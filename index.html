@@ -27,6 +27,8 @@
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn-secondary { background-color: #6b7280; color: white; }
         .btn-secondary:hover:not(:disabled) { background-color: #4b5563; }
+        /* Modal styles */
+        #person-modal.hidden { display: none; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 p-4 lg:p-8">
@@ -38,6 +40,7 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
+            <!-- Personnel Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
@@ -47,6 +50,7 @@
                 </div>
             </div>
 
+            <!-- Performance Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
@@ -59,12 +63,41 @@
         </div>
     </div>
 
+    <!-- Personnel Details Modal -->
+    <div id="person-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
+        <div id="modal-content" class="relative mx-auto p-6 border w-full max-w-md shadow-lg rounded-2xl bg-white transform transition-all scale-95 opacity-0">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-start pb-3 border-b">
+                <div>
+                    <h3 id="modal-name" class="text-2xl leading-6 font-bold text-gray-900"></h3>
+                    <p id="modal-role-group" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                <button id="modal-close-btn" class="p-1 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <!-- Modal Body -->
+            <div id="modal-details" class="mt-4 text-left space-y-4">
+                <!-- Details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+
     <script>
         // --- GLOBAL VARIABLES & DOM REFERENCES ---
         let performanceChart = null;
         const accordionContainer = document.getElementById('accordion-container');
         const chartCanvas = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
+        // Modal elements
+        const personModal = document.getElementById('person-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalName = document.getElementById('modal-name');
+        const modalRoleGroup = document.getElementById('modal-role-group');
+        const modalDetails = document.getElementById('modal-details');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
 
         // --- 色彩參考 (用於圖表) ---
         const groupColorMapping = [
@@ -75,9 +108,69 @@
             { groupName: '柏勛組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
         ];
 
-        // --- 彈出視窗相關的 JavaScript 函式已被移除 ---
+        // --- MODAL FUNCTIONS ---
+        /**
+         * Displays the personnel detail modal with the given person's information.
+         * @param {object} person - The person object from the JSON data.
+         */
+        function showPersonDetailsModal(person) {
+            // Populate modal header
+            modalName.textContent = person.name || 'N/A';
+            modalRoleGroup.textContent = `${person.role || '組員'} / ${person.group || '其他人員'}`;
+
+            // Populate modal details
+            const certs = person.certificates;
+            const hasValidCerts = certs && certs.length > 0 && certs[0].name !== '#N/A';
+            
+            // Create HTML for certificates list
+            const certsHtml = hasValidCerts
+                ? `<ul class="space-y-2 list-inside">${certs.map(c => `
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <div>
+                            <span class="font-medium text-gray-800">${c.name}</span>
+                            <span class="block text-xs text-gray-500">有效期限: ${c.expiry || '未提供'}</span>
+                        </div>
+                    </li>`).join('')}</ul>`
+                : '<span class="text-gray-500">無相關證照</span>';
+            
+            // Assemble all details
+            modalDetails.innerHTML = `
+                <div>
+                    <p class="text-sm font-medium text-gray-500">學歷</p>
+                    <p class="mt-1 text-gray-800">${person.education || '未提供'}</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">專業證照</p>
+                    <div class="mt-1">${certsHtml}</div>
+                </div>
+            `;
+
+            // Show modal with animation
+            personModal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10); // Small delay to ensure transition triggers
+        }
+
+        /**
+         * Hides the personnel detail modal.
+         */
+        function hidePersonDetailsModal() {
+            modalContent.classList.add('scale-95', 'opacity-0');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                personModal.classList.add('hidden');
+            }, 200); // Match transition duration
+        }
+
 
         // --- UI RENDERING ---
+        /**
+         * Builds and renders the personnel accordion UI.
+         * @param {Array<object>} personnelData - Array of person objects.
+         */
         function buildAccordionUI(personnelData) {
             if (!personnelData || personnelData.length === 0) {
                 accordionContainer.innerHTML = `<div class="text-center p-8 text-gray-500">目前沒有人員資料。</div>`;
@@ -118,8 +211,8 @@
                     const hasCerts = person.certificates && person.certificates.length > 0 && person.certificates[0].name !== '#N/A';
                     const isManager = person.role === '副理' || person.role === '副總經理';
                     
-                    // 移除了 cursor-pointer 和 hover 效果，恢復為靜態卡片
-                    let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 `;
+                    // Add cursor-pointer and hover effects to indicate clickability
+                    let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 `;
                     if (isManager) {
                         divClasses += 'bg-blue-50 border-blue-200';
                     } else {
@@ -133,7 +226,9 @@
                         ${hasCerts ? '<span class="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white" title="持有證照"></span>' : ''}
                     `;
                     
-                    // 移除了點擊事件監聽器
+                    // Add click event listener to show the modal
+                    memberDiv.addEventListener('click', () => showPersonDetailsModal(person));
+                    
                     membersGrid.appendChild(memberDiv);
                 });
 
@@ -143,6 +238,10 @@
             });
         }
 
+        /**
+         * Creates a new Chart.js instance or updates an existing one.
+         * @param {object} chartData - The data object for the chart.
+         */
         function createOrUpdateChart(chartData) {
             const ctx = chartCanvas.getContext('2d');
             if (performanceChart) {
@@ -165,6 +264,10 @@
             }
         }
         
+        /**
+         * Processes and renders the performance data into the bar chart.
+         * @param {Array<object>} performanceData - Array of performance objects.
+         */
         function renderPerformanceChart(performanceData) {
             const chartData = {
                 labels: performanceData.map(p => p.groupName),
@@ -191,7 +294,7 @@
             refreshDashboardBtn.disabled = true;
             refreshDashboardBtn.textContent = '讀取中...';
             
-            const timestamp = new Date().getTime();
+            const timestamp = new Date().getTime(); // Prevent browser caching
 
             try {
                 const personnelUrl = new URL('personnelData.json', window.location.href);
@@ -255,9 +358,15 @@
         document.addEventListener('DOMContentLoaded', loadDashboardData);
         refreshDashboardBtn.addEventListener('click', loadDashboardData);
 
-        // --- 彈出視窗的事件監聽器已被移除 ---
+        // Modal close event listeners
+        modalCloseBtn.addEventListener('click', hidePersonDetailsModal);
+        personModal.addEventListener('click', (event) => {
+            // Close modal if the outer container (overlay) is clicked
+            if (event.target === personModal) {
+                hidePersonDetailsModal();
+            }
+        });
 
     </script>
 </body>
 </html>
-```
