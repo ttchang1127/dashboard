@@ -1,4 +1,3 @@
-# .github/workflows/update-data.yml
 name: Update Dashboard Data
 
 # 權限設定：允許 workflow 寫入儲存庫內容
@@ -27,8 +26,8 @@ jobs:
         with:
           node-version: '18'
 
-      # 步驟 3: 執行 Node.js 腳本來抓取兩個工作表的資料並存檔
-      - name: Fetch data from Google Sheets and save to JSON
+      # 步驟 3: 執行 Node.js 腳本來抓取並處理資料
+      - name: Fetch and Process Data from Google Sheets
         run: |
           node -e "
             const https = require('https');
@@ -38,14 +37,14 @@ jobs:
             const SPREADSHEET_ID = '1GjhgGAUuI5g6rtOGiUceMLgeGy12sp93fNQlWKM-UGc';
             const API_KEY = process.env.GOOGLE_API_KEY;
 
-            // 人員資料工作表設定
-            const PERSONNEL_SHEET = { name: '工作表1', range: 'A1:E100', file: 'personnelData.json' };
-            // 績效資料工作表設定 (修正了範圍以正確讀取資料)
+            // 人員資料工作表設定 (欄位: 姓名, 組別, 職稱, 學歷, 證照)
+            const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:I100', file: 'personnelData.json' };
+            // 績效資料工作表設定 (第一列為組名，第二列為金額)
             const PERFORMANCE_SHEET = { name: '工作表2', range: 'B1:F2', file: 'performanceData.json' };
 
             // 檢查 API 金鑰是否存在
             if (!API_KEY) {
-              console.error('錯誤: 找不到 GOOGLE_API_KEY secret！');
+              console.error('錯誤: 找不到 GOOGLE_API_KEY secret！請在 GitHub 儲存庫的 Settings > Secrets and variables > Actions 中設定。');
               process.exit(1);
             }
 
@@ -64,7 +63,7 @@ jobs:
                       if (parsed.values) {
                         resolve(parsed.values);
                       } else {
-                        const errorMsg = parsed.error ? JSON.stringify(parsed.error) : '在工作表回應中找不到 values 欄位。';
+                        const errorMsg = parsed.error ? \`Google API 錯誤: \${JSON.stringify(parsed.error.message)}\` : '在工作表回應中找不到 "values" 欄位。';
                         reject(new Error(errorMsg));
                       }
                     } catch (e) { reject(e); }
@@ -73,7 +72,7 @@ jobs:
               });
             }
 
-            // 處理人員資料：將陣列轉換為物件陣列，並處理證照欄位
+            // [修正] 處理人員資料：將陣列轉換為物件陣列，並將證照處理成字串陣列
             function processPersonnelData(values) {
               const headerMapping = { '姓名': 'name', '組別': 'group', '職稱': 'role', '學歷': 'education', '證照': 'certificates' };
               const headers = values[0];
@@ -86,7 +85,8 @@ jobs:
                   if (englishKey) {
                     const value = row[index] || '';
                     if (englishKey === 'certificates') {
-                      person[englishKey] = value.split(/[,、，\\s]+/).filter(cert => cert.trim() !== '').map(certName => ({ name: certName.trim(), number: '' }));
+                      // 將證照字串分割成陣列，並過濾空值
+                      person[englishKey] = value.split(/[,、，\\s]+/).map(cert => cert.trim()).filter(cert => cert);
                     } else {
                       person[englishKey] = value.trim();
                     }
@@ -99,10 +99,29 @@ jobs:
               console.log(\`✅ 成功擷取資料並寫入 \${PERSONNEL_SHEET.file}\`);
             }
 
-            // 處理績效資料
+            // [修正] 處理績效資料：將兩列資料轉換為前端需要的 [組別, 金額] 配對格式
             function processPerformanceData(values) {
-              fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify(values, null, 2));
-              console.log(\`✅ 成功擷取資料並寫入 \${PERFORMANCE_SHEET.file}\`);
+              // 預期資料格式:
+              // values[0] = ["吳孝智 組", "陳囿任 組", ...] (組別名稱)
+              // values[1] = ["695756", "500000", ...] (對應金額)
+              if (!values || values.length < 2 || values[0].length !== values[1].length) {
+                const errorMsg = '❌ 績效資料格式不正確。預期應有兩列（組別、金額），且長度相同。';
+                console.error(errorMsg);
+                // 寫入空陣列以避免前端出錯，並拋出錯誤讓 workflow 失敗
+                fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify([], null, 2));
+                throw new Error(errorMsg);
+              }
+
+              const groups = values[0];
+              const amounts = values[1];
+
+              // 使用 map 將兩列資料 "zip" 在一起
+              const transformedData = groups.map((group, index) => {
+                return [group, amounts[index]];
+              });
+
+              fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify(transformedData, null, 2));
+              console.log(\`✅ 成功擷取並轉換資料，寫入 \${PERFORMANCE_SHEET.file}\`);
             }
 
             // --- 主執行函式 ---
@@ -119,7 +138,7 @@ jobs:
 
                 console.log('✨ 所有資料更新完成！');
               } catch (error) {
-                console.error('❌ 更新過程中發生錯誤:', error);
+                console.error('❌ 更新過程中發生錯誤:', error.message);
                 process.exit(1);
               }
             }
@@ -137,9 +156,9 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           # 將兩個 JSON 檔案都加入到暫存區
           git add personnelData.json performanceData.json
-          # 如果暫存區有變動，才執行 commit 和 push
+          # 檢查是否有檔案變動
           if ! git diff --staged --quiet; then
-            git commit -m 'chore: 自動更新儀表板資料'
+            git commit -m 'chore(data): 自動更新儀表板資料'
             git push
             echo "資料已更新並推送至儲存庫。"
           else
