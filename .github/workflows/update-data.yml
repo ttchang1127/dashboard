@@ -53,7 +53,7 @@ jobs:
             // 從 Google Sheet API 抓取資料的通用函式
             function fetchSheetData(sheetName, range) {
               return new Promise((resolve, reject) => {
-                const url = \`https://sheets.googleapis.com/v4/spreadsheets/\${SPREADSHEET_ID}/values/\${encodeURIComponent(sheetName)}!\${range}?key=\${API_KEY}\`;
+                const url = \`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(sheetName)}!${range}?key=${API_KEY}\`;
                 https.get(url, (res) => {
                   let rawData = '';
                   res.on('data', (chunk) => { rawData += chunk; });
@@ -63,7 +63,7 @@ jobs:
                       if (parsed.values) {
                         resolve(parsed.values);
                       } else {
-                        const errorMsg = parsed.error ? \`Google API 錯誤: \${JSON.stringify(parsed.error.message)}\` : '在工作表回應中找不到 "values" 欄位。';
+                        const errorMsg = parsed.error ? \`Google API 錯誤: ${JSON.stringify(parsed.error.message)}\` : '在工作表回應中找不到 \"values\" 欄位。';
                         reject(new Error(errorMsg));
                       }
                     } catch (e) { reject(e); }
@@ -115,7 +115,7 @@ jobs:
               const groups = values[0];
               const amounts = values[1];
 
-              // 使用 map 將兩列資料 "zip" 在一起
+              // 使用 map 將兩列資料 \"zip\" 在一起
               const transformedData = groups.map((group, index) => {
                 return [group, amounts[index]];
               });
