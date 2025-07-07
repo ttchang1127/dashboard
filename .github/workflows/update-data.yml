@@ -2,6 +2,8 @@
 
 name: Update Google Sheet Data
 
+permissions:
+  contents: write
 # 觸發條件：
 on:
   # 1. 每天的每個小時的第 5 分鐘自動執行一次 (您可以到 crontab.guru 網站查詢或產生您要的排程)
