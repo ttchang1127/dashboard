@@ -1,22 +1,9 @@
-好的，這很可能是因為缺少了更直覺的關閉方式（例如按下鍵盤的 `ESC` 鍵），導致在某些情況下感覺無法輕易關閉視窗。
-
-我已經對程式碼進行了修正，主要新增了一項關鍵功能：
-
-  * **新增「ESC 鍵關閉視窗」功能**：現在當彈出視窗顯示時，您可以直接按下鍵盤上的 `Escape` (ESC) 鍵來關閉它。這是一個標準且符合使用者習慣的操作，可以有效避免「被卡住」的感覺。
-
-原有的「點擊關閉按鈕」和「點擊視窗外灰色區域」的關閉方式依然保留。以下是修正後的完整程式碼，您可以直接複製並取代舊的檔案。
-
------
-
-### 修正後的完整程式碼
-
-```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>桃辦/新北辦儀表板 (互動修正版)</title>
+    <title>桃辦/新北辦儀表板 (靜態版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -40,30 +27,6 @@
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn-secondary { background-color: #6b7280; color: white; }
         .btn-secondary:hover:not(:disabled) { background-color: #4b5563; }
-        
-        /* --- Modal Styles --- */
-        .modal-hidden { display: none; }
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 1.5rem 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 p-4 lg:p-8">
@@ -96,52 +59,12 @@
         </div>
     </div>
 
-    <div id="person-modal" class="modal-hidden modal-overlay">
-        <div class="modal-content">
-            <button id="modal-close-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h3 id="modal-name" class="text-2xl font-bold mb-4 text-gray-900">姓名</h3>
-            <div class="space-y-3">
-                <div>
-                    <span class="font-semibold text-gray-600">組別:</span>
-                    <span id="modal-group" class="ml-2 text-gray-800"></span>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">職稱:</span>
-                    <span id="modal-role" class="ml-2 text-gray-800"></span>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">學歷:</span>
-                    <span id="modal-education" class="ml-2 text-gray-800"></span>
-                </div>
-                <div>
-                    <p class="font-semibold text-gray-600 mb-1">證照:</p>
-                    <ul id="modal-certs-list" class="list-disc list-inside space-y-1 text-gray-800 pl-2">
-                        <li>無證照</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <script>
         // --- GLOBAL VARIABLES & DOM REFERENCES ---
         let performanceChart = null;
         const accordionContainer = document.getElementById('accordion-container');
         const chartCanvas = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
-
-        // Modal DOM elements
-        const personModal = document.getElementById('person-modal');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        const modalName = document.getElementById('modal-name');
-        const modalGroup = document.getElementById('modal-group');
-        const modalRole = document.getElementById('modal-role');
-        const modalEducation = document.getElementById('modal-education');
-        const modalCertsList = document.getElementById('modal-certs-list');
-
 
         // --- 色彩參考 (用於圖表) ---
         const groupColorMapping = [
@@ -152,44 +75,7 @@
             { groupName: '柏勛組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
         ];
 
-        // --- MODAL LOGIC ---
-        function showPersonDetails(person) {
-            try {
-                if (!person) {
-                    console.error("showPersonDetails was called without a person object.");
-                    return;
-                }
-
-                modalName.textContent = person.name || 'N/A';
-                modalGroup.textContent = person.group || 'N/A';
-                modalRole.textContent = person.role || '組員';
-                modalEducation.textContent = person.education || 'N/A';
-                
-                if (person.certificates && Array.isArray(person.certificates) && person.certificates.length > 0) {
-                    const validCerts = person.certificates.filter(cert => cert && cert.name && cert.name.trim() && cert.name !== '#N/A');
-                    if (validCerts.length > 0) {
-                        modalCertsList.innerHTML = validCerts
-                            .map(cert => `<li>${cert.name}</li>`)
-                            .join('');
-                    } else {
-                        modalCertsList.innerHTML = '<li>無有效證照</li>';
-                    }
-                } else {
-                    modalCertsList.innerHTML = '<li>無證照</li>';
-                }
-                
-                personModal.classList.remove('modal-hidden');
-
-            } catch (error) {
-                console.error("Error displaying person details:", error);
-                hidePersonDetails();
-                alert("顯示詳細資料時發生錯誤，請檢查資料格式。"); 
-            }
-        }
-
-        function hidePersonDetails() {
-            personModal.classList.add('modal-hidden');
-        }
+        // --- 彈出視窗相關的 JavaScript 函式已被移除 ---
 
         // --- UI RENDERING ---
         function buildAccordionUI(personnelData) {
@@ -232,11 +118,12 @@
                     const hasCerts = person.certificates && person.certificates.length > 0 && person.certificates[0].name !== '#N/A';
                     const isManager = person.role === '副理' || person.role === '副總經理';
                     
-                    let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer `;
+                    // 移除了 cursor-pointer 和 hover 效果，恢復為靜態卡片
+                    let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 `;
                     if (isManager) {
-                        divClasses += 'bg-blue-50 border-blue-200 hover:bg-blue-100 hover:shadow-md';
+                        divClasses += 'bg-blue-50 border-blue-200';
                     } else {
-                        divClasses += 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:shadow-md';
+                        divClasses += 'bg-gray-50 border-gray-200';
                     }
                     memberDiv.className = divClasses;
 
@@ -245,7 +132,8 @@
                         <p class="text-sm text-gray-500">${person.role || '組員'}</p>
                         ${hasCerts ? '<span class="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white" title="持有證照"></span>' : ''}
                     `;
-                    memberDiv.addEventListener('click', () => showPersonDetails(person));
+                    
+                    // 移除了點擊事件監聽器
                     membersGrid.appendChild(memberDiv);
                 });
 
@@ -366,24 +254,8 @@
         // --- EVENT LISTENERS ---
         document.addEventListener('DOMContentLoaded', loadDashboardData);
         refreshDashboardBtn.addEventListener('click', loadDashboardData);
-        
-        // --- Modal closing event listeners ---
-        modalCloseBtn.addEventListener('click', hidePersonDetails);
-        
-        personModal.addEventListener('click', (event) => {
-            // Closes the modal if the overlay (the background) is clicked
-            if (event.target === personModal) {
-                hidePersonDetails();
-            }
-        });
 
-        // **FIXED**: Added listener for the Escape key to close the modal
-        document.addEventListener('keydown', (event) => {
-            // Check if the pressed key is 'Escape' and if the modal is currently visible
-            if (event.key === 'Escape' && !personModal.classList.contains('modal-hidden')) {
-                hidePersonDetails();
-            }
-        });
+        // --- 彈出視窗的事件監聽器已被移除 ---
 
     </script>
 </body>
