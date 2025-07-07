@@ -3,89 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>桃辦/新北辦儀表板 (GitHub Actions 安全版)</title>
+    <title>桃辦/新北辦儀表板 (靜態生成版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
-        }
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
-        
-        .modal-enter { opacity: 0; transform: scale(0.95); }
-        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.2s ease-out; }
-        .modal-leave-active { opacity: 0; transform: scale(0.95); transition: all 0.2s ease-in; }
-
         details > summary { list-style: none; cursor: pointer; }
         details > summary::-webkit-details-marker { display: none; }
         details summary .arrow { transition: transform 0.2s; }
         details[open] summary .arrow { transform: rotate(90deg); }
-
         .btn {
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             font-weight: 500;
             transition: all 0.2s;
-            border: 1px solid transparent;
             cursor: pointer;
         }
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        .btn-primary {
-            background-color: #3b82f6;
-            color: white;
-        }
-        .btn-primary:hover:not(:disabled) {
-            background-color: #2563eb;
-        }
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-        }
-        .btn-danger:hover:not(:disabled) {
-            background-color: #dc2626;
-        }
-        .btn-secondary {
-            background-color: #6b7280;
-            color: white;
-        }
-        .btn-secondary:hover:not(:disabled) {
-            background-color: #4b5563;
-        }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-secondary { background-color: #6b7280; color: white; }
+        .btn-secondary:hover:not(:disabled) { background-color: #4b5563; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 p-4 lg:p-8">
 
     <div class="w-full max-w-7xl mx-auto">
         <header class="mb-8 text-center relative">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板22</h1>
-            <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (績效圖表由後端定時更新)</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板333</h1>
+            <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (資料由後端定時更新)</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
-            <!-- Left Column: Personnel Organization -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
-                    <button id="add-person-btn" class="btn btn-primary">新增人員</button>
-                </div>
+                    </div>
                 <div id="accordion-container" class="space-y-3 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
-                    <!-- Accordion items will be dynamically inserted here -->
-                     <div class="text-center p-8 text-gray-500">讀取資料中...</div>
+                    <div class="text-center p-8 text-gray-500">讀取資料中...</div>
                 </div>
             </div>
 
-            <!-- Right Column: Performance Chart -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
-                    <button id="update-chart-btn" class="btn btn-secondary">重新整理圖表</button>
+                    <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
                  </div>
                  <div class="relative">
                      <canvas id="performanceChart"></canvas>
@@ -94,213 +59,41 @@
         </div>
     </div>
 
-    <!-- Modal for Certificate Details -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div id="modal-content" class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative modal-enter custom-scrollbar overflow-y-auto max-h-[90vh]">
-            <button id="modal-close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h2 id="modal-title" class="text-2xl font-bold mb-6">編輯人員資料</h2>
-            <form id="person-form" class="space-y-4">
-                <input type="hidden" id="person-id">
-                <div>
-                    <label for="person-name" class="block text-sm font-medium text-gray-700">姓名</label>
-                    <input type="text" id="person-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
-                </div>
-                <div>
-                    <label for="person-group" class="block text-sm font-medium text-gray-700">組別</label>
-                    <input type="text" id="person-group" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
-                </div>
-                <div>
-                    <label for="person-role" class="block text-sm font-medium text-gray-700">職稱</label>
-                    <input type="text" id="person-role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
-                </div>
-                <div>
-                    <label for="person-education" class="block text-sm font-medium text-gray-700">學歷</label>
-                    <input type="text" id="person-education" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-700 mb-2">證照</h3>
-                    <div id="certificates-container" class="space-y-2"></div>
-                    <button type="button" id="add-certificate-btn" class="mt-2 text-sm text-blue-600 hover:text-blue-800">+ 新增證照</button>
-                </div>
-                <div class="flex justify-end pt-4 space-x-3">
-                    <button type="button" id="delete-person-btn" class="btn btn-danger">刪除</button>
-                    <button type="submit" class="btn btn-primary">儲存變更</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, getDocs, onSnapshot, addDoc, setDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- FIREBASE CONFIGURATION ---
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-dashboard-app-secure';
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // --- REMOVED GOOGLE SHEETS API CONFIG ---
-        // API Key is now handled by GitHub Actions securely in the backend.
-
+    <script>
         // --- GLOBAL VARIABLES & DOM REFERENCES ---
         let performanceChart = null;
-        let currentUserId = null;
-        const personnelColPath = `artifacts/${appId}/public/data/personnel`;
-        // The performanceColPath is no longer needed as data comes from a local JSON file.
-        
         const accordionContainer = document.getElementById('accordion-container');
-        const modal = document.getElementById('modal');
-        const modalContent = document.getElementById('modal-content');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        const modalTitle = document.getElementById('modal-title');
         const chartCanvas = document.getElementById('performanceChart');
-        const personForm = document.getElementById('person-form');
-        const addPersonBtn = document.getElementById('add-person-btn');
-        const deletePersonBtn = document.getElementById('delete-person-btn');
-        const addCertificateBtn = document.getElementById('add-certificate-btn');
-        const certificatesContainer = document.getElementById('certificates-container');
-        const updateChartBtn = document.getElementById('update-chart-btn');
+        const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
 
-        // --- INITIAL DATA (for first-time population and color reference) ---
-        const initialPersonnelData = [
-            { name: "張增糴", group: "副總經理", role: "副總經理", education: "國立臺灣大學 土木工程學系 碩士", certificates: [ { name: "土木技師", number: "" }, { name: "大地技師", number: "" } ]},
-            { name: "吳孝智", group: "吳孝智 組", role: "副理", education: "國立中央大學 土木工程學系 碩士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" }, { name: "管挖", number: "" } ]},
-            { name: "康慶龍", group: "吳孝智 組", role: "組員", education: "逢甲大學 水利工程與資源保育學系 學士", certificates: [ { name: "品管", number: "" }, { name: "無人機普通操作證", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "翁巧晴", group: "吳孝智 組", role: "組員", education: "蘭陽技術學院 土木工程科 副學士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "林全華", group: "吳孝智 組", role: "組員", education: "致遠管理學院 營建管理學系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "陳建榮", group: "吳孝智 組", role: "組員", education: "國立宜蘭大學 土木工程學系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(甲種職業安全衛生業務主管)", number: "" }, { name: "乙級測量技術士", number: "" }, { name: "工地主任", number: "" } ]},
-            { name: "張佳文", group: "吳孝智 組", role: "組員", education: "國立臺北科技大學 土木工程學系 學士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "陳囿任", group: "陳囿任 組", role: "副理", education: "中華大學 營建管理研究所 碩士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "黃阡維", group: "陳囿任 組", role: "組員", education: "國立嘉義大學 土木與水資源工程學系 學士", certificates: [ { name: "品管", number: "" }, { name: "管挖", number: "" }, { name: "無人機專業操作證", number: "" }, { name: "營造業甲種業務主管", number: "" } ]},
-            { name: "吳尚東", group: "陳囿任 組", role: "組員", education: "國立臺灣海洋大學 河海工程學系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "陳珮婷", group: "陳囿任 組", role: "組員", education: "國立金門大學 都市計畫與景觀學系 學士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "呂紹吉", group: "陳囿任 組", role: "組員", education: "逢甲大學 水利工程與資源保育學系 碩士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "許英麗", group: "陳囿任 組", role: "組員", education: "中華大學 景觀建築學系 學士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "蕭輔仁", group: "陳囿任 組", role: "組員", education: "健行科技大學 資訊管理系 學士", certificates: [ { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "林莊健", group: "陳囿任 組", role: "組員", education: "中國文化大學 景觀學系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(丙種)", number: "" }, { name: "管挖", number: "" } ]},
-            { name: "謝宜庭", group: "陳囿任 組", role: "組員", education: "國立聯合大學 土木與防災工程學系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "高鴻瑜", group: "陳囿任 組", role: "組員", education: "朝陽科技大學 營建工程系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "張鎧峻", group: "張鎧峻 組", role: "副理", education: "國立成功大學 土木工程學系 碩士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "張友誠", group: "張鎧峻 組", role: "組員", education: "國立交通大學 土木工程學系 碩士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "曾院榮", group: "張鎧峻 組", role: "組員", education: "國立交通大學 土木工程學系 學士", certificates: [ { name: "土木技師", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "王宜婷", group: "張鎧峻 組", role: "組員", education: "中原大學 土木工程學系 學士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "詹子瑩", group: "張鎧峻 組", role: "組員", education: "逢甲大學 水利工程與資源保育學系 碩士", certificates: [ { name: "品管", number: "" }, { name: "無人機普通操作證", number: "" } ]},
-            { name: "王子銘", group: "張鎧峻 組", role: "組員", education: "Oregon State University 水利工程學系 碩士", certificates: [ { name: "品管", number: "" }, { name: "無人機專業操作證", number: "" } ]},
-            { name: "張巍耀", group: "張巍耀 組", role: "副理", education: "逢甲大學 土木工程學系 碩士", certificates: [ { name: "品管", number: "" }, { name: "管挖", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "梅德鍾", group: "張巍耀 組", role: "組員", education: "淡江大學 土木工程學系 碩士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" }, { name: "無人機普通操作證", number: "" } ]},
-            { name: "李俊毅", group: "張巍耀 組", role: "組員", education: "國立高雄第一科技大學 環境與安全衛生工程系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" }, { name: "管挖", number: "" } ]},
-            { name: "蕭家璨", group: "張巍耀 組", role: "組員", education: "逢甲大學 土木工程學系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" }, { name: "無人機普通操作證", number: "" } ]},
-            { name: "吳諾樸", group: "張巍耀 組", role: "組員", education: "朝陽科技大學 景觀及都市設計系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" }, { name: "管挖", number: "" } ]},
-            { name: "陳品圻", group: "張巍耀 組", role: "組員", education: "朝陽科技大學 景觀及都市設計系 學士", certificates: [ { name: "品管", number: "" }, { name: "管挖", number: "" } ]},
-            { name: "黃立昕", group: "張巍耀 組", role: "組員", education: "中原大學 土木工程學系 學士", certificates: [ { name: "土木技師", number: "" }, { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "潘國揚", group: "張巍耀 組", role: "組員", education: "陸軍軍官學校 理組 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(甲級職業安全管理師)", number: "" } ]},
-            { name: "黃國亮", group: "張巍耀 組", role: "組員", education: "中原大學 土木工程學系 碩士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "蕭凱馨", group: "張巍耀 組", role: "組員", education: "萬能科技大學 財務金融系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "宋柏勛", group: "宋柏勛 組", role: "副理", education: "國立中央大學 土木工程學系 博士", certificates: [ { name: "品管", number: "" }, { name: "無人機普通操作證", number: "" } ]},
-            { name: "張智淵", group: "宋柏勛 組", role: "組員", education: "國立臺灣科技大學 營建工程系 碩士", certificates: [ { name: "土木技師", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "簡宏瑋", group: "宋柏勛 組", role: "組員", education: "國立中央大學 土木工程學系 學士", certificates: [ { name: "土木技師", number: "" } ]},
-            { name: "莊盛宇", group: "宋柏勛 組", role: "組員", education: "國立臺灣科技大學 營建工程學系 碩士", certificates: [ { name: "土木技師", number: "" } ]},
-            { name: "林啓聖", group: "宋柏勛 組", role: "組員", education: "德霖技術學院 土木工程系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(營造業甲種職業安全衛生業務主管)", number: "" } ]},
-            { name: "李瑞迪", group: "宋柏勛 組", role: "組員", education: "宏國德霖科技大學 土木工程系 學士", certificates: []},
-            { name: "許淑靜", group: "宋柏勛 組", role: "組員", education: "德霖科技大學 土木工程學系 學士", certificates: [ { name: "品管", number: "" }, { name: "職安(職業衛生管理師)", number: "" } ]},
-            { name: "黃忠成", group: "宋柏勛 組", role: "組員", education: "逢甲大學 土木工程學系 學士", certificates: [ { name: "土木技師", number: "" }, { name: "職安(職業安全管理師)", number: "" } ]},
-            { name: "周建志", group: "宋柏勛 組", role: "組員", education: "國立臺灣科技大學 營建工程學系 學士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "楊萬璽", group: "其他人員", role: "組員", education: "國立臺北科技大學 土木工程系 學士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "李佳穎", group: "其他人員", role: "組員", education: "國立屏東科技大學 農企業管理系 學士", certificates: [ { name: "品管", number: "" } ]},
-            { name: "石婷瑄", group: "其他人員", role: "組員", education: "萬能科技大學 行銷與流通管理系 學士", certificates: []}
+        // --- 色彩參考 (用於圖表) ---
+        // 這個陣列現在只用來為特定組別指定顏色
+        const groupColorMapping = [
+            { groupName: '吳孝智 組', color: 'rgba(54, 162, 235, 0.6)', borderColor: 'rgba(54, 162, 235, 1)' },
+            { groupName: '陳囿任 組', color: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)' },
+            { groupName: '張鎧峻 組', color: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)' },
+            { groupName: '張巍耀 組', color: 'rgba(255, 206, 86, 0.6)', borderColor: 'rgba(255, 206, 86, 1)' },
+            { groupName: '宋柏勛 組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
         ];
-        // This array is now only used for color mapping. The actual data comes from performanceData.json
-        const initialPerformanceData = [
-            { groupName: '吳孝智 組', amount: 695756, color: 'rgba(54, 162, 235, 0.6)', borderColor: 'rgba(54, 162, 235, 1)' },
-            { groupName: '陳囿任 組', amount: 3902929, color: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)' },
-            { groupName: '張鎧峻 組', amount: 9778919, color: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)' },
-            { groupName: '張巍耀 組', amount: 9983194, color: 'rgba(255, 206, 86, 0.6)', borderColor: 'rgba(255, 206, 86, 1)' },
-            { groupName: '宋柏勛 組', amount: 80000, color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
-        ];
-
-        // --- AUTHENTICATION & DATA INITIALIZATION ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                console.log("Authenticated user:", currentUserId);
-                await checkAndSeedPersonnelData(); // Only seeds personnel data now
-                setupRealtimeListeners();
-            } else {
-                console.log("No user signed in.");
-            }
-        });
-        
-        async function main() {
-             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-             } catch (error) {
-                console.error("Authentication failed:", error);
-                accordionContainer.innerHTML = `<div class="text-center p-8 text-red-500">認證失敗，無法讀取資料。</div>`;
-             }
-        }
-
-        async function checkAndSeedPersonnelData() {
-            const personnelRef = collection(db, personnelColPath);
-            const snapshot = await getDocs(personnelRef);
-            if (snapshot.empty) {
-                console.log("Personnel collection is empty. Seeding initial data...");
-                const batch = writeBatch(db);
-                
-                initialPersonnelData.forEach(person => {
-                    const docRef = doc(collection(db, personnelColPath));
-                    batch.set(docRef, person);
-                });
-
-                await batch.commit();
-                console.log("Initial personnel data seeded successfully.");
-            } else {
-                console.log("Personnel database already contains data.");
-            }
-        }
-
-        // --- REALTIME LISTENERS ---
-        function setupRealtimeListeners() {
-            // Listener for personnel data (remains unchanged)
-            const personnelQuery = collection(db, personnelColPath);
-            onSnapshot(personnelQuery, (snapshot) => {
-                const personnelData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                buildAccordionUI(personnelData);
-            }, (error) => {
-                console.error("Error fetching personnel:", error);
-                accordionContainer.innerHTML = `<div class="text-center p-8 text-red-500">讀取人員資料時發生錯誤。</div>`;
-            });
-
-            // Performance data listener is REMOVED. Data is now fetched from a static JSON file.
-        }
 
         // --- UI RENDERING ---
         function buildAccordionUI(personnelData) {
+            if (!personnelData || personnelData.length === 0) {
+                accordionContainer.innerHTML = `<div class="text-center p-8 text-gray-500">目前沒有人員資料。</div>`;
+                return;
+            }
+            
             const groupedData = personnelData.reduce((acc, person) => {
-                acc[person.group] = acc[person.group] || [];
-                acc[person.group].push(person);
+                const group = person.group || "其他人員";
+                acc[group] = acc[group] || [];
+                acc[group].push(person);
                 return acc;
             }, {});
 
             const groupOrder = [ "副總經理", ...Object.keys(groupedData).filter(g => g !== "副總經理" && g !== "其他人員").sort((a, b) => a.localeCompare(b, 'zh-Hant')), "其他人員" ];
             
-            accordionContainer.innerHTML = ''; 
-
-            if (personnelData.length === 0) {
-                accordionContainer.innerHTML = `<div class="text-center p-8 text-gray-500">目前沒有人員資料。</div>`;
-                return;
-            }
-
+            accordionContainer.innerHTML = '';
+            
             groupOrder.forEach(groupName => {
                 const members = groupedData[groupName];
                 if (!members) return;
@@ -311,7 +104,6 @@
 
                 const summary = document.createElement('summary');
                 summary.className = 'flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition';
-                
                 summary.innerHTML = `
                     <span class="font-semibold text-gray-700">${groupName}</span>
                     <span class="arrow text-gray-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
@@ -321,21 +113,21 @@
                 membersGrid.className = 'p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3';
                 
                 members.forEach(person => {
-                    const memberButton = document.createElement('button');
+                    const memberDiv = document.createElement('div');
                     const isManager = person.role === '副理' || person.role === '副總經理';
                     const hasCerts = person.certificates && person.certificates.length > 0;
                     
-                    let buttonClasses = `p-3 border rounded-lg text-center hover:shadow-md hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 relative `;
-                    if (isManager) buttonClasses += 'bg-blue-100 text-blue-800 font-semibold';
-                    else buttonClasses += 'bg-gray-50';
-                    memberButton.className = buttonClasses;
+                    let divClasses = `p-3 border rounded-lg text-center relative cursor-default `; // cursor-default as it's not clickable
+                    if (isManager) divClasses += 'bg-blue-100 text-blue-800 font-semibold';
+                    else divClasses += 'bg-gray-50';
+                    memberDiv.className = divClasses;
 
-                    memberButton.innerHTML = `
+                    memberDiv.innerHTML = `
                         <span>${person.name}</span>
                         ${hasCerts ? '<span class="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500" title="持有證照"></span>' : ''}
                     `;
-                    memberButton.onclick = () => showModal(person);
-                    membersGrid.appendChild(memberButton);
+                    // On-click functionality is removed
+                    membersGrid.appendChild(memberDiv);
                 });
 
                 details.appendChild(summary);
@@ -346,12 +138,8 @@
 
         function createOrUpdateChart(chartData) {
             const ctx = chartCanvas.getContext('2d');
-            
             if (performanceChart) {
-                performanceChart.data.labels = chartData.labels;
-                performanceChart.data.datasets[0].data = chartData.datasets[0].data;
-                performanceChart.data.datasets[0].backgroundColor = chartData.datasets[0].backgroundColor;
-                performanceChart.data.datasets[0].borderColor = chartData.datasets[0].borderColor;
+                performanceChart.data = chartData;
                 performanceChart.update();
             } else {
                 performanceChart = new Chart(ctx, {
@@ -368,22 +156,20 @@
                 });
             }
         }
-
-        function updatePerformanceChart(performanceData) {
-            performanceData.sort((a,b) => initialPerformanceData.findIndex(p => p.groupName === a.id) - initialPerformanceData.findIndex(p => p.groupName === b.id));
-
+        
+        function renderPerformanceChart(performanceData) {
             const chartData = {
-                labels: performanceData.map(p => p.id),
+                labels: performanceData.map(p => p.groupName),
                 datasets: [{
                     label: '114年度已請領費用 (元)',
                     data: performanceData.map(p => p.amount),
                     backgroundColor: performanceData.map(p => {
-                        const initial = initialPerformanceData.find(ip => ip.groupName === p.id);
-                        return initial ? initial.color : 'rgba(201, 203, 207, 0.6)';
+                        const mapping = groupColorMapping.find(m => m.groupName === p.groupName);
+                        return mapping ? mapping.color : 'rgba(201, 203, 207, 0.6)';
                     }),
                     borderColor: performanceData.map(p => {
-                        const initial = initialPerformanceData.find(ip => ip.groupName === p.id);
-                        return initial ? initial.borderColor : 'rgba(201, 203, 207, 1)';
+                        const mapping = groupColorMapping.find(m => m.groupName === p.groupName);
+                        return mapping ? mapping.borderColor : 'rgba(201, 203, 207, 1)';
                     }),
                     borderWidth: 1
                 }]
@@ -391,168 +177,66 @@
             createOrUpdateChart(chartData);
         }
 
-        // --- NEW: FETCH DATA FROM LOCAL JSON ---
-        async function updateChartFromLocalData() {
-            updateChartBtn.disabled = true;
-            updateChartBtn.textContent = '讀取中...';
+        // --- MAIN DATA FETCHING LOGIC ---
+        async function loadDashboardData() {
+            refreshDashboardBtn.disabled = true;
+            refreshDashboardBtn.textContent = '讀取中...';
+            
+            // Use cache-busting query parameter to get the latest file
+            const timestamp = new Date().getTime();
 
             try {
-                // FIX: Use a simple relative path without './' which is more robust in blob environments.
-                const urlWithCacheBust = `performanceData.json?t=${new Date().getTime()}`;
+                // Fetch both data files concurrently
+                const [personnelRes, performanceRes] = await Promise.all([
+                    fetch(`personnelData.json?t=${timestamp}`),
+                    fetch(`performanceData.json?t=${timestamp}`)
+                ]);
 
-                const response = await fetch(urlWithCacheBust);
-                
-                if (!response.ok) {
-                    throw new Error(`找不到資料檔案 (performanceData.json): ${response.statusText}`);
+                // Process Personnel Data
+                if (personnelRes.ok) {
+                    const personnelData = await personnelRes.json();
+                    buildAccordionUI(personnelData);
+                } else {
+                    throw new Error(`找不到人員資料檔案 (personnelData.json): ${personnelRes.statusText}`);
                 }
-                const values = await response.json(); // Expected format: [["吳孝智 組", "695756"], ...]
-
-                if (!values || values.length === 0) {
-                    console.log("從 performanceData.json 未獲取到資料。");
-                    return;
-                }
                 
-                // Convert the array of arrays into the object format needed for the chart
-                const performanceData = values.map(row => {
-                    const groupName = row[0];
-                    const amount = parseInt(String(row[1]).replace(/,/g, ''), 10);
-                    return {
-                        id: groupName,
-                        amount: isNaN(amount) ? 0 : amount,
-                    };
-                });
-
-                // Call the existing chart update function
-                updatePerformanceChart(performanceData);
+                // Process Performance Data
+                if (performanceRes.ok) {
+                    const values = await performanceRes.json(); // Expected: [["吳孝智 組", "695756"], ...]
+                    if (!values || values.length === 0) {
+                         console.log("從 performanceData.json 未獲取到資料。");
+                         // Optional: Clear chart or show message
+                         renderPerformanceChart([]);
+                         return;
+                    }
+                    const performanceData = values.map(row => {
+                        const groupName = row[0];
+                        const amount = parseInt(String(row[1]).replace(/,/g, ''), 10);
+                        return { groupName: groupName, amount: isNaN(amount) ? 0 : amount };
+                    });
+                    renderPerformanceChart(performanceData);
+                } else {
+                     throw new Error(`找不到績效資料檔案 (performanceData.json): ${performanceRes.statusText}`);
+                }
 
             } catch (error) {
-                console.error("讀取本地績效資料失敗:", error);
-                // Optionally, display an error message on the chart canvas
+                console.error("讀取儀表板資料失敗:", error);
+                accordionContainer.innerHTML = `<div class="text-center p-8 text-red-500">儀表板資料載入失敗。<br>${error.message}</div>`;
                 const ctx = chartCanvas.getContext('2d');
                 ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
                 ctx.font = "16px 'Noto Sans TC'";
                 ctx.fillStyle = "red";
                 ctx.textAlign = "center";
                 ctx.fillText('無法載入圖表資料', chartCanvas.width / 2, 50);
-
             } finally {
-                updateChartBtn.disabled = false;
-                updateChartBtn.textContent = '重新整理圖表';
-            }
-        }
-
-        // --- MODAL & FORM HANDLING ---
-        function showModal(person = null) {
-            personForm.reset();
-            certificatesContainer.innerHTML = '';
-            
-            if (person) { // Editing existing person
-                modalTitle.textContent = '編輯人員資料';
-                document.getElementById('person-id').value = person.id;
-                document.getElementById('person-name').value = person.name || '';
-                document.getElementById('person-group').value = person.group || '';
-                document.getElementById('person-role').value = person.role || '';
-                document.getElementById('person-education').value = person.education || '';
-                
-                if (person.certificates && person.certificates.length > 0) {
-                    person.certificates.forEach(cert => addCertificateInput(cert.name));
-                }
-                deletePersonBtn.style.display = 'block';
-
-            } else { // Adding new person
-                modalTitle.textContent = '新增人員';
-                document.getElementById('person-id').value = '';
-                deletePersonBtn.style.display = 'none';
-            }
-            
-            modal.classList.remove('hidden');
-            void modalContent.offsetWidth; 
-            modalContent.classList.add('modal-enter-active');
-        }
-
-        function hideModal() {
-            modalContent.classList.remove('modal-enter-active');
-            modalContent.classList.add('modal-leave-active');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modalContent.classList.remove('modal-leave-active');
-            }, 200);
-        }
-
-        function addCertificateInput(value = '') {
-            const div = document.createElement('div');
-            div.className = 'flex items-center space-x-2';
-            div.innerHTML = `
-                <input type="text" value="${value}" class="flex-grow block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm certificate-input" placeholder="證照名稱">
-                <button type="button" class="remove-cert-btn text-red-500 hover:text-red-700">&times;</button>
-            `;
-            certificatesContainer.appendChild(div);
-            div.querySelector('.remove-cert-btn').onclick = () => div.remove();
-        }
-
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('person-id').value;
-            
-            const certificateInputs = certificatesContainer.querySelectorAll('.certificate-input');
-            const certificates = Array.from(certificateInputs)
-                                        .map(input => ({ name: input.value.trim(), number: "" }))
-                                        .filter(cert => cert.name);
-
-            const personData = {
-                name: document.getElementById('person-name').value.trim(),
-                group: document.getElementById('person-group').value.trim(),
-                role: document.getElementById('person-role').value.trim(),
-                education: document.getElementById('person-education').value.trim(),
-                certificates: certificates
-            };
-
-            try {
-                if (id) { // Update existing
-                    const docRef = doc(db, personnelColPath, id);
-                    await setDoc(docRef, personData);
-                } else { // Create new
-                    await addDoc(collection(db, personnelColPath), personData);
-                }
-                hideModal();
-            } catch (error) {
-                console.error("Error saving person:", error);
-                alert("儲存失敗: " + error.message);
-            }
-        }
-
-        async function handleDeletePerson() {
-            const id = document.getElementById('person-id').value;
-            if (!id) return;
-
-            // Using a simple confirm dialog. For a better UX, a custom modal is recommended.
-            if (window.confirm(`確定要刪除這位人員 (${document.getElementById('person-name').value}) 嗎？此操作無法復原。`)) {
-                try {
-                    await deleteDoc(doc(db, personnelColPath, id));
-                    hideModal();
-                } catch (error) {
-                    console.error("Error deleting person:", error);
-                    alert("刪除失敗: " + error.message);
-                }
+                refreshDashboardBtn.disabled = false;
+                refreshDashboardBtn.textContent = '重新整理';
             }
         }
 
         // --- EVENT LISTENERS ---
-        document.addEventListener('DOMContentLoaded', () => {
-            main(); // This handles Firebase auth and personnel data
-            updateChartFromLocalData(); // This loads the chart data from the local JSON
-        });
-
-        modalCloseBtn.addEventListener('click', hideModal);
-        modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) hideModal(); });
-        addPersonBtn.addEventListener('click', () => showModal());
-        personForm.addEventListener('submit', handleFormSubmit);
-        deletePersonBtn.addEventListener('click', handleDeletePerson);
-        addCertificateBtn.addEventListener('click', () => addCertificateInput());
-        
-        // The update button now re-fetches the local JSON file.
-        updateChartBtn.addEventListener('click', updateChartFromLocalData);
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
+        refreshDashboardBtn.addEventListener('click', loadDashboardData);
 
     </script>
 </body>
