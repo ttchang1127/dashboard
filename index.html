@@ -1,9 +1,22 @@
+好的，這很可能是因為缺少了更直覺的關閉方式（例如按下鍵盤的 `ESC` 鍵），導致在某些情況下感覺無法輕易關閉視窗。
+
+我已經對程式碼進行了修正，主要新增了一項關鍵功能：
+
+  * **新增「ESC 鍵關閉視窗」功能**：現在當彈出視窗顯示時，您可以直接按下鍵盤上的 `Escape` (ESC) 鍵來關閉它。這是一個標準且符合使用者習慣的操作，可以有效避免「被卡住」的感覺。
+
+原有的「點擊關閉按鈕」和「點擊視窗外灰色區域」的關閉方式依然保留。以下是修正後的完整程式碼，您可以直接複製並取代舊的檔案。
+
+-----
+
+### 修正後的完整程式碼
+
+```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>桃辦/新北辦儀表板 (互動增強版)</title>
+    <title>桃辦/新北辦儀表板 (互動修正版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -28,7 +41,7 @@
         .btn-secondary { background-color: #6b7280; color: white; }
         .btn-secondary:hover:not(:disabled) { background-color: #4b5563; }
         
-        /* --- Modal Styles (RESTORED) --- */
+        /* --- Modal Styles --- */
         .modal-hidden { display: none; }
         .modal-overlay {
             position: fixed;
@@ -57,7 +70,7 @@
 
     <div class="w-full max-w-7xl mx-auto">
         <header class="mb-8 text-center relative">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板999</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板</h1>
             <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (資料由後端定時更新)</p>
         </header>
 
@@ -120,7 +133,7 @@
         const chartCanvas = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
 
-        // Modal DOM elements (RESTORED)
+        // Modal DOM elements
         const personModal = document.getElementById('person-modal');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const modalName = document.getElementById('modal-name');
@@ -139,7 +152,7 @@
             { groupName: '柏勛組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
         ];
 
-        // --- MODAL LOGIC (RESTORED) ---
+        // --- MODAL LOGIC ---
         function showPersonDetails(person) {
             try {
                 if (!person) {
@@ -219,7 +232,6 @@
                     const hasCerts = person.certificates && person.certificates.length > 0 && person.certificates[0].name !== '#N/A';
                     const isManager = person.role === '副理' || person.role === '副總經理';
                     
-                    // MODIFIED: Re-added cursor-pointer and hover effects
                     let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer `;
                     if (isManager) {
                         divClasses += 'bg-blue-50 border-blue-200 hover:bg-blue-100 hover:shadow-md';
@@ -233,7 +245,6 @@
                         <p class="text-sm text-gray-500">${person.role || '組員'}</p>
                         ${hasCerts ? '<span class="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white" title="持有證照"></span>' : ''}
                     `;
-                    // RESTORED: Event listener to show modal
                     memberDiv.addEventListener('click', () => showPersonDetails(person));
                     membersGrid.appendChild(memberDiv);
                 });
@@ -287,7 +298,7 @@
             createOrUpdateChart(chartData);
         }
 
-        // --- MAIN DATA FETCHING LOGIC (FIXED) ---
+        // --- MAIN DATA FETCHING LOGIC ---
         async function loadDashboardData() {
             refreshDashboardBtn.disabled = true;
             refreshDashboardBtn.textContent = '讀取中...';
@@ -295,7 +306,6 @@
             const timestamp = new Date().getTime();
 
             try {
-                // FIX: Construct full URLs to resolve fetch parsing issues in certain environments.
                 const personnelUrl = new URL('personnelData.json', window.location.href);
                 personnelUrl.searchParams.set('t', timestamp);
 
@@ -357,11 +367,20 @@
         document.addEventListener('DOMContentLoaded', loadDashboardData);
         refreshDashboardBtn.addEventListener('click', loadDashboardData);
         
-        // RESTORED: Modal related event listeners
+        // --- Modal closing event listeners ---
         modalCloseBtn.addEventListener('click', hidePersonDetails);
+        
         personModal.addEventListener('click', (event) => {
             // Closes the modal if the overlay (the background) is clicked
             if (event.target === personModal) {
+                hidePersonDetails();
+            }
+        });
+
+        // **FIXED**: Added listener for the Escape key to close the modal
+        document.addEventListener('keydown', (event) => {
+            // Check if the pressed key is 'Escape' and if the modal is currently visible
+            if (event.key === 'Escape' && !personModal.classList.contains('modal-hidden')) {
                 hidePersonDetails();
             }
         });
