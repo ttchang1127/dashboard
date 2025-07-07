@@ -41,7 +41,7 @@ jobs:
             // 人員資料工作表設定
             const PERSONNEL_SHEET = { name: '工作表1', range: 'A1:E100', file: 'personnelData.json' };
             // 績效資料工作表設定 (修正了範圍以正確讀取資料)
-            const PERFORMANCE_SHEET = { name: '工作表2', range: 'A2:B10', file: 'performanceData.json' };
+            const PERFORMANCE_SHEET = { name: '工作表2', range: 'B1:F2', file: 'performanceData.json' };
 
             // 檢查 API 金鑰是否存在
             if (!API_KEY) {
