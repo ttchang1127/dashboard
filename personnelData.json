@@ -2,6 +2,7 @@
   {
     "name": "梅德鍾",
     "group": "巍耀組",
+    "role": "組員",
     "education": "淡江大學 \n土木工程學系 \n碩士",
     "certificates": [
       {
@@ -19,269 +20,9 @@
     ]
   },
   {
-    "name": "張巍耀",
-    "group": "巍耀組",
-    "education": "逢甲大學 \n土木工程學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.管挖",
-        "number": ""
-      },
-      {
-        "name": "3.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "李俊毅",
-    "group": "巍耀組",
-    "education": "國立高雄第一科技大學 \n環境與安全衛生工程系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      },
-      {
-        "name": "3.管挖",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "蕭家璨",
-    "group": "巍耀組",
-    "education": "逢甲大學 \n土木工��學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      },
-      {
-        "name": "3.無人機普通操作證",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "吳諾樸",
-    "group": "巍耀組",
-    "education": "朝陽科技大學 \n景觀及都市設計系\n 學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      },
-      {
-        "name": "3.管挖",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "陳品圻",
-    "group": "巍耀組",
-    "education": "朝陽科技大學 \n景觀及都市設計系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.管挖",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "黃立昕",
-    "group": "巍耀組",
-    "education": "中原大學 \n土木工程學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      },
-      {
-        "name": "2.品管",
-        "number": ""
-      },
-      {
-        "name": "3.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "潘國揚",
-    "group": "巍耀組",
-    "education": "陸軍軍官學校 \n理組 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(甲級職業安全管理師)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "黃國亮",
-    "group": "巍耀組",
-    "education": "中原大學 \n土木工程學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "蕭凱馨",
-    "group": "巍耀組",
-    "education": "萬能科技大學\n財務金融系\n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "張鎧峻",
-    "group": "鎧峻組",
-    "education": "國立���功大學\n 土木工程學系\n 碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "張友誠",
-    "group": "鎧峻組",
-    "education": "國立交通大學 \n土木工程學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "曾院榮",
-    "group": "鎧峻組",
-    "education": "國立交通大學 \n土木工程學系\n 學士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "王宜婷",
-    "group": "鎧峻組",
-    "education": "中原大學 \n土木工程學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "詹子瑩",
-    "group": "鎧峻組",
-    "education": "逢甲大學 \n水利工程與資源保育學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.無人機普通操作證",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "王子銘",
-    "group": "鎧峻組",
-    "education": "Oregon State University\n水利工程學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.無人機專業操作證",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "楊萬璽",
-    "group": "駐點",
-    "education": "國立臺北科技大學 \n土木工程系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "李佳穎",
-    "group": "行政",
-    "education": "國立屏東科技大學 \n農企業管理系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "石婷瑄",
-    "group": "駐點",
-    "education": "萬能科技大學 \n行銷與流通管理系\n 學士",
-    "certificates": []
-  },
-  {
-    "name": "張��糴",
+    "name": "張增糴",
     "group": "副總經理",
+    "role": "副總經理",
     "education": "國立臺灣大學 \n土木工程學系 \n碩士",
     "certificates": [
       {
@@ -295,260 +36,9 @@
     ]
   },
   {
-    "name": "宋柏勛",
-    "group": "柏勛組",
-    "education": "國立中央大學 \n土木工程學系 \n博士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.無人機普通操作證",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "林啓聖",
-    "group": "柏勛組",
-    "education": "德霖技術學院 \n土木工程系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "張智淵",
-    "group": "柏勛組",
-    "education": "國立臺灣科技大學 \n營建工程系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "簡宏瑋",
-    "group": "柏勛組",
-    "education": "國立中央大學 \n土木工程學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "莊盛宇",
-    "group": "柏勛組",
-    "education": "國立臺灣科技大學 \n營建工程學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "黃忠成",
-    "group": "柏勛組",
-    "education": "逢甲大學 \n土木工程學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      },
-      {
-        "name": "2.職安(職業安全管理師)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "李瑞迪",
-    "group": "柏勛組",
-    "education": "宏國德霖科技大學 \n土木工程系 \n學士",
-    "certificates": []
-  },
-  {
-    "name": "許淑靜",
-    "group": "柏勛組",
-    "education": "德霖科技大學 \n土木工程學系\n 學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(職業衛生管理師)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "周建志",
-    "group": "柏勛組",
-    "education": "國立臺灣科技大學 \n營建工程學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "陳囿任",
-    "group": "囿任組",
-    "education": "中華大學 \n營建管理研究所 \n碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "黃阡維",
-    "group": "囿任組",
-    "education": "國立嘉義大學 \n土木與水資源工程學系\n 學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.管挖",
-        "number": ""
-      },
-      {
-        "name": "3.無人機專業操作證4.營造業甲種業務主管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "吳尚東",
-    "group": "囿任組",
-    "education": "國立臺灣海洋大學 \n河海工程學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "陳珮婷",
-    "group": "囿任組",
-    "education": "國立金門大學 \n都市計畫與景觀學系\n 學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "呂紹吉",
-    "group": "囿任組",
-    "education": "逢甲大學 \n水利工程與資源保育學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業���全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "許英麗",
-    "group": "囿任組",
-    "education": "中華大學 \n景觀建築學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "蕭輔仁",
-    "group": "囿任組",
-    "education": "健行科技大學 \n資訊管理系\n 學士",
-    "certificates": [
-      {
-        "name": "1.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "林莊健",
-    "group": "囿任組",
-    "education": "中國文化大學 \n景觀學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(丙種)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "謝宜庭",
-    "group": "囿任組",
-    "education": "國立聯合大學 \n土木與防災工程學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "高鴻瑜",
-    "group": "囿任組",
-    "education": "朝陽科技大學 \n營建工程系 \n學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ]
-  },
-  {
     "name": "吳孝智",
     "group": "孝智組",
+    "role": "副理",
     "education": "國立中央大學 \n土木工程學系 \n碩士",
     "certificates": [
       {
@@ -568,6 +58,7 @@
   {
     "name": "康慶龍",
     "group": "孝智組",
+    "role": "組員",
     "education": "逢甲大學 \n水利工程與資源保育學系 \n學士",
     "certificates": [
       {
@@ -585,8 +76,21 @@
     ]
   },
   {
+    "name": "陳囿任",
+    "group": "囿任組",
+    "role": "副理",
+    "education": "中華大學 \n營建管理研究所 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
     "name": "翁巧晴",
     "group": "孝智組",
+    "role": "組員",
     "education": "蘭陽技術學院 \n土木工程科 \n副學士",
     "certificates": [
       {
@@ -596,9 +100,326 @@
     ]
   },
   {
+    "name": "張鎧峻",
+    "group": "鎧峻組",
+    "role": "副理",
+    "education": "國立成功大學\n 土木工程學系\n 碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "張巍耀",
+    "group": "巍耀組",
+    "role": "副理",
+    "education": "逢甲大學 \n土木工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.管挖",
+        "number": ""
+      },
+      {
+        "name": "3.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "王宥達",
+    "group": "北分局",
+    "role": "",
+    "education": "國立交通大學 \n土木工程學系研究所\n 碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "張友誠",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "國立交通大學 \n土木工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "林致毅",
+    "group": "北分局",
+    "role": "",
+    "education": "中華大學 \n土木工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "黃阡維",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "國立嘉義大學 \n土木與水資源工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.管挖",
+        "number": ""
+      },
+      {
+        "name": "3.無人機專業操作證4.營造業甲種業務主管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "楊萬璽",
+    "group": "無組別",
+    "role": "",
+    "education": "國立臺北科技大學 \n土木工程系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "曾院榮",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "國立交通大學 \n土木工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "李佳穎",
+    "group": "無組別",
+    "role": "",
+    "education": "國立屏東科技大學 \n農企業管理系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "吳尚東",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "國立臺灣海洋大學 \n河海工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "王宜婷",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "中原大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "陳珮婷",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "國立金門大學 \n都市計畫與景觀學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "宋柏勛",
+    "group": "柏勛組",
+    "role": "副理",
+    "education": "國立中央大學 \n土木工程學系 \n博士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.無人機普通操作證",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "李俊毅",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "國立高雄第一科技大學 \n環境與安全衛生工程系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.管挖",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "呂紹吉",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "逢甲大學 \n水利工程與資源保育學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "蕭家璨",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "逢甲大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.無人機普通操作證",
+        "number": ""
+      }
+    ]
+  },
+  {
     "name": "林全華",
     "group": "孝智組",
+    "role": "組員",
     "education": "致遠管理學院 \n營建管理學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "許英麗",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "中華大學 \n景觀建築學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "林偉正",
+    "group": "北分局",
+    "role": "",
+    "education": "萬能科技大學 \n土木工程系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "吳諾樸",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "朝陽科技大學 \n景觀及都市設計系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.管挖",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "詹子瑩",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "逢甲大學 \n水利工程與資源保育學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.無人機普通操作證",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "林啓聖",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "德霖技術學院 \n土木工程系 \n學士",
     "certificates": [
       {
         "name": "1.品管",
@@ -613,6 +434,7 @@
   {
     "name": "陳建榮",
     "group": "孝智組",
+    "role": "組員",
     "education": "國立宜蘭大學 \n土木工程學系\n 學士",
     "certificates": [
       {
@@ -622,8 +444,150 @@
     ]
   },
   {
+    "name": "陳品圻",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "朝陽科技大學 \n景觀及都市設計系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.管挖",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "黃立昕",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "中原大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      },
+      {
+        "name": "2.品管",
+        "number": ""
+      },
+      {
+        "name": "3.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "張智淵",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "國立臺灣科技大學 \n營建工程系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "簡宏瑋",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "國立中央大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "蕭輔仁",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "健行科技大學 \n資訊管理系\n 學士",
+    "certificates": [
+      {
+        "name": "1.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "莊盛宇",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "國立臺灣科技大學 \n營建工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.��木技師",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "石婷瑄",
+    "group": "無組別",
+    "role": "",
+    "education": "萬能科技大學 \n行銷與流通管理系\n 學士",
+    "certificates": []
+  },
+  {
+    "name": "黃忠成",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "逢甲大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      },
+      {
+        "name": "2.職安(職業安全管理師)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "楊元舜",
+    "group": "北分局",
+    "role": "",
+    "education": "中原大學 \n土木工程學系\n 碩士",
+    "certificates": []
+  },
+  {
+    "name": "李瑞迪",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "宏國德霖科技大學 \n土木工程系 \n學士",
+    "certificates": []
+  },
+  {
+    "name": "潘國揚",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "陸軍軍官學校 \n理組 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(甲級職業安全管理師)",
+        "number": ""
+      }
+    ]
+  },
+  {
     "name": "張佳文",
     "group": "孝智組",
+    "role": "組員",
     "education": "國立臺北科技大學 \n土木工程學系 \n學士",
     "certificates": [
       {
@@ -633,72 +597,174 @@
     ]
   },
   {
-    "name": "王宥達",
-    "group": "北分局",
-    "education": "國立交通大學 \n土木工程學系研究所\n 碩士",
+    "name": "林莊健",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "中國文化大學 \n景觀學系 \n學士",
     "certificates": [
       {
         "name": "1.品管",
         "number": ""
-      }
-    ]
-  },
-  {
-    "name": "林致毅",
-    "group": "北分局",
-    "education": "中華大學 \n土木工程學系\n 學士",
-    "certificates": [
+      },
       {
-        "name": "1.品管",
+        "name": "2.職安(丙種)",
         "number": ""
       }
     ]
-  },
-  {
-    "name": "林偉正",
-    "group": "北分局",
-    "education": "萬能科技大學 \n土木工程系\n 學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ]
-  },
-  {
-    "name": "楊元舜",
-    "group": "北分局",
-    "education": "中原大學 \n土木工程學系\n 碩士",
-    "certificates": []
   },
   {
     "name": "江品增",
     "group": "北分局",
+    "role": "",
     "education": "國立宜蘭大學 \n土木工程學系 \n學士",
     "certificates": []
   },
   {
     "name": "許甘棠",
     "group": "北分局",
+    "role": "",
     "education": "高雄市私立國際高級商工職業學校",
     "certificates": []
   },
   {
+    "name": "許淑靜",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "德霖科技大學 \n土木工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(職業衛生管理師)",
+        "number": ""
+      }
+    ]
+  },
+  {
     "name": "沈宏昌",
     "group": "北分局",
+    "role": "",
     "education": "國立中興大學\n 土木工程學系 \n學士",
     "certificates": []
   },
   {
+    "name": "謝宜庭",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "國立聯合大學 \n土木與防災工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "王子銘",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "Oregon State University\n水利工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.無人機專業操作證",
+        "number": ""
+      }
+    ]
+  },
+  {
     "name": "王昱杰",
     "group": "北分局",
+    "role": "",
     "education": "逢甲大學 \n營建工程與管理學系\n 學士",
     "certificates": []
   },
   {
     "name": "許聖耘",
     "group": "北分局",
+    "role": "",
     "education": "朝陽科技大學 \n營建工程系 \n學士",
     "certificates": []
+  },
+  {
+    "name": "周建志",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "國立臺灣科技大學 \n營建工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "高鴻瑜",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "朝陽科技大學 \n營建工程系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "黃國亮",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "中原大學 \n土木工程學系 \n��士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "蕭凱馨",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "萬能科技大學\n財務金融系\n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "陳蒼緯",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ]
   }
 ]
