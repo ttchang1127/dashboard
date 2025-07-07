@@ -33,7 +33,7 @@ jobs:
             const fs = require('fs');
 
             const SPREADSHEET_ID = '1GjhgGAUuI5g6rtOGiUceMLgeGy12sp93fNQlWKM-UGc';
-            const SHEET_NAME = encodeURIComponent('114執行金額');
+            const SHEET_NAME = encodeURIComponent('工作表2');
             const SHEET_RANGE = 'B1:F2';
             const API_KEY = process.env.GOOGLE_API_KEY;
 
