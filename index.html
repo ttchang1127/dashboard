@@ -35,7 +35,7 @@
 
     <div class="w-full max-w-7xl mx-auto">
         <header class="mb-8 text-center relative">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板666</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板777</h1>
             <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (資料由後端定時更新)</p>
         </header>
 
@@ -56,7 +56,7 @@
                     <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
                     <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
                  </div>
-                 <div class="relative">
+                 <div class="relative" style="height: 400px;">
                      <canvas id="performanceChart"></canvas>
                  </div>
             </div>
@@ -119,36 +119,47 @@
             { groupName: '柏勛組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
         ];
 
-        // --- MODAL LOGIC (FIXED) ---
+        // --- MODAL LOGIC (FIXED with try-catch block) ---
         function showPersonDetails(person) {
-            // 防禦性程式設計，確保 person 物件存在
-            if (!person) {
-                console.error("showPersonDetails a été appelée sans objet person.");
-                return;
-            }
-
-            modalName.textContent = person.name || 'N/A';
-            modalGroup.textContent = person.group || 'N/A';
-            modalRole.textContent = person.role || '組員';
-            // 安全地設定學歷文字，whitespace-pre-wrap class 會處理換行
-            modalEducation.textContent = person.education || 'N/A';
-            
-            // 安全地處理證照資訊
-            if (person.certificates && person.certificates.length > 0) {
-                // 過濾掉無效的證照資料, 例如 "#N/A"
-                const validCerts = person.certificates.filter(cert => cert && cert.name && cert.name !== '#N/A');
-                if (validCerts.length > 0) {
-                    modalCertsList.innerHTML = validCerts
-                        .map(cert => `<li>${cert.name}</li>`)
-                        .join('');
-                } else {
-                    modalCertsList.innerHTML = '<li>無有效證照</li>';
+            try {
+                // 防禦性程式設計，確保 person 物件存在
+                if (!person) {
+                    console.error("showPersonDetails was called without a person object.");
+                    return;
                 }
-            } else {
-                modalCertsList.innerHTML = '<li>無證照</li>';
+
+                modalName.textContent = person.name || 'N/A';
+                modalGroup.textContent = person.group || 'N/A';
+                modalRole.textContent = person.role || '組員';
+                // 安全地設定學歷文字
+                modalEducation.textContent = person.education || 'N/A';
+                
+                // 安全地處理證照資訊
+                if (person.certificates && Array.isArray(person.certificates) && person.certificates.length > 0) {
+                    // 過濾掉無效的證照資料, 例如 "#N/A" 或空物件
+                    const validCerts = person.certificates.filter(cert => cert && cert.name && cert.name.trim() && cert.name !== '#N/A');
+                    if (validCerts.length > 0) {
+                        modalCertsList.innerHTML = validCerts
+                            .map(cert => `<li>${cert.name}</li>`)
+                            .join('');
+                    } else {
+                        modalCertsList.innerHTML = '<li>無有效證照</li>';
+                    }
+                } else {
+                    modalCertsList.innerHTML = '<li>無證照</li>';
+                }
+                
+                // 只有在所有資料都成功設定後，才顯示 Modal
+                personModal.classList.remove('modal-hidden');
+
+            } catch (error) {
+                // 如果在處理資料時發生任何錯誤，將其記錄到控制台，並確保 Modal 不會卡住 UI
+                console.error("Error displaying person details:", error);
+                // 可以選擇在這裡顯示一個錯誤訊息的 Modal，或者直接隱藏它
+                hidePersonDetails();
+                // We use a custom modal for alerts in a real app, but for this context, alert is fine.
+                alert("顯示詳細資料時發生錯誤，請檢查資料格式。"); 
             }
-            
-            personModal.classList.remove('modal-hidden');
         }
 
         function hidePersonDetails() {
@@ -259,22 +270,26 @@
             createOrUpdateChart(chartData);
         }
 
-        // --- MAIN DATA FETCHING LOGIC ---
+        // --- MAIN DATA FETCHING LOGIC (FIXED) ---
         async function loadDashboardData() {
             refreshDashboardBtn.disabled = true;
             refreshDashboardBtn.textContent = '讀取中...';
             
-            // Use cache-busting query parameter to get the latest file
             const timestamp = new Date().getTime();
 
             try {
-                // Fetch both data files concurrently
+                // FIX: Construct full URLs to resolve fetch parsing issues in certain environments.
+                const personnelUrl = new URL('personnelData.json', window.location.href);
+                personnelUrl.searchParams.set('t', timestamp);
+
+                const performanceUrl = new URL('performanceData.json', window.location.href);
+                performanceUrl.searchParams.set('t', timestamp);
+
                 const [personnelRes, performanceRes] = await Promise.all([
-                    fetch(`personnelData.json?t=${timestamp}`),
-                    fetch(`performanceData.json?t=${timestamp}`)
+                    fetch(personnelUrl.href),
+                    fetch(performanceUrl.href)
                 ]);
 
-                // Process Personnel Data
                 if (personnelRes.ok) {
                     const personnelData = await personnelRes.json();
                     buildAccordionUI(personnelData);
@@ -282,13 +297,12 @@
                     throw new Error(`找不到人員資料檔案 (personnelData.json): ${personnelRes.statusText}`);
                 }
                 
-                // Process Performance Data
                 if (performanceRes.ok) {
-                    const values = await performanceRes.json(); // Expected: [["孝智組", ...], ["695,756", ...]]
+                    const values = await performanceRes.json();
                     if (!values || !Array.isArray(values) || values.length < 2 || !Array.isArray(values[0]) || !Array.isArray(values[1])) {
                          console.error("績效資料格式不符");
                          renderPerformanceChart([]);
-                         return; // Exit if format is wrong
+                         return;
                     }
                     
                     const groupNames = values[0];
@@ -309,11 +323,13 @@
                 console.error("讀取儀表板資料失敗:", error);
                 accordionContainer.innerHTML = `<div class="text-center p-8 text-red-500">儀表板資料載入失敗。<br>${error.message}</div>`;
                 const ctx = chartCanvas.getContext('2d');
-                ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
-                ctx.font = "16px 'Noto Sans TC'";
-                ctx.fillStyle = "red";
-                ctx.textAlign = "center";
-                ctx.fillText('無法載入圖表資料', chartCanvas.width / 2, 50);
+                if (ctx) {
+                    ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
+                    ctx.font = "16px 'Noto Sans TC'";
+                    ctx.fillStyle = "red";
+                    ctx.textAlign = "center";
+                    ctx.fillText('無法載入圖表資料', chartCanvas.width / 2, 50);
+                }
             } finally {
                 refreshDashboardBtn.disabled = false;
                 refreshDashboardBtn.textContent = '重新整理';
