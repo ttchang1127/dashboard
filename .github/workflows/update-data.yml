@@ -1,12 +1,13 @@
 # .github/workflows/update-data.yml
+name: Update Dashboard Data
 
-name: Update Google Sheet Data
-
+# 權限設定：允許 workflow 寫入儲存庫內容
 permissions:
   contents: write
+
 # 觸發條件：
 on:
-  # 1. 每天的每個小時的第 5 分鐘自動執行一次 (您可以到 crontab.guru 網站查詢或產生您要的排程)
+  # 1. 每天的每個小時的第 5 分鐘自動執行一次
   schedule:
     - cron: '5 * * * *'
   # 2. 允許您在 Actions 分頁手動觸發此工作流程
@@ -20,55 +21,110 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 步驟 2: 設定 Node.js 環境，這樣我們才能執行 JavaScript
+      # 步驟 2: 設定 Node.js 環境
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # 步驟 3: 執行 Node.js 腳本來抓取資料並存檔
+      # 步驟 3: 執行 Node.js 腳本來抓取兩個工作表的資料並存檔
       - name: Fetch data from Google Sheets and save to JSON
-        # 我們直接在 run 指令中寫腳本，省去多一個檔案的麻煩
         run: |
           node -e "
             const https = require('https');
             const fs = require('fs');
 
+            // --- 組態設定 ---
             const SPREADSHEET_ID = '1GjhgGAUuI5g6rtOGiUceMLgeGy12sp93fNQlWKM-UGc';
-            const SHEET_NAME = encodeURIComponent('工作表2');
-            const SHEET_RANGE = 'B1:F2';
             const API_KEY = process.env.GOOGLE_API_KEY;
 
+            // 人員資料工作表設定
+            const PERSONNEL_SHEET = { name: '工作表1', range: 'A1:E100', file: 'personnelData.json' };
+            // 績效資料工作表設定 (修正了範圍以正確讀取資料)
+            const PERFORMANCE_SHEET = { name: '工作表2', range: 'A2:B10', file: 'performanceData.json' };
+
+            // 檢查 API 金鑰是否存在
             if (!API_KEY) {
-              console.error('Error: GOOGLE_API_KEY secret not found!');
+              console.error('錯誤: 找不到 GOOGLE_API_KEY secret！');
               process.exit(1);
             }
-            
-            const url = \`https://sheets.googleapis.com/v4/spreadsheets/\${SPREADSHEET_ID}/values/\${SHEET_NAME}!\${SHEET_RANGE}?key=\${API_KEY}\`;
 
-            https.get(url, (res) => {
-              let rawData = '';
-              res.on('data', (chunk) => { rawData += chunk; });
-              res.on('end', () => {
-                try {
-                  const parsedData = JSON.parse(rawData);
-                  if (parsedData.values) {
-                    // 將抓到的資料寫入 performanceData.json 這個檔案
-                    fs.writeFileSync('performanceData.json', JSON.stringify(parsedData.values, null, 2));
-                    console.log('Successfully fetched data and wrote to performanceData.json');
-                  } else {
-                     console.error('Error parsing data from Google Sheets:', parsedData.error);
-                     process.exit(1);
-                  }
-                } catch (e) {
-                  console.error('Error parsing JSON:', e.message);
-                  process.exit(1);
-                }
+            // --- 核心函式 ---
+
+            // 從 Google Sheet API 抓取資料的通用函式
+            function fetchSheetData(sheetName, range) {
+              return new Promise((resolve, reject) => {
+                const url = \`https://sheets.googleapis.com/v4/spreadsheets/\${SPREADSHEET_ID}/values/\${encodeURIComponent(sheetName)}!\${range}?key=\${API_KEY}\`;
+                https.get(url, (res) => {
+                  let rawData = '';
+                  res.on('data', (chunk) => { rawData += chunk; });
+                  res.on('end', () => {
+                    try {
+                      const parsed = JSON.parse(rawData);
+                      if (parsed.values) {
+                        resolve(parsed.values);
+                      } else {
+                        const errorMsg = parsed.error ? JSON.stringify(parsed.error) : '在工作表回應中找不到 values 欄位。';
+                        reject(new Error(errorMsg));
+                      }
+                    } catch (e) { reject(e); }
+                  });
+                }).on('error', (e) => reject(e));
               });
-            }).on('error', (e) => {
-              console.error(\`Got error: \${e.message}\`);
-              process.exit(1);
-            });
+            }
+
+            // 處理人員資料：將陣列轉換為物件陣列，並處理證照欄位
+            function processPersonnelData(values) {
+              const headerMapping = { '姓名': 'name', '組別': 'group', '職稱': 'role', '學歷': 'education', '證照': 'certificates' };
+              const headers = values[0];
+              const dataRows = values.slice(1);
+
+              const personnel = dataRows.map(row => {
+                const person = {};
+                headers.forEach((header, index) => {
+                  const englishKey = headerMapping[header];
+                  if (englishKey) {
+                    const value = row[index] || '';
+                    if (englishKey === 'certificates') {
+                      person[englishKey] = value.split(/[,、，\\s]+/).filter(cert => cert.trim() !== '').map(certName => ({ name: certName.trim(), number: '' }));
+                    } else {
+                      person[englishKey] = value.trim();
+                    }
+                  }
+                });
+                return person;
+              }).filter(p => p.name); // 過濾掉姓名為空的無效資料列
+
+              fs.writeFileSync(PERSONNEL_SHEET.file, JSON.stringify(personnel, null, 2));
+              console.log(\`✅ 成功擷取資料並寫入 \${PERSONNEL_SHEET.file}\`);
+            }
+
+            // 處理績效資料
+            function processPerformanceData(values) {
+              fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify(values, null, 2));
+              console.log(\`✅ 成功擷取資料並寫入 \${PERFORMANCE_SHEET.file}\`);
+            }
+
+            // --- 主執行函式 ---
+            async function main() {
+              console.log('🚀 開始從 Google Sheets 更新資料...');
+              try {
+                const [personnelValues, performanceValues] = await Promise.all([
+                  fetchSheetData(PERSONNEL_SHEET.name, PERSONNEL_SHEET.range),
+                  fetchSheetData(PERFORMANCE_SHEET.name, PERFORMANCE_SHEET.range)
+                ]);
+                
+                processPersonnelData(personnelValues);
+                processPerformanceData(performanceValues);
+
+                console.log('✨ 所有資料更新完成！');
+              } catch (error) {
+                console.error('❌ 更新過程中發生錯誤:', error);
+                process.exit(1);
+              }
+            }
+
+            main();
           "
         env:
           # 將我們設定的 secret 注入到執行環境中
@@ -79,9 +135,13 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add performanceData.json
-          # 如果沒有變動，就不執行 commit
-          git diff --staged --quiet || git commit -m ' chore:
-          
-          Update performance data from Google Sheet'
-          git push
+          # 將兩個 JSON 檔案都加入到暫存區
+          git add personnelData.json performanceData.json
+          # 如果暫存區有變動，才執行 commit 和 push
+          if ! git diff --staged --quiet; then
+            git commit -m 'chore: 自動更新儀表板資料'
+            git push
+            echo "資料已更新並推送至儲存庫。"
+          else
+            echo "資料無變動，無需推送。"
+          fi
