@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>桃辦/新北辦儀表板</title>
+    <title>桃辦/新北辦儀表板 (靜態版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -116,7 +116,7 @@
         function showPersonDetailsModal(person) {
             // Populate modal header
             modalName.textContent = person.name || 'N/A';
-            modalRoleGroup.textContent = `${person.role || '組員'} / ${person.group || '其他人員'}`;
+            modalRoleGroup.textContent = `${person.role || '組員'} / ${person.group || '無組別'}`;
 
             // Populate modal details
             const certs = person.certificates;
@@ -172,25 +172,31 @@
          * @param {Array<object>} personnelData - Array of person objects.
          */
         function buildAccordionUI(personnelData) {
-            if (!personnelData || personnelData.length === 0) {
+            // 1. Filter out personnel from '北分局'
+            const filteredData = personnelData.filter(person => person.office !== '北分局');
+
+            if (!filteredData || filteredData.length === 0) {
                 accordionContainer.innerHTML = `<div class="text-center p-8 text-gray-500">目前沒有人員資料。</div>`;
                 return;
             }
             
-            const groupedData = personnelData.reduce((acc, person) => {
-                const group = person.group || "其他人員";
+            // 2. Group the filtered data
+            const groupedData = filteredData.reduce((acc, person) => {
+                const group = person.group || "無組別"; // Use "無組別" for undefined groups
                 acc[group] = acc[group] || [];
                 acc[group].push(person);
                 return acc;
             }, {});
 
-            const groupOrder = [ "副總經理", ...Object.keys(groupedData).filter(g => g !== "副總經理" && g !== "其他人員").sort((a, b) => a.localeCompare(b, 'zh-Hant')), "其他人員" ];
+            // 3. Define the specific group order
+            const groupOrder = [ "副總經理", "鎧峻組", "巍耀組", "囿任組", "柏勛組", "無組別" ];
             
             accordionContainer.innerHTML = '';
             
+            // 4. Render groups based on the defined order
             groupOrder.forEach(groupName => {
                 const members = groupedData[groupName];
-                if (!members) return;
+                if (!members) return; // Skip if group doesn't exist in the data
 
                 const details = document.createElement('details');
                 details.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden';
@@ -211,7 +217,6 @@
                     const hasCerts = person.certificates && person.certificates.length > 0 && person.certificates[0].name !== '#N/A';
                     const isManager = person.role === '副理' || person.role === '副總經理';
                     
-                    // Add cursor-pointer and hover effects to indicate clickability
                     let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 `;
                     if (isManager) {
                         divClasses += 'bg-blue-50 border-blue-200';
@@ -226,7 +231,6 @@
                         ${hasCerts ? '<span class="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white" title="持有證照"></span>' : ''}
                     `;
                     
-                    // Add click event listener to show the modal
                     memberDiv.addEventListener('click', () => showPersonDetailsModal(person));
                     
                     membersGrid.appendChild(memberDiv);
