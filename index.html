@@ -35,7 +35,7 @@
 
     <div class="w-full max-w-7xl mx-auto">
         <header class="mb-8 text-center relative">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板555</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板666</h1>
             <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (資料由後端定時更新)</p>
         </header>
 
@@ -72,7 +72,7 @@
                         <h3 id="modal-name" class="text-2xl font-bold text-gray-900"></h3>
                         <p id="modal-group" class="text-gray-500"></p>
                     </div>
-                    <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600">&times;</button>
+                    <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
                 </div>
                 <div class="space-y-4">
                     <div>
@@ -119,17 +119,31 @@
             { groupName: '柏勛組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
         ];
 
-        // --- MODAL LOGIC ---
+        // --- MODAL LOGIC (FIXED) ---
         function showPersonDetails(person) {
+            // 防禦性程式設計，確保 person 物件存在
+            if (!person) {
+                console.error("showPersonDetails a été appelée sans objet person.");
+                return;
+            }
+
             modalName.textContent = person.name || 'N/A';
             modalGroup.textContent = person.group || 'N/A';
             modalRole.textContent = person.role || '組員';
-            modalEducation.textContent = person.education.replace(/\\n/g, '\n') || 'N/A';
+            // 安全地設定學歷文字，whitespace-pre-wrap class 會處理換行
+            modalEducation.textContent = person.education || 'N/A';
             
+            // 安全地處理證照資訊
             if (person.certificates && person.certificates.length > 0) {
-                modalCertsList.innerHTML = person.certificates
-                    .map(cert => `<li>${cert.name || '無效證照資料'}</li>`)
-                    .join('');
+                // 過濾掉無效的證照資料, 例如 "#N/A"
+                const validCerts = person.certificates.filter(cert => cert && cert.name && cert.name !== '#N/A');
+                if (validCerts.length > 0) {
+                    modalCertsList.innerHTML = validCerts
+                        .map(cert => `<li>${cert.name}</li>`)
+                        .join('');
+                } else {
+                    modalCertsList.innerHTML = '<li>無有效證照</li>';
+                }
             } else {
                 modalCertsList.innerHTML = '<li>無證照</li>';
             }
