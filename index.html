@@ -1,3 +1,14 @@
+好的，這裏是移除了點擊人員卡片會跳出詳細資訊視窗功能的更新版程式碼。
+
+主要的修改包含：
+
+1.  **註解了彈出視窗的 HTML 結構**：讓該區塊不會被瀏覽器渲染。
+2.  **註解了與彈出視窗相關的 JavaScript 程式碼**：包含了顯示/隱藏視窗的函式、事件監聽器以及相關的變數宣告。
+3.  **移除了人員卡片的點擊樣式**：例如滑鼠指標變成手指、滑鼠懸停時的背景變色和陰影效果，讓使用者知道卡片是不可點擊的。
+
+您可以直接複製以下完整的程式碼來替換掉原有的內容。
+
+```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -27,7 +38,7 @@
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn-secondary { background-color: #6b7280; color: white; }
         .btn-secondary:hover:not(:disabled) { background-color: #4b5563; }
-        /* Modal styles */
+        /* Modal styles - Kept for reference, but the modal is removed */
         .modal-hidden { display: none; }
     </style>
 </head>
@@ -35,12 +46,11 @@
 
     <div class="w-full max-w-7xl mx-auto">
         <header class="mb-8 text-center relative">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板777</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板888</h1>
             <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (資料由後端定時更新)</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
-            <!-- Personnel Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
@@ -50,48 +60,17 @@
                 </div>
             </div>
 
-            <!-- Performance Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
                     <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
                  </div>
                  <div class="relative" style="height: 400px;">
-                     <canvas id="performanceChart"></canvas>
+                      <canvas id="performanceChart"></canvas>
                  </div>
             </div>
         </div>
     </div>
-
-    <!-- Modal for Person Details -->
-    <div id="person-modal" class="modal-hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 id="modal-name" class="text-2xl font-bold text-gray-900"></h3>
-                        <p id="modal-group" class="text-gray-500"></p>
-                    </div>
-                    <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <h4 class="font-semibold text-gray-700">職稱</h4>
-                        <p id="modal-role" class="text-gray-600"></p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700">學歷</h4>
-                        <p id="modal-education" class="text-gray-600 whitespace-pre-wrap"></p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700">證照</h4>
-                        <ul id="modal-certs-list" class="list-disc list-inside text-gray-600 space-y-1"></ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <script>
         // --- GLOBAL VARIABLES & DOM REFERENCES ---
@@ -100,7 +79,8 @@
         const chartCanvas = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
 
-        // Modal DOM elements
+        // Modal DOM elements (REMOVED)
+        /*
         const personModal = document.getElementById('person-modal');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const modalName = document.getElementById('modal-name');
@@ -108,6 +88,7 @@
         const modalRole = document.getElementById('modal-role');
         const modalEducation = document.getElementById('modal-education');
         const modalCertsList = document.getElementById('modal-certs-list');
+        */
 
 
         // --- 色彩參考 (用於圖表) ---
@@ -119,10 +100,10 @@
             { groupName: '柏勛組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
         ];
 
-        // --- MODAL LOGIC (FIXED with try-catch block) ---
+        // --- MODAL LOGIC (REMOVED) ---
+        /*
         function showPersonDetails(person) {
             try {
-                // 防禦性程式設計，確保 person 物件存在
                 if (!person) {
                     console.error("showPersonDetails was called without a person object.");
                     return;
@@ -131,12 +112,9 @@
                 modalName.textContent = person.name || 'N/A';
                 modalGroup.textContent = person.group || 'N/A';
                 modalRole.textContent = person.role || '組員';
-                // 安全地設定學歷文字
                 modalEducation.textContent = person.education || 'N/A';
                 
-                // 安全地處理證照資訊
                 if (person.certificates && Array.isArray(person.certificates) && person.certificates.length > 0) {
-                    // 過濾掉無效的證照資料, 例如 "#N/A" 或空物件
                     const validCerts = person.certificates.filter(cert => cert && cert.name && cert.name.trim() && cert.name !== '#N/A');
                     if (validCerts.length > 0) {
                         modalCertsList.innerHTML = validCerts
@@ -149,15 +127,11 @@
                     modalCertsList.innerHTML = '<li>無證照</li>';
                 }
                 
-                // 只有在所有資料都成功設定後，才顯示 Modal
                 personModal.classList.remove('modal-hidden');
 
             } catch (error) {
-                // 如果在處理資料時發生任何錯誤，將其記錄到控制台，並確保 Modal 不會卡住 UI
                 console.error("Error displaying person details:", error);
-                // 可以選擇在這裡顯示一個錯誤訊息的 Modal，或者直接隱藏它
                 hidePersonDetails();
-                // We use a custom modal for alerts in a real app, but for this context, alert is fine.
                 alert("顯示詳細資料時發生錯誤，請檢查資料格式。"); 
             }
         }
@@ -165,6 +139,7 @@
         function hidePersonDetails() {
             personModal.classList.add('modal-hidden');
         }
+        */
 
         // --- UI RENDERING ---
         function buildAccordionUI(personnelData) {
@@ -207,7 +182,8 @@
                     const hasCerts = person.certificates && person.certificates.length > 0 && person.certificates[0].name !== '#N/A';
                     const isManager = person.role === '副理' || person.role === '副總經理';
                     
-                    let divClasses = `p-3 border rounded-lg text-left relative cursor-pointer hover:bg-gray-100 hover:shadow-md transition-all duration-200 `;
+                    // MODIFIED: Removed click-related classes like cursor-pointer and hover effects
+                    let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 `;
                     if (isManager) divClasses += 'bg-blue-50 border-blue-200';
                     else divClasses += 'bg-gray-50 border-gray-200';
                     memberDiv.className = divClasses;
@@ -217,7 +193,8 @@
                         <p class="text-sm text-gray-500">${person.role || '組員'}</p>
                         ${hasCerts ? '<span class="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white" title="持有證照"></span>' : ''}
                     `;
-                    memberDiv.addEventListener('click', () => showPersonDetails(person));
+                    // REMOVED: Event listener to show modal
+                    // memberDiv.addEventListener('click', () => showPersonDetails(person));
                     membersGrid.appendChild(memberDiv);
                 });
 
@@ -339,13 +316,17 @@
         // --- EVENT LISTENERS ---
         document.addEventListener('DOMContentLoaded', loadDashboardData);
         refreshDashboardBtn.addEventListener('click', loadDashboardData);
+        // REMOVED: Modal related event listeners
+        /*
         modalCloseBtn.addEventListener('click', hidePersonDetails);
         personModal.addEventListener('click', (event) => {
             if (event.target === personModal) {
                 hidePersonDetails();
             }
         });
+        */
 
     </script>
 </body>
 </html>
+```
