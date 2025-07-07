@@ -72,8 +72,13 @@ jobs:
               });
             }
 
-            // [修正] 處理人員資料：將陣列轉換為物件陣列，並將證照處理成字串陣列
+            // [優化] 處理人員資料：增加對空資料的檢查
             function processPersonnelData(values) {
+              if (!values || values.length < 1) {
+                console.warn('⚠️ 人員資料工作表為空或讀取失敗，略過處理。');
+                fs.writeFileSync(PERSONNEL_SHEET.file, JSON.stringify([], null, 2));
+                return;
+              }
               const headerMapping = { '姓名': 'name', '組別': 'group', '職稱': 'role', '學歷': 'education', '證照': 'certificates' };
               const headers = values[0];
               const dataRows = values.slice(1);
@@ -85,7 +90,6 @@ jobs:
                   if (englishKey) {
                     const value = row[index] || '';
                     if (englishKey === 'certificates') {
-                      // 將證照字串分割成陣列，並過濾空值
                       person[englishKey] = value.split(/[,、，\\s]+/).map(cert => cert.trim()).filter(cert => cert);
                     } else {
                       person[englishKey] = value.trim();
@@ -93,32 +97,32 @@ jobs:
                   }
                 });
                 return person;
-              }).filter(p => p.name); // 過濾掉姓名為空的無效資料列
+              }).filter(p => p.name); 
 
               fs.writeFileSync(PERSONNEL_SHEET.file, JSON.stringify(personnel, null, 2));
               console.log(\`✅ 成功擷取資料並寫入 \${PERSONNEL_SHEET.file}\`);
             }
 
-            // [修正] 處理績效資料：將兩列資料轉換為前端需要的 [組別, 金額] 配對格式
+            // [優化] 處理績效資料：使其更具彈性，處理長度不匹配的情況
             function processPerformanceData(values) {
-              // 預期資料格式:
-              // values[0] = ["吳孝智 組", "陳囿任 組", ...] (組別名稱)
-              // values[1] = ["695756", "500000", ...] (對應金額)
-              if (!values || values.length < 2 || values[0].length !== values[1].length) {
-                const errorMsg = '❌ 績效資料格式不正確。預期應有兩列（組別、金額），且長度相同。';
-                console.error(errorMsg);
-                // 寫入空陣列以避免前端出錯，並拋出錯誤讓 workflow 失敗
+              if (!values || values.length < 2) {
+                console.warn('⚠️ 績效資料格式不正確或為空，應至少有兩列（組別、金額）。略過處理。');
                 fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify([], null, 2));
-                throw new Error(errorMsg);
+                return;
               }
 
               const groups = values[0];
               const amounts = values[1];
 
-              // 使用 map 將兩列資料 \"zip\" 在一起
-              const transformedData = groups.map((group, index) => {
-                return [group, amounts[index]];
-              });
+              if (groups.length !== amounts.length) {
+                console.warn(\`⚠️ 警告: 組別數量 (\${groups.length}) 與金額數量 (\${amounts.length}) 不匹配。將以較短的數量為準進行處理。\`);
+              }
+
+              const minLength = Math.min(groups.length, amounts.length);
+              const transformedData = [];
+              for (let i = 0; i < minLength; i++) {
+                transformedData.push([groups[i], amounts[i]]);
+              }
 
               fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify(transformedData, null, 2));
               console.log(\`✅ 成功擷取並轉換資料，寫入 \${PERFORMANCE_SHEET.file}\`);
