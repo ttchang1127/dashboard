@@ -116,7 +116,7 @@
         function showPersonDetailsModal(person) {
             // Populate modal header
             modalName.textContent = person.name || 'N/A';
-            modalRoleGroup.textContent = `${person.role || '組員'} / ${person.group || '無組別'}`;
+            modalRoleGroup.textContent = `${person.role || '組員'} / ${person.group || '行政/駐點'}`;
 
             // Populate modal details
             const certs = person.certificates;
@@ -182,14 +182,14 @@
             
             // 2. Group the filtered data
             const groupedData = filteredData.reduce((acc, person) => {
-                const group = person.group || "無組別"; // Use "無組別" for undefined groups
+                const group = person.group || "行政/駐點"; // Use "行政/駐點" for undefined groups
                 acc[group] = acc[group] || [];
                 acc[group].push(person);
                 return acc;
             }, {});
 
             // 3. Define the specific group order
-            const groupOrder = [ "副總經理", "鎧峻組", "巍耀組", "囿任組", "孝智組", "柏勛組", "無組別" ];
+            const groupOrder = [ "副總經理", "鎧峻組", "巍耀組", "囿任組", "孝智組", "柏勛組", "行政/駐點" ];
             
             accordionContainer.innerHTML = '';
             
