@@ -27,26 +27,30 @@
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn-secondary { background-color: #6b7280; color: white; }
         .btn-secondary:hover:not(:disabled) { background-color: #4b5563; }
+        /* Modal styles */
+        .modal-hidden { display: none; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 p-4 lg:p-8">
 
     <div class="w-full max-w-7xl mx-auto">
         <header class="mb-8 text-center relative">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板333</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板555</h1>
             <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (資料由後端定時更新)</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
+            <!-- Personnel Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
-                    </div>
+                </div>
                 <div id="accordion-container" class="space-y-3 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
                     <div class="text-center p-8 text-gray-500">讀取資料中...</div>
                 </div>
             </div>
 
+            <!-- Performance Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
@@ -59,6 +63,36 @@
         </div>
     </div>
 
+    <!-- Modal for Person Details -->
+    <div id="person-modal" class="modal-hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 id="modal-name" class="text-2xl font-bold text-gray-900"></h3>
+                        <p id="modal-group" class="text-gray-500"></p>
+                    </div>
+                    <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600">&times;</button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-700">職稱</h4>
+                        <p id="modal-role" class="text-gray-600"></p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700">學歷</h4>
+                        <p id="modal-education" class="text-gray-600 whitespace-pre-wrap"></p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700">證照</h4>
+                        <ul id="modal-certs-list" class="list-disc list-inside text-gray-600 space-y-1"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         // --- GLOBAL VARIABLES & DOM REFERENCES ---
         let performanceChart = null;
@@ -66,15 +100,46 @@
         const chartCanvas = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
 
+        // Modal DOM elements
+        const personModal = document.getElementById('person-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalName = document.getElementById('modal-name');
+        const modalGroup = document.getElementById('modal-group');
+        const modalRole = document.getElementById('modal-role');
+        const modalEducation = document.getElementById('modal-education');
+        const modalCertsList = document.getElementById('modal-certs-list');
+
+
         // --- 色彩參考 (用於圖表) ---
-        // 這個陣列現在只用來為特定組別指定顏色
         const groupColorMapping = [
-            { groupName: '吳孝智 組', color: 'rgba(54, 162, 235, 0.6)', borderColor: 'rgba(54, 162, 235, 1)' },
-            { groupName: '陳囿任 組', color: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)' },
-            { groupName: '張鎧峻 組', color: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)' },
-            { groupName: '張巍耀 組', color: 'rgba(255, 206, 86, 0.6)', borderColor: 'rgba(255, 206, 86, 1)' },
-            { groupName: '宋柏勛 組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
+            { groupName: '孝智組', color: 'rgba(54, 162, 235, 0.6)', borderColor: 'rgba(54, 162, 235, 1)' },
+            { groupName: '囿任組', color: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)' },
+            { groupName: '鎧峻組', color: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)' },
+            { groupName: '巍耀組', color: 'rgba(255, 206, 86, 0.6)', borderColor: 'rgba(255, 206, 86, 1)' },
+            { groupName: '柏勛組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
         ];
+
+        // --- MODAL LOGIC ---
+        function showPersonDetails(person) {
+            modalName.textContent = person.name || 'N/A';
+            modalGroup.textContent = person.group || 'N/A';
+            modalRole.textContent = person.role || '組員';
+            modalEducation.textContent = person.education.replace(/\\n/g, '\n') || 'N/A';
+            
+            if (person.certificates && person.certificates.length > 0) {
+                modalCertsList.innerHTML = person.certificates
+                    .map(cert => `<li>${cert.name || '無效證照資料'}</li>`)
+                    .join('');
+            } else {
+                modalCertsList.innerHTML = '<li>無證照</li>';
+            }
+            
+            personModal.classList.remove('modal-hidden');
+        }
+
+        function hidePersonDetails() {
+            personModal.classList.add('modal-hidden');
+        }
 
         // --- UI RENDERING ---
         function buildAccordionUI(personnelData) {
@@ -100,7 +165,7 @@
 
                 const details = document.createElement('details');
                 details.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden';
-                if (groupName === '副總經理') details.open = true;
+                if (groupName === '副總經理' || groupName.includes('組')) details.open = true;
 
                 const summary = document.createElement('summary');
                 summary.className = 'flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition';
@@ -110,23 +175,24 @@
                 `;
 
                 const membersGrid = document.createElement('div');
-                membersGrid.className = 'p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3';
+                membersGrid.className = 'p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4';
                 
                 members.forEach(person => {
                     const memberDiv = document.createElement('div');
+                    const hasCerts = person.certificates && person.certificates.length > 0 && person.certificates[0].name !== '#N/A';
                     const isManager = person.role === '副理' || person.role === '副總經理';
-                    const hasCerts = person.certificates && person.certificates.length > 0;
                     
-                    let divClasses = `p-3 border rounded-lg text-center relative cursor-default `; // cursor-default as it's not clickable
-                    if (isManager) divClasses += 'bg-blue-100 text-blue-800 font-semibold';
-                    else divClasses += 'bg-gray-50';
+                    let divClasses = `p-3 border rounded-lg text-left relative cursor-pointer hover:bg-gray-100 hover:shadow-md transition-all duration-200 `;
+                    if (isManager) divClasses += 'bg-blue-50 border-blue-200';
+                    else divClasses += 'bg-gray-50 border-gray-200';
                     memberDiv.className = divClasses;
 
                     memberDiv.innerHTML = `
-                        <span>${person.name}</span>
-                        ${hasCerts ? '<span class="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500" title="持有證照"></span>' : ''}
+                        <p class="font-semibold text-gray-900 truncate">${person.name}</p>
+                        <p class="text-sm text-gray-500">${person.role || '組員'}</p>
+                        ${hasCerts ? '<span class="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white" title="持有證照"></span>' : ''}
                     `;
-                    // On-click functionality is removed
+                    memberDiv.addEventListener('click', () => showPersonDetails(person));
                     membersGrid.appendChild(memberDiv);
                 });
 
@@ -147,6 +213,7 @@
                     data: chartData,
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         scales: { y: { beginAtZero: true, ticks: { callback: value => 'NT$ ' + value.toLocaleString() } } },
                         plugins: {
                             legend: { display: false },
@@ -171,7 +238,8 @@
                         const mapping = groupColorMapping.find(m => m.groupName === p.groupName);
                         return mapping ? mapping.borderColor : 'rgba(201, 203, 207, 1)';
                     }),
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderRadius: 5
                 }]
             };
             createOrUpdateChart(chartData);
@@ -202,21 +270,25 @@
                 
                 // Process Performance Data
                 if (performanceRes.ok) {
-                    const values = await performanceRes.json(); // Expected: [["吳孝智 組", "695756"], ...]
-                    if (!values || values.length === 0) {
-                         console.log("從 performanceData.json 未獲取到資料。");
-                         // Optional: Clear chart or show message
+                    const values = await performanceRes.json(); // Expected: [["孝智組", ...], ["695,756", ...]]
+                    if (!values || !Array.isArray(values) || values.length < 2 || !Array.isArray(values[0]) || !Array.isArray(values[1])) {
+                         console.error("績效資料格式不符");
                          renderPerformanceChart([]);
-                         return;
+                         return; // Exit if format is wrong
                     }
-                    const performanceData = values.map(row => {
-                        const groupName = row[0];
-                        const amount = parseInt(String(row[1]).replace(/,/g, ''), 10);
+                    
+                    const groupNames = values[0];
+                    const groupAmounts = values[1];
+
+                    const performanceData = groupNames.map((groupName, index) => {
+                        const amountStr = groupAmounts[index] || "0";
+                        const amount = parseInt(String(amountStr).replace(/,/g, ''), 10);
                         return { groupName: groupName, amount: isNaN(amount) ? 0 : amount };
                     });
+
                     renderPerformanceChart(performanceData);
                 } else {
-                     throw new Error(`找不到績效資料檔案 (performanceData.json): ${performanceRes.statusText}`);
+                    throw new Error(`找不到績效資料檔案 (performanceData.json): ${performanceRes.statusText}`);
                 }
 
             } catch (error) {
@@ -237,6 +309,12 @@
         // --- EVENT LISTENERS ---
         document.addEventListener('DOMContentLoaded', loadDashboardData);
         refreshDashboardBtn.addEventListener('click', loadDashboardData);
+        modalCloseBtn.addEventListener('click', hidePersonDetails);
+        personModal.addEventListener('click', (event) => {
+            if (event.target === personModal) {
+                hidePersonDetails();
+            }
+        });
 
     </script>
 </body>
