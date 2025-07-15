@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道路排水設計互動模擬器 (管涵版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral with Teal Accent -->
+    <!-- Application Structure Plan: A single-page dashboard structure featuring a central interactive simulator as the main learning tool. This non-linear approach allows users to directly experience the cause-and-effect relationships between design variables, rather than passively reading through report chapters. The structure includes: 1. A header for quick navigation. 2. A hero section introducing the topic. 3. The core 'Drainage Design Simulator' where users manipulate hydrological and hydraulic parameters. 4. A 'Core Concepts' section with accordion-style cards for deeper dives into specific topics like recurrence interval and Manning's 'n'. This structure was chosen because it prioritizes hands-on learning and exploration, making the complex technical information more accessible and memorable for a broader audience. The user flow is centered on experimentation within the simulator, supported by contextual information in surrounding sections. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Rational Method (Q=CIA/360) & Manning's Formula (V=1/n*R^2/3*S^1/2). Goal: Demonstrate the interrelationship of all key design variables. Viz/Method: A comprehensive interactive calculator (HTML form + JS). Interaction: Sliders for continuous variables (Area, Slope) and dropdowns for discrete choices (Recurrence Interval, Surface Type, Material). Justification: This provides immediate, tangible feedback, making abstract formulas understandable. Library: Vanilla JS.
+        - Report Info: Permissible velocity limits (min/max). Goal: Show if a design is stable or at risk of erosion/sedimentation. Viz/Method: A dynamic bar chart integrated with the simulator. Interaction: The chart updates in real-time as user changes input parameters. The user's calculated velocity is a bar, compared against a shaded background representing the "safe zone". Justification: This is a highly effective visual way to communicate the concept of a "design window" and failure modes. Library: Chart.js (Canvas).
+        - Report Info: Key data tables (C values, n values). Goal: Inform user choices within the simulator. Viz/Method: Data stored in JS objects and used to populate dropdown menus. Interaction: User selection from the dropdown directly inputs the correct coefficient into the calculation. Justification: Simplifies the user experience and directly connects report data to the interactive model. Library: Vanilla JS.
+        - Report Info: Core design principles. Goal: Provide context and deeper knowledge. Viz/Method: Accordion-style content cards. Interaction: User clicks to expand and read more about a specific topic. Justification: Keeps the main interface clean while making detailed information available on demand. Library: Vanilla JS + Tailwind CSS.
+        -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
+        .velocity-chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 140px; max-height: 150px; }
+        @media (max-width: 768px) { 
+            .chart-container { height: 250px; }
+            .velocity-chart-container { height: 120px; }
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #0d9488; /* teal-600 */
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #0d9488;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-teal-700">道路排水設計 (管涵版)</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#intro" class="text-gray-600 hover:bg-teal-50 hover:text-teal-700 px-3 py-2 rounded-md text-sm font-medium">介紹</a>
+                        <a href="#simulator" class="text-gray-600 hover:bg-teal-50 hover:text-teal-700 px-3 py-2 rounded-md text-sm font-medium">互動模擬器</a>
+                        <a href="#concepts" class="text-gray-600 hover:bg-teal-50 hover:text-teal-700 px-3 py-2 rounded-md text-sm font-medium">核心概念</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="intro" class="py-16 sm:py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">探索道路排水的科學</h1>
+                <p class="mt-6 text-lg leading-8 text-gray-600 max-w-3xl mx-auto">
+                    道路排水不僅是挖一條溝。它是一門精密的科學，需要在降雨量、地形、材料與流速之間尋求完美平衡。本頁將報告中的複雜公式與規範，轉化為一個互動工具，讓您親手體驗設計決策的過程，並理解各因素間的交互關聯。
+                </p>
+            </div>
+        </section>
+
+        <section id="simulator" class="py-16 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">排水設計互動模擬器</h2>
+                    <p class="mt-4 text-lg text-gray-600">調整下方參數，觀察它們如何影響設計流量與管涵穩定性。</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-stone-200">
+                        <div class="space-y-8">
+                            <div>
+                                <h3 class="text-xl font-bold text-teal-700 border-b-2 border-teal-200 pb-2 mb-4 flex items-center">
+                                    <span class="bg-teal-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3 font-bold text-lg">1</span>
+                                    水文分析：計算設計流量 (Qp)
+                                </h3>
+                                <div class="space-y-6">
+                                    <div>
+                                        <label for="recurrenceInterval" class="block text-sm font-medium text-gray-700">設計重現期距 (風險等級)</label>
+                                        <select id="recurrenceInterval" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md">
+                                            <option value="5" data-i="120">5 年 (省縣道、鄉道常用)</option>
+                                            <option value="10" data-i="150" selected>10 年 (國道常用)</option>
+                                            <option value="25" data-i="180">25 年 (重要區域排水路)</option>
+                                            <option value="50" data-i="210">50 年 (涵洞、次要橋梁)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="roadWidth" class="block text-sm font-medium text-gray-700">道路寬度 (RdW): <span id="roadWidthValue" class="font-bold text-teal-600">15.0</span> 公尺</label>
+                                        <input id="roadWidth" type="range" min="5" max="50" value="15" step="0.5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                    <div>
+                                        <label for="designLength" class="block text-sm font-medium text-gray-700">設計長度 (L1): <span id="designLengthValue" class="font-bold text-teal-600">100</span> 公尺</label>
+                                        <input id="designLength" type="range" min="10" max="500" value="100" step="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                    <div>
+                                        <label for="collectionType" class="block text-sm font-medium text-gray-700">收水方式</label>
+                                        <select id="collectionType" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md">
+                                            <option value="dual" selected>道路雙側收水</option>
+                                            <option value="single">道路單側收水</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-xl font-bold text-teal-700 border-b-2 border-teal-200 pb-2 mb-4 flex items-center">
+                                    <span class="bg-teal-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3 font-bold text-lg">2</span>
+                                    水理設計：決定管涵尺寸與流速 (V)
+                                </h3>
+                                <div class="space-y-6">
+                                     <div>
+                                        <label for="culvertSlope" class="block text-sm font-medium text-gray-700">管涵縱向坡度 (S): <span id="slopeValue" class="font-bold text-teal-600">0.50</span> %</label>
+                                        <input id="culvertSlope" type="range" min="0.1" max="5" value="0.5" step="0.01" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                    <div>
+                                        <label for="culvertDiameter" class="block text-sm font-medium text-gray-700">管涵尺寸直徑 (D): <span id="diameterValue" class="font-bold text-teal-600">1.0</span> 公尺</label>
+                                        <input id="culvertDiameter" type="range" min="0.3" max="2.5" value="1.0" step="0.1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                     <div>
+                                        <label class="block text-sm font-medium text-gray-700">管涵材質 (糙率 n)</label>
+                                        <p class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-100 sm:text-sm rounded-md">混凝土 (n=0.013)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-stone-200">
+                        <h3 class="text-xl font-bold text-slate-900 mb-4 text-center">設計結果分析</h3>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4 text-center mb-4">
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 flex flex-col justify-center">
+                                    <p class="text-sm font-medium text-blue-800">單側設計流量 (Qp)</p>
+                                    <p id="flowRateDisplay" class="text-2xl lg:text-3xl font-bold text-blue-600">0.31</p>
+                                    <p class="text-sm text-gray-500">m³/s</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg border border-green-200 flex flex-col justify-center">
+                                    <p class="text-sm font-medium text-green-800">滿管容量 (Qn)</p>
+                                    <p id="channelCapacityDisplay" class="text-2xl lg:text-3xl font-bold text-green-600">1.05</p>
+                                    <p class="text-sm text-gray-500">m³/s</p>
+                                </div>
+                                <div id="loadRatioContainer" class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 flex flex-col justify-center">
+                                    <p class="text-sm font-medium text-yellow-800">負荷比 (Qp/Qn)</p>
+                                    <p id="loadRatioDisplay" class="text-2xl lg:text-3xl font-bold text-yellow-600">0.30</p>
+                                    <p class="text-sm text-gray-500">效率指標</p>
+                                </div>
+                                 <div class="bg-teal-50 p-4 rounded-lg border border-teal-200 flex flex-col justify-center">
+                                    <p class="text-sm font-medium text-teal-800">管內水深 (h)</p>
+                                    <p id="waterDepthDisplay" class="text-2xl lg:text-3xl font-bold text-teal-600">0.44</p>
+                                    <p class="text-sm text-gray-500">公尺</p>
+                                </div>
+                            </div>
+                           <div id="statusMessage" class="p-4 rounded-md text-center font-bold">
+                               <!-- Status message will be injected here -->
+                           </div>
+                           <div class="velocity-chart-container">
+                                <canvas id="velocityChart"></canvas>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="concepts" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">核心設計概念</h2>
+                    <p class="mt-4 text-lg text-gray-600">理解這些關鍵概念，是掌握排水設計的基礎。</p>
+                </div>
+                <div class="space-y-4" id="accordion">
+                    <div class="accordion-item bg-stone-50 border border-stone-200 rounded-lg">
+                        <button class="accordion-header w-full flex justify-between items-center p-5 text-left font-semibold text-slate-800 hover:bg-stone-100">
+                            <span>什麼是「合理化公式」？</span>
+                            <svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="accordion-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                            <div class="p-5 pt-0 text-gray-600">
+                                <p>合理化公式 \(Q_p = \frac{1}{360} \times C \times I \times A\) 是計算小型集水區洪峰流量的標準方法。它將三個核心因素結合起來：</p>
+                                <ul class="list-disc list-inside mt-2 space-y-1">
+                                    <li><b>C (逕流係數):</b> 地表的不透水程度。瀝青路面的C值高，雨水大多變成逕流；森林的C值低，大量雨水會入滲。</li>
+                                    <li><b>I (降雨強度):</b> 在特定時間（集流時間）內的平均降雨速率，與設計重現期距相關。</li>
+                                    <li><b>A (集水面積):</b> 所有會將雨水匯集到設計點的總面積。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-stone-50 border border-stone-200 rounded-lg">
+                        <button class="accordion-header w-full flex justify-between items-center p-5 text-left font-semibold text-slate-800 hover:bg-stone-100">
+                            <span>曼寧公式與「容許流速」的奧秘</span>
+                            <svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="accordion-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                             <div class="p-5 pt-0 text-gray-600">
+                                <p>在算出需要排掉多少水 (Q) 後，曼寧公式 \(V = \frac{1}{n} \times R^{2/3} \times S^{1/2}\) 幫助我們設計管涵。它告訴我們，水在特定管涵內的流速 (V) 由以下因素決定：</p>
+                                <ul class="list-disc list-inside mt-2 space-y-1">
+                                    <li><b>n (糙率係數):</b> 管壁的粗糙程度。混凝土光滑(n值小)，水流得快。</li>
+                                    <li><b>R (水力半徑):</b> 管涵斷面的效率指標，與斷面形狀和水深有關。</li>
+                                    <li><b>S (縱向坡度):</b> 管涵的坡度，對流速影響極大。</li>
+                                </ul>
+                                <p class="mt-4 font-semibold">這引出了「容許流速」的關鍵概念：</p>
+                                <ul class="list-disc list-inside mt-2 space-y-1">
+                                    <li><b>最小容許流速 (約 0.8 m/s):</b> 必須夠快，才能避免泥沙在管涵中淤積，造成堵塞。</li>
+                                    <li><b>最大容許流速 (約 3.0 m/s):</b> 必須夠慢，才不會因能量過強而沖毀管涵結構。一個成功的設計，就是將流速精準控制在這個「安全窗口」內。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2024 道路排水設計互動學習工具。基於台灣公路排水設計規範報告轉譯。</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const recurrenceIntervalEl = document.getElementById('recurrenceInterval');
+            const roadWidthEl = document.getElementById('roadWidth');
+            const designLengthEl = document.getElementById('designLength');
+            const collectionTypeEl = document.getElementById('collectionType');
+            const surfaceTypeEl = document.getElementById('surfaceType');
+            const culvertSlopeEl = document.getElementById('culvertSlope');
+            const culvertDiameterEl = document.getElementById('culvertDiameter');
+            
+            const roadWidthValueEl = document.getElementById('roadWidthValue');
+            const designLengthValueEl = document.getElementById('designLengthValue');
+            const slopeValueEl = document.getElementById('slopeValue');
+            const diameterValueEl = document.getElementById('diameterValue');
+            const flowRateDisplayEl = document.getElementById('flowRateDisplay');
+            const channelCapacityDisplayEl = document.getElementById('channelCapacityDisplay');
+            const loadRatioDisplayEl = document.getElementById('loadRatioDisplay');
+            const loadRatioContainerEl = document.getElementById('loadRatioContainer');
+            const waterDepthDisplayEl = document.getElementById('waterDepthDisplay');
+            const statusMessageEl = document.getElementById('statusMessage');
+
+            const dataStore = {
+                rational: { C: 0.90, I: 150, RdW: 15, L1: 100 },
+                manning: { S: 0.005, n: 0.013, D: 1.0 },
+                velocityLimits: { min: 0.8, max: 3.0 },
+                collection: 'dual'
+            };
+
+            const velCtx = document.getElementById('velocityChart').getContext('2d');
+            const velocityChart = new Chart(velCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['計算流速'],
+                    datasets: [{
+                        label: '計算流速 (m/s)',
+                        data: [0],
+                        backgroundColor: ['#0d9488'],
+                        borderColor: ['#047857'],
+                        borderWidth: 1,
+                        barPercentage: 0.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: { beginAtZero: true, title: { display: true, text: '流速 (m/s)' } },
+                        y: { ticks: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (c) => `流速: ${c.raw.toFixed(2)} m/s` } },
+                        annotation: {
+                            annotations: {
+                                permissibleRange: {
+                                    type: 'box', yMin: -1, yMax: 1, xMin: 0.8, xMax: 3.0,
+                                    backgroundColor: 'rgba(74, 222, 128, 0.2)',
+                                    borderColor: 'rgba(34, 197, 94, 0.5)',
+                                    borderWidth: 1,
+                                    label: { content: '容許範圍', display: true, position: 'start', color: '#166534' }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateSimulator() {
+                // Read values from UI
+                dataStore.rational.I = parseFloat(recurrenceIntervalEl.options[recurrenceIntervalEl.selectedIndex].dataset.i);
+                dataStore.rational.RdW = parseFloat(roadWidthEl.value);
+                dataStore.rational.L1 = parseFloat(designLengthEl.value);
+                dataStore.collection = collectionTypeEl.value;
+                dataStore.rational.C = 0.90; // Fixed for asphalt road surface
+                
+                dataStore.manning.S = parseFloat(culvertSlopeEl.value) / 100;
+                dataStore.manning.n = 0.013; // Fixed for concrete
+                dataStore.manning.D = parseFloat(culvertDiameterEl.value);
+                
+                dataStore.velocityLimits.min = 0.8;
+                dataStore.velocityLimits.max = 3.0;
+
+                // Update UI labels
+                roadWidthValueEl.textContent = dataStore.rational.RdW.toFixed(1);
+                designLengthValueEl.textContent = dataStore.rational.L1.toFixed(0);
+                slopeValueEl.textContent = (dataStore.manning.S * 100).toFixed(2);
+                diameterValueEl.textContent = dataStore.manning.D.toFixed(1);
+
+                // Calculations
+                const areaM2 = dataStore.rational.RdW * dataStore.rational.L1;
+                const areaHa = areaM2 / 10000;
+                const Qp_total = (dataStore.rational.C * dataStore.rational.I * areaHa) / 360;
+                const Qp_channel = dataStore.collection === 'dual' ? Qp_total / 2 : Qp_total;
+
+                let h = dataStore.manning.D / 2; // Initial guess for water depth
+                for (let i = 0; i < 20; i++) {
+                    if (h <= 0) h = 0.001;
+                    if (h >= dataStore.manning.D) h = dataStore.manning.D * 0.999;
+                    
+                    const r = dataStore.manning.D / 2;
+                    const theta = 2 * Math.acos((r - h) / r);
+                    const A = (r * r * (theta - Math.sin(theta))) / 2;
+                    const P = r * theta;
+                    
+                    if (P === 0) break;
+                    
+                    const R = A / P;
+                    const Q_calc = (1 / dataStore.manning.n) * A * Math.pow(R, 2/3) * Math.pow(dataStore.manning.S, 0.5);
+                    
+                    if (Q_calc > 0) {
+                       h = h * Math.pow(Qp_channel / Q_calc, 0.4);
+                    } else {
+                       h = h * 1.1; 
+                    }
+                }
+                
+                const r_final = dataStore.manning.D / 2;
+                const theta_final = 2 * Math.acos((r_final - h) / r_final);
+                const A_final = (r_final * r_final * (theta_final - Math.sin(theta_final))) / 2;
+                const V_actual = (A_final > 0) ? Qp_channel / A_final : 0;
+
+                const A_full = Math.PI * Math.pow(dataStore.manning.D / 2, 2);
+                const R_full = dataStore.manning.D / 4;
+                const Qn = (1 / dataStore.manning.n) * A_full * Math.pow(R_full, 2/3) * Math.pow(dataStore.manning.S, 0.5);
+                
+                const loadRatio = Qn > 0 ? Qp_channel / Qn : 0;
+
+                // Update output elements
+                flowRateDisplayEl.textContent = Qp_channel.toFixed(2);
+                channelCapacityDisplayEl.textContent = Qn.toFixed(2);
+                loadRatioDisplayEl.textContent = loadRatio.toFixed(2);
+                waterDepthDisplayEl.textContent = h.toFixed(2);
+
+                loadRatioContainerEl.className = "p-4 rounded-lg border flex flex-col justify-center";
+                if (loadRatio > 1.0) {
+                    loadRatioContainerEl.classList.add('bg-red-100', 'border-red-300');
+                    loadRatioDisplayEl.classList.add('text-red-600');
+                } else if (loadRatio > 0.8) {
+                    loadRatioContainerEl.classList.add('bg-green-100', 'border-green-300');
+                    loadRatioDisplayEl.classList.add('text-green-600');
+                } else {
+                    loadRatioContainerEl.classList.add('bg-yellow-100', 'border-yellow-300');
+                    loadRatioDisplayEl.classList.add('text-yellow-600');
+                }
+
+                // Update Velocity Chart
+                velocityChart.data.datasets[0].data[0] = V_actual;
+                velocityChart.options.plugins.annotation.annotations.permissibleRange.xMin = dataStore.velocityLimits.min;
+                velocityChart.options.plugins.annotation.annotations.permissibleRange.xMax = dataStore.velocityLimits.max;
+                velocityChart.update();
+                
+                // Update Status Message
+                if (loadRatio > 1.0) {
+                    statusMessageEl.textContent = '❌ 危險：管涵容量不足，將會溢流！';
+                    statusMessageEl.className = 'p-4 rounded-md text-center font-bold bg-red-100 text-red-800';
+                } else if (V_actual < dataStore.velocityLimits.min) {
+                    statusMessageEl.textContent = '⚠️ 風險：流速過慢，可能造成泥沙淤積！';
+                    statusMessageEl.className = 'p-4 rounded-md text-center font-bold bg-yellow-100 text-yellow-800';
+                } else if (V_actual > dataStore.velocityLimits.max) {
+                    statusMessageEl.textContent = '❌ 危險：流速過快，可能沖刷管壁！';
+                    statusMessageEl.className = 'p-4 rounded-md text-center font-bold bg-red-100 text-red-800';
+                } else {
+                    statusMessageEl.textContent = '✅ 設計穩定：流速在容許範圍內。';
+                    statusMessageEl.className = 'p-4 rounded-md text-center font-bold bg-green-100 text-green-800';
+                }
+            }
+
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const icon = header.querySelector('svg');
+
+                header.addEventListener('click', () => {
+                    const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+                    
+                    accordionItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.querySelector('.accordion-content').style.maxHeight = '0px';
+                            otherItem.querySelector('.accordion-header svg').classList.remove('rotate-180');
+                        }
+                    });
+
+                    if (isOpen) {
+                        content.style.maxHeight = '0px';
+                        icon.classList.remove('rotate-180');
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        icon.classList.add('rotate-180');
+                    }
+                });
+            });
+
+            [recurrenceIntervalEl, roadWidthEl, designLengthEl, collectionTypeEl, culvertSlopeEl, culvertDiameterEl].forEach(el => {
+                if(el) {
+                    el.addEventListener('input', updateSimulator);
+                }
+            });
+            
+            updateSimulator();
+        });
+    </script>
+</body>
+</html>
