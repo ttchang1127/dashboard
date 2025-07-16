@@ -15,7 +15,7 @@ on:
 
 jobs:
   update-data:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       # 步驟 1: 將您的儲存庫程式碼 checkout 到虛擬環境中
       - name: Checkout repository
