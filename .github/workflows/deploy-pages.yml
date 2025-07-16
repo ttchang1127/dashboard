@@ -1,0 +1,61 @@
+# 工作流程的名稱
+name: Deploy to GitHub Pages
+
+# 觸發條件：當有程式碼推送到 main 分支時執行
+on:
+  push:
+    branches: ["main"]
+  # 允許您在 Actions 分頁手動觸發此工作流程
+  workflow_dispatch:
+
+# 權限設定：這是讓部署能成功的關鍵
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 並行設定：確保同時間只有一個部署在執行，防止版本錯亂
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # 第一個工作：建置 (Build)
+  build:
+    # 指定在您的自架主機上執行，解決排隊問題！
+    runs-on: self-hosted
+    
+    steps:
+      # 步驟 1: 將您的儲存庫程式碼 checkout 到主機中
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      # 步驟 2: 設定 GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        
+      # 步驟 3: 將所有網站檔案打包成一個 artifact
+      # artifact 就像一個準備好要部署的「包裹」
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # path 指的是要打包的資料夾，'.' 代表整個儲存庫的根目錄
+          path: '.'
+
+  # 第二個工作：部署 (Deploy)
+  deploy:
+    # 建置完成後才需要部署
+    needs: build
+    
+    # 部署這個步驟，使用 GitHub 的標準主機即可，因為它很快且安全
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    steps:
+      # 步驟 1: 從 artifact 中取出「包裹」，並部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
