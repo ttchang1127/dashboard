@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>集水井工程設計模擬器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- 
+        Version 34 (Feature Add): 
+        - Added a new "Elevation Check" banner below the core results.
+        - This section performs two checks:
+          1. Backwater Check: Warns if the calculated water surface elevation is higher than any inlet pipe's top, potentially impeding flow.
+          2. Invert Check: Warns if any inlet pipe's bottom elevation is lower than the lowest outlet pipe's bottom, which could cause siltation.
+        - Implemented `updateElevationChecksUI` function to dynamically update the status and styling of these checks.
+     -->
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .input-group { @apply bg-slate-50 p-4 rounded-lg border h-full flex flex-col; }
+        .input-label { @apply block text-sm font-medium text-gray-600 mb-1; }
+        .result-box { @apply bg-white p-4 rounded-lg border text-center; }
+        .result-label { @apply text-sm font-medium text-slate-500; }
+        .result-value { @apply text-lg md:text-xl font-bold text-slate-800 mt-1; }
+        /* Custom focus styles for better visibility */
+        .input-field:focus, select:focus, input[type=checkbox]:focus {
+            --tw-ring-color: theme('colors.blue.500');
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+            border-color: theme('colors.blue.500');
+        }
+        details > summary {
+            cursor: pointer;
+            list-style: none; /* Remove default triangle */
+        }
+        details > summary::-webkit-details-marker {
+            display: none; /* Remove default triangle in Chrome */
+        }
+        details summary .arrow {
+            transition: transform 0.2s;
+        }
+        details[open] summary .arrow {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <header class="bg-white/90 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-blue-700">集水井工程設計模擬器</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="py-12">
+        <section id="simulator">
+            <!-- Results Banner -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-900 mb-4">核心計算結果</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 items-center">
+                        <div class="result-box border-green-200">
+                            <p class="result-label text-green-800">總流入量 (Q_in)</p>
+                            <p id="total-inflow" class="result-value text-green-600">0.00</p>
+                            <span class="text-xs text-slate-500">m³/s</span>
+                        </div>
+                        <div class="result-box border-red-200">
+                            <p class="result-label text-red-800">總流出容量 (Q_out)</p>
+                            <p id="total-outflow" class="result-value text-red-600">0.00</p>
+                            <span class="text-xs text-slate-500">m³/s</span>
+                        </div>
+                        <div class="result-box border-cyan-200">
+                            <p class="result-label text-cyan-800">設計水面高程</p>
+                            <p id="water-surface-elevation" class="result-value text-cyan-600">--.--</p>
+                            <span class="text-xs text-slate-500">m</span>
+                        </div>
+                        <div class="result-box bg-teal-50 border-teal-200">
+                            <p class="result-label text-teal-800">建議外緣尺寸</p>
+                            <p id="basin-dimensions" class="result-value text-teal-600">-- x -- x --</p>
+                            <span class="text-xs text-slate-500">長x寬x高 (m)</span>
+                        </div>
+                         <div id="status-message" class="p-3 h-full flex items-center justify-center rounded-md text-center font-semibold text-lg"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Elevation Check Banner -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-900 mb-4">高程檢核 (流入 vs 流出)</h2>
+                    <div id="elevation-check-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Backwater Check -->
+                        <div id="backwater-check-card" class="p-4 rounded-lg flex items-center transition-colors duration-300">
+                            <div id="backwater-check-icon" class="mr-4 text-3xl"></div>
+                            <div>
+                                <p class="font-semibold" id="backwater-check-title">水位壅高檢核</p>
+                                <p class="text-sm" id="backwater-check-details">檢查井內水位是否高於流入管頂</p>
+                            </div>
+                        </div>
+                        <!-- Invert Check -->
+                        <div id="invert-check-card" class="p-4 rounded-lg flex items-center transition-colors duration-300">
+                            <div id="invert-check-icon" class="mr-4 text-3xl"></div>
+                            <div>
+                                <p class="font-semibold" id="invert-check-title">管底高程檢核</p>
+                                <p class="text-sm" id="invert-check-details">檢查流入管底是否高於流出管底</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <!-- Left Column: Inputs -->
+                    <div class="lg:col-span-1 space-y-8">
+                        <!-- Input Section Card -->
+                        <div id="input-container" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-slate-200 space-y-8">
+                            <h1 class="text-2xl font-bold text-slate-900 border-b pb-4">設計參數輸入</h1>
+                            <!-- General Settings -->
+                            <div class="input-group">
+                                <h3 class="font-bold text-lg text-slate-800 mb-4">基本設定</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label for="top-elevation" class="input-label">井頂高程 (m)</label>
+                                        <input type="number" id="top-elevation" value="100.0" step="0.1" class="mt-1 block w-full border-yellow-300 bg-yellow-50 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="sump-depth" class="input-label">沉砂槽深度 (m)</label>
+                                        <input type="number" id="sump-depth" value="0.3" step="0.1" class="mt-1 block w-full border-yellow-300 bg-yellow-50 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="freeboard" class="input-label">最小出水高 (m)</label>
+                                        <input type="number" id="freeboard" value="0.3" step="0.1" class="mt-1 block w-full border-yellow-300 bg-yellow-50 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="top-slab-thickness" class="input-label">頂版厚度 (m)</label>
+                                        <input type="number" id="top-slab-thickness" value="0.2" step="0.05" class="mt-1 block w-full border-yellow-300 bg-yellow-50 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="wall-thickness" class="input-label">壁體厚度 (m)</label>
+                                        <input type="number" id="wall-thickness" value="0.2" step="0.05" class="mt-1 block w-full border-yellow-300 bg-yellow-50 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Connection Settings in a 2x2 Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div id="neg-x-group" class="input-group"></div>
+                                <div id="pos-x-group" class="input-group"></div>
+                                <div id="neg-y-group" class="input-group"></div>
+                                <div id="pos-y-group" class="input-group"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Visuals & Table -->
+                    <div class="lg:col-span-1 space-y-8">
+                        <!-- Plan View Card -->
+                        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-slate-200">
+                             <h3 class="font-bold text-center mb-4 text-slate-700 text-xl">平面圖 (X-Y)</h3>
+                             <canvas id="plan-view-canvas" width="500" height="500" class="w-full aspect-square bg-gray-50 rounded border"></canvas>
+                        </div>
+                        
+                        <!-- Results Table Card -->
+                        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-slate-200">
+                            <h2 class="text-xl font-bold text-slate-900 mb-4">構造物資訊彙整表</h2>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="bg-slate-100 text-slate-600">
+                                        <tr>
+                                            <th class="px-4 py-2">位置</th>
+                                            <th class="px-4 py-2">類型</th>
+                                            <th class="px-4 py-2">構造物</th>
+                                            <th class="px-4 py-2">尺寸(m)</th>
+                                            <th class="px-4 py-2">頂/底高程</th>
+                                            <th class="px-4 py-2">流量(m³/s)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="results-table-body" class="text-slate-700">
+                                        <!-- Rows will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Explanations Banner -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 space-y-4">
+                    <details>
+                        <summary class="flex justify-between items-center font-semibold text-slate-800">
+                            <span>集水井尺寸設計說明</span>
+                            <span class="arrow"><svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
+                        </summary>
+                        <div class="input-group mt-4">
+                            <div class="space-y-3 text-sm text-slate-600">
+                                <p>建議的集水井外緣尺寸是基於以下考量：</p>
+                                <ul class="list-disc list-inside space-y-2 pl-2">
+                                    <li>
+                                        <strong class="font-semibold">長度 (Y) 與 寬度 (X):</strong>
+                                        為確保足夠作業空間，內部淨尺寸為<code class="text-xs font-mono bg-slate-200 p-1 rounded">最大管渠尺寸 + 1.0m</code>。外緣尺寸則再加上兩側的壁體厚度。
+                                    </li>
+                                    <li>
+                                        <strong class="font-semibold">高度 (Z):</strong>
+                                        外緣高度由井頂高程至底版外緣高程計算。井底內緣高程由最低出水管底減去沉砂槽深度決定，底版外緣則再往下加上底版厚度(假設等於壁厚)。
+                                    </li>
+                                </ul>
+                            </div>
+                       </div>
+                     </details>
+                     <details>
+                        <summary class="flex justify-between items-center font-semibold text-slate-800">
+                            <span>狀態訊息說明</span>
+                             <span class="arrow"><svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
+                        </summary>
+                        <div class="input-group mt-4">
+                             <div class="space-y-3 text-sm text-slate-600">
+                                 <div class="flex items-start">
+                                     <span class="mr-2 mt-1 w-5 h-5 flex-shrink-0 rounded-full bg-green-100 text-green-800 flex items-center justify-center font-bold">✓</span>
+                                     <div>
+                                         <p class="font-semibold text-green-800">安全</p>
+                                         <p>流入量小於流出容量，集水井不會溢出。</p>
+                                         <p class="font-mono text-xs mt-1 text-slate-500">判斷式: Q_in &lt; Q_out</p>
+                                     </div>
+                                 </div>
+                                 <div class="flex items-start">
+                                     <span class="mr-2 mt-1 w-5 h-5 flex-shrink-0 rounded-full bg-yellow-100 text-yellow-800 flex items-center justify-center font-bold">~</span>
+                                     <div>
+                                         <p class="font-semibold text-yellow-800">注意</p>
+                                         <p>流入量等於流出容量，系統處於臨界平衡。</p>
+                                         <p class="font-mono text-xs mt-1 text-slate-500">判斷式: Q_in ≈ Q_out</p>
+                                     </div>
+                                 </div>
+                                 <div class="flex items-start">
+                                     <span class="mr-2 mt-1 w-5 h-5 flex-shrink-0 rounded-full bg-red-100 text-red-800 flex items-center justify-center font-bold">!</span>
+                                     <div>
+                                         <p class="font-semibold text-red-800">危險</p>
+                                         <p>流入量大於流出容量，集水井將會溢出。</p>
+                                         <p class="font-mono text-xs mt-1 text-slate-500">判斷式: Q_in > Q_out</p>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                     </details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const createPositionGroupHTML = (positionId, positionLabel) => {
+            const inputClasses = "mt-1 block w-full border-yellow-300 bg-yellow-50 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm";
+            return `
+                <h3 class="font-bold text-lg text-slate-800 mb-2 text-center">${positionLabel}</h3>
+                <div>
+                    <label for="${positionId}-conn-type" class="input-label">水流狀態</label>
+                    <select id="${positionId}-conn-type" class="${inputClasses}">
+                        <option value="none">無</option>
+                        <option value="inlet">流入</option>
+                        <option value="outlet">流出</option>
+                    </select>
+                </div>
+                <div id="${positionId}-fields" class="hidden space-y-3 pt-3 mt-3 border-t">
+                    <div>
+                        <label for="${positionId}-struct-type" class="input-label">構造物類型</label>
+                        <select id="${positionId}-struct-type" class="${inputClasses}">
+                            <option value="pipe">管涵</option>
+                            <option value="box">箱涵</option>
+                            <option value="ditch">水溝</option>
+                        </select>
+                    </div>
+                    <div id="${positionId}-dims">
+                        <label for="${positionId}-dim1" class="input-label">直徑 (m)</label>
+                        <input type="number" id="${positionId}-dim1" value="0.5" step="0.1" class="${inputClasses}">
+                    </div>
+                    <div>
+                        <label for="${positionId}-flow" class="input-label">流量 Q (m³/s)</label>
+                        <input type="number" id="${positionId}-flow" value="0.1" step="0.05" class="${inputClasses}">
+                    </div>
+                    <div>
+                        <label for="${positionId}-invert" class="input-label">底部高程 (m)</label>
+                        <input type="number" id="${positionId}-invert" value="98.0" step="0.1" class="${inputClasses}">
+                    </div>
+                </div>
+            `;
+        };
+        
+        const positions = [
+            { id: 'neg-x', label: '➀ (-X 位置)' },
+            { id: 'pos-x', label: '➁ (+X 位置)' },
+            { id: 'neg-y', label: '➂ (-Y 位置)' },
+            { id: 'pos-y', label: '➃ (+Y 位置)' },
+        ];
+
+        positions.forEach(pos => {
+            document.getElementById(`${pos.id}-group`).innerHTML = createPositionGroupHTML(pos.id, pos.label);
+        });
+
+        const inputContainer = document.getElementById('input-container');
+
+        inputContainer.addEventListener('input', (event) => {
+            const target = event.target;
+            if (target.matches('input, select')) {
+                const positionId = target.id.split('-')[0] + '-' + target.id.split('-')[1];
+                
+                if (target.id.endsWith('-conn-type')) {
+                    const fieldsDiv = document.getElementById(`${positionId}-fields`);
+                    fieldsDiv.classList.toggle('hidden', target.value === 'none');
+                }
+                
+                if (target.id.endsWith('-struct-type')) {
+                    const dimsContainer = document.getElementById(`${positionId}-dims`);
+                    const dim1Label = target.value === 'pipe' ? '直徑 (m)' : '寬度 (m)';
+                    const dim2Label = '高度 (m)';
+                    const inputClasses = "mt-1 block w-full border-yellow-300 bg-yellow-50 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm";
+                    
+                    let dimsHTML = `
+                        <div>
+                            <label for="${positionId}-dim1" class="input-label">${dim1Label}</label>
+                            <input type="number" id="${positionId}-dim1" value="0.5" step="0.1" class="${inputClasses}">
+                        </div>`;
+                    
+                    if (target.value !== 'pipe') {
+                        dimsHTML += `
+                            <div class="mt-3">
+                                <label for="${positionId}-dim2" class="input-label">${dim2Label}</label>
+                                <input type="number" id="${positionId}-dim2" value="0.5" step="0.1" class="${inputClasses}">
+                            </div>`;
+                    }
+                    dimsContainer.innerHTML = dimsHTML;
+                }
+                updateAll();
+            }
+        });
+
+        function updateAll() {
+            // --- Data Collection ---
+            let totalInflow = 0;
+            let totalOutflowCapacity = 0;
+            let inlets = [];
+            let outlets = [];
+            let allConnections = [];
+            
+            positions.forEach(pos => {
+                const connType = document.getElementById(`${pos.id}-conn-type`).value;
+                if (connType !== 'none') {
+                    const conn = {
+                        position: pos.id,
+                        connType: connType,
+                        structType: document.getElementById(`${pos.id}-struct-type`).value,
+                        dim1: parseFloat(document.getElementById(`${pos.id}-dim1`).value),
+                        dim2: document.getElementById(`${pos.id}-dim2`) ? parseFloat(document.getElementById(`${pos.id}-dim2`).value) : null,
+                        flow: parseFloat(document.getElementById(`${pos.id}-flow`).value),
+                        invert: parseFloat(document.getElementById(`${pos.id}-invert`).value),
+                    };
+
+                    allConnections.push(conn);
+                    if (connType === 'inlet') {
+                        totalInflow += conn.flow;
+                        inlets.push(conn);
+                    } else { // outlet
+                        totalOutflowCapacity += conn.flow;
+                        outlets.push(conn);
+                    }
+                }
+            });
+            const lowestInletInvert = inlets.reduce((min, i) => Math.min(min, i.invert), Infinity);
+
+            // --- Calculation ---
+            const topElevation = parseFloat(document.getElementById('top-elevation').value);
+            const sumpDepth = parseFloat(document.getElementById('sump-depth').value);
+            const wallThickness = parseFloat(document.getElementById('wall-thickness').value);
+            
+            const maxDim = allConnections.reduce((max, c) => Math.max(max, c.dim1, c.dim2 || 0), 0);
+            const innerLength = maxDim + 1.0; 
+            const innerWidth = maxDim + 1.0;
+
+            let waterSurfaceElevation = NaN;
+            let innerBasinBottom = NaN;
+            let outerBottomElevation = NaN;
+            let outerHeight = NaN;
+
+            if (outlets.length > 0) {
+                const mainOutlet = outlets.sort((a,b) => a.invert - b.invert)[0];
+                const n = 0.013; // Concrete
+                const S = (lowestInletInvert !== Infinity && lowestInletInvert > mainOutlet.invert) ? (lowestInletInvert - mainOutlet.invert) / 10 : 0.001;
+                
+                let h = 0.01;
+                if (mainOutlet.structType === 'pipe') {
+                    h = solveManningCircular(totalInflow, mainOutlet.dim1, S, n);
+                } else {
+                    h = solveManningRectangular(totalInflow, mainOutlet.dim1, S, n);
+                }
+                waterSurfaceElevation = mainOutlet.invert + h;
+                innerBasinBottom = mainOutlet.invert - sumpDepth;
+                outerBottomElevation = innerBasinBottom - wallThickness;
+                outerHeight = topElevation - outerBottomElevation;
+            }
+
+            const outerWidth = innerWidth + (2 * wallThickness);
+            const outerLength = innerLength + (2 * wallThickness);
+
+            // --- Update UI ---
+            document.getElementById('total-inflow').textContent = totalInflow.toFixed(3);
+            document.getElementById('total-outflow').textContent = totalOutflowCapacity.toFixed(3);
+            document.getElementById('water-surface-elevation').textContent = isNaN(waterSurfaceElevation) ? '--.--' : waterSurfaceElevation.toFixed(2);
+            document.getElementById('basin-dimensions').textContent = isNaN(outerHeight) ? '-- x -- x --' : `${outerLength.toFixed(2)} x ${outerWidth.toFixed(2)} x ${outerHeight.toFixed(2)}`;
+            
+            if (outlets.length === 0 && totalInflow > 0) {
+                 updateStatus('錯誤：必須至少定義一個流出口。', 'error');
+            } else {
+                const balance_diff = totalInflow - totalOutflowCapacity;
+                if (balance_diff > 0.001) {
+                    updateStatus('危險：集水井會溢出', 'error');
+                } else if (balance_diff < -0.001) {
+                    updateStatus('安全：集水井不會溢出', 'success');
+                } else {
+                    updateStatus('注意：系統平衡', 'warning');
+                }
+            }
+            
+            // --- Elevation Checks ---
+            let backwaterWarningInlets = [];
+            let invertWarningInlets = [];
+            const lowestOutletInvert = outlets.reduce((min, o) => Math.min(min, o.invert), Infinity);
+
+            if (isFinite(waterSurfaceElevation)) {
+                inlets.forEach(inlet => {
+                    const inletHeight = (inlet.structType === 'pipe') ? inlet.dim1 : (inlet.dim2 || 0);
+                    const inletTop = inlet.invert + inletHeight;
+                    if (inletTop < waterSurfaceElevation) {
+                        backwaterWarningInlets.push(inlet.position);
+                    }
+                });
+            }
+
+            if (isFinite(lowestOutletInvert)) {
+                inlets.forEach(inlet => {
+                    if (inlet.invert < lowestOutletInvert) {
+                        invertWarningInlets.push(inlet.position);
+                    }
+                });
+            }
+
+            // --- Draw & Populate ---
+            drawPlanView({L: innerLength, W: innerWidth, connections: allConnections, wallThickness: wallThickness});
+            updateElevationChecksUI(backwaterWarningInlets, invertWarningInlets);
+            populateResultsTable(allConnections, {
+                hasData: !isNaN(outerHeight),
+                topElevation,
+                outerBottomElevation,
+                outerLength,
+                outerWidth,
+                outerHeight
+            });
+        }
+
+        function updateElevationChecksUI(backwaterWarnings, invertWarnings) {
+            const backwaterCard = document.getElementById('backwater-check-card');
+            const backwaterIcon = document.getElementById('backwater-check-icon');
+            const backwaterTitle = document.getElementById('backwater-check-title');
+            const backwaterDetails = document.getElementById('backwater-check-details');
+
+            const invertCard = document.getElementById('invert-check-card');
+            const invertIcon = document.getElementById('invert-check-icon');
+            const invertTitle = document.getElementById('invert-check-title');
+            const invertDetails = document.getElementById('invert-check-details');
+            
+            const positionLabels = { 'neg-x': '➀', 'pos-x': '➁', 'neg-y': '➂', 'pos-y': '➃' };
+
+            // Reset classes
+            backwaterCard.className = 'p-4 rounded-lg flex items-center transition-colors duration-300';
+            invertCard.className = 'p-4 rounded-lg flex items-center transition-colors duration-300';
+
+            // Backwater Check UI
+            if (backwaterWarnings.length > 0) {
+                backwaterCard.classList.add('bg-yellow-100', 'text-yellow-800');
+                backwaterIcon.textContent = '⚠️';
+                backwaterTitle.textContent = '水位壅高 - 注意';
+                const warningPositions = backwaterWarnings.map(p => positionLabels[p]).join(', ');
+                backwaterDetails.textContent = `位置 ${warningPositions} 的管頂低於井內水位，可能影響流入。`;
+            } else {
+                backwaterCard.classList.add('bg-green-100', 'text-green-800');
+                backwaterIcon.textContent = '✅';
+                backwaterTitle.textContent = '水位壅高 - 安全';
+                backwaterDetails.textContent = '所有流入管頂皆高於井內設計水位。';
+            }
+
+            // Invert Check UI
+            if (invertWarnings.length > 0) {
+                invertCard.classList.add('bg-yellow-100', 'text-yellow-800');
+                invertIcon.textContent = '⚠️';
+                invertTitle.textContent = '管底高程 - 注意';
+                const warningPositions = invertWarnings.map(p => positionLabels[p]).join(', ');
+                invertDetails.textContent = `位置 ${warningPositions} 的管底低於流出管底，可能造成淤積。`;
+            } else {
+                invertCard.classList.add('bg-green-100', 'text-green-800');
+                invertIcon.textContent = '✅';
+                invertTitle.textContent = '管底高程 - 安全';
+                invertDetails.textContent = '所有流入管底皆高於或等於最低流出管底。';
+            }
+        }
+
+        function populateResultsTable(connections, sumpInfo) {
+            const tableBody = document.getElementById('results-table-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+            const positionLabels = { 'neg-x': '➀', 'pos-x': '➁', 'neg-y': '➂', 'pos-y': '➃' };
+            const structLabels = { 'pipe': '管涵', 'box': '箱涵', 'ditch': '水溝' };
+
+            connections.forEach(c => {
+                const height = (c.structType === 'pipe') ? c.dim1 : (c.dim2 || 0);
+                const topEl = c.invert + height;
+                const dimStr = c.structType === 'pipe' ? `D=${c.dim1.toFixed(2)}` : `${c.dim1.toFixed(2)}x${(c.dim2 || 0).toFixed(2)}`;
+                const flowTypeStr = c.connType === 'inlet' ? 
+                    '<span class="text-green-600 font-semibold">流入</span>' : 
+                    '<span class="text-red-600 font-semibold">流出</span>';
+
+                const rowHTML = `
+                    <tr class="border-b border-slate-200 hover:bg-slate-50">
+                        <td class="px-4 py-2 font-bold">${positionLabels[c.position]}</td>
+                        <td class="px-4 py-2">${flowTypeStr}</td>
+                        <td class="px-4 py-2">${structLabels[c.structType]}</td>
+                        <td class="px-4 py-2">${dimStr}</td>
+                        <td class="px-4 py-2">${topEl.toFixed(2)} / ${c.invert.toFixed(2)}</td>
+                        <td class="px-4 py-2">${c.flow.toFixed(3)}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += rowHTML;
+            });
+
+            // Add the new row for the sump itself
+            if (sumpInfo && sumpInfo.hasData) {
+                const dimStr = `${sumpInfo.outerLength.toFixed(2)}x${sumpInfo.outerWidth.toFixed(2)}x${sumpInfo.outerHeight.toFixed(2)}`;
+                const elevationStr = `${sumpInfo.topElevation.toFixed(2)} / ${sumpInfo.outerBottomElevation.toFixed(2)}`;
+
+                const sumpRowHTML = `
+                    <tr class="border-b border-slate-200 bg-blue-50 hover:bg-blue-100 font-semibold">
+                        <td class="px-4 py-2 text-blue-800">O</td>
+                        <td class="px-4 py-2 text-blue-800">--</td>
+                        <td class="px-4 py-2 text-blue-800">集水井</td>
+                        <td class="px-4 py-2 text-blue-800">${dimStr}</td>
+                        <td class="px-4 py-2 text-blue-800">${elevationStr}</td>
+                        <td class="px-4 py-2 text-blue-800">無</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += sumpRowHTML;
+            }
+        }
+
+
+        function solveManningCircular(Q, D, S, n) {
+            let h = D / 2;
+            for(let i=0; i<20; i++) {
+                if (h <= 0) h = 0.001; if (h >= D) h = D * 0.999;
+                const r = D / 2;
+                const theta = 2 * Math.acos((r - h) / r);
+                const A = (r*r * (theta - Math.sin(theta))) / 2;
+                const P = r * theta;
+                if (P === 0) return 0.001;
+                const R = A / P;
+                const Q_calc = (1/n) * A * Math.pow(R, 2/3) * Math.pow(S, 0.5);
+                if (Q_calc > 0 && isFinite(Q_calc)) h *= Math.pow(Q/Q_calc, 0.4);
+            }
+            return h;
+        }
+
+        function solveManningRectangular(Q, B, S, n) {
+            let h = 0.5;
+            for(let i=0; i<15; i++) {
+                if (h <= 0) h = 0.01;
+                const A = B * h;
+                const P = B + 2 * h;
+                const R = A / P;
+                const Q_calc = (1/n) * A * Math.pow(R, 2/3) * Math.pow(S, 0.5);
+                if (Q_calc > 0 && isFinite(Q_calc)) h *= Math.pow(Q/Q_calc, 0.4);
+            }
+            return h;
+        }
+
+        function updateStatus(message, type) {
+            const el = document.getElementById('status-message');
+            el.textContent = message;
+            el.className = 'p-3 h-full flex items-center justify-center rounded-md text-center font-semibold text-lg ';
+            if (type === 'error') el.classList.add('bg-red-100', 'text-red-800');
+            else if (type === 'warning') el.classList.add('bg-yellow-100', 'text-yellow-800');
+            else if (type === 'success') el.classList.add('bg-green-100', 'text-green-800');
+        }
+
+        function setupCanvas(canvas, rect) {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+            return ctx;
+        }
+
+        function drawPlanView(params) {
+            const canvas = document.getElementById('plan-view-canvas');
+            if (!canvas) {
+                console.error("錯誤：找不到ID為 'plan-view-canvas' 的畫布元素！");
+                return;
+            }
+            
+            const rect = canvas.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) {
+                console.warn("警告：畫布尺寸為零，跳過繪製。這可能是佈局計時問題。");
+                return; 
+            }
+
+            const ctx = setupCanvas(canvas, rect);
+            const w = rect.width;
+            const h = rect.height;
+            ctx.clearRect(0, 0, w, h);
+            
+            const cx = w / 2;
+            const cy = h / 2;
+
+            // Draw Axes
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, cy); ctx.lineTo(w, cy); // X-axis
+            ctx.moveTo(cx, 0); ctx.lineTo(cx, h); // Y-axis
+            ctx.stroke();
+            
+            const outerW = params.W + 2 * params.wallThickness;
+            const outerL = params.L + 2 * params.wallThickness;
+            const scale = Math.min(w * 0.5 / outerW, h * 0.5 / outerL);
+
+            const innerBasinW = params.W * scale;
+            const innerBasinL = params.L * scale;
+            const wallThicknessScaled = params.wallThickness * scale;
+
+            const outerBasinW = innerBasinW + 2 * wallThicknessScaled;
+            const outerBasinL = innerBasinL + 2 * wallThicknessScaled;
+            
+            const outerX0 = cx - outerBasinW / 2;
+            const outerY0 = cy - outerBasinL / 2;
+            const innerX0 = cx - innerBasinW / 2;
+            const innerY0 = cy - innerBasinL / 2;
+
+            // Draw outer and inner basin
+            ctx.fillStyle = '#e2e8f0'; // Wall color
+            ctx.fillRect(outerX0, outerY0, outerBasinW, outerBasinL);
+            ctx.fillStyle = 'rgba(203, 213, 225, 0.5)'; // Inner color
+            ctx.fillRect(innerX0, innerY0, innerBasinW, innerBasinL);
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(outerX0, outerY0, outerBasinW, outerBasinL);
+            ctx.strokeRect(innerX0, innerY0, innerBasinW, innerBasinL);
+
+
+            // Draw connections and arrows
+            const positionLabels = { 'neg-x': '➀', 'pos-x': '➁', 'neg-y': '➂', 'pos-y': '➃' };
+            params.connections.forEach(c => {
+                ctx.fillStyle = '#64748b';
+                ctx.strokeStyle = '#475569';
+                let px, py, pw, ph;
+                const connW = c.dim1 * scale;
+                const connH = (c.structType === 'pipe' ? c.dim1 : c.dim2) * scale;
+                
+                // Position stubs
+                switch(c.position) {
+                    case 'pos-x': 
+                        pw = 15; ph = connH; px = innerX0 + innerBasinW; py = cy - ph / 2;
+                        break;
+                    case 'neg-x': 
+                        pw = 15; ph = connH; px = innerX0 - pw; py = cy - ph / 2;
+                        break;
+                    case 'pos-y': 
+                        pw = connW; ph = 15; px = cx - pw / 2; py = innerY0 - ph;
+                        break;
+                    case 'neg-y': 
+                        pw = connW; ph = 15; px = cx - pw / 2; py = innerY0 + innerBasinL;
+                        break;
+                }
+                ctx.fillRect(px, py, pw, ph);
+                ctx.strokeRect(px, py, pw, ph);
+                drawArrow(ctx, c.position, c.connType, px, py, pw, ph);
+            });
+            
+            // Draw labels on axes
+            ctx.fillStyle = '#1e3a8a'; // Dark blue for labels
+            ctx.font = 'bold 20px Noto Sans TC';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            ctx.fillText(positionLabels['pos-x'], w - 20, cy);
+            ctx.fillText(positionLabels['neg-x'], 20, cy);
+            ctx.fillText(positionLabels['pos-y'], cx, 20);
+            ctx.fillText(positionLabels['neg-y'], cx, h - 20);
+        }
+
+        function drawArrow(ctx, position, connType, x, y, w, h) {
+            ctx.fillStyle = connType === 'inlet' ? '#16a34a' : '#dc2626'; 
+            ctx.beginPath();
+            const arrowScale = 3;
+            const aw = 5 * arrowScale; // arrow width
+            const ah = 4 * arrowScale; // arrow height
+            
+            // Inlet arrows point towards basin, Outlet arrows point away
+            switch(position) {
+                case 'pos-x': // Right side
+                    if (connType === 'inlet') { // Point left
+                        const ax = x - 8, ay = y + h / 2;
+                        ctx.moveTo(ax, ay); ctx.lineTo(ax + aw, ay - ah); ctx.lineTo(ax + aw, ay + ah);
+                    } else { // Point right
+                        const ax = x + w + 8, ay = y + h / 2;
+                        ctx.moveTo(ax, ay); ctx.lineTo(ax - aw, ay - ah); ctx.lineTo(ax - aw, ay + ah);
+                    }
+                    break;
+                case 'neg-x': // Left side
+                    if (connType === 'inlet') { // Point right
+                        const ax = x + w + 8, ay = y + h / 2;
+                        ctx.moveTo(ax, ay); ctx.lineTo(ax - aw, ay - ah); ctx.lineTo(ax - aw, ay + ah);
+                    } else { // Point left
+                        const ax = x - 8, ay = y + h / 2;
+                        ctx.moveTo(ax, ay); ctx.lineTo(ax + aw, ay - ah); ctx.lineTo(ax + aw, ay + ah);
+                    }
+                    break;
+                case 'pos-y': // Top side
+                    if (connType === 'inlet') { // Point down
+                        const ax = x + w / 2, ay = y + h + 8;
+                        ctx.moveTo(ax, ay); ctx.lineTo(ax - ah, ay - aw); ctx.lineTo(ax + ah, ay - aw);
+                    } else { // Point up
+                        const ax = x + w / 2, ay = y - 8;
+                        ctx.moveTo(ax, ay); ctx.lineTo(ax - ah, ay + aw); ctx.lineTo(ax + ah, ay + aw);
+                    }
+                    break;
+                case 'neg-y': // Bottom side
+                    if (connType === 'inlet') { // Point up
+                        const ax = x + w / 2, ay = y - 8;
+                        ctx.moveTo(ax, ay); ctx.lineTo(ax - ah, ay + aw); ctx.lineTo(ax + ah, ay + aw);
+                    } else { // Point down
+                        const ax = x + w / 2, ay = y + h + 8;
+                        ctx.moveTo(ax, ay); ctx.lineTo(ax - ah, ay - aw); ctx.lineTo(ax + ah, ay - aw);
+                    }
+                    break;
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        function setDefaultValues() {
+            // Helper to dispatch events
+            const triggerInput = (el) => el.dispatchEvent(new Event('input', { bubbles: true }));
+
+            // -X Position
+            document.getElementById('neg-x-conn-type').value = 'inlet';
+            triggerInput(document.getElementById('neg-x-conn-type'));
+            document.getElementById('neg-x-struct-type').value = 'pipe';
+            document.getElementById('neg-x-dim1').value = 0.5;
+            document.getElementById('neg-x-flow').value = 0.2;
+            document.getElementById('neg-x-invert').value = 98;
+
+            // +X Position
+            document.getElementById('pos-x-conn-type').value = 'outlet';
+            triggerInput(document.getElementById('pos-x-conn-type'));
+            document.getElementById('pos-x-struct-type').value = 'pipe';
+            document.getElementById('pos-x-dim1').value = 0.5;
+            document.getElementById('pos-x-flow').value = 0.2;
+            document.getElementById('pos-x-invert').value = 98;
+
+            // -Y Position
+            const negYStructSelect = document.getElementById('neg-y-struct-type');
+            document.getElementById('neg-y-conn-type').value = 'inlet';
+            triggerInput(document.getElementById('neg-y-conn-type'));
+            negYStructSelect.value = 'ditch';
+            triggerInput(negYStructSelect); // This will create the dim2 input
+            document.getElementById('neg-y-dim1').value = 0.4;
+            document.getElementById('neg-y-dim2').value = 0.6;
+            document.getElementById('neg-y-flow').value = 0.2;
+            document.getElementById('neg-y-invert').value = 98;
+
+            // +Y Position
+            const posYStructSelect = document.getElementById('pos-y-struct-type');
+            document.getElementById('pos-y-conn-type').value = 'outlet';
+            triggerInput(document.getElementById('pos-y-conn-type'));
+            posYStructSelect.value = 'ditch';
+            triggerInput(posYStructSelect);
+            document.getElementById('pos-y-dim1').value = 0.4;
+            document.getElementById('pos-y-dim2').value = 0.6;
+            document.getElementById('pos-y-flow').value = 0.2;
+            document.getElementById('pos-y-invert').value = 98;
+            
+            updateAll();
+        }
+
+        // Initial load
+        // **FIX**: Use a short timeout to ensure the layout is stable before the first draw.
+        setTimeout(() => {
+            setDefaultValues();
+            // Add a resize listener for responsiveness
+            window.addEventListener('resize', updateAll);
+        }, 100); 
+    });
+    </script>
+</body>
+</html>
