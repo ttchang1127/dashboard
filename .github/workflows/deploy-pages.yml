@@ -48,7 +48,7 @@ jobs:
     needs: build
     
     # 部署這個步驟，使用 GitHub 的標準主機即可，因為它很快且安全
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     environment:
       name: github-pages
