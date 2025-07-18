@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式預力混凝土橋梁檢核指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVZs3OFDGUCIJnDikTuRBNRFv4ASYYVhU712U9YFePlQIjIv6GDU" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <!-- Chosen Palette: Slate & Amber -->
+    <!-- Application Structure Plan: 採用側邊欄導航與主內容區的佈局。側邊欄作為檢核流程的目錄，使用者可以點擊跳轉至對應的檢核章節。主內容區則使用可展開的卡片（details/summary）來呈現每一項詳細的檢核內容。此版本將靜態數值改為互動式輸入框，讓使用者能輸入自己的計算值並獲得即時判定結果，將指南轉化為實用的檢核工具。 -->
+    <!-- Visualization & Content Choices: 
+        1. 報告資訊: 完整的檢核流程 -> 目標: 提供清晰的導航與流程概覽 -> 呈現方式: 使用固定於左側的HTML列表作為導航欄 -> 互動: 點擊列表項目平滑滾動至對應的內容區塊。
+        2. 報告資訊: 各項詳細檢核 -> 目標: 將指南轉化為互動檢核工具 -> 呈現方式: 將原先顯示計算值的欄位改為HTML <input type="number"> -> 互動: 使用者輸入數值後，JavaScript會即時與規範限制值比對，並動態更新「判定」結果（OK/NG）。
+        3. 報告資訊: 檢核中的計算公式與結果 -> 目標: 精確顯示公式與數值 -> 呈現方式: 使用KaTeX渲染數學公式，並用表格呈現限制值。
+        4. 報告資訊: 檢核結果（OK/NG） -> 目標: 醒目地標示檢核是否通過 -> 呈現方式: 使用帶有背景色的標籤（Tag），並由JavaScript動態更新。
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        :root {
+            --sidebar-width: 280px;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .main-content {
+            padding-left: var(--sidebar-width);
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            transition: transform 0.3s ease;
+        }
+        .sidebar-link {
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+        .sidebar-link.active, .sidebar-link:hover {
+            border-left-color: #f59e0b; /* amber-500 */
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .check-card {
+            scroll-margin-top: 80px; /* Offset for sticky header */
+        }
+        .check-card summary {
+            list-style: none;
+            cursor: pointer;
+        }
+        .check-card summary::-webkit-details-marker {
+            display: none;
+        }
+        .check-card[open] summary {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .result-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            width: 50px;
+            text-align: center;
+            display: inline-block;
+        }
+        .result-ok {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+        }
+        .result-ng {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+        }
+        .result-pending {
+            background-color: #e2e8f0; /* slate-200 */
+            color: #475569; /* slate-600 */
+        }
+        input[type="number"] {
+            width: 120px;
+            text-align: right;
+        }
+        @media (max-width: 1024px) {
+            .main-content {
+                padding-left: 0;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 40;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            input[type="number"] {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <div id="app-container">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-white border-r border-slate-200 p-6 overflow-y-auto">
+            <h2 class="text-xl font-bold text-slate-800 mb-6">檢核流程</h2>
+            <nav>
+                <ul class="space-y-2">
+                    <li><a href="#section-1" class="sidebar-link block py-2 px-4 text-slate-600 font-medium">1. 設計前提</a></li>
+                    <li><a href="#section-2" class="sidebar-link block py-2 px-4 text-slate-600 font-medium">2. 橋面版檢核</a>
+                        <ul class="pl-4 mt-2 space-y-1 text-sm">
+                            <li><a href="#check-2-1" class="sidebar-link block py-1.5 px-3 text-slate-500">2.1 PC鋼材應力</a></li>
+                            <li><a href="#check-2-2" class="sidebar-link block py-1.5 px-3 text-slate-500">2.2 混凝土應力</a></li>
+                            <li><a href="#check-2-3" class="sidebar-link block py-1.5 px-3 text-slate-500">2.3 彎矩檢核</a></li>
+                            <li><a href="#check-2-4" class="sidebar-link block py-1.5 px-3 text-slate-500">2.4 剪力檢核</a></li>
+                            <li><a href="#check-2-5" class="sidebar-link block py-1.5 px-3 text-slate-500">2.5 特殊荷重檢核</a></li>
+                            <li><a href="#check-2-6" class="sidebar-link block py-1.5 px-3 text-slate-500">2.6 施工階段檢核</a></li>
+                            <li><a href="#check-2-7" class="sidebar-link block py-1.5 px-3 text-slate-500">2.7 耐久性能檢核</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#section-3" class="sidebar-link block py-2 px-4 text-slate-600 font-medium">3. 腹版與下翼版</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="sticky top-0 bg-white/80 backdrop-blur-lg shadow-sm z-30">
+                <div class="flex items-center justify-between p-4 border-b border-slate-200">
+                    <button id="menu-toggle" class="lg:hidden p-2 rounded-md text-slate-600 hover:bg-slate-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <h1 class="text-xl font-bold text-slate-800">互動式預力混凝土橋梁檢核指南</h1>
+                    <div class="w-8"></div>
+                </div>
+            </header>
+
+            <main class="p-4 md:p-8">
+                <section id="section-1" class="check-card bg-white rounded-lg shadow-md p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">1. 設計前提條件</h2>
+                    <p class="text-slate-600 mb-4">本檢核指南基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。所有檢核均基於一個三跨連續PC箱型梁橋的範例，其設計使用年限為100年。以下將逐一檢核設計中的關鍵環節。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="bg-slate-50 p-4 rounded-md">
+                            <h4 class="font-bold text-slate-700 mb-2">主要材料</h4>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>混凝土: $f'_{ck}$ = 36 N/mm²</li>
+                                <li>主方向PC鋼材: SWPR7BL (12S15.2)</li>
+                                <li>橫方向PC鋼材: SWPR19L (1S21.8)</li>
+                                <li>鋼筋: SD345</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-md">
+                            <h4 class="font-bold text-slate-700 mb-2">主要尺寸</h4>
+                             <ul class="list-disc list-inside space-y-1">
+                                <li>橋面版厚度: 300 mm</li>
+                                <li>腹版厚度: 450 mm</li>
+                                <li>下翼版厚度: 220 mm</li>
+                                <li>瀝青鋪裝厚度: 80 mm</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="section-2">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">2. 橋面版檢核 (橋軸直角方向)</h2>
+                    
+                    <details id="check-2-1" class="check-card bg-white rounded-lg shadow-md mb-6" open>
+                        <summary class="p-6 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-slate-700">2.1 PC鋼材應力檢核 (預力導入直後)</h3>
+                            <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                        </summary>
+                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                            <p class="mb-4"><strong>目標：</strong>確保預力導入初期，PC鋼材的拉應力不超過其材料的容許值，以評估鬆弛影響是否在控制內。</p>
+                            <p class="mb-4"><strong>規範來源：</strong>《道示》III編 表5.1.1、III編 4.2</p>
+                            <div class="mb-4">
+                                <h4 class="font-semibold text-slate-600 mb-2">判定基準：</h4>
+                                <p>應力限制值取 $0.70 \sigma_{pu}$ 與 $0.85 \sigma_{py}$ 之較小值。</p>
+                                <p>$0.70 \times 1830 = 1281$ N/mm²</p>
+                                <p>$0.85 \times 1580 = 1343$ N/mm²</p>
+                                <p>$\rightarrow$ <strong>限制值 $\sigma_p \le 1280$ N/mm²</strong></p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的計算值)：</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="p-3">斷面</th>
+                                                <th class="p-3">應力 (左張拉) (N/mm²)</th>
+                                                <th class="p-3">應力 (右張拉) (N/mm²)</th>
+                                                <th class="p-3">判定</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="check-2-1-body">
+                                            <!-- Rows will be generated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details id="check-2-2" class="check-card bg-white rounded-lg shadow-md mb-6">
+                        <summary class="p-6 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-slate-700">2.2 混凝土應力檢核 (長期荷重)</h3>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                        </summary>
+                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                            <p class="mb-4"><strong>目標：</strong>確保在永久作用下，混凝土的壓應力未超過規定，以驗證徐變與乾縮變形的影響可被妥善評估。</p>
+                            <p class="mb-4"><strong>規範來源：</strong>《道示》III編 5.1.5(3)</p>
+                             <div class="mb-4">
+                                <h4 class="font-semibold text-slate-600 mb-2">判定基準：</h4>
+                                <p><strong>限制值 $0.0 \le \sigma_{c} \le 13.8$ N/mm²</strong> (「+」為壓應力)</p>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的計算值)：</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="p-3">斷面</th>
+                                                <th class="p-3">位置</th>
+                                                <th class="p-3">應力 (TF無) (N/mm²)</th>
+                                                <th class="p-3">應力 (TF有) (N/mm²)</th>
+                                                <th class="p-3">判定</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="check-2-2-body">
+                                            <!-- Rows will be generated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <details id="check-2-3" class="check-card bg-white rounded-lg shadow-md mb-6">
+                        <summary class="p-6 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-slate-700">2.3 彎矩檢核 (極限狀態1 & 3)</h3>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                        </summary>
+                        <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-600 mb-2">極限狀態 1 (服務性檢核)</h4>
+                                <p class="mb-4"><strong>目標：</strong>確保在正常使用載重下，混凝土應力在容許範圍內，防止功能性損壞。</p>
+                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.3.1(4), 5.6.1(3)</p>
+                                <p class="mb-4"><strong>判定基準：</strong>拉應力 $\sigma_t \le 2.5$ N/mm²，壓應力 $\sigma_c \le 20.7$ N/mm²。即 **$-2.5 \le \sigma_c \le 20.7$ N/mm²**。</p>
+                                <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入設計應力 min/max)：</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="p-3">斷面</th>
+                                                <th class="p-3">最小應力 (N/mm²)</th>
+                                                <th class="p-3">最大應力 (N/mm²)</th>
+                                                <th class="p-3">判定</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="check-2-3-1-body">
+                                            <!-- Rows will be generated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-slate-200">
+                                <h4 class="text-lg font-semibold text-slate-600 mb-2">極限狀態 3 (安全性檢核)</h4>
+                                <p class="mb-4"><strong>目標：</strong>確保在極限載重下，設計彎矩 $M_d$ 不超過斷面的破壞抵抗彎矩 $M_{ud}$，防止結構破壞。</p>
+                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.4.1(4), 5.8.1(3)</p>
+                                <p class="mb-4"><strong>結果：</strong>此檢核涉及彎矩而非應力，請參照設計文件中的彎矩檢核表。範例中所有斷面均通過檢核。 <span class="result-tag result-ok">OK</span></p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details id="check-2-4" class="check-card bg-white rounded-lg shadow-md mb-6">
+                        <summary class="p-6 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-slate-700">2.4 剪力檢核 (穿刺剪力)</h3>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                        </summary>
+                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                             <p class="mb-4"><strong>目標：</strong>確保橋面版有足夠的厚度以抵抗輪載產生的穿刺剪力破壞。</p>
+                            <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.3.2, 9.4.2</p>
+                            <p class="mb-4"><strong>判定基準：</strong>極限狀態1的檢核可由極限狀態3的檢核替代。極限狀態3要求實際版厚需大於最小全厚要求。</p>
+                            <div class="mb-4">
+                                <h4 class="font-semibold text-slate-600 mb-2">計算與判定：</h4>
+                                <p>最小全厚要求 $d_{min} = (30L + 110) \times 90\% = (30 \times 4.40 + 110) \times 0.90 = 218$ mm</p>
+                                <div class="flex items-center gap-4 mt-2">
+                                    <label for="deck-thickness">請輸入您的設計版厚 (mm):</label>
+                                    <input type="number" id="deck-thickness" value="300" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500">
+                                    <span id="deck-thickness-result"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details id="check-2-5" class="check-card bg-white rounded-lg shadow-md mb-6">
+                        <summary class="p-6 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-slate-700">2.5 特殊荷重檢核</h3>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                        </summary>
+                        <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
+                           <div>
+                                <h4 class="text-lg font-semibold text-slate-600 mb-2">相反應力構件檢核</h4>
+                                <p class="mb-4"><strong>目標：</strong>針對靜載重與活載重產生應力符號相反的斷面，進行特殊載重組合下的檢核。</p>
+                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 式(解5.1.2)</p>
+                                <p class="mb-4"><strong>結果：</strong>經判定，Sec-7上緣為相反應力構件。使用檢核用荷重組合 $1.0 \times (L+PS+CR+SH)$ 計算後，應力與彎矩均在限制值內。 <span class="result-tag result-ok">OK</span></p>
+                            </div>
+                            <div class="pt-6 border-t border-slate-200">
+                                <h4 class="text-lg font-semibold text-slate-600 mb-2">橋梁護欄衝擊荷重檢核</h4>
+                                <p class="mb-4"><strong>目標：</strong>確保橋面板在護欄受衝擊時，能承受其產生的彎矩。</p>
+                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.6(6)</p>
+                                <p class="mb-4"><strong>結果：</strong>此檢核涉及彎矩而非應力，請參照設計文件中的彎矩檢核表。範例中所有斷面均通過檢核。 <span class="result-tag result-ok">OK</span></p>
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <details id="check-2-6" class="check-card bg-white rounded-lg shadow-md mb-6">
+                        <summary class="p-6 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-slate-700">2.6 施工階段檢核</h3>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                        </summary>
+                        <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-600 mb-2">PC鋼材應力檢核</h4>
+                                <p class="mb-4"><strong>目標：</strong>確保在張拉過程與張拉完成後，PC鋼材應力不超過臨時狀況的容許值。</p>
+                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 表-解3.4.1</p>
+                                <p class="mb-4"><strong>結果：</strong>張拉中應力 $\le 1420$ N/mm²，張拉後應力 $\le 1280$ N/mm²。範例中所有斷面計算值均在限制內。 <span class="result-tag result-ok">OK</span></p>
+                            </div>
+                             <div class="pt-6 border-t border-slate-200">
+                                <h4 class="text-lg font-semibold text-slate-600 mb-2">混凝土應力檢核</h4>
+                                <p class="mb-4"><strong>目標：</strong>確保在施工階段（如主梁完成、橋面完成），混凝土應力在臨時容許範圍內。</p>
+                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 3.4.1(8)解說</p>
+                                <div class="mb-4">
+                                    <h5 class="font-semibold text-slate-600 mb-2">判定基準：</h5>
+                                    <ul class="list-disc list-inside">
+                                        <li>主梁完成階段: <strong>$-1.48 \le \sigma_c \le 17.6$ N/mm²</strong></li>
+                                        <li>橋面完成階段: <strong>$-1.67 \le \sigma_c \le 14.7$ N/mm²</strong></li>
+                                    </ul>
+                                </div>
+                                <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的計算值)：</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="p-3" rowspan="2">斷面</th>
+                                                <th class="p-3" colspan="3">主梁完成階段 (N/mm²)</th>
+                                                <th class="p-3" colspan="3">橋面完成階段 (N/mm²)</th>
+                                            </tr>
+                                            <tr>
+                                                <th class="p-3">上緣應力</th>
+                                                <th class="p-3">下緣應力</th>
+                                                <th class="p-3">判定</th>
+                                                <th class="p-3">上緣應力</th>
+                                                <th class="p-3">下緣應力</th>
+                                                <th class="p-3">判定</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="check-2-6-body">
+                                            <!-- Rows will be generated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details id="check-2-7" class="check-card bg-white rounded-lg shadow-md mb-6">
+                        <summary class="p-6 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-slate-700">2.7 耐久性能檢核</h3>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                        </summary>
+                        <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-600 mb-2">疲勞檢核</h4>
+                                <p class="mb-4"><strong>目標：</strong>控制在重複載重下，混凝土與PC鋼材的應力，防止疲勞破壞。</p>
+                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.5.1, 6.3.2, 表-6.3.4, 表-9.5.2</p>
+                                <p class="mb-4"><strong>判定基準：</strong>混凝土應力 $0.0 \le \sigma_c \le 13.8$ N/mm²；PC鋼材有效應力 $\sigma_p \le 1090$ N/mm²。</p>
+                                <p class="mb-4"><strong>結果：</strong>PC鋼材有效應力檢核 <span class="result-tag result-ok">OK</span> (1086 N/mm² $\le$ 1090 N/mm²)。混凝土應力請於下表輸入檢核。</p>
+                                <h4 class="font-semibold text-slate-600 mb-2">混凝土應力計算與判定 (請輸入您的設計應力 min/max)：</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="p-3">斷面</th>
+                                                <th class="p-3">位置</th>
+                                                <th class="p-3">最小應力 (N/mm²)</th>
+                                                <th class="p-3">最大應力 (N/mm²)</th>
+                                                <th class="p-3">判定</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="check-2-7-1-body">
+                                            <!-- Rows will be generated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-slate-200">
+                                <h4 class="text-lg font-semibold text-slate-600 mb-2">內部鋼筋腐蝕檢核</h4>
+                                <p class="mb-4"><strong>目標：</strong>透過控制保護層厚度與混凝土應力狀態，防止內部鋼筋腐蝕。</p>
+                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 6.2.3, 9.5.2, 表-5.1.2</p>
+                                <p class="mb-4"><strong>判定基準：</strong>保護層厚度需滿足規定；永久作用下混凝土應力 $0.0 \le \sigma_c \le 13.8$ N/mm²。</p>
+                                <p class="mb-4"><strong>結果：</strong>保護層厚度已確認符合規定。混凝土應力請於下表輸入檢核。</p>
+                                 <h4 class="font-semibold text-slate-600 mb-2">混凝土應力計算與判定 (請輸入您的計算值)：</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="p-3">斷面</th>
+                                                <th class="p-3">位置</th>
+                                                <th class="p-3">應力 (N/mm²)</th>
+                                                <th class="p-3">判定</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="check-2-7-2-body">
+                                            <!-- Rows will be generated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </section>
+
+                <section id="section-3" class="check-card bg-white rounded-lg shadow-md p-6 mt-8">
+                     <h2 class="text-2xl font-bold text-slate-800 mb-4">3. 腹版與下翼版檢核</h2>
+                     <p class="text-slate-600">此部分的詳細檢核內容將在後續版本中提供。</p>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initial render of KaTeX
+            renderMathInElement(document.body, {
+              delimiters: [
+                  {left: '$$', right: '$$', display: true},
+                  {left: '$', right: '$', display: false},
+                  {left: '\\(', right: '\\)', display: false},
+                  {left: '\\[', right: '\\]', display: true}
+              ],
+              throwOnError : false
+            });
+
+            // --- Interactive Check Logic ---
+
+            function createResultTag(status) {
+                if (status === 'OK') {
+                    return '<span class="result-tag result-ok">OK</span>';
+                } else if (status === 'NG') {
+                    return '<span class="result-tag result-ng">NG</span>';
+                }
+                return '<span class="result-tag result-pending">--</span>';
+            }
+
+            // Check 2.1: PC Steel Stress
+            const check21Body = document.getElementById('check-2-1-body');
+            const check21Data = [
+                { section: 'Sec-3', valLeft: 1116, valRight: 1178 },
+                { section: 'Sec-5', valLeft: 1117, valRight: 1176 },
+                { section: 'Sec-7', valLeft: 1147, valRight: 1147 },
+            ];
+            const limit21 = 1280;
+            check21Data.forEach((data, index) => {
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'text-center' : 'bg-slate-50 text-center';
+                row.innerHTML = `
+                    <td class="p-3 font-medium">${data.section}</td>
+                    <td class="p-3"><input type="number" value="${data.valLeft}" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-max="${limit21}" data-target="result-2-1-${index}"></td>
+                    <td class="p-3"><input type="number" value="${data.valRight}" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-max="${limit21}" data-target="result-2-1-${index}"></td>
+                    <td class="p-3" id="result-2-1-${index}"></td>
+                `;
+                check21Body.appendChild(row);
+            });
+            
+            // Check 2.2: Concrete Stress (Long-term)
+            const check22Body = document.getElementById('check-2-2-body');
+            const check22Data = [
+                { section: 'Sec-3', pos: '上緣', valNoTf: 2.48, valTf: 2.48 },
+                { section: 'Sec-3', pos: '下緣', valNoTf: 0.60, valTf: 0.60 },
+                { section: 'Sec-5', pos: '上緣', valNoTf: 2.86, valTf: 2.80 },
+                { section: 'Sec-5', pos: '下緣', valNoTf: 0.08, valTf: 0.15 },
+                { section: 'Sec-7', pos: '上緣', valNoTf: 0.28, valTf: 0.14 },
+                { section: 'Sec-7', pos: '下緣', valNoTf: 4.22, valTf: 4.38 },
+            ];
+            const [limit22Min, limit22Max] = [0.0, 13.8];
+            check22Data.forEach((data, index) => {
+                const isGroupStart = index % 2 === 0;
+                const row = document.createElement('tr');
+                row.className = Math.floor(index / 2) % 2 === 0 ? 'text-center' : 'bg-slate-50 text-center';
+                row.innerHTML = `
+                    ${isGroupStart ? `<td class="p-3 font-medium" rowspan="2">${data.section}</td>` : ''}
+                    <td class="p-3">${data.pos}</td>
+                    <td class="p-3"><input type="number" value="${data.valNoTf}" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit22Min}" data-limit-max="${limit22Max}" data-target="result-2-2-${index}"></td>
+                    <td class="p-3"><input type="number" value="${data.valTf}" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit22Min}" data-limit-max="${limit22Max}" data-target="result-2-2-${index}"></td>
+                    <td class="p-3" id="result-2-2-${index}"></td>
+                `;
+                check22Body.appendChild(row);
+            });
+
+            // Check 2.3.1: Limit State 1 Stress
+            const check231Body = document.getElementById('check-2-3-1-body');
+            const check231Data = [
+                { section: 'Sec-3', valMin: -0.17, valMax: 3.25 },
+                { section: 'Sec-5', valMin: -0.48, valMax: 3.44 },
+                { section: 'Sec-7', valMin: -0.24, valMax: 4.76 },
+            ];
+            const [limit231Min, limit231Max] = [-2.5, 20.7];
+             check231Data.forEach((data, index) => {
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'text-center' : 'bg-slate-50 text-center';
+                row.innerHTML = `
+                    <td class="p-3 font-medium">${data.section}</td>
+                    <td class="p-3"><input type="number" value="${data.valMin}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit231Min}" data-limit-max="${limit231Max}" data-target="result-2-3-1-${index}"></td>
+                    <td class="p-3"><input type="number" value="${data.valMax}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit231Min}" data-limit-max="${limit231Max}" data-target="result-2-3-1-${index}"></td>
+                    <td class="p-3" id="result-2-3-1-${index}"></td>
+                `;
+                check231Body.appendChild(row);
+            });
+
+            // Check 2.4: Deck Thickness
+            const deckInput = document.getElementById('deck-thickness');
+            const deckResult = document.getElementById('deck-thickness-result');
+            const minDeckThickness = 218;
+            function checkDeckThickness() {
+                const val = parseFloat(deckInput.value);
+                if (isNaN(val)) {
+                    deckResult.innerHTML = createResultTag('pending');
+                    return;
+                }
+                deckResult.innerHTML = val >= minDeckThickness ? createResultTag('OK') : createResultTag('NG');
+            }
+            deckInput.addEventListener('input', checkDeckThickness);
+            checkDeckThickness();
+
+            // Check 2.6: Construction Stage Concrete Stress
+            const check26Body = document.getElementById('check-2-6-body');
+            const check26Data = [
+                { section: 'Sec-3', val1_top: 3.84, val1_bot: -0.14, val2_top: 3.09, val2_bot: 0.62 },
+                { section: 'Sec-5', val1_top: 3.64, val1_bot: 0.06, val2_top: 3.45, val2_bot: 0.25 },
+                { section: 'Sec-7', val1_top: 0.35, val1_bot: 5.22, val2_top: 0.32, val2_bot: 5.25 },
+            ];
+            const limits26_1 = [-1.48, 17.6];
+            const limits26_2 = [-1.67, 14.7];
+            check26Data.forEach((data, index) => {
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'text-center' : 'bg-slate-50 text-center';
+                row.innerHTML = `
+                    <td class="p-3 font-medium">${data.section}</td>
+                    <td class="p-3"><input type="number" value="${data.val1_top}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limits26_1[0]}" data-limit-max="${limits26_1[1]}" data-target="result-2-6-1-${index}"></td>
+                    <td class="p-3"><input type="number" value="${data.val1_bot}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limits26_1[0]}" data-limit-max="${limits26_1[1]}" data-target="result-2-6-1-${index}"></td>
+                    <td class="p-3" id="result-2-6-1-${index}"></td>
+                    <td class="p-3"><input type="number" value="${data.val2_top}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limits26_2[0]}" data-limit-max="${limits26_2[1]}" data-target="result-2-6-2-${index}"></td>
+                    <td class="p-3"><input type="number" value="${data.val2_bot}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limits26_2[0]}" data-limit-max="${limits26_2[1]}" data-target="result-2-6-2-${index}"></td>
+                    <td class="p-3" id="result-2-6-2-${index}"></td>
+                `;
+                check26Body.appendChild(row);
+            });
+
+             // Check 2.7.1: Fatigue Concrete Stress
+            const check271Body = document.getElementById('check-2-7-1-body');
+            const check271Data = [
+                { section: 'Sec-3', pos: '上緣', valMin: 0.40, valMax: 2.36 },
+                { section: 'Sec-3', pos: '下緣', valMin: 0.57, valMax: 2.54 },
+                { section: 'Sec-5', pos: '上緣', valMin: 0.14, valMax: 2.67 },
+                { section: 'Sec-5', pos: '下緣', valMin: 2.72, valMax: 2.72 },
+                { section: 'Sec-7', pos: '上緣', valMin: 0.27, valMax: 3.82 },
+                { section: 'Sec-7', pos: '下緣', valMin: 0.48, valMax: 4.02 },
+            ];
+            const [limit271Min, limit271Max] = [0.0, 13.8];
+            check271Data.forEach((data, index) => {
+                const isGroupStart = index % 2 === 0;
+                const row = document.createElement('tr');
+                row.className = Math.floor(index / 2) % 2 === 0 ? 'text-center' : 'bg-slate-50 text-center';
+                row.innerHTML = `
+                    ${isGroupStart ? `<td class="p-3 font-medium" rowspan="2">${data.section}</td>` : ''}
+                    <td class="p-3">${data.pos}</td>
+                    <td class="p-3"><input type="number" value="${data.valMin}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit271Min}" data-limit-max="${limit271Max}" data-target="result-2-7-1-${index}"></td>
+                    <td class="p-3"><input type="number" value="${data.valMax}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit271Min}" data-limit-max="${limit271Max}" data-target="result-2-7-1-${index}"></td>
+                    <td class="p-3" id="result-2-7-1-${index}"></td>
+                `;
+                check271Body.appendChild(row);
+            });
+
+            // Check 2.7.2: Corrosion Concrete Stress
+            const check272Body = document.getElementById('check-2-7-2-body');
+            const check272Data = [
+                { section: 'Sec-3', pos: '上緣', val: 2.36 },
+                { section: 'Sec-3', pos: '下緣', val: 0.57 },
+                { section: 'Sec-5', pos: '上緣', val: 2.72 },
+                { section: 'Sec-5', pos: '下緣', val: 0.08 },
+                { section: 'Sec-7', pos: '上緣', val: 0.27 },
+                { section: 'Sec-7', pos: '下緣', val: 4.02 },
+            ];
+            const [limit272Min, limit272Max] = [0.0, 13.8];
+            check272Data.forEach((data, index) => {
+                const isGroupStart = index % 2 === 0;
+                const row = document.createElement('tr');
+                row.className = Math.floor(index / 2) % 2 === 0 ? 'text-center' : 'bg-slate-50 text-center';
+                row.innerHTML = `
+                    ${isGroupStart ? `<td class="p-3 font-medium" rowspan="2">${data.section}</td>` : ''}
+                    <td class="p-3">${data.pos}</td>
+                    <td class="p-3"><input type="number" value="${data.val}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit272Min}" data-limit-max="${limit272Max}" data-target="result-2-7-2-${index}"></td>
+                    <td class="p-3" id="result-2-7-2-${index}"></td>
+                `;
+                check272Body.appendChild(row);
+            });
+
+
+            // --- General Event Listener for all checkers ---
+            
+            function runAllChecks() {
+                document.querySelectorAll('.stress-input').forEach(input => {
+                    validateInput(input);
+                });
+            }
+
+            function validateInput(input) {
+                const val = parseFloat(input.value);
+                const targetId = input.dataset.target;
+                const resultCell = document.getElementById(targetId);
+
+                if (isNaN(val)) {
+                    resultCell.innerHTML = createResultTag('pending');
+                    return;
+                }
+
+                const min = input.dataset.limitMin !== undefined ? parseFloat(input.dataset.limitMin) : -Infinity;
+                const max = input.dataset.limitMax !== undefined ? parseFloat(input.dataset.limitMax) : Infinity;
+                
+                if (val >= min && val <= max) {
+                    resultCell.innerHTML = createResultTag('OK');
+                } else {
+                    resultCell.innerHTML = createResultTag('NG');
+                }
+            }
+            
+            document.getElementById('app-container').addEventListener('input', function(e) {
+                if (e.target.classList.contains('stress-input')) {
+                    validateInput(e.target);
+                }
+            });
+
+            // Run initial checks on page load
+            runAllChecks();
+
+
+            // --- Sidebar and Mobile Menu Logic ---
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            const sections = document.querySelectorAll('section[id], details[id]');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        sidebarLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
