@@ -45,7 +45,6 @@
                     </div>
                 </summary>
                 <div class="p-6 border-t border-gray-200">
-                    <!-- 將 ul 的佈局從垂直堆疊改為兩欄網格 -->
                     <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- 道路排水溝按鈕 -->
                         <li>
@@ -79,20 +78,27 @@
                 </div>
             </details>
 
-            <!-- 範例：未來可以新增其他工具類別 -->
-            <!--
-            <details class="bg-white rounded-2xl shadow-lg overflow-hidden group">
+            <!-- *** 修改後的三跨預力箱型梁檢核下拉選單 *** -->
+            <details class="bg-white rounded-2xl shadow-lg overflow-hidden group" open>
                 <summary class="flex items-center justify-between p-5 cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
-                    <h2 class="text-xl font-bold text-gray-800">結構分析</h2>
+                    <h2 class="text-xl font-bold text-gray-800">三跨預力箱型梁檢核</h2>
                     <div class="custom-arrow text-gray-500">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
                 </summary>
                 <div class="p-6 border-t border-gray-200">
-                    <p class="text-gray-500">此處可放置結構相關工具...</p>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- 橋面板檢核按鈕 -->
+                        <li>
+                            <a href="./brg_deck.html" target="_blank" class="block p-4 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
+                                <h3 class="font-semibold text-slate-800 text-lg">1. 橋面板檢核</h3>
+                                <p class="text-sm text-slate-700 mt-1">基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。</p>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </details>
-            -->
+
         </main>
 
         <footer class="text-center text-gray-400 mt-12 text-sm">
