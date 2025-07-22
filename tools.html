@@ -30,13 +30,11 @@
 </head>
 <body class="bg-gray-50 text-gray-800 p-4 sm:p-6 md:p-8">
     <div class="w-full max-w-4xl mx-auto">
-        <!-- 頁面標頭 -->
         <header class="mb-8 text-center relative">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900">TTC_計算機</h1>
         </header>
 
         <main class="space-y-6">
-            <!-- 水文計算下拉選單 -->
             <details class="bg-white rounded-2xl shadow-lg overflow-hidden group" open>
                 <summary class="flex items-center justify-between p-5 cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                     <h2 class="text-xl font-bold text-gray-800">水文計算</h2>
@@ -46,28 +44,24 @@
                 </summary>
                 <div class="p-6 border-t border-gray-200">
                     <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- 道路排水溝按鈕 -->
                         <li>
                             <a href="./road_ditch.html" target="_blank" class="block p-4 rounded-lg bg-green-50 hover:bg-green-100 border border-green-200 hover:border-green-300 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
                                 <h3 class="font-semibold text-green-800 text-lg">道路排水溝</h3>
                                 <p class="text-sm text-green-700 mt-1">計算道路旁 U 型排水溝的流量、流速與相關水理參數。</p>
                             </a>
                         </li>
-                        <!-- 新增的集水井按鈕 -->
                         <li>
                             <a href="./well.html" target="_blank" class="block p-4 rounded-lg bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 hover:border-yellow-300 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
                                 <h3 class="font-semibold text-yellow-800 text-lg">集水井</h3>
                                 <p class="text-sm text-yellow-700 mt-1">評估集水井的收集效率與設計流量。</p>
                             </a>
                         </li>
-                        <!-- 管涵按鈕 -->
                         <li>
                             <a href="./rcp.html" target="_blank" class="block p-4 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 hover:border-purple-300 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
                                 <h3 class="font-semibold text-purple-800 text-lg">管涵</h3>
                                 <p class="text-sm text-purple-700 mt-1">分析圓形管涵在不同條件下的通水能力與水理狀態。</p>
                             </a>
                         </li>
-                        <!-- 渠道計算連結 -->
                         <li>
                             <a href="./channel_calculator.html" target="_blank" class="block p-4 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 hover:border-blue-300 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
                                 <h3 class="font-semibold text-blue-800 text-lg">渠道計算</h3>
@@ -78,7 +72,6 @@
                 </div>
             </details>
 
-            <!-- *** 修改後的三跨預力箱型梁檢核下拉選單 *** -->
             <details class="bg-white rounded-2xl shadow-lg overflow-hidden group" open>
                 <summary class="flex items-center justify-between p-5 cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                     <h2 class="text-xl font-bold text-gray-800">三跨預力箱型梁檢核</h2>
@@ -88,11 +81,29 @@
                 </summary>
                 <div class="p-6 border-t border-gray-200">
                     <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- 橋面板檢核按鈕 -->
                         <li>
                             <a href="./brg_deck.html" target="_blank" class="block p-4 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
                                 <h3 class="font-semibold text-slate-800 text-lg">1. 橋面板檢核</h3>
                                 <p class="text-sm text-slate-700 mt-1">基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </details>
+            
+            <details class="bg-white rounded-2xl shadow-lg overflow-hidden group" open>
+                <summary class="flex items-center justify-between p-5 cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                    <h2 class="text-xl font-bold text-gray-800">電氣計算</h2>
+                    <div class="custom-arrow text-gray-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                </summary>
+                <div class="p-6 border-t border-gray-200">
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <li>
+                            <a href="./lamp.html" target="_blank" class="block p-4 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 transition-all duration-200 hover:shadow-md transform hover:-translate-y-0.5">
+                                <h3 class="font-semibold text-red-800 text-lg">路燈單線圖及壓降計算</h3>
+                                <p class="text-sm text-red-700 mt-1">產生路燈單線圖並計算電壓降，確保符合設計規範。</p>
                             </a>
                         </li>
                     </ul>
