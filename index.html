@@ -53,11 +53,15 @@
             <!-- Performance Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                  <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
-                    <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
+                     <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
+                     <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
                  </div>
                  <div class="relative" style="height: 400px;">
                      <canvas id="performanceChart"></canvas>
+                 </div>
+                 <!-- Total Amount Display -->
+                 <div class="text-right mt-4 pr-2">
+                    <p id="total-amount" class="text-xl font-bold text-gray-800">總金額: 計算中...</p>
                  </div>
             </div>
         </div>
@@ -90,6 +94,7 @@
         const accordionContainer = document.getElementById('accordion-container');
         const chartCanvas = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
+        const totalAmountEl = document.getElementById('total-amount'); // Reference for total amount
         // Modal elements
         const personModal = document.getElementById('person-modal');
         const modalContent = document.getElementById('modal-content');
@@ -269,7 +274,7 @@
         }
         
         /**
-         * Processes and renders the performance data into the bar chart.
+         * Processes and renders the performance data into the bar chart and calculates total.
          * @param {Array<object>} performanceData - Array of performance objects.
          */
         function renderPerformanceChart(performanceData) {
@@ -291,12 +296,21 @@
                 }]
             };
             createOrUpdateChart(chartData);
+
+            // Calculate and display total amount
+            const totalAmount = performanceData.reduce((sum, item) => sum + item.amount, 0);
+            if (totalAmountEl) {
+                totalAmountEl.textContent = `總金額: ${totalAmount.toLocaleString()} 元`;
+            }
         }
 
         // --- MAIN DATA FETCHING LOGIC ---
         async function loadDashboardData() {
             refreshDashboardBtn.disabled = true;
             refreshDashboardBtn.textContent = '讀取中...';
+            if (totalAmountEl) {
+                totalAmountEl.textContent = '總金額: 計算中...';
+            }
             
             const timestamp = new Date().getTime(); // Prevent browser caching
 
@@ -324,6 +338,9 @@
                     if (!values || !Array.isArray(values) || values.length < 2 || !Array.isArray(values[0]) || !Array.isArray(values[1])) {
                          console.error("績效資料格式不符");
                          renderPerformanceChart([]);
+                         if (totalAmountEl) {
+                             totalAmountEl.textContent = '總金額: 資料格式錯誤';
+                         }
                          return;
                     }
                     
@@ -344,6 +361,9 @@
             } catch (error) {
                 console.error("讀取儀表板資料失敗:", error);
                 accordionContainer.innerHTML = `<div class="text-center p-8 text-red-500">儀表板資料載入失敗。<br>${error.message}</div>`;
+                if (totalAmountEl) {
+                    totalAmountEl.textContent = '總金額: 無法計算';
+                }
                 const ctx = chartCanvas.getContext('2d');
                 if (ctx) {
                     ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
