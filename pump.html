@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式泵送系統設計模擬器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: 本應用程式採用任務導向的儀表板結構，引導使用者從上到下完成一個泵送系統的設計流程。此結構將報告中的四大核心概念（揚程、水頭損失、馬力、電氣）轉化為四個互動模組。使用者在第一個模組輸入基本參數，後續模組會自動繼承並計算結果，讓使用者能清晰地看到各個環節的因果關係。這種由淺入深的引導式設計，將靜態的知識轉化為主動的探索與設計體驗，比單純的章節式呈現更具可用性與教育意義。 -->
+    <!-- Visualization & Content Choices: 
+        1. 揚程計算: 目標: 建立基礎。方法: HTML表單輸入，搭配Chart.js線圖呈現初始系統曲線。互動: 使用者輸入後，圖表即時更新。理由: 將抽象的靜揚程概念具象化為圖表的起點。
+        2. 水頭損失: 目標: 分析損失構成。方法: HTML按鈕組讓使用者增減管件，搭配Chart.js圓餅圖顯示損失比例。互動: 點擊按鈕即時更新總揚程(TDH)與圓餅圖。理由: 遊戲化的互動讓使用者深刻體會「次要損失」的重要性。
+        3. 馬力選型: 目標: 比較功率。方法: HTML滑桿調整效率，搭配Chart.js長條圖比較水功率、軸功率與馬達功率。互動: 拖動滑桿即時更新所有功率值。理由: 將「效率」這個關鍵參數從抽象數字變為可直接操縱的變量，凸顯其對選型結果的巨大影響。
+        4. 電氣配置: 目標: 整合資訊。方法: 使用HTML/CSS/Unicode字符動態生成單線圖。互動: 點擊按鈕切換啟動方式，圖示與說明隨之改變。理由: 將最終的電氣方案與前端的液壓計算結果直接掛鉤，完整呈現設計流程的閉環。
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #FDFBF8; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .nav-button { transition: all 0.3s ease; }
+        .nav-button.active { background-color: #0369A1; color: white; }
+        .nav-button:not(.active):hover { background-color: #E0F2FE; }
+        .value-badge { background-color: #0EA5E9; color: white; font-weight: 700; padding: 4px 12px; border-radius: 9999px; min-width: 80px; text-align: center; }
+        .section-card { background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #E5E7EB; }
+        .sld-box { border: 2px solid #9CA3AF; padding: 8px; text-align: center; border-radius: 4px; background-color: #F9FAFB; font-size: 0.875rem; font-weight: 500;}
+        .sld-line { width: 2px; background-color: #9CA3AF; margin: 0 auto; }
+        .sld-icon { font-size: 1.5rem; line-height: 1; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-20">
+        <div class="container mx-auto px-4 py-3">
+            <h1 class="text-2xl md:text-3xl font-bold text-sky-800">互動式泵送系統設計模擬器</h1>
+            <p class="text-gray-600 mt-1">一個將工程報告轉化為實用設計工具的應用程式</p>
+        </div>
+        <nav id="navbar" class="bg-white border-b border-gray-200">
+            <div class="container mx-auto px-4 flex justify-center space-x-2 sm:space-x-4">
+                <a href="#section-1" class="nav-button text-center text-sm sm:text-base font-medium text-gray-700 px-3 py-3 rounded-t-lg">1. 系統參數</a>
+                <a href="#section-2" class="nav-button text-center text-sm sm:text-base font-medium text-gray-700 px-3 py-3 rounded-t-lg">2. 水頭損失</a>
+                <a href="#section-3" class="nav-button text-center text-sm sm:text-base font-medium text-gray-700 px-3 py-3 rounded-t-lg">3. 功率選型</a>
+                <a href="#section-4" class="nav-button text-center text-sm sm:text-base font-medium text-gray-700 px-3 py-3 rounded-t-lg">4. 電氣系統</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <!-- Section 1: System Parameters -->
+        <section id="section-1" class="mb-12">
+            <div class="section-card p-6">
+                <h2 class="text-2xl font-bold text-sky-700 mb-1">1. 系統參數與揚程</h2>
+                <p class="text-gray-600 mb-6">首先，請定義泵送系統的基本物理參數。這是所有後續計算的基礎。「揚程」代表泵浦需要提供的能量，以克服高度差和系統阻力。</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="staticHead" class="block font-medium text-gray-700">靜揚程 (m)</label>
+                            <input type="number" id="staticHead" value="10" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
+                            <p class="text-sm text-gray-500 mt-1">水源液面到排放點的垂直高度差。</p>
+                        </div>
+                        <div>
+                            <label for="flowRate" class="block font-medium text-gray-700">設計流量 (m³/min)</label>
+                            <input type="number" id="flowRate" value="1.2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
+                            <p class="text-sm text-gray-500 mt-1">系統需要輸送的流體體積速率。</p>
+                        </div>
+                        <div>
+                            <label for="pipeLength" class="block font-medium text-gray-700">管路總長 (m)</label>
+                            <input type="number" id="pipeLength" value="50" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
+                            <p class="text-sm text-gray-500 mt-1">從吸入口到排放口的管線總長度。</p>
+                        </div>
+                        <div>
+                            <label for="pipeDiameter" class="block font-medium text-gray-700">管路內徑 (mm)</label>
+                            <input type="number" id="pipeDiameter" value="100" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
+                            <p class="text-sm text-gray-500 mt-1">管線的內部直徑。</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2 text-center">系統曲線預覽</h3>
+                        <p class="text-sm text-center text-gray-600 mb-4">此圖顯示在不同流量下，系統所需的總揚程。目前僅考慮靜揚程與管路摩擦損失。</p>
+                        <div class="chart-container">
+                            <canvas id="systemCurveChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Head Loss -->
+        <section id="section-2" class="mb-12">
+            <div class="section-card p-6">
+                <h2 class="text-2xl font-bold text-sky-700 mb-1">2. 互動式水頭損失分析</h2>
+                <p class="text-gray-600 mb-6">流體經過彎頭、閥門等管件時會產生「次要損失」。請點擊下方按鈕加入管件，觀察它們如何顯著增加系統所需的總揚程。在許多緊湊的系統中，這部分損失甚至會超過直管的摩擦損失。</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">管件配置</h3>
+                        <div id="fittings-controls" class="grid grid-cols-2 gap-4"></div>
+                        <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold">已選管件列表：</h4>
+                            <ul id="fittings-list" class="mt-2 text-gray-700 list-disc list-inside">
+                                <li class="italic">尚未加入任何管件</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-lg font-semibold mb-2">總動態揚程 (TDH)</h3>
+                        <div id="tdh-display" class="text-5xl font-bold text-sky-600 mb-4">10.00 m</div>
+                        <p class="text-sm text-center text-gray-600 mb-4">這是泵浦在設計流量下必須提供的總能量，包含靜揚程與所有水頭損失。</p>
+                        <div class="chart-container">
+                            <canvas id="lossCompositionChart"></canvas>
+                        </div>
+                        <p class="text-sm text-center text-gray-600 mt-2">揚程構成比例圖</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Power & Selection -->
+        <section id="section-3" class="mb-12">
+            <div class="section-card p-6">
+                <h2 class="text-2xl font-bold text-sky-700 mb-1">3. 泵浦功率與馬達選型</h2>
+                <p class="text-gray-600 mb-6">根據計算出的總揚程(TDH)和流量，我們可以確定所需的功率。請拖動滑桿調整泵浦效率，觀察其對軸功率和最終馬達選型的影響。選擇高效率的泵浦是節能的關鍵。</p>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <div class="space-y-6">
+                            <div>
+                                <label for="pumpEfficiency" class="block font-medium text-gray-700">泵浦效率 (%)</label>
+                                <div class="flex items-center space-x-4">
+                                    <input type="range" id="pumpEfficiency" min="50" max="95" value="75" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="pumpEfficiencyValue" class="font-bold text-sky-600 text-lg w-16 text-center">75%</span>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">泵浦將輸入能量轉換為水動力的能力。</p>
+                            </div>
+                            <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-lg">
+                                <h3 class="text-lg font-semibold text-sky-800">建議馬達功率</h3>
+                                <div id="motor-recommendation" class="text-4xl font-bold text-sky-800 mt-1">1.5 kW (2 HP)</div>
+                                <p class="text-sm text-gray-600 mt-1">已包含15-25%的安全裕度，並選用最接近的標準馬達規格。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2 text-center">功率層級比較</h3>
+                        <p class="text-sm text-center text-gray-600 mb-4">此圖顯示從理論水功率到最終馬達選型的能量增加過程。</p>
+                        <div class="chart-container">
+                            <canvas id="powerComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 4: Electrical System -->
+        <section id="section-4">
+            <div class="section-card p-6">
+                <h2 class="text-2xl font-bold text-sky-700 mb-1">4. 電氣系統配置</h2>
+                <p class="text-gray-600 mb-6">電氣系統是抽水站的心臟。下方是一個根據您前面設計所產生的簡化單線圖(SLD)。請選擇不同的馬達啟動方式，觀察其對電氣配置的影響，並了解其優缺點。</p>
+                
+                <div class="mb-6">
+                    <div class="flex justify-center space-x-2 border-b border-gray-200" role="tablist">
+                        <button id="starter-dol" class="starter-button px-4 py-2 font-medium text-sm rounded-t-md border-b-2 border-transparent">直接啟動 (DOL)</button>
+                        <button id="starter-rvss" class="starter-button px-4 py-2 font-medium text-sm rounded-t-md border-b-2 border-transparent">緩啟動器 (RVSS)</button>
+                        <button id="starter-vfd" class="starter-button px-4 py-2 font-medium text-sm rounded-t-md border-b-2 border-transparent">變頻器 (VFD)</button>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <h3 class="text-lg font-semibold mb-4 text-center">簡化單線圖 (SLD)</h3>
+                        <div class="flex flex-col items-center space-y-2">
+                            <div class="sld-box"⚡️ 480V, 3Φ 進線</div>
+                            <div class="sld-line h-4"></div>
+                            <div class="sld-box">主斷路器 (MCB)</div>
+                            <div class="sld-line h-4"></div>
+                            <div class="sld-box">馬達控制中心 (MCC)</div>
+                            <div class="sld-line h-4"></div>
+                            <div id="sld-starter" class="sld-box w-40">
+                                <div class="sld-icon">▶️</div>
+                                <div>直接啟動器</div>
+                            </div>
+                            <div class="sld-line h-4"></div>
+                            <div class="sld-box">過載保護 (OL)</div>
+                            <div class="sld-line h-4"></div>
+                            <div id="sld-motor" class="sld-box w-40">
+                                <div class="sld-icon">Ⓜ️</div>
+                                <div>馬達: 1.5 kW</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="starter-info">
+                        <h3 id="starter-title" class="text-xl font-bold text-gray-800"></h3>
+                        <p id="starter-description" class="mt-2 text-gray-600"></p>
+                        <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <h4 class="font-semibold">優點</h4>
+                                <ul id="starter-pros" class="list-disc list-inside mt-1 text-green-700 space-y-1"></ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">缺點</h4>
+                                <ul id="starter-cons" class="list-disc list-inside mt-1 text-red-700 space-y-1"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 mt-8 border-t">
+        <p class="text-gray-500">基於「泵送系統設計全方位工程指南」報告內容所建構的互動式應用程式。</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fittingsData = {
+                '90° 彎頭': { k: 0.9, name: '90° 標準彎頭' },
+                '45° 彎頭': { k: 0.4, name: '45° 標準彎頭' },
+                '閘閥 (全開)': { k: 0.2, name: '閘閥 (全開)' },
+                '球閥 (全開)': { k: 6.0, name: '球閥 (全開)' },
+                '逆止閥 (擺動式)': { k: 2.0, name: '逆止閥 (擺動式)' },
+                '三通 (直通)': { k: 0.6, name: '三通 (直通)' },
+            };
+
+            const motorData = [
+                { hp: 0.5, kw: 0.37 }, { hp: 1, kw: 0.75 }, { hp: 2, kw: 1.5 }, { hp: 3, kw: 2.2 },
+                { hp: 5, kw: 3.7 }, { hp: 7.5, kw: 5.5 }, { hp: 10, kw: 7.5 }, { hp: 15, kw: 11 },
+                { hp: 20, kw: 15 }, { hp: 25, kw: 18.5 }, { hp: 30, kw: 22 }, { hp: 40, kw: 30 },
+                { hp: 50, kw: 37 }, { hp: 60, kw: 45 }, { hp: 75, kw: 55 }, { hp: 100, kw: 75 },
+            ];
+
+            const starterInfoData = {
+                dol: {
+                    title: '直接啟動 (Direct-On-Line, DOL)',
+                    description: '最簡單、成本最低的啟動方式，直接將全電壓施加於馬達。',
+                    pros: ['結構簡單', '成本低廉', '啟動轉矩大'],
+                    cons: ['啟動電流巨大 (6-8倍)', '對電網衝擊大', '機械應力高 (水錘)'],
+                    icon: '▶️',
+                    name: '直接啟動器'
+                },
+                rvss: {
+                    title: '降壓緩啟動器 (Soft Starter, RVSS)',
+                    description: '透過電子控制逐漸升高電壓，平滑地啟動馬達，限制啟動電流。',
+                    pros: ['有效限制啟動電流 (2-4倍)', '減少機械衝擊', '延長設備壽命'],
+                    cons: ['成本高於DOL', '啟動期間會產生熱量', '不具備調速功能'],
+                    icon: 'S',
+                    name: '緩啟動器'
+                },
+                vfd: {
+                    title: '變頻器 (Variable Frequency Drive, VFD)',
+                    description: '最先進的控制技術，透過改變電源頻率來精確控制馬達轉速。',
+                    pros: ['卓越的節能效果', '精確的流量/壓力控制', '最平滑的啟停，衝擊最小'],
+                    cons: ['初始投資最高', '可能產生諧波干擾', '系統較複雜'],
+                    icon: '∿',
+                    name: '變頻器'
+                }
+            };
+
+            const systemState = {
+                staticHead: 10,
+                flowRate: 1.2, // m3/min
+                pipeLength: 50,
+                pipeDiameter: 100, // mm
+                pumpEfficiency: 75,
+                fittings: [],
+                activeStarter: 'dol',
+            };
+            
+            const charts = {};
+
+            function init() {
+                createFittingsControls();
+                createCharts();
+                addEventListeners();
+                updateAll();
+                setupNav();
+                updateStarterInfo('dol');
+            }
+
+            function createFittingsControls() {
+                const container = document.getElementById('fittings-controls');
+                container.innerHTML = '';
+                for (const key in fittingsData) {
+                    const button = document.createElement('button');
+                    button.className = 'bg-sky-100 text-sky-800 font-medium py-2 px-4 rounded-lg hover:bg-sky-200 transition-colors';
+                    button.textContent = `+ ${key}`;
+                    button.onclick = () => addFitting(key);
+                    container.appendChild(button);
+                }
+            }
+
+            function addEventListeners() {
+                document.getElementById('staticHead').addEventListener('input', updateAll);
+                document.getElementById('flowRate').addEventListener('input', updateAll);
+                document.getElementById('pipeLength').addEventListener('input', updateAll);
+                document.getElementById('pipeDiameter').addEventListener('input', updateAll);
+                document.getElementById('pumpEfficiency').addEventListener('input', (e) => {
+                    document.getElementById('pumpEfficiencyValue').textContent = `${e.target.value}%`;
+                    updateAll();
+                });
+                document.getElementById('starter-dol').addEventListener('click', () => updateStarterInfo('dol'));
+                document.getElementById('starter-rvss').addEventListener('click', () => updateStarterInfo('rvss'));
+                document.getElementById('starter-vfd').addEventListener('click', () => updateStarterInfo('vfd'));
+            }
+
+            function addFitting(key) {
+                systemState.fittings.push(fittingsData[key]);
+                updateAll();
+            }
+
+            function removeFitting(index) {
+                systemState.fittings.splice(index, 1);
+                updateAll();
+            }
+
+            function updateFittingsList() {
+                const list = document.getElementById('fittings-list');
+                list.innerHTML = '';
+                if (systemState.fittings.length === 0) {
+                    list.innerHTML = '<li class="italic">尚未加入任何管件</li>';
+                    return;
+                }
+                systemState.fittings.forEach((fitting, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'flex justify-between items-center';
+                    li.textContent = fitting.name;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = '移除';
+                    removeBtn.className = 'text-red-500 hover:text-red-700 text-sm ml-4';
+                    removeBtn.onclick = () => removeFitting(index);
+                    li.appendChild(removeBtn);
+                    list.appendChild(li);
+                });
+            }
+            
+            function updateStarterInfo(starterKey) {
+                systemState.activeStarter = starterKey;
+                const data = starterInfoData[starterKey];
+                
+                document.getElementById('starter-title').textContent = data.title;
+                document.getElementById('starter-description').textContent = data.description;
+                
+                const prosList = document.getElementById('starter-pros');
+                prosList.innerHTML = data.pros.map(p => `<li>${p}</li>`).join('');
+
+                const consList = document.getElementById('starter-cons');
+                consList.innerHTML = data.cons.map(c => `<li>${c}</li>`).join('');
+
+                const sldStarter = document.getElementById('sld-starter');
+                sldStarter.innerHTML = `<div class="sld-icon">${data.icon}</div><div>${data.name}</div>`;
+                
+                document.querySelectorAll('.starter-button').forEach(btn => {
+                    btn.classList.remove('bg-sky-100', 'text-sky-700', 'border-sky-500');
+                    btn.classList.add('border-transparent');
+                });
+                const activeBtn = document.getElementById(`starter-${starterKey}`);
+                activeBtn.classList.add('bg-sky-100', 'text-sky-700', 'border-sky-500');
+                activeBtn.classList.remove('border-transparent');
+            }
+
+            function calculate() {
+                const { staticHead, flowRate, pipeLength, pipeDiameter, pumpEfficiency, fittings } = systemState;
+                
+                const Q_m3s = flowRate / 60;
+                const D_m = pipeDiameter / 1000;
+                
+                const area = Math.PI * Math.pow(D_m / 2, 2);
+                const velocity = Q_m3s / area;
+
+                const rho = 1000; // kg/m3 for water
+                const nu = 1.0e-6; // m2/s kinematic viscosity for water at 20C
+                const g = 9.81;
+
+                const reynolds = (velocity * D_m) / nu;
+                
+                const epsilon = 0.046 / 1000; // Roughness for new steel pipe in m
+                const relRoughness = epsilon / D_m;
+                
+                let frictionFactor;
+                if (reynolds < 2000) {
+                    frictionFactor = 64 / reynolds;
+                } else {
+                    frictionFactor = Math.pow(-1.8 * Math.log10(Math.pow(relRoughness / 3.7, 1.11) + 6.9 / reynolds), -2);
+                }
+
+                const majorLoss = frictionFactor * (pipeLength / D_m) * (Math.pow(velocity, 2) / (2 * g));
+                
+                const totalK = fittings.reduce((sum, f) => sum + f.k, 0);
+                const minorLoss = totalK * (Math.pow(velocity, 2) / (2 * g));
+
+                const tdh = staticHead + majorLoss + minorLoss;
+                
+                const waterPower_kw = (Q_m3s * tdh * rho * g) / 1000;
+                const brakePower_kw = waterPower_kw / (pumpEfficiency / 100);
+                
+                let serviceFactor = 0.25;
+                if (brakePower_kw > 7.5) serviceFactor = 0.15;
+                if (brakePower_kw > 30) serviceFactor = 0.10;
+
+                const requiredMotorKw = brakePower_kw * (1 + serviceFactor);
+                
+                const recommendedMotor = motorData.find(m => m.kw >= requiredMotorKw) || motorData[motorData.length - 1];
+
+                return {
+                    tdh,
+                    majorLoss,
+                    minorLoss,
+                    waterPower_kw,
+                    brakePower_kw,
+                    recommendedMotor
+                };
+            }
+
+            function updateAll() {
+                systemState.staticHead = parseFloat(document.getElementById('staticHead').value) || 0;
+                systemState.flowRate = parseFloat(document.getElementById('flowRate').value) || 0;
+                systemState.pipeLength = parseFloat(document.getElementById('pipeLength').value) || 0;
+                systemState.pipeDiameter = parseFloat(document.getElementById('pipeDiameter').value) || 0;
+                systemState.pumpEfficiency = parseInt(document.getElementById('pumpEfficiency').value) || 75;
+
+                const results = calculate();
+                
+                document.getElementById('tdh-display').textContent = `${results.tdh.toFixed(2)} m`;
+                document.getElementById('motor-recommendation').textContent = `${results.recommendedMotor.kw} kW (${results.recommendedMotor.hp} HP)`;
+                document.getElementById('sld-motor').innerHTML = `<div class="sld-icon">Ⓜ️</div><div>馬達: ${results.recommendedMotor.kw} kW</div>`;
+
+                updateFittingsList();
+                updateCharts(results);
+            }
+
+            function createCharts() {
+                const commonOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#4B5563' } },
+                        x: { ticks: { color: '#4B5563' } }
+                    }
+                };
+
+                charts.systemCurve = new Chart(document.getElementById('systemCurveChart'), {
+                    type: 'line',
+                    data: { labels: [], datasets: [] },
+                    options: { ...commonOptions, plugins: { ...commonOptions.plugins, title: { display: false } } }
+                });
+
+                charts.lossComposition = new Chart(document.getElementById('lossCompositionChart'), {
+                    type: 'doughnut',
+                    data: { labels: ['靜揚程', '摩擦損失', '管件損失'], datasets: [] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+
+                charts.powerComparison = new Chart(document.getElementById('powerComparisonChart'), {
+                    type: 'bar',
+                    data: { labels: ['水功率 (WHP)', '軸功率 (BHP)', '建議馬達功率'], datasets: [] },
+                    options: commonOptions
+                });
+            }
+
+            function updateCharts(results) {
+                const { tdh, majorLoss, minorLoss, waterPower_kw, brakePower_kw, recommendedMotor } = results;
+                const staticHead = systemState.staticHead;
+
+                charts.systemCurve.data.labels = [0, systemState.flowRate * 0.5, systemState.flowRate, systemState.flowRate * 1.5].map(q => q.toFixed(2));
+                const lossCoefficient = (majorLoss + minorLoss) / Math.pow(systemState.flowRate, 2);
+                charts.systemCurve.data.datasets = [{
+                    label: '系統曲線 (總揚程)',
+                    data: charts.systemCurve.data.labels.map(q => staticHead + lossCoefficient * Math.pow(parseFloat(q), 2)),
+                    borderColor: '#0369A1',
+                    backgroundColor: 'rgba(3, 105, 161, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }];
+                charts.systemCurve.update();
+
+                charts.lossComposition.data.datasets = [{
+                    label: '揚程構成',
+                    data: [staticHead, majorLoss, minorLoss],
+                    backgroundColor: ['#38BDF8', '#FBBF24', '#F87171'],
+                    hoverOffset: 4
+                }];
+                charts.lossComposition.update();
+
+                charts.powerComparison.data.datasets = [{
+                    label: '功率 (kW)',
+                    data: [waterPower_kw, brakePower_kw, recommendedMotor.kw],
+                    backgroundColor: ['#38BDF8', '#FBBF24', '#34D399'],
+                    borderColor: ['#0EA5E9', '#F59E0B', '#10B981'],
+                    borderWidth: 1
+                }];
+                charts.powerComparison.update();
+            }
+            
+            function setupNav() {
+                const sections = document.querySelectorAll('section');
+                const navLinks = document.querySelectorAll('#navbar a');
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            navLinks.forEach(link => {
+                                link.classList.remove('active');
+                                if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                    link.classList.add('active');
+                                }
+                            });
+                        }
+                    });
+                }, { rootMargin: "-50% 0px -50% 0px", threshold: 0 });
+
+                sections.forEach(section => observer.observe(section));
+                
+                navLinks.forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        document.querySelector(this.getAttribute('href')).scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    });
+                });
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
