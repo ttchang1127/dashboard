@@ -11,12 +11,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm Harmony -->
-    <!-- Application Structure Plan: The SPA is structured into four main, logical tabs: '設計案例' (Case Studies), '壓降計算機' (VD Calculator), '單線圖設計' (SLD Design), and '設計總結' (Summary). This task-oriented structure allows users to either learn sequentially or jump directly to practical tools. The 'Case Studies' section integrates the other sections by allowing users to load pre-filled data into the calculator, bridging theory and practice. The 'SLD' section uses an interactive diagram to explain components and provides new recommendation values. The 'Calculator' is the core interactive tool for hands-on learning. This design prioritizes user engagement and practical application over a static, linear presentation of the source report. -->
+    <!-- Application Structure Plan: The SPA is structured into five main, logical tabs: '設計案例' (Case Studies), '壓降, 線徑, 保護裝置計算' (Calculator), '單線圖設計' (SLD Design), '設計總結' (Summary), and '補充說明' (Supplementary Info). The calculator is enhanced with a hierarchical verification logic, including feeder and total voltage drop, reflecting a complete panel design workflow. The SLD is now dynamic, reflecting the calculator's inputs. -->
     <!-- Visualization & Content Choices: 
-        - Report Info: Evolution from traditional to smart poles. Goal: Inform. Viz: Side-by-side comparison cards using HTML/Tailwind. Interaction: None. Justification: Clear, visual comparison. Library: HTML/Tailwind.
-        - Report Info: SLD components. Goal: Organize & Inform. Viz: A main diagram with key components and a new recommendations section. Interaction: Clicking on a component name highlights it on the diagram and shows its description. Justification: Makes a complex diagram digestible and interactive. Library: Vanilla JS.
-        - Report Info: Voltage drop calculation results. Goal: Compare & Inform. Viz: A dynamic bar chart. Interaction: The chart updates in real-time based on calculator inputs. A bar shows the calculated VD%, compared against two static lines representing the 3% and 5% legal limits. The bar color changes to red if it exceeds the limits. Justification: Provides immediate, clear visual feedback on the calculation's compliance. Library: Chart.js.
-        - Report Info: Three design cases. Goal: Apply & Analyze. Viz: Tabbed content for each case, integrating text, and a button to load data into the calculator. Interaction: Clicking the button populates the calculator. Justification: Seamlessly connects theoretical cases with the practical tool, reinforcing learning. Library: Vanilla JS.
+        - Report Info: Design verification logic. Goal: Inform/Apply. Viz: Interactive dropdowns and color-coded text results for a feeder, two branch circuits, and one main panel, now including busbar and voltage-dependent grounding checks. Justification: Simulates a realistic design workflow, allowing users to verify individual components and the overall system's compliance with 3%-3%-5% rule. Library/Method: Vanilla JS.
+        - Report Info: SLD components. Goal: Organize & Inform. Viz: A dynamic SVG-based diagram. Interaction: Selections in the calculator tab update the diagram's text content. Justification: Creates a powerful feedback loop between design parameters and visual representation. Library/Method: Vanilla JS and inline SVG.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -40,15 +38,6 @@
         .content-section.active {
             display: block;
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 400px;
-        }
         .sld-highlight {
             transition: all 0.3s ease-in-out;
             cursor: pointer;
@@ -59,20 +48,30 @@
             font-weight: 700;
         }
         .sld-component-line {
-            stroke: #9ca3af;
-            stroke-width: 2;
+            stroke: #334155;
+            stroke-width: 1.5;
         }
         .sld-component-box {
             fill: #f1f5f9;
             stroke: #64748b;
-            stroke-width: 1.5;
+            stroke-width: 1;
         }
-        .sld-component-text {
-            font-size: 12px;
+        .sld-component-text, .sld-label-text {
+            font-size: 10px;
             font-family: 'Noto Sans TC', sans-serif;
             fill: #334155;
-            text-anchor: middle;
-            dominant-baseline: central;
+        }
+        .sld-title-text {
+             font-size: 14px;
+             font-weight: bold;
+             font-family: 'Noto Sans TC', sans-serif;
+             fill: #1e293b;
+        }
+        .verification-grid {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 0.5rem 1rem;
         }
     </style>
 </head>
@@ -90,13 +89,16 @@
                     <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-active" data-tab="cases">設計案例</button>
                 </li>
                 <li class="mr-2">
-                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="calculator">壓降計算機</button>
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="calculator">壓降, 線徑, 保護裝置計算</button>
                 </li>
                 <li class="mr-2">
                     <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="sld">單線圖設計</button>
                 </li>
-                <li>
+                <li class="mr-2">
                     <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="summary">設計總結</button>
+                </li>
+                <li>
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="supplement">補充說明</button>
                 </li>
             </ul>
         </nav>
@@ -105,7 +107,7 @@
             <section id="sld" class="content-section">
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h2 class="text-2xl font-bold mb-2 text-[#4A6C6F]">單線圖 (SLD)：電力系統的藍圖</h2>
-                    <p class="mb-6 text-slate-700 leading-relaxed">單線圖是電氣工程的通用語言，它使用標準化符號，以簡潔的圖形表示複雜的電力系統。一個準確的單線圖是進行壓降計算、故障排除和安全維護的基礎。點擊下方列表中的元件名稱，即可在圖中高亮顯示並查看其說明。</p>
+                    <p class="mb-6 text-slate-700 leading-relaxed">此單線圖會根據您在「計算機」頁面中的選擇動態更新，以反映您當前的設計。</p>
                     
                     <div class="grid md:grid-cols-3 gap-6">
                         <div class="md:col-span-1">
@@ -122,45 +124,95 @@
                         </div>
                         <div class="md:col-span-2">
                             <div class="border rounded-lg p-4 bg-slate-50">
-                                <svg id="sld-diagram" viewBox="0 0 400 500" class="w-full h-auto">
-                                    <line class="sld-component-line" x1="200" y1="0" x2="200" y2="50" />
+                                <svg id="sld-diagram" viewBox="0 0 500 500" class="w-full h-auto">
+                                    <!-- Power Source -->
                                     <g class="sld-component" data-id="power-source">
-                                        <rect class="sld-component-box" x="150" y="50" width="100" height="40" rx="5"></rect>
-                                        <text class="sld-component-text" x="200" y="70">電源 3φ4W</text>
+                                        <text x="250" y="20" text-anchor="middle" class="sld-title-text" id="sld_power_source">電源</text>
+                                        <line class="sld-component-line" x1="250" y1="30" x2="250" y2="50" />
+                                        <path class="sld-component-line" d="M 245 50 L 255 50 L 250 60 Z" fill="#334155" />
                                     </g>
-                                    <line class="sld-component-line" x1="200" y1="90" x2="200" y2="120" />
-                                    <g class="sld-component" data-id="breaker">
-                                        <rect class="sld-component-box" x="150" y="120" width="100" height="40" rx="5"></rect>
-                                        <text class="sld-component-text" x="200" y="140">主斷路器</text>
-                                    </g>
-                                    <line class="sld-component-line" x1="200" y1="160" x2="200" y2="220" />
+                                    
+                                    <!-- Feeder Cable -->
                                     <g class="sld-component" data-id="feeder">
-                                        <text class="sld-component-text" x="225" y="190">幹線</text>
+                                        <line class="sld-component-line" x1="250" y1="60" x2="250" y2="90" />
+                                        <text x="260" y="75" class="sld-label-text" id="sld_feeder_wire">XLPE, 14-2/C</text>
                                     </g>
-                                    <line class="sld-component-line" x1="200" y1="220" x2="200" y2="250" />
+
+                                    <!-- Control Box L1 -->
                                     <g class="sld-component" data-id="control-box">
-                                        <rect class="sld-component-box" x="125" y="250" width="150" height="60" rx="5"></rect>
-                                        <text class="sld-component-text" x="200" y="280">路燈控制箱</text>
+                                        <rect x="50" y="90" width="400" height="300" class="sld-component-box" />
+                                        <rect x="60" y="100" width="40" height="20" class="sld-component-box" />
+                                        <text x="80" y="110" text-anchor="middle" class="sld-title-text">L1</text>
                                     </g>
-                                    <line class="sld-component-line" x1="200" y1="310" x2="200" y2="340" />
+
+                                    <!-- Main Breaker NFB -->
+                                    <g class="sld-component" data-id="breaker">
+                                        <line class="sld-component-line" x1="250" y1="90" x2="250" y2="120" />
+                                        <path d="M 250 120 C 240 125, 240 135, 250 140" stroke="#334155" stroke-width="1.5" fill="none" />
+                                        <line class="sld-component-line" x1="250" y1="140" x2="230" y2="155" />
+                                        <text x="260" y="125" class="sld-label-text">NFB</text>
+                                        <text x="260" y="135" class="sld-label-text">2P</text>
+                                        <text x="275" y="135" class="sld-label-text" id="sld_main_nfb_at">30 AT</text>
+                                    </g>
+
+                                    <!-- Bus Bar -->
+                                    <line class="sld-component-line" x1="100" y1="170" x2="400" y2="170" />
+                                    <line class="sld-component-line" x1="250" y1="150" x2="250" y2="170" />
+                                    <text x="250" y="163" text-anchor="middle" class="sld-label-text" id="sld_busbar_size">CU BUS BAR</text>
+
+                                    <!-- Grounding -->
+                                    <g>
+                                        <line class="sld-component-line" x1="380" y1="170" x2="380" y2="190" />
+                                        <rect x="370" y="190" width="20" height="10" class="sld-component-box" />
+                                        <text x="380" y="195" text-anchor="middle" class="sld-label-text">G</text>
+                                        <line class="sld-component-line" x1="380" y1="200" x2="430" y2="200" />
+                                        <line class="sld-component-line" x1="430" y1="200" x2="430" y2="220" />
+                                        <path d="M 425 220 L 435 220 L 430 230 Z" fill="#334155" />
+                                        <text x="430" y="240" text-anchor="middle" class="sld-label-text" id="sld_grounding_resistance">R≤50Ω</text>
+                                    </g>
+
+                                    <!-- Branch 1 -->
                                     <g class="sld-component" data-id="branch-breaker">
-                                         <rect class="sld-component-box" x="150" y="340" width="100" height="40" rx="5"></rect>
-                                         <text class="sld-component-text" x="200" y="360">分路斷路器</text>
+                                        <line class="sld-component-line" x1="150" y1="170" x2="150" y2="200" />
+                                        <path d="M 150 200 C 140 205, 140 215, 150 220" stroke="#334155" stroke-width="1.5" fill="none" />
+                                        <line class="sld-component-line" x1="150" y1="220" x2="130" y2="235" />
+                                        <circle cx="150" cy="245" r="3" fill="none" stroke="#334155" stroke-width="1.5" />
+                                        <text x="160" y="202" class="sld-label-text">ELCB</text>
+                                        <text x="160" y="212" class="sld-label-text">2P</text>
+                                        <text x="175" y="212" class="sld-label-text" id="sld_branch1_elcb_at">20 AT</text>
                                     </g>
-                                    <line class="sld-component-line" x1="200" y1="380" x2="200" y2="440" />
                                     <g class="sld-component" data-id="branch-circuit">
-                                        <text class="sld-component-text" x="225" y="410">分路</text>
+                                        <line class="sld-component-line" x1="150" y1="250" x2="150" y2="390" />
+                                        <text x="160" y="270" class="sld-label-text" id="sld_branch1_wire">XLPE, 8-2/C</text>
                                     </g>
                                     <g class="sld-component" data-id="load">
-                                        <circle class="sld-component-box" cx="200" cy="460" r="20"></circle>
-                                        <line x1="188" y1="448" x2="212" y2="472" stroke="#64748b" stroke-width="1.5"></line>
-                                        <line x1="188" y1="472" x2="212" y2="448" stroke="#64748b" stroke-width="1.5"></line>
-                                        <text class="sld-component-text" x="200" y="495" font-size="14px">路燈負載</text>
+                                        <circle cx="150" cy="410" r="12" class="sld-component-box" />
+                                        <text x="150" y="410" text-anchor="middle" dominant-baseline="central" class="sld-label-text">①</text>
+                                        <text x="150" y="435" text-anchor="middle" class="sld-label-text">迴路 1</text>
+                                        <text x="150" y="448" text-anchor="middle" class="sld-label-text" id="sld_branch1_load">總負載: 1440 W</text>
+                                    </g>
+
+                                    <!-- Branch 2 -->
+                                    <g class="sld-component" data-id="branch-breaker">
+                                        <line class="sld-component-line" x1="350" y1="170" x2="350" y2="200" />
+                                        <path d="M 350 200 C 340 205, 340 215, 350 220" stroke="#334155" stroke-width="1.5" fill="none" />
+                                        <line class="sld-component-line" x1="350" y1="220" x2="330" y2="235" />
+                                        <circle cx="350" cy="245" r="3" fill="none" stroke="#334155" stroke-width="1.5" />
+                                        <text x="360" y="202" class="sld-label-text">ELCB</text>
+                                        <text x="360" y="212" class="sld-label-text">2P</text>
+                                        <text x="375" y="212" class="sld-label-text" id="sld_branch2_elcb_at">15 AT</text>
+                                    </g>
+                                     <g class="sld-component" data-id="branch-circuit">
+                                        <line class="sld-component-line" x1="350" y1="250" x2="350" y2="390" />
+                                        <text x="360" y="270" class="sld-label-text" id="sld_branch2_wire">XLPE, 8-2/C</text>
+                                    </g>
+                                    <g class="sld-component" data-id="load">
+                                        <circle cx="350" cy="410" r="12" class="sld-component-box" />
+                                        <text x="350" y="410" text-anchor="middle" dominant-baseline="central" class="sld-label-text">②</text>
+                                        <text x="350" y="435" text-anchor="middle" class="sld-label-text">迴路 2</text>
+                                        <text x="350" y="448" text-anchor="middle" class="sld-label-text" id="sld_branch2_load">總負載: 1200 W</text>
                                     </g>
                                 </svg>
-                            </div>
-                            <div id="sld-description" class="mt-4 p-4 bg-sky-50 rounded-lg text-slate-700 min-h-[100px]">
-                                <p>點擊左側元件以查看詳細說明。</p>
                             </div>
                         </div>
                     </div>
@@ -191,12 +243,14 @@
 
             <section id="calculator" class="content-section">
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-2xl font-bold mb-2 text-[#4A6C6F]">互動式壓降計算機</h2>
-                    <p class="mb-6 text-slate-700 leading-relaxed">壓降是確保設備正常運作和符合法規的關鍵。根據台灣《屋內線路裝置規則》，幹線和分路壓降各不應超過3%，總和不應超過5%。使用此計算機，輸入您的電路參數，即時驗證設計是否合規。</p>
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A6C6F]">壓降, 線徑, 保護裝置計算</h2>
+                    <p class="mb-6 text-slate-700 leading-relaxed">此工具模擬一個開關箱的設計流程。請分別輸入兩個分路迴路的負載參數，並為各分路及總開關選擇規格，系統將自動進行計算與檢核。</p>
                     
-                    <div class="grid md:grid-cols-2 gap-8">
+                    <div class="grid lg:grid-cols-2 gap-8">
                         <div>
-                            <div class="space-y-4">
+                            <!-- Common Inputs -->
+                            <div class="space-y-4 p-4 border border-slate-200 rounded-lg mb-6">
+                                <h3 class="font-semibold text-lg text-slate-800">1. 幹線與共通參數</h3>
                                 <div>
                                     <label for="systemType" class="block text-sm font-medium text-slate-700">系統類型</label>
                                     <select id="systemType" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-[#4A6C6F] focus:border-[#4A6C6F]">
@@ -209,41 +263,137 @@
                                     <label for="voltage" class="block text-sm font-medium text-slate-700">標稱電壓 (V)</label>
                                     <input type="number" id="voltage" value="220" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
                                 </div>
-                                <div>
-                                    <label for="power" class="block text-sm font-medium text-slate-700">總負載功率 (W)</label>
-                                    <input type="number" id="power" value="2500" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                 <div>
+                                    <label for="length_feeder" class="block text-sm font-medium text-slate-700">幹線長度 (m)</label>
+                                    <input type="number" id="length_feeder" value="50" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
                                 </div>
                                 <div>
-                                    <label for="pf" class="block text-sm font-medium text-slate-700">功率因數 (PF)</label>
-                                    <input type="number" id="pf" value="0.8" step="0.01" min="0" max="1" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
-                                </div>
-                                <div>
-                                    <label for="length" class="block text-sm font-medium text-slate-700">線路長度 (m)</label>
-                                    <input type="number" id="length" value="100" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
-                                </div>
-                                <div>
-                                    <label for="wireSize" class="block text-sm font-medium text-slate-700">導線截面積 (mm²)</label>
-                                    <select id="wireSize" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-[#4A6C6F] focus:border-[#4A6C6F]">
-                                        <option value="3.5">3.5 mm²</option>
-                                        <option value="5.5" selected>5.5 mm²</option>
+                                    <label for="checkWireSize_feeder" class="block text-sm font-medium text-slate-700">幹線線徑</label>
+                                    <select id="checkWireSize_feeder" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
                                         <option value="8">8 mm²</option>
-                                        <option value="14">14 mm²</option>
+                                        <option value="14" selected>14 mm²</option>
                                         <option value="22">22 mm²</option>
                                         <option value="38">38 mm²</option>
-                                        <option value="60">60 mm²</option>
-                                        <option value="100">100 mm²</option>
                                     </select>
                                 </div>
-                                <button id="calculateBtn" class="w-full bg-[#4A6C6F] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#3E5A5C] transition-colors">計算壓降</button>
                             </div>
+
+                            <!-- Circuit 1 -->
+                            <div class="space-y-4 p-4 border border-sky-200 rounded-lg mb-6">
+                                <h3 class="font-semibold text-lg text-sky-800">2. 迴路 1 (分路)</h3>
+                                <div>
+                                    <label for="power1" class="block text-sm font-medium text-slate-700">總負載功率 (W)</label>
+                                    <input type="number" id="power1" value="1440" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="pf1" class="block text-sm font-medium text-slate-700">功率因數 (PF)</label>
+                                    <input type="number" id="pf1" value="0.9" step="0.01" min="0" max="1" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="length1" class="block text-sm font-medium text-slate-700">線路長度 (m)</label>
+                                    <input type="number" id="length1" value="150" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div class="pt-2 mt-2 border-t">
+                                    <label for="checkWireSize1" class="block text-sm font-medium text-slate-700">導線線徑</label>
+                                    <select id="checkWireSize1" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                        <option value="5.5">5.5 mm²</option>
+                                        <option value="8" selected>8 mm²</option>
+                                        <option value="14">14 mm²</option>
+                                    </select>
+                                    <label for="checkElcbAT1" class="block text-sm font-medium text-slate-700 mt-2">ELCB 額定電流 (AT)</label>
+                                    <select id="checkElcbAT1" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                        <option value="15">15 A</option>
+                                        <option value="20" selected>20 A</option>
+                                        <option value="30">30 A</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                             <!-- Circuit 2 -->
+                            <div class="space-y-4 p-4 border border-teal-200 rounded-lg mb-6">
+                                <h3 class="font-semibold text-lg text-teal-800">3. 迴路 2 (分路)</h3>
+                                <div>
+                                    <label for="power2" class="block text-sm font-medium text-slate-700">總負載功率 (W)</label>
+                                    <input type="number" id="power2" value="1200" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="pf2" class="block text-sm font-medium text-slate-700">功率因數 (PF)</label>
+                                    <input type="number" id="pf2" value="0.9" step="0.01" min="0" max="1" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="length2" class="block text-sm font-medium text-slate-700">線路長度 (m)</label>
+                                    <input type="number" id="length2" value="120" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                 <div class="pt-2 mt-2 border-t">
+                                    <label for="checkWireSize2" class="block text-sm font-medium text-slate-700">導線線徑</label>
+                                    <select id="checkWireSize2" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                        <option value="5.5">5.5 mm²</option>
+                                        <option value="8" selected>8 mm²</option>
+                                        <option value="14">14 mm²</option>
+                                    </select>
+                                    <label for="checkElcbAT2" class="block text-sm font-medium text-slate-700 mt-2">ELCB 額定電流 (AT)</label>
+                                    <select id="checkElcbAT2" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                        <option value="15" selected>15 A</option>
+                                        <option value="20">20 A</option>
+                                        <option value="30">30 A</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Main Panel -->
+                            <div class="space-y-4 p-4 border border-slate-300 rounded-lg">
+                                <h3 class="font-semibold text-lg text-slate-800">4. 開關箱 (總開關)</h3>
+                                <div>
+                                    <label for="busbarSize" class="block text-sm font-medium text-slate-700">匯流排尺寸 (mm)</label>
+                                    <select id="busbarSize" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                        <option value="15x2">15 x 2</option>
+                                        <option value="20x3" selected>20 x 3</option>
+                                        <option value="25x3">25 x 3</option>
+                                        <option value="30x5">30 x 5</option>
+                                    </select>
+                                </div>
+                                 <div>
+                                    <label for="groundingResistance" class="block text-sm font-medium text-slate-700">接地電阻實測/目標值 (Ω)</label>
+                                    <input type="number" id="groundingResistance" value="25" step="1" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div class="pt-2 mt-2 border-t">
+                                    <label for="checkNfbAT" class="block text-sm font-medium text-slate-700">NFB 額定電流 (AT)</label>
+                                    <select id="checkNfbAT" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                        <option value="20">20 A</option>
+                                        <option value="30" selected>30 A</option>
+                                        <option value="50">50 A</option>
+                                        <option value="75">75 A</option>
+                                    </select>
+                                     <label for="checkNfbIC" class="block text-sm font-medium text-slate-700 mt-2">NFB 啟斷容量 (IC)</label>
+                                    <select id="checkNfbIC" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                        <option value="5">5 kA</option>
+                                        <option value="10" selected>10 kA</option>
+                                        <option value="15">15 kA</option>
+                                    </select>
+                                    <label for="shortCircuitCurrent" class="block text-sm font-medium text-slate-700 mt-2">預期最大短路電流 (kA)</label>
+                                    <input type="number" id="shortCircuitCurrent" value="3.5" step="0.1" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                            </div>
+                             <button id="calculateBtn" class="w-full bg-[#4A6C6F] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#3E5A5C] transition-colors mt-6 text-lg">計算與檢核</button>
                         </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-center">計算結果</h3>
-                            <div class="chart-container">
-                                <canvas id="vdChart"></canvas>
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3 text-center text-sky-800">迴路 1 計算與檢核結果</h3>
+                                <div id="resultCircuit1" class="text-sm space-y-3 bg-sky-50 p-4 rounded-lg">
+                                     <p class="text-base text-center">請點擊「計算與檢核」。</p>
+                                </div>
                             </div>
-                            <div id="resultText" class="mt-4 text-center space-y-2">
-                                <p class="text-lg">請點擊「計算壓降」以查看結果。</p>
+                             <div>
+                                <h3 class="text-lg font-semibold mb-3 text-center text-teal-800">迴路 2 計算與檢核結果</h3>
+                                <div id="resultCircuit2" class="text-sm space-y-3 bg-teal-50 p-4 rounded-lg">
+                                     <p class="text-base text-center">請點擊「計算與檢核」。</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3 text-center">幹線 & 總開關檢核結果</h3>
+                                <div id="resultPanel" class="text-sm space-y-3 bg-slate-100 p-4 rounded-lg">
+                                     <p class="text-base text-center">請點擊「計算與檢核」。</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -289,6 +439,181 @@
                     </ul>
                 </div>
             </section>
+
+            <section id="supplement" class="content-section">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-4 text-[#4A6C6F]">供電系統選擇指南</h2>
+                    <p class="mb-6 text-slate-700 leading-relaxed">在電氣系統設計中，選擇正確的供電方式是首要步驟。這個選擇主要取決於**負載的總功率、設備所需的電壓類型、以及對電力傳輸效率的要求**。</p>
+
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3 text-slate-800 border-b pb-2">1. 單相二線式 (1φ2W)</h3>
+                            <p class="text-slate-700 mt-3">這是最基礎、最簡單的供電方式。</p>
+                            <ul class="mt-4 space-y-2 list-disc list-inside text-slate-600">
+                                <li><strong>系統組成:</strong>
+                                    <ul class="pl-6 list-['-_'] list-inside">
+                                        <li>**110V 系統**: 1條火線 (L) + 1條中性線 (N)。</li>
+                                        <li>**220V 系統**: 2條火線 (L1, L2)。</li>
+                                    </ul>
+                                </li>
+                                <li><strong>特性:</strong> 結構簡單，配線最少；僅能提供單一種電壓；適用於功率較小的負載。</li>
+                                <li><strong>應用場景:</strong> 單一的家用電器、小功率的照明迴路、獨立的馬達或泵浦（220V）。</li>
+                                <li><strong>何時選擇:</strong> 當您的負載很單純，總功率不高（通常在 3kW 以下），並且只需要一種電壓時，這是最經濟的選擇。</li>
+                                <li><strong>限制:</strong> 傳輸相同功率時，電流最高，線路壓降和能量損耗最顯著，不適合長距離或大功率傳輸。</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3 text-slate-800 border-b pb-2">2. 單相三線式 (1φ3W)</h3>
+                            <p class="text-slate-700 mt-3">這是台灣住宅和小型商業場所最標準的供電方式，兼具靈活性與效率。</p>
+                             <ul class="mt-4 space-y-2 list-disc list-inside text-slate-600">
+                                <li><strong>系統組成:</strong> 2條火線 (L1, L2) + 1條中性線 (N)。</li>
+                                <li><strong>提供電壓:</strong>
+                                    <ul class="pl-6 list-['-_'] list-inside">
+                                        <li>火線 (L1 或 L2) 對 中性線 (N) = **110V**</li>
+                                        <li>火線 (L1) 對 火線 (L2) = **220V**</li>
+                                    </ul>
+                                </li>
+                                <li><strong>特性:</strong> 能同時提供兩種電壓，極具彈性；是單相系統中傳輸效率最高的選擇。</li>
+                                <li><strong>應用場景:</strong> 所有住宅用戶、小型商店、辦公室、需要220V及110V的路燈控制箱。</li>
+                                <li><strong>何時選擇:</strong> 當需要同時使用110V和220V，或負載總功率較大（> 3kW）但未達三相電程度時。</li>
+                                <li><strong>核心優勢:</strong> **負載平衡**。若能將110V的負載平均分配，中性線上的電流會趨近於零，大幅降低線路損耗。</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3 text-slate-800 border-b pb-2">3. 三相四線式 (3φ4W)</h3>
+                            <p class="text-slate-700 mt-3">這是工業和大型商業設施的標準，也是電力傳輸的最高效形式。</p>
+                             <ul class="mt-4 space-y-2 list-disc list-inside text-slate-600">
+                                <li><strong>系統組成:</strong> 3條火線 (R, S, T) + 1條中性線 (N)。</li>
+                                <li><strong>提供電壓 (以380V/220V系統為例):</strong>
+                                    <ul class="pl-6 list-['-_'] list-inside">
+                                        <li>任一火線 對 中性線 (N) = **220V** (單相電壓)</li>
+                                        <li>任二火線 對 火線 = **380V** (三相電壓)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>特性:</strong> 電力輸送最穩定、效率最高；能直接驅動三相馬達。</li>
+                                <li><strong>應用場景:</strong> 工廠、大樓、**路燈系統的「幹線」**、大型泵浦或空調。</li>
+                                <li><strong>何時選擇:</strong> 當總負載功率非常大（> 10kW）、有三相設備需求、或需長距離電力輸送時。</li>
+                                <li><strong>核心優勢:</strong> **高傳輸效率與負載平衡**。將單相負載（如路燈控制箱）均勻分配到三相上，可最大化傳輸效率。</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 pt-8 border-t border-slate-200">
+                        <h2 class="text-2xl font-bold mb-4 text-[#4A6C6F]">壓降計算機之計算原理</h2>
+                        <p class="mb-6 text-slate-700 leading-relaxed">本指南中的互動式壓降計算機，是基於專業電工法規所要求的精確阻抗法進行計算。其核心公式與計算步驟如下，了解其組成有助於您更深入地運用此工具。</p>
+                        
+                        <div class="p-4 bg-slate-100 rounded-lg text-center mb-6">
+                            <code class="text-sm md:text-base text-slate-800 font-mono">VD = K1 × I × L × (R × cosθ + X × sinθ)</code>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-lg text-slate-800">第一步：計算設計電流 (I)</h4>
+                                <p class="text-slate-600">根據您輸入的總負載功率(P)、標稱電壓(V)及功率因數(PF)，計算出迴路上的設計電流(A)。</p>
+                                <p class="mt-2 p-2 bg-slate-50 rounded"><code class="font-mono">I = P / (V × PF)</code></p>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold text-lg text-slate-800">第二步：查找導線參數 (R & X)</h4>
+                                <p class="text-slate-600">當您選擇導線截面積時，計算機會從內建的資料表中，自動查找出對應線徑每公里(km)的交流電阻(R)與電抗(X)值。</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg text-slate-800">第三步：計算有效阻抗 (Rcosθ + Xsinθ)</h4>
+                                <p class="text-slate-600">此部分是壓降公式的核心，它綜合了導線的電阻(R)、電抗(X)以及負載的功率因數(cosθ)，計算出實際影響壓降的有效阻抗值。</p>
+                                 <ul class="pl-6 list-disc list-inside text-slate-600 mt-2">
+                                    <li><code class="font-mono bg-slate-100 px-1 rounded">cosθ</code> 即為您輸入的功率因數(PF)。</li>
+                                    <li><code class="font-mono bg-slate-100 px-1 rounded">sinθ</code> 則由三角函數公式 <code class="font-mono bg-slate-100 px-1 rounded">√(1 - cosθ²)</code> 自動算出。</li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold text-lg text-slate-800">第四步：計算總電壓降 (VD)</h4>
+                                <p class="text-slate-600">將前述所有參數代入核心公式，計算出最終的電壓下降數值，單位為伏特(V)。其中系統係數(K1)會根據您選擇的供電方式自動設定：</p>
+                                <ul class="pl-6 list-disc list-inside text-slate-600 mt-2">
+                                    <li><strong>單相二線式 (1φ2W):</strong> K1 = 2 (計算來回兩條線)</li>
+                                    <li><strong>單相三線式 (1φ3W):</strong> K1 = 1 (假設負載平衡)</li>
+                                    <li><strong>三相四線式 (3φ4W):</strong> K1 = 1 (計算線對中性線)</li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold text-lg text-slate-800">第五步：換算為百分比 (VD%)</h4>
+                                <p class="text-slate-600">最後，計算機將VD(伏特)換算為壓降百分比，並以圖表呈現，讓您能直觀地與3%及5%的法規限制進行比較。</p>
+                                <p class="mt-2 p-2 bg-slate-50 rounded"><code class="font-mono">VD% = (VD / 標稱電壓) × 100%</code></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-8 border-t border-slate-200">
+                        <h2 class="text-2xl font-bold mb-4 text-[#4A6C6F]">電氣設計檢核指南</h2>
+                        <p class="mb-6 text-slate-700 leading-relaxed">在完成負載電流與壓降計算後，下一步是利用這些數據來檢核或選定最合適的導線線徑與保護裝置。此檢核過程需同時滿足**法規要求、安全裕度、以及保護協調**三大原則。</p>
+                        <div class="space-y-8">
+                            <div>
+                                <h3 class="text-xl font-semibold mb-3 text-slate-800 border-b pb-2">1. 導線線徑 (Wire Size) 之檢核</h3>
+                                <p class="mt-4 text-slate-600">導線線徑的選擇必須通過以下**兩項關鍵檢核**，缺一不可：</p>
+                                <div class="mt-4 space-y-4">
+                                    <div class="p-4 border-l-4 border-sky-500 bg-sky-50">
+                                        <h4 class="font-bold text-sky-800">✅ 檢核項目一：壓降 (Voltage Drop)</h4>
+                                        <p class="mt-1 text-slate-700">這是性能上的首要檢核。若計算出的壓降百分比 > 法規限制 (分路3%, 總和5%) → **不合格**。必須**加大線徑**後重新計算。</p>
+                                    </div>
+                                    <div class="p-4 border-l-4 border-sky-500 bg-sky-50">
+                                        <h4 class="font-bold text-sky-800">✅ 檢核項目二：安全電流 (Ampacity)</h4>
+                                        <p class="mt-1 text-slate-700">這是確保導線不會過熱的**絕對安全底線**。所選線徑的「額定安全電流」必須大於迴路的「設計電流」。若安全電流 < 設計電流 → **不合格**，必須加大線徑。</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div>
+                                <h3 class="text-xl font-semibold mb-3 text-slate-800 border-b pb-2">2. 漏電斷路器 (ELCB) 之檢核</h3>
+                                <div class="mt-4 space-y-4">
+                                    <div class="p-4 border-l-4 border-amber-500 bg-amber-50">
+                                        <h4 class="font-bold text-amber-800">✅ 檢核項目一：額定電流 (AT - Ampere Trip)</h4>
+                                        <p class="mt-1 text-slate-700">確保斷路器能穩定運作並提供過載保護。常用準則: `AT ≥ 設計電流 (I) × 1.25`。應選擇大於計算值且最接近的標準AT值。</p>
+                                    </div>
+                                    <div class="p-4 border-l-4 border-amber-500 bg-amber-50">
+                                        <h4 class="font-bold text-amber-800">✅ 檢核項目二：額定感度電流 (mA)</h4>
+                                        <p class="mt-1 text-slate-700">決定漏電保護的靈敏度。**戶外路燈建議優先選用 30mA (高靈敏度)**，以提供最佳人身安全保護。</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div>
+                                <h3 class="text-xl font-semibold mb-3 text-slate-800 border-b pb-2">3. 無熔絲開關 (NFB / MCCB) 之檢核</h3>
+                                <div class="mt-4 space-y-4">
+                                    <div class="p-4 border-l-4 border-rose-500 bg-rose-50">
+                                        <h4 class="font-bold text-rose-800">✅ 檢核項目一：額定電流 (AT - Ampere Trip)</h4>
+                                        <p class="mt-1 text-slate-700">檢核方式與 ELCB 完全相同。</p>
+                                    </div>
+                                    <div class="p-4 border-l-4 border-rose-500 bg-rose-50">
+                                        <h4 class="font-bold text-rose-800">✅ 檢核項目二：啟斷容量 (IC - Interrupting Capacity)</h4>
+                                        <p class="mt-1 text-slate-700">**最重要的安全檢核**。NFB的啟斷容量(kA)必須**大於**其安裝點的「預期最大短路電流」。若 IC < 預期短路電流 → **絕對不合格**，為極度危險的設計錯誤。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-3 text-slate-800 border-b pb-2">4. 匯流排 (Busbar) 之設計檢核</h3>
+                                <div class="mt-4 space-y-4">
+                                    <div class="p-4 border-l-4 border-indigo-500 bg-indigo-50">
+                                        <h4 class="font-bold text-indigo-800">✅ 檢核項目：載流量 (Ampacity)</h4>
+                                        <p class="mt-1 text-slate-700">匯流排的載流量必須大於總開關(NFB)的額定電流(AT)。一個常用的經驗法則是，銅匯流排每 mm² 約可承載 2A 電流。因此，`(寬度 × 厚度 × 2) > NFB AT`。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-3 text-slate-800 border-b pb-2">5. 接地電阻 (Grounding Resistance) 之設計考量</h3>
+                                <div class="mt-4 space-y-4">
+                                    <div class="p-4 border-l-4 border-emerald-500 bg-emerald-50">
+                                        <h4 class="font-bold text-emerald-800">✅ 檢核項目：電阻值 (R)</h4>
+                                        <p class="mt-1 text-slate-700">接地電阻的目標是提供一條極低阻抗的故障電流路徑。其要求依「對地電壓」而定：</p>
+                                        <ul class="list-disc list-inside mt-2 text-slate-700 pl-4">
+                                            <li>對地電壓 150V 以下：電阻應在 **100Ω 以下**。</li>
+                                            <li>對地電壓 151V 至 300V：電阻應在 **50Ω 以下**。</li>
+                                            <li>對地電壓 301V 以上：電阻應在 **10Ω 以下**。</li>
+                                        </ul>
+                                        <p class="mt-2 text-slate-700">此數值需透過接地電阻計實際量測，若不符合，則需增加接地棒數量或使用接地改善劑。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -297,126 +622,28 @@
             const tabs = document.querySelectorAll('.nav-tab');
             const sections = document.querySelectorAll('.content-section');
             const calculateBtn = document.getElementById('calculateBtn');
-            const resultText = document.getElementById('resultText');
             const sldHighlights = document.querySelectorAll('.sld-highlight');
-            const sldDescription = document.getElementById('sld-description');
             const sldDiagramComponents = document.querySelectorAll('#sld-diagram .sld-component');
             const caseLoaders = document.querySelectorAll('.case-loader');
 
             const wireData = {
-                '3.5': { R: 6.79, X: 0.095 },
-                '5.5': { R: 4.31, X: 0.091 },
-                '8': { R: 2.98, X: 0.088 },
-                '14': { R: 1.68, X: 0.083 },
-                '22': { R: 1.06, X: 0.080 },
-                '38': { R: 0.618, X: 0.077 },
-                '60': { R: 0.390, X: 0.075 },
-                '100': { R: 0.232, X: 0.073 },
+                '3.5': { R: 6.79, X: 0.095, ampacity: 30 },
+                '5.5': { R: 4.31, X: 0.091, ampacity: 40 },
+                '8': { R: 2.98, X: 0.088, ampacity: 50 },
+                '14': { R: 1.68, X: 0.083, ampacity: 75 },
+                '22': { R: 1.06, X: 0.080, ampacity: 100 },
+                '38': { R: 0.618, X: 0.077, ampacity: 135 },
             };
 
             const sldDescriptions = {
-                'power-source': '<strong>電源:</strong> 標示電力公司的供電點、電壓等級（如 3φ4W 380/220V）及系統頻率。這是整個系統的起點。',
-                'breaker': '<strong>主斷路器:</strong> 總開關，保護整個系統免於過載和短路。需標示其額定電流(AT)、框架電流(AF)和啟斷容量(IC)。',
-                'feeder': '<strong>幹線電纜:</strong> 從主斷路器到分路控制箱的大電纜。其線徑選擇對控制總壓降至關重要。需標示材質、線徑、長度。',
-                'control-box': '<strong>控制箱:</strong> 包含分路保護裝置和控制元件（如定時器、光感應器）的箱體。',
-                'branch-breaker': '<strong>分路斷路器:</strong> 保護單一照明迴路的斷路器。',
-                'branch-circuit': '<strong>分路電纜:</strong> 從控制箱連接至末端路燈的線路。其壓降必須符合法規限制。',
-                'load': '<strong>負載:</strong> 指路燈本身或其他智慧杆上的設備。需標示其功率和數量。'
+                'power-source': '<strong>電源:</strong> 標示電力公司的供電點、電壓等級（如 1φ2W 220V）及系統頻率。這是整個系統的起點。',
+                'breaker': '<strong>主斷路器:</strong> 總開關 (NFB)，保護整個系統免於過載和短路。此案例為 30A/50AF。',
+                'feeder': '<strong>幹線電纜:</strong> 從電源接戶點到控制箱的主電纜。此案例使用 22mm² XLPE 電纜。',
+                'control-box': '<strong>控制箱 (L1):</strong> 包含分路保護裝置的箱體，是電力分配的核心。',
+                'branch-breaker': '<strong>分路斷路器:</strong> 保護單一照明迴路的漏電斷路器 (ELCB)。此案例為 15A/50AF，感度100mA。',
+                'branch-circuit': '<strong>分路電纜:</strong> 從控制箱連接至末端路燈的線路。此案例使用 8mm² XLPE 電纜。',
+                'load': '<strong>負載:</strong> 指路燈本身。此案例每個迴路供應5支72W雙臂路燈，總計720W。'
             };
-
-            let vdChart;
-
-            function initChart() {
-                if (!document.getElementById('vdChart')) return;
-                const ctx = document.getElementById('vdChart').getContext('2d');
-                vdChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['壓降 (%)'],
-                        datasets: [{
-                            label: '計算壓降',
-                            data: [0],
-                            backgroundColor: ['#6EE7B7'],
-                            borderColor: ['#10B981'],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 6,
-                                title: {
-                                    display: true,
-                                    text: '壓降百分比 (%)'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return `壓降: ${context.raw.toFixed(2)} %`;
-                                    }
-                                }
-                            },
-                            annotation: {
-                                annotations: {
-                                    line1: {
-                                        type: 'line',
-                                        yMin: 3,
-                                        yMax: 3,
-                                        borderColor: 'rgb(255, 159, 64)',
-                                        borderWidth: 2,
-                                        borderDash: [6, 6],
-                                        label: {
-                                            content: '3% 法規限制',
-                                            enabled: true,
-                                            position: 'end',
-                                            backgroundColor: 'rgba(255, 159, 64, 0.8)'
-                                        }
-                                    },
-                                    line2: {
-                                        type: 'line',
-                                        yMin: 5,
-                                        yMax: 5,
-                                        borderColor: 'rgb(255, 99, 132)',
-                                        borderWidth: 2,
-                                        borderDash: [6, 6],
-                                        label: {
-                                            content: '5% 總和限制',
-                                            enabled: true,
-                                            position: 'end',
-                                            backgroundColor: 'rgba(255, 99, 132, 0.8)'
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            function updateChart(percentage) {
-                if (!vdChart) return;
-                vdChart.data.datasets[0].data[0] = percentage;
-                if (percentage > 5) {
-                    vdChart.data.datasets[0].backgroundColor[0] = '#EF4444'; // red-500
-                    vdChart.data.datasets[0].borderColor[0] = '#B91C1C'; // red-700
-                } else if (percentage > 3) {
-                    vdChart.data.datasets[0].backgroundColor[0] = '#FBBF24'; // amber-400
-                    vdChart.data.datasets[0].borderColor[0] = '#D97706'; // amber-600
-                } else {
-                    vdChart.data.datasets[0].backgroundColor[0] = '#6EE7B7'; // emerald-300
-                    vdChart.data.datasets[0].borderColor[0] = '#10B981'; // emerald-500
-                }
-                vdChart.update();
-            }
             
             function setActiveTab(tab) {
                 tabs.forEach(t => {
@@ -445,86 +672,197 @@
                 });
             });
 
+            function updateSLD() {
+                const systemType = document.getElementById('systemType').options[document.getElementById('systemType').selectedIndex].text;
+                const voltage = parseFloat(document.getElementById('voltage').value);
+                document.getElementById('sld_power_source').textContent = `${systemType} ${voltage}V 供電`;
+
+                const feederWire = document.getElementById('checkWireSize_feeder').value;
+                document.getElementById('sld_feeder_wire').textContent = `XLPE, ${feederWire}-2/C`;
+
+                const nfbAT = document.getElementById('checkNfbAT').value;
+                document.getElementById('sld_main_nfb_at').textContent = `${nfbAT} AT`;
+                
+                const busbarSize = document.getElementById('busbarSize').value;
+                document.getElementById('sld_busbar_size').textContent = `CU BUS BAR ${busbarSize}mm`;
+
+                let groundingTarget = 50;
+                if (voltage <= 150) { groundingTarget = 100; }
+                else if (voltage >= 301) { groundingTarget = 10; }
+                document.getElementById('sld_grounding_resistance').textContent = `R≤${groundingTarget}Ω`;
+
+                const wire1 = document.getElementById('checkWireSize1').value;
+                const elcb1 = document.getElementById('checkElcbAT1').value;
+                const power1 = document.getElementById('power1').value;
+                document.getElementById('sld_branch1_wire').textContent = `XLPE, ${wire1}-2/C`;
+                document.getElementById('sld_branch1_elcb_at').textContent = `${elcb1} AT`;
+                document.getElementById('sld_branch1_load').textContent = `總負載: ${power1} W`;
+
+                const wire2 = document.getElementById('checkWireSize2').value;
+                const elcb2 = document.getElementById('checkElcbAT2').value;
+                const power2 = document.getElementById('power2').value;
+                document.getElementById('sld_branch2_wire').textContent = `XLPE, ${wire2}-2/C`;
+                document.getElementById('sld_branch2_elcb_at').textContent = `${elcb2} AT`;
+                document.getElementById('sld_branch2_load').textContent = `總負載: ${power2} W`;
+            }
+
             if (calculateBtn) {
                 calculateBtn.addEventListener('click', () => {
                     const systemType = document.getElementById('systemType').value;
                     const V = parseFloat(document.getElementById('voltage').value);
-                    const P = parseFloat(document.getElementById('power').value);
-                    const pf = parseFloat(document.getElementById('pf').value);
-                    const L = parseFloat(document.getElementById('length').value) / 1000; // convert to km
-                    const wireSize = document.getElementById('wireSize').value;
+                    
+                    // --- Feeder Data ---
+                    const L_feeder_m = parseFloat(document.getElementById('length_feeder').value);
+                    const checkWire_feeder = document.getElementById('checkWireSize_feeder').value;
 
-                    if (!V || !P || !pf || !L || !wireSize) {
-                        resultText.innerHTML = '<p class="text-red-500">請輸入所有參數。</p>';
-                        return;
+                    // --- Circuit 1 Data ---
+                    const P1 = parseFloat(document.getElementById('power1').value);
+                    const pf1 = parseFloat(document.getElementById('pf1').value);
+                    const L1_m = parseFloat(document.getElementById('length1').value);
+                    const checkWire1 = document.getElementById('checkWireSize1').value;
+                    const checkElcbAT1 = parseFloat(document.getElementById('checkElcbAT1').value);
+
+                    // --- Circuit 2 Data ---
+                    const P2 = parseFloat(document.getElementById('power2').value);
+                    const pf2 = parseFloat(document.getElementById('pf2').value);
+                    const L2_m = parseFloat(document.getElementById('length2').value);
+                    const checkWire2 = document.getElementById('checkWireSize2').value;
+                    const checkElcbAT2 = parseFloat(document.getElementById('checkElcbAT2').value);
+                    
+                    // --- Panel Data ---
+                    const busbarSize = document.getElementById('busbarSize').value.split('x');
+                    const busbarWidth = parseFloat(busbarSize[0]);
+                    const busbarThickness = parseFloat(busbarSize[1]);
+                    const groundingResistance = parseFloat(document.getElementById('groundingResistance').value);
+                    const checkNfbAT = parseFloat(document.getElementById('checkNfbAT').value);
+                    const checkNfbIC = parseFloat(document.getElementById('checkNfbIC').value);
+                    const shortCircuit = parseFloat(document.getElementById('shortCircuitCurrent').value);
+
+                    function calculateVD(I, pf, L_m, checkWire) {
+                        if (!V || !I || !pf || !L_m || !checkWire) return null;
+                        const L_km = L_m / 1000;
+                        const R = wireData[checkWire].R;
+                        const X = wireData[checkWire].X;
+                        const ampacity = wireData[checkWire].ampacity;
+                        const sin_theta = Math.sqrt(1 - pf * pf);
+                        const effective_z = (R * pf + X * sin_theta);
+                        let V_base = V;
+                        let K1 = 1;
+                        if (systemType === '1p2w') { K1 = 2; }
+                        const VD = K1 * I * L_km * effective_z;
+                        const VD_percent = (VD / V_base) * 100;
+                        return { VD_percent, ampacity };
                     }
                     
-                    const R = wireData[wireSize].R;
-                    const X = wireData[wireSize].X;
-                    const sin_theta = Math.sqrt(1 - pf * pf);
-
-                    let I, VD, VD_percent, V_base;
-                    let K1 = 1;
+                    const I1 = (P1 && V && pf1) ? P1 / (V * pf1) : 0;
+                    const I2 = (P2 && V && pf2) ? P2 / (V * pf2) : 0;
+                    const total_I = I1 + I2;
                     
-                    if (systemType === '1p2w') {
-                        I = P / (V * pf);
-                        V_base = V;
-                        K1 = 2; // 來回兩條線
-                        VD = K1 * I * L * (R * pf + X * sin_theta);
-                    } else if (systemType === '1p3w') {
-                        I = P / (V * pf); // 假設負載平衡，計算單邊電流
-                        V_base = V;
-                        K1 = 1; // 計算單條火線壓降
-                        VD = K1 * I * L * (R * pf + X * sin_theta);
-                    } else { // 3p4w
-                        V_base = V; // 相電壓
-                        const V_line = V * Math.sqrt(3);
-                        I = P / (V_base * pf); // 單相負載接於相電壓
-                        K1 = 1; // 計算相電壓降
-                        VD = K1 * I * L * (R * pf + X * sin_theta);
+                    const result1 = calculateVD(I1, pf1, L1_m, checkWire1);
+                    const result2 = calculateVD(I2, pf2, L2_m, checkWire2);
+                    const pf_avg = (pf1 * I1 + pf2 * I2) / total_I || 0.9; // Weighted average PF
+                    const result_feeder = calculateVD(total_I, pf_avg, L_feeder_m, checkWire_feeder);
+
+                    function displayBranchResults(result, containerId, circuitNum, feeder_vd_percent) {
+                        const container = document.getElementById(containerId);
+                        const P = circuitNum === 1 ? P1 : P2;
+                        const I = circuitNum === 1 ? I1 : I2;
+                        const checkElcbAT = circuitNum === 1 ? checkElcbAT1 : checkElcbAT2;
+
+                        if (!result || !P) {
+                            container.innerHTML = '<p class="text-base text-center text-red-500">請輸入完整的迴路參數。</p>';
+                            return;
+                        }
+
+                        const total_vd_percent = feeder_vd_percent + result.VD_percent;
+                        
+                        let branchVdCheckHTML = result.VD_percent <= 3 ? '<span class="font-bold text-green-600">合格 (≤3%)</span>' : '<span class="font-bold text-red-600">不合格 (>3%)</span>';
+                        let totalVdCheckHTML = total_vd_percent <= 5 ? '<span class="font-bold text-green-600">合格 (≤5%)</span>' : '<span class="font-bold text-red-600">不合格 (>5%)</span>';
+                        let ampacityCheckHTML = result.ampacity > I ? '<span class="font-bold text-green-600">合格</span>' : `<span class="font-bold text-red-600">不合格</span>`;
+                        
+                        const recommendedElcbAT = I * 1.25;
+                        let elcbAtCheckHTML;
+                        if (checkElcbAT < I) { elcbAtCheckHTML = '<span class="font-bold text-red-600">不合格 (AT過低)</span>'; }
+                        else if (checkElcbAT < recommendedElcbAT) { elcbAtCheckHTML = '<span class="font-bold text-amber-600">注意 (裕度不足)</span>'; }
+                        else if (checkElcbAT > result.ampacity) { elcbAtCheckHTML = '<span class="font-bold text-red-600">不合格 (無法保護線纜)</span>'; }
+                        else { elcbAtCheckHTML = '<span class="font-bold text-green-600">合格</span>'; }
+
+                        container.innerHTML = `
+                            <p class="verification-grid"><span>設計電流 I:</span> <strong>${I.toFixed(2)} A</strong> <span></span></p>
+                            <hr class="col-span-3 my-1">
+                            <p class="verification-grid"><span>分路壓降 VD%:</span> <strong class="${result.VD_percent > 3 ? 'text-red-600' : 'text-green-600'}">${result.VD_percent.toFixed(2)} %</strong> ${branchVdCheckHTML}</p>
+                            <p class="verification-grid"><span>總壓降 VD%:</span> <strong class="${total_vd_percent > 5 ? 'text-red-600' : 'text-green-600'}">${total_vd_percent.toFixed(2)} %</strong> ${totalVdCheckHTML}</p>
+                             <p class="verification-grid"><span></span> <small class="text-slate-500 col-span-2">(幹線 ${feeder_vd_percent.toFixed(2)}% + 分路 ${result.VD_percent.toFixed(2)}%)</small> <span></span></p>
+                            <hr class="col-span-3 my-1">
+                            <p class="verification-grid"><span>線徑安全電流:</span> <span>${result.ampacity}A > ${I.toFixed(2)}A</span> ${ampacityCheckHTML}</p>
+                            <hr class="col-span-3 my-1">
+                            <p class="verification-grid"><span>ELCB AT 檢核:</span> <span>選用 ${checkElcbAT}A</span> ${elcbAtCheckHTML}</p>
+                            <p class="verification-grid"><span></span> <small class="text-slate-500 col-span-2">建議值 ≥ ${recommendedElcbAT.toFixed(2)}A</small> <span></span></p>
+                        `;
                     }
-                    
-                    VD_percent = (VD / V_base) * 100;
 
-                    let statusText, statusColor;
-                    if (VD_percent > 5) {
-                        statusText = "不合格 (總和 > 5%)";
-                        statusColor = "text-red-600";
-                    } else if (VD_percent > 3) {
-                        statusText = "注意 (單路 > 3%)";
-                        statusColor = "text-amber-600";
+                    const feeder_vd_percent = result_feeder ? result_feeder.VD_percent : 0;
+                    displayBranchResults(result1, 'resultCircuit1', 1, feeder_vd_percent);
+                    displayBranchResults(result2, 'resultCircuit2', 2, feeder_vd_percent);
+
+                    // Panel Verification
+                    const panelResultDiv = document.getElementById('resultPanel');
+                    if(result_feeder) {
+                        const recommendedNfbAT = total_I * 1.25;
+                        const busbarArea = busbarWidth * busbarThickness;
+                        const busbarAmpacity = busbarArea * 2; // Rule of thumb: 2A/mm^2
+
+                        let feederVdCheckHTML = result_feeder.VD_percent <= 3 ? '<span class="font-bold text-green-600">合格 (≤3%)</span>' : '<span class="font-bold text-red-600">不合格 (>3%)</span>';
+                        let nfbAtCheckHTML;
+                        if (checkNfbAT < total_I) { nfbAtCheckHTML = '<span class="font-bold text-red-600">不合格 (AT過低)</span>'; }
+                        else if (checkNfbAT < recommendedNfbAT) { nfbAtCheckHTML = '<span class="font-bold text-amber-600">注意 (裕度不足)</span>'; }
+                        else { nfbAtCheckHTML = '<span class="font-bold text-green-600">合格</span>'; }
+
+                        let icCheckHTML = checkNfbIC > shortCircuit ? '<span class="font-bold text-green-600">合格</span>' : '<span class="font-bold text-red-600">不合格 (IC不足)</span>';
+                        let busbarCheckHTML = busbarAmpacity > checkNfbAT ? '<span class="font-bold text-green-600">合格</span>' : '<span class="font-bold text-red-600">不合格</span>';
+                        
+                        let groundingTargetResistance = 50;
+                        if (V <= 150) { groundingTargetResistance = 100; }
+                        else if (V >= 301) { groundingTargetResistance = 10; }
+                        let groundingCheckHTML = groundingResistance <= groundingTargetResistance ? '<span class="font-bold text-green-600">合格</span>' : `<span class="font-bold text-red-600">不合格 (R > ${groundingTargetResistance}Ω)</span>`;
+
+
+                        panelResultDiv.innerHTML = `
+                            <p class="verification-grid"><span>總設計電流:</span> <strong>${total_I.toFixed(2)} A</strong> <span></span></p>
+                            <p class="verification-grid"><span>幹線壓降 VD%:</span> <strong class="${result_feeder.VD_percent > 3 ? 'text-red-600' : 'text-green-600'}">${result_feeder.VD_percent.toFixed(2)} %</strong> ${feederVdCheckHTML}</p>
+                            <hr class="col-span-3 my-1">
+                            <p class="verification-grid"><span>NFB AT 檢核:</span> <span>選用 ${checkNfbAT}A</span> ${nfbAtCheckHTML}</p>
+                            <p class="verification-grid"><span></span> <small class="text-slate-500 col-span-2">建議值 ≥ ${recommendedNfbAT.toFixed(2)}A</small> <span></span></p>
+                             <p class="verification-grid"><span>NFB IC 檢核:</span> <span>${checkNfbIC}kA > ${shortCircuit}kA</span> ${icCheckHTML}</p>
+                             <hr class="col-span-3 my-1">
+                             <p class="verification-grid"><span>匯流排載流量:</span> <span>${busbarAmpacity.toFixed(0)}A > ${checkNfbAT}A</span> ${busbarCheckHTML}</p>
+                             <p class="verification-grid"><span>接地電阻檢核:</span> <span>${groundingResistance}Ω ≤ ${groundingTargetResistance}Ω</span> ${groundingCheckHTML}</p>
+                        `;
+
                     } else {
-                        statusText = "合格 (< 3%)";
-                        statusColor = "text-green-600";
+                        panelResultDiv.innerHTML = '<p class="text-base text-center">請先完成所有迴路計算。</p>';
                     }
-
-                    resultText.innerHTML = `
-                        <p>設計電流: <strong>${I.toFixed(2)} A</strong></p>
-                        <p>電壓降: <strong>${VD.toFixed(2)} V</strong></p>
-                        <p>壓降百分比: <strong class="${statusColor}">${VD_percent.toFixed(2)} %</strong></p>
-                        <p>狀態: <strong class="${statusColor}">${statusText}</strong></p>
-                    `;
-                    
-                    updateChart(VD_percent);
+                    updateSLD();
                 });
             }
 
             sldHighlights.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const componentId = btn.dataset.component;
-                    
                     sldHighlights.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-
-                    sldDescription.innerHTML = sldDescriptions[componentId] || '<p>請選擇一個元件。</p>';
-
                     sldDiagramComponents.forEach(comp => {
-                        if (comp.dataset.id === componentId) {
-                            comp.style.opacity = '1';
-                            comp.querySelectorAll('rect, circle').forEach(shape => shape.style.fill = 'rgba(74, 108, 111, 0.2)');
-                        } else {
-                            comp.style.opacity = '0.7';
-                            comp.querySelectorAll('rect, circle').forEach(shape => shape.style.fill = '#f1f5f9');
+                        const group = comp.closest('.sld-component');
+                        if (group && group.dataset.id === componentId) {
+                           group.style.opacity = '1';
+                           group.querySelectorAll('rect, circle, path').forEach(shape => {
+                               if(shape.getAttribute('fill') !== '#334155') shape.style.fill = 'rgba(74, 108, 111, 0.2)'
+                           });
+                        } else if (group) {
+                           group.style.opacity = '0.7';
+                           group.querySelectorAll('rect, circle, path').forEach(shape => {
+                               if(shape.getAttribute('fill') !== '#334155') shape.style.fill = '#f1f5f9'
+                           });
                         }
                     });
                 });
@@ -533,34 +871,27 @@
             caseLoaders.forEach(button => {
                 button.addEventListener('click', () => {
                     const caseNum = button.dataset.case;
-                    const systemTypeSelect = document.getElementById('systemType');
-                    const voltageInput = document.getElementById('voltage');
-                    const powerInput = document.getElementById('power');
-                    const pfInput = document.getElementById('pf');
-                    const lengthInput = document.getElementById('length');
-                    const wireSizeSelect = document.getElementById('wireSize');
-
+                    
                     if (caseNum === '1') {
-                        systemTypeSelect.value = '1p3w';
-                        voltageInput.value = 220;
-                        powerInput.value = 1500; // 10 * 150W
-                        pfInput.value = 0.95;
-                        lengthInput.value = 200;
-                        wireSizeSelect.value = '8';
+                        document.getElementById('power1').value = 1500;
+                        document.getElementById('pf1').value = 0.95;
+                        document.getElementById('length1').value = 200;
+                        document.getElementById('checkWireSize1').value = '8';
+                        document.getElementById('checkElcbAT1').value = '15';
                     } else if (caseNum === '2') {
-                        systemTypeSelect.value = '3p4w';
-                        voltageInput.value = 220;
-                        powerInput.value = 2500; // 10 * 250W
-                        pfInput.value = 0.8;
-                        lengthInput.value = 100; // This is for the branch circuit
-                        wireSizeSelect.value = '5.5';
+                         document.getElementById('length_feeder').value = 500;
+                         document.getElementById('checkWireSize_feeder').value = '38';
+                         document.getElementById('power1').value = 2500;
+                         document.getElementById('pf1').value = 0.8;
+                         document.getElementById('length1').value = 100;
+                         document.getElementById('checkWireSize1').value = '5.5';
+                         document.getElementById('checkElcbAT1').value = '20';
                     } else if (caseNum === '3') {
-                        systemTypeSelect.value = '1p2w'; // AC input is single phase
-                        voltageInput.value = 220;
-                        powerInput.value = 644.4;
-                        pfInput.value = 0.95;
-                        lengthInput.value = 100;
-                        wireSizeSelect.value = '5.5';
+                        document.getElementById('power1').value = 644.4;
+                        document.getElementById('pf1').value = 0.95;
+                        document.getElementById('length1').value = 100;
+                        document.getElementById('checkWireSize1').value = '3.5';
+                        document.getElementById('checkElcbAT1').value = '15';
                     }
                     
                     const calculatorTab = document.querySelector('.nav-tab[data-tab="calculator"]');
@@ -572,10 +903,7 @@
                     window.scrollTo({ top: calculatorTab.offsetTop, behavior: 'smooth' });
                 });
             });
-            
-            if (document.getElementById('vdChart')) {
-                initChart();
-            }
+            updateSLD();
         });
     </script>
 </body>
