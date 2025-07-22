@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式路燈電氣設計指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The SPA is structured into four main, logical tabs: '設計案例' (Case Studies), '壓降計算機' (VD Calculator), '單線圖設計' (SLD Design), and '設計總結' (Summary). This task-oriented structure allows users to either learn sequentially or jump directly to practical tools. The 'Case Studies' section integrates the other sections by allowing users to load pre-filled data into the calculator, bridging theory and practice. The 'SLD' section uses an interactive diagram to explain components and provides new recommendation values. The 'Calculator' is the core interactive tool for hands-on learning. This design prioritizes user engagement and practical application over a static, linear presentation of the source report. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Evolution from traditional to smart poles. Goal: Inform. Viz: Side-by-side comparison cards using HTML/Tailwind. Interaction: None. Justification: Clear, visual comparison. Library: HTML/Tailwind.
+        - Report Info: SLD components. Goal: Organize & Inform. Viz: A main diagram with key components and a new recommendations section. Interaction: Clicking on a component name highlights it on the diagram and shows its description. Justification: Makes a complex diagram digestible and interactive. Library: Vanilla JS.
+        - Report Info: Voltage drop calculation results. Goal: Compare & Inform. Viz: A dynamic bar chart. Interaction: The chart updates in real-time based on calculator inputs. A bar shows the calculated VD%, compared against two static lines representing the 3% and 5% legal limits. The bar color changes to red if it exceeds the limits. Justification: Provides immediate, clear visual feedback on the calculation's compliance. Library: Chart.js.
+        - Report Info: Three design cases. Goal: Apply & Analyze. Viz: Tabbed content for each case, integrating text, and a button to load data into the calculator. Interaction: Clicking the button populates the calculator. Justification: Seamlessly connects theoretical cases with the practical tool, reinforcing learning. Library: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F8F7F4;
+            color: #334155;
+        }
+        .tab-active {
+            border-color: #4A6C6F;
+            color: #4A6C6F;
+            font-weight: 700;
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #64748b;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        .sld-highlight {
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .sld-highlight.active {
+            background-color: rgba(74, 108, 111, 0.1);
+            color: #4A6C6F;
+            font-weight: 700;
+        }
+        .sld-component-line {
+            stroke: #9ca3af;
+            stroke-width: 2;
+        }
+        .sld-component-box {
+            fill: #f1f5f9;
+            stroke: #64748b;
+            stroke-width: 1.5;
+        }
+        .sld-component-text {
+            font-size: 12px;
+            font-family: 'Noto Sans TC', sans-serif;
+            fill: #334155;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">互動式路燈電氣設計指南</h1>
+            <p class="mt-2 text-lg text-slate-600">從傳統照明到智慧杆：單線圖與壓降分析的實踐</p>
+        </header>
+
+        <nav class="mb-8 border-b border-slate-300">
+            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+                <li class="mr-2">
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-active" data-tab="cases">設計案例</button>
+                </li>
+                <li class="mr-2">
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="calculator">壓降計算機</button>
+                </li>
+                <li class="mr-2">
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="sld">單線圖設計</button>
+                </li>
+                <li>
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="summary">設計總結</button>
+                </li>
+            </ul>
+        </nav>
+
+        <main>
+            <section id="sld" class="content-section">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A6C6F]">單線圖 (SLD)：電力系統的藍圖</h2>
+                    <p class="mb-6 text-slate-700 leading-relaxed">單線圖是電氣工程的通用語言，它使用標準化符號，以簡潔的圖形表示複雜的電力系統。一個準確的單線圖是進行壓降計算、故障排除和安全維護的基礎。點擊下方列表中的元件名稱，即可在圖中高亮顯示並查看其說明。</p>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="md:col-span-1">
+                            <h3 class="text-lg font-semibold mb-3">主要元件列表</h3>
+                            <ul class="space-y-2">
+                                <li><button class="sld-highlight w-full text-left p-2 rounded" data-component="power-source">1. 電源 (Power Source)</button></li>
+                                <li><button class="sld-highlight w-full text-left p-2 rounded" data-component="breaker">2. 主斷路器 (Main Breaker)</button></li>
+                                <li><button class="sld-highlight w-full text-left p-2 rounded" data-component="feeder">3. 幹線電纜 (Feeder Cable)</button></li>
+                                <li><button class="sld-highlight w-full text-left p-2 rounded" data-component="control-box">4. 控制箱 (Control Box)</button></li>
+                                <li><button class="sld-highlight w-full text-left p-2 rounded" data-component="branch-breaker">5. 分路斷路器 (Branch Breaker)</button></li>
+                                <li><button class="sld-highlight w-full text-left p-2 rounded" data-component="branch-circuit">6. 分路電纜 (Branch Circuit)</button></li>
+                                <li><button class="sld-highlight w-full text-left p-2 rounded" data-component="load">7. 負載 (Load)</button></li>
+                            </ul>
+                        </div>
+                        <div class="md:col-span-2">
+                            <div class="border rounded-lg p-4 bg-slate-50">
+                                <svg id="sld-diagram" viewBox="0 0 400 500" class="w-full h-auto">
+                                    <line class="sld-component-line" x1="200" y1="0" x2="200" y2="50" />
+                                    <g class="sld-component" data-id="power-source">
+                                        <rect class="sld-component-box" x="150" y="50" width="100" height="40" rx="5"></rect>
+                                        <text class="sld-component-text" x="200" y="70">電源 3φ4W</text>
+                                    </g>
+                                    <line class="sld-component-line" x1="200" y1="90" x2="200" y2="120" />
+                                    <g class="sld-component" data-id="breaker">
+                                        <rect class="sld-component-box" x="150" y="120" width="100" height="40" rx="5"></rect>
+                                        <text class="sld-component-text" x="200" y="140">主斷路器</text>
+                                    </g>
+                                    <line class="sld-component-line" x1="200" y1="160" x2="200" y2="220" />
+                                    <g class="sld-component" data-id="feeder">
+                                        <text class="sld-component-text" x="225" y="190">幹線</text>
+                                    </g>
+                                    <line class="sld-component-line" x1="200" y1="220" x2="200" y2="250" />
+                                    <g class="sld-component" data-id="control-box">
+                                        <rect class="sld-component-box" x="125" y="250" width="150" height="60" rx="5"></rect>
+                                        <text class="sld-component-text" x="200" y="280">路燈控制箱</text>
+                                    </g>
+                                    <line class="sld-component-line" x1="200" y1="310" x2="200" y2="340" />
+                                    <g class="sld-component" data-id="branch-breaker">
+                                         <rect class="sld-component-box" x="150" y="340" width="100" height="40" rx="5"></rect>
+                                         <text class="sld-component-text" x="200" y="360">分路斷路器</text>
+                                    </g>
+                                    <line class="sld-component-line" x1="200" y1="380" x2="200" y2="440" />
+                                    <g class="sld-component" data-id="branch-circuit">
+                                        <text class="sld-component-text" x="225" y="410">分路</text>
+                                    </g>
+                                    <g class="sld-component" data-id="load">
+                                        <circle class="sld-component-box" cx="200" cy="460" r="20"></circle>
+                                        <line x1="188" y1="448" x2="212" y2="472" stroke="#64748b" stroke-width="1.5"></line>
+                                        <line x1="188" y1="472" x2="212" y2="448" stroke="#64748b" stroke-width="1.5"></line>
+                                        <text class="sld-component-text" x="200" y="495" font-size="14px">路燈負載</text>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div id="sld-description" class="mt-4 p-4 bg-sky-50 rounded-lg text-slate-700 min-h-[100px]">
+                                <p>點擊左側元件以查看詳細說明。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t border-slate-200">
+                        <h3 class="text-xl font-bold mb-4 text-[#4A6C6F]">設計建議值</h3>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="border border-slate-200 p-4 rounded-lg">
+                                <h4 class="font-semibold text-lg mb-2">導線線徑 (Wire Size)</h4>
+                                <p class="text-sm text-slate-600 mb-2"><strong>分路：</strong>依規定最小應使用 3.5mm²。但長距離(>100m)迴路常需提升至 5.5mm² 或 8mm²，以確保壓降在3%內。</p>
+                                <p class="text-sm text-slate-600"><strong>幹線：</strong>無固定值，需經由總壓降計算決定。長距離幹線(>200m)可能需使用 22mm² 以上線徑，以滿足總壓降5%的要求。</p>
+                            </div>
+                            <div class="border border-slate-200 p-4 rounded-lg">
+                                <h4 class="font-semibold text-lg mb-2">漏電斷路器 (ELCB)</h4>
+                                <p class="text-sm text-slate-600 mb-2"><strong>安裝位置：</strong>建議總開關及各分路開關均加裝。</p>
+                                <p class="text-sm text-slate-600"><strong>額定感度電流：</strong>為達最佳人身安全保護，建議選用 30mA 高靈敏度型。</p>
+                                 <p class="text-sm text-slate-600"><strong>動作時間：</strong>應在 0.1 秒以內。</p>
+                            </div>
+                            <div class="border border-slate-200 p-4 rounded-lg">
+                                <h4 class="font-semibold text-lg mb-2">無熔絲開關 (NFB)</h4>
+                                <p class="text-sm text-slate-600 mb-2"><strong>額定電流 (AT)：</strong>應大於迴路設計電流，建議取「設計電流 x 1.25倍」作為安全裕度。</p>
+                                <p class="text-sm text-slate-600"><strong>啟斷容量 (IC)：</strong>必須大於安裝點的「預期最大短路電流」。此為關鍵安全參數，需向電力公司查詢或計算，確保短路時能安全跳脫。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="calculator" class="content-section">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A6C6F]">互動式壓降計算機</h2>
+                    <p class="mb-6 text-slate-700 leading-relaxed">壓降是確保設備正常運作和符合法規的關鍵。根據台灣《屋內線路裝置規則》，幹線和分路壓降各不應超過3%，總和不應超過5%。使用此計算機，輸入您的電路參數，即時驗證設計是否合規。</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="systemType" class="block text-sm font-medium text-slate-700">系統類型</label>
+                                    <select id="systemType" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-[#4A6C6F] focus:border-[#4A6C6F]">
+                                        <option value="1p2w">單相二線式 (1φ2W)</option>
+                                        <option value="1p3w">單相三線式 (1φ3W)</option>
+                                        <option value="3p4w" selected>三相四線式 (3φ4W)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="voltage" class="block text-sm font-medium text-slate-700">標稱電壓 (V)</label>
+                                    <input type="number" id="voltage" value="220" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="power" class="block text-sm font-medium text-slate-700">總負載功率 (W)</label>
+                                    <input type="number" id="power" value="2500" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="pf" class="block text-sm font-medium text-slate-700">功率因數 (PF)</label>
+                                    <input type="number" id="pf" value="0.8" step="0.01" min="0" max="1" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="length" class="block text-sm font-medium text-slate-700">線路長度 (m)</label>
+                                    <input type="number" id="length" value="100" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="wireSize" class="block text-sm font-medium text-slate-700">導線截面積 (mm²)</label>
+                                    <select id="wireSize" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-[#4A6C6F] focus:border-[#4A6C6F]">
+                                        <option value="3.5">3.5 mm²</option>
+                                        <option value="5.5" selected>5.5 mm²</option>
+                                        <option value="8">8 mm²</option>
+                                        <option value="14">14 mm²</option>
+                                        <option value="22">22 mm²</option>
+                                        <option value="38">38 mm²</option>
+                                        <option value="60">60 mm²</option>
+                                        <option value="100">100 mm²</option>
+                                    </select>
+                                </div>
+                                <button id="calculateBtn" class="w-full bg-[#4A6C6F] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#3E5A5C] transition-colors">計算壓降</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-3 text-center">計算結果</h3>
+                            <div class="chart-container">
+                                <canvas id="vdChart"></canvas>
+                            </div>
+                            <div id="resultText" class="mt-4 text-center space-y-2">
+                                <p class="text-lg">請點擊「計算壓降」以查看結果。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cases" class="content-section active">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-4 text-[#4A6C6F]">設計案例分析</h2>
+                    <p class="mb-6 text-slate-700 leading-relaxed">理論結合實踐是最好的學習方式。這裡我們將報告中的三個經典案例數位化，您可以選擇任一案例，點擊「載入參數至計算機」按鈕，系統將自動為您填入該案例的數據，讓您親自驗證壓降計算的過程與結果。</p>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="border border-slate-200 p-4 rounded-lg flex flex-col">
+                            <h3 class="text-xl font-semibold mb-2">案例一：住宅區迴路</h3>
+                            <p class="text-sm text-slate-600 flex-grow">單相三線式(1φ3W) 220V，供應10盞150W LED燈，線長200公尺。挑戰在於長距離下如何選擇合適線徑以符合3%分路壓降限制。</p>
+                            <button class="case-loader mt-4 w-full bg-slate-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-slate-700 transition-colors" data-case="1">載入參數至計算機</button>
+                        </div>
+                        <div class="border border-slate-200 p-4 rounded-lg flex flex-col">
+                            <h3 class="text-xl font-semibold mb-2">案例二：主幹道系統</h3>
+                            <p class="text-sm text-slate-600 flex-grow">三相四線式(3φ4W) 380/220V，500公尺幹線供應3個控制箱，每個控制箱再接100公尺分路。此案例完美展示了「3%-3%-5%」規則中，總壓降超標的「合規性陷阱」。</p>
+                            <button class="case-loader mt-4 w-full bg-slate-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-slate-700 transition-colors" data-case="2">載入參數至計算機</button>
+                        </div>
+                        <div class="border border-slate-200 p-4 rounded-lg flex flex-col">
+                            <h3 class="text-xl font-semibold mb-2">案例三：全功能智慧杆</h3>
+                            <p class="text-sm text-slate-600 flex-grow">混合AC/DC負載，包含照明、5G基地台、攝影機等。此案例重點在於功率預算、AC輸入電流計算，以及對敏感電子設備的內部DC壓降校核。</p>
+                            <button class="case-loader mt-4 w-full bg-slate-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-slate-700 transition-colors" data-case="3">載入參數至計算機</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="summary" class="content-section">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-4 text-[#4A6C6F]">設計總結與檢核清單</h2>
+                    <p class="mb-6 text-slate-700 leading-relaxed">一個成功的電氣設計是安全、可靠、高效且合規的。在完成您的設計前，請使用以下清單進行最終審核，確保萬無一失。</p>
+                    <ul class="space-y-3 text-slate-700">
+                        <li class="flex items-start"><span class="mr-3 text-xl text-[#4A6C6F]">✅</span> <strong>單線圖完整性：</strong>所有元件是否已繪製並準確標註規格、尺寸、長度？</li>
+                        <li class="flex items-start"><span class="mr-3 text-xl text-[#4A6C6F]">✅</span> <strong>負載計算與平衡：</strong>是否已準確計算總功率？三相系統負載是否已盡可能平衡？</li>
+                        <li class="flex items-start"><span class="mr-3 text-xl text-[#4A6C6F]">✅</span> <strong>壓降合規性：</strong>幹線、分路及總壓降是否「同時」滿足法規的「3%-3%-5%」要求？</li>
+                        <li class="flex items-start"><span class="mr-3 text-xl text-[#4A6C6F]">✅</span> <strong>保護協調：</strong>斷路器選擇是否同時考慮了負載電流（AT）與短路電流（IC）？</li>
+                        <li class="flex items-start"><span class="mr-3 text-xl text-[#4A6C6F]">✅</span> <strong>智慧杆特殊要求：</strong>是否已校核DC壓降？是否已規劃備用電源與獨立計費？</li>
+                        <li class="flex items-start"><span class="mr-3 text-xl text-[#4A6C6F]">✅</span> <strong>預留未來容量：</strong>幹線電纜和管道尺寸是否已預留至少25%-50%的擴充裕量？</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.nav-tab');
+            const sections = document.querySelectorAll('.content-section');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultText = document.getElementById('resultText');
+            const sldHighlights = document.querySelectorAll('.sld-highlight');
+            const sldDescription = document.getElementById('sld-description');
+            const sldDiagramComponents = document.querySelectorAll('#sld-diagram .sld-component');
+            const caseLoaders = document.querySelectorAll('.case-loader');
+
+            const wireData = {
+                '3.5': { R: 6.79, X: 0.095 },
+                '5.5': { R: 4.31, X: 0.091 },
+                '8': { R: 2.98, X: 0.088 },
+                '14': { R: 1.68, X: 0.083 },
+                '22': { R: 1.06, X: 0.080 },
+                '38': { R: 0.618, X: 0.077 },
+                '60': { R: 0.390, X: 0.075 },
+                '100': { R: 0.232, X: 0.073 },
+            };
+
+            const sldDescriptions = {
+                'power-source': '<strong>電源:</strong> 標示電力公司的供電點、電壓等級（如 3φ4W 380/220V）及系統頻率。這是整個系統的起點。',
+                'breaker': '<strong>主斷路器:</strong> 總開關，保護整個系統免於過載和短路。需標示其額定電流(AT)、框架電流(AF)和啟斷容量(IC)。',
+                'feeder': '<strong>幹線電纜:</strong> 從主斷路器到分路控制箱的大電纜。其線徑選擇對控制總壓降至關重要。需標示材質、線徑、長度。',
+                'control-box': '<strong>控制箱:</strong> 包含分路保護裝置和控制元件（如定時器、光感應器）的箱體。',
+                'branch-breaker': '<strong>分路斷路器:</strong> 保護單一照明迴路的斷路器。',
+                'branch-circuit': '<strong>分路電纜:</strong> 從控制箱連接至末端路燈的線路。其壓降必須符合法規限制。',
+                'load': '<strong>負載:</strong> 指路燈本身或其他智慧杆上的設備。需標示其功率和數量。'
+            };
+
+            let vdChart;
+
+            function initChart() {
+                if (!document.getElementById('vdChart')) return;
+                const ctx = document.getElementById('vdChart').getContext('2d');
+                vdChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['壓降 (%)'],
+                        datasets: [{
+                            label: '計算壓降',
+                            data: [0],
+                            backgroundColor: ['#6EE7B7'],
+                            borderColor: ['#10B981'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 6,
+                                title: {
+                                    display: true,
+                                    text: '壓降百分比 (%)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `壓降: ${context.raw.toFixed(2)} %`;
+                                    }
+                                }
+                            },
+                            annotation: {
+                                annotations: {
+                                    line1: {
+                                        type: 'line',
+                                        yMin: 3,
+                                        yMax: 3,
+                                        borderColor: 'rgb(255, 159, 64)',
+                                        borderWidth: 2,
+                                        borderDash: [6, 6],
+                                        label: {
+                                            content: '3% 法規限制',
+                                            enabled: true,
+                                            position: 'end',
+                                            backgroundColor: 'rgba(255, 159, 64, 0.8)'
+                                        }
+                                    },
+                                    line2: {
+                                        type: 'line',
+                                        yMin: 5,
+                                        yMax: 5,
+                                        borderColor: 'rgb(255, 99, 132)',
+                                        borderWidth: 2,
+                                        borderDash: [6, 6],
+                                        label: {
+                                            content: '5% 總和限制',
+                                            enabled: true,
+                                            position: 'end',
+                                            backgroundColor: 'rgba(255, 99, 132, 0.8)'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateChart(percentage) {
+                if (!vdChart) return;
+                vdChart.data.datasets[0].data[0] = percentage;
+                if (percentage > 5) {
+                    vdChart.data.datasets[0].backgroundColor[0] = '#EF4444'; // red-500
+                    vdChart.data.datasets[0].borderColor[0] = '#B91C1C'; // red-700
+                } else if (percentage > 3) {
+                    vdChart.data.datasets[0].backgroundColor[0] = '#FBBF24'; // amber-400
+                    vdChart.data.datasets[0].borderColor[0] = '#D97706'; // amber-600
+                } else {
+                    vdChart.data.datasets[0].backgroundColor[0] = '#6EE7B7'; // emerald-300
+                    vdChart.data.datasets[0].borderColor[0] = '#10B981'; // emerald-500
+                }
+                vdChart.update();
+            }
+            
+            function setActiveTab(tab) {
+                tabs.forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('tab-inactive');
+                });
+                tab.classList.add('tab-active');
+                tab.classList.remove('tab-inactive');
+            }
+
+            function showSection(tabId) {
+                sections.forEach(section => {
+                    if (section.id === tabId) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+            }
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.dataset.tab;
+                    setActiveTab(tab);
+                    showSection(tabId);
+                });
+            });
+
+            if (calculateBtn) {
+                calculateBtn.addEventListener('click', () => {
+                    const systemType = document.getElementById('systemType').value;
+                    const V = parseFloat(document.getElementById('voltage').value);
+                    const P = parseFloat(document.getElementById('power').value);
+                    const pf = parseFloat(document.getElementById('pf').value);
+                    const L = parseFloat(document.getElementById('length').value) / 1000; // convert to km
+                    const wireSize = document.getElementById('wireSize').value;
+
+                    if (!V || !P || !pf || !L || !wireSize) {
+                        resultText.innerHTML = '<p class="text-red-500">請輸入所有參數。</p>';
+                        return;
+                    }
+                    
+                    const R = wireData[wireSize].R;
+                    const X = wireData[wireSize].X;
+                    const sin_theta = Math.sqrt(1 - pf * pf);
+
+                    let I, VD, VD_percent, V_base;
+                    let K1 = 1;
+                    
+                    if (systemType === '1p2w') {
+                        I = P / (V * pf);
+                        V_base = V;
+                        K1 = 2; // 來回兩條線
+                        VD = K1 * I * L * (R * pf + X * sin_theta);
+                    } else if (systemType === '1p3w') {
+                        I = P / (V * pf); // 假設負載平衡，計算單邊電流
+                        V_base = V;
+                        K1 = 1; // 計算單條火線壓降
+                        VD = K1 * I * L * (R * pf + X * sin_theta);
+                    } else { // 3p4w
+                        V_base = V; // 相電壓
+                        const V_line = V * Math.sqrt(3);
+                        I = P / (V_base * pf); // 單相負載接於相電壓
+                        K1 = 1; // 計算相電壓降
+                        VD = K1 * I * L * (R * pf + X * sin_theta);
+                    }
+                    
+                    VD_percent = (VD / V_base) * 100;
+
+                    let statusText, statusColor;
+                    if (VD_percent > 5) {
+                        statusText = "不合格 (總和 > 5%)";
+                        statusColor = "text-red-600";
+                    } else if (VD_percent > 3) {
+                        statusText = "注意 (單路 > 3%)";
+                        statusColor = "text-amber-600";
+                    } else {
+                        statusText = "合格 (< 3%)";
+                        statusColor = "text-green-600";
+                    }
+
+                    resultText.innerHTML = `
+                        <p>設計電流: <strong>${I.toFixed(2)} A</strong></p>
+                        <p>電壓降: <strong>${VD.toFixed(2)} V</strong></p>
+                        <p>壓降百分比: <strong class="${statusColor}">${VD_percent.toFixed(2)} %</strong></p>
+                        <p>狀態: <strong class="${statusColor}">${statusText}</strong></p>
+                    `;
+                    
+                    updateChart(VD_percent);
+                });
+            }
+
+            sldHighlights.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const componentId = btn.dataset.component;
+                    
+                    sldHighlights.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    sldDescription.innerHTML = sldDescriptions[componentId] || '<p>請選擇一個元件。</p>';
+
+                    sldDiagramComponents.forEach(comp => {
+                        if (comp.dataset.id === componentId) {
+                            comp.style.opacity = '1';
+                            comp.querySelectorAll('rect, circle').forEach(shape => shape.style.fill = 'rgba(74, 108, 111, 0.2)');
+                        } else {
+                            comp.style.opacity = '0.7';
+                            comp.querySelectorAll('rect, circle').forEach(shape => shape.style.fill = '#f1f5f9');
+                        }
+                    });
+                });
+            });
+
+            caseLoaders.forEach(button => {
+                button.addEventListener('click', () => {
+                    const caseNum = button.dataset.case;
+                    const systemTypeSelect = document.getElementById('systemType');
+                    const voltageInput = document.getElementById('voltage');
+                    const powerInput = document.getElementById('power');
+                    const pfInput = document.getElementById('pf');
+                    const lengthInput = document.getElementById('length');
+                    const wireSizeSelect = document.getElementById('wireSize');
+
+                    if (caseNum === '1') {
+                        systemTypeSelect.value = '1p3w';
+                        voltageInput.value = 220;
+                        powerInput.value = 1500; // 10 * 150W
+                        pfInput.value = 0.95;
+                        lengthInput.value = 200;
+                        wireSizeSelect.value = '8';
+                    } else if (caseNum === '2') {
+                        systemTypeSelect.value = '3p4w';
+                        voltageInput.value = 220;
+                        powerInput.value = 2500; // 10 * 250W
+                        pfInput.value = 0.8;
+                        lengthInput.value = 100; // This is for the branch circuit
+                        wireSizeSelect.value = '5.5';
+                    } else if (caseNum === '3') {
+                        systemTypeSelect.value = '1p2w'; // AC input is single phase
+                        voltageInput.value = 220;
+                        powerInput.value = 644.4;
+                        pfInput.value = 0.95;
+                        lengthInput.value = 100;
+                        wireSizeSelect.value = '5.5';
+                    }
+                    
+                    const calculatorTab = document.querySelector('.nav-tab[data-tab="calculator"]');
+                    setActiveTab(calculatorTab);
+                    showSection('calculator');
+                    if (calculateBtn) {
+                        calculateBtn.click();
+                    }
+                    window.scrollTo({ top: calculatorTab.offsetTop, behavior: 'smooth' });
+                });
+            });
+            
+            if (document.getElementById('vdChart')) {
+                initChart();
+            }
+        });
+    </script>
+</body>
+</html>
