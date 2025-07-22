@@ -30,6 +30,7 @@
         .sld-box { border: 2px solid #9CA3AF; padding: 8px; text-align: center; border-radius: 4px; background-color: #F9FAFB; font-size: 0.875rem; font-weight: 500;}
         .sld-line { width: 2px; background-color: #9CA3AF; margin: 0 auto; }
         .sld-icon { font-size: 1.5rem; line-height: 1; }
+        .formula { background-color: #F3F4F6; padding: 1rem; border-radius: 8px; font-family: monospace; color: #1F2937; text-align: center; overflow-x: auto; }
     </style>
 </head>
 <body class="text-gray-800">
@@ -40,11 +41,12 @@
             <p class="text-gray-600 mt-1">一個將工程報告轉化為實用設計工具的應用程式</p>
         </div>
         <nav id="navbar" class="bg-white border-b border-gray-200">
-            <div class="container mx-auto px-4 flex justify-center space-x-2 sm:space-x-4">
-                <a href="#section-1" class="nav-button text-center text-sm sm:text-base font-medium text-gray-700 px-3 py-3 rounded-t-lg">1. 系統參數</a>
-                <a href="#section-2" class="nav-button text-center text-sm sm:text-base font-medium text-gray-700 px-3 py-3 rounded-t-lg">2. 水頭損失</a>
-                <a href="#section-3" class="nav-button text-center text-sm sm:text-base font-medium text-gray-700 px-3 py-3 rounded-t-lg">3. 功率選型</a>
-                <a href="#section-4" class="nav-button text-center text-sm sm:text-base font-medium text-gray-700 px-3 py-3 rounded-t-lg">4. 電氣系統</a>
+            <div class="container mx-auto px-4 flex justify-center space-x-1 sm:space-x-2">
+                <a href="#section-1" class="nav-button text-center text-xs sm:text-sm font-medium text-gray-700 px-2 py-3 rounded-t-lg">1. 系統參數</a>
+                <a href="#section-2" class="nav-button text-center text-xs sm:text-sm font-medium text-gray-700 px-2 py-3 rounded-t-lg">2. 水頭損失</a>
+                <a href="#section-3" class="nav-button text-center text-xs sm:text-sm font-medium text-gray-700 px-2 py-3 rounded-t-lg">3. 功率選型</a>
+                <a href="#section-4" class="nav-button text-center text-xs sm:text-sm font-medium text-gray-700 px-2 py-3 rounded-t-lg">4. 補充說明</a>
+                <a href="#section-5" class="nav-button text-center text-xs sm:text-sm font-medium text-gray-700 px-2 py-3 rounded-t-lg">5. 電氣系統</a>
             </div>
         </nav>
     </header>
@@ -152,11 +154,65 @@
                 </div>
             </div>
         </section>
-        
-        <!-- Section 4: Electrical System -->
-        <section id="section-4">
+
+        <!-- Section 4: Supplementary Explanation -->
+        <section id="section-4" class="mb-12">
             <div class="section-card p-6">
-                <h2 class="text-2xl font-bold text-sky-700 mb-1">4. 電氣系統配置</h2>
+                <h2 class="text-2xl font-bold text-sky-700 mb-1">4. 計算過程補充說明</h2>
+                <p class="text-gray-600 mb-6">本節將揭示模擬器背後運作的工程計算原理，讓您了解每個參數如何影響最終的設計結果。所有計算均基於標準的流體力學公式。</p>
+                
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">總動態揚程 (TDH)</h3>
+                        <p class="mb-4">總動態揚程是泵浦必須提供的總能量，用以克服系統中的所有阻力。其基本構成如下：</p>
+                        <div class="formula">TDH = 靜揚程 + 主要損失 + 次要損失</div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">主要損失 (摩擦損失)</h3>
+                        <p class="mb-4">流體在直管中流動時因摩擦產生的能量損失。本模擬器採用達西-韋斯白赫(Darcy-Weisbach)方程式，這是業界公認最精確的方法：</p>
+                        <div class="formula">主要損失 = f * (L/D) * (v²/2g)</div>
+                        <ul class="list-disc list-inside mt-4 space-y-2 text-gray-600">
+                            <li><code>f</code> (摩擦係數): 一個關鍵的無因次參數，由流體的雷諾數(Re)和管壁的相對粗糙度共同決定。本工具使用Colebrook-White方程式進行迭代計算，確保精度。</li>
+                            <li><code>L</code> (管路長度): 您在第一部分輸入的管線總長。</li>
+                            <li><code>D</code> (管路內徑): 您輸入的管線內徑。</li>
+                            <li><code>v</code> (流速): 由流量和管徑自動計算得出 (v = Q/A)。</li>
+                            <li><code>g</code> (重力加速度): 標準值 9.81 m/s²。</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">次要損失 (管件損失)</h3>
+                        <p class="mb-4">流體流經彎頭、閥門等配件時，因流向改變和渦流產生的能量損失。計算方法為K係數法：</p>
+                        <div class="formula">次要損失 = ΣK * (v²/2g)</div>
+                        <p class="mt-4 text-gray-600">其中 <code>ΣK</code> 是您在第二部分選擇的所有管件的阻力係數(K值)總和。每個管件都有其特定的K值，代表其對水流的阻礙程度。</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">功率計算流程</h3>
+                        <p class="mb-4">從液壓需求轉換為馬達規格，主要經過三個步驟：</p>
+                        <ol class="list-decimal list-inside space-y-4 text-gray-600">
+                            <li>
+                                <strong>水功率 (WHP):</strong> 泵浦傳遞給流體的淨功率，即理論最小需求功率。
+                                <div class="formula mt-2">WHP (kW) = (流量(m³/s) * TDH(m) * 密度 * g) / 1000</div>
+                            </li>
+                            <li>
+                                <strong>軸功率 (BHP):</strong> 驅動泵浦實際需要的功率，考慮了泵浦自身的能量損失。
+                                <div class="formula mt-2">BHP (kW) = 水功率 / 泵浦效率(η)</div>
+                            </li>
+                            <li>
+                                <strong>馬達選型:</strong> 在軸功率的基礎上增加一個安全裕度(Service Factor)，通常為15-25%，然後選擇最接近的標準馬達規格，以確保馬達不會在極限條件下運行。
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 5: Electrical System -->
+        <section id="section-5">
+            <div class="section-card p-6">
+                <h2 class="text-2xl font-bold text-sky-700 mb-1">5. 電氣系統配置</h2>
                 <p class="text-gray-600 mb-6">電氣系統是抽水站的心臟。下方是一個根據您前面設計所產生的簡化單線圖(SLD)。請選擇不同的馬達啟動方式，觀察其對電氣配置的影響，並了解其優缺點。</p>
                 
                 <div class="mb-6">
@@ -171,7 +227,7 @@
                     <div class="bg-gray-50 p-4 rounded-lg border">
                         <h3 class="text-lg font-semibold mb-4 text-center">簡化單線圖 (SLD)</h3>
                         <div class="flex flex-col items-center space-y-2">
-                            <div class="sld-box"⚡️ 480V, 3Φ 進線</div>
+                            <div class="sld-box">⚡️ 480V, 3Φ 進線</div>
                             <div class="sld-line h-4"></div>
                             <div class="sld-box">主斷路器 (MCB)</div>
                             <div class="sld-line h-4"></div>
@@ -383,7 +439,8 @@
                 if (reynolds < 2000) {
                     frictionFactor = 64 / reynolds;
                 } else {
-                    frictionFactor = Math.pow(-1.8 * Math.log10(Math.pow(relRoughness / 3.7, 1.11) + 6.9 / reynolds), -2);
+                    // Using Colebrook-White equation approximation (Swamee-Jain) for direct calculation
+                     frictionFactor = 0.25 / Math.pow(Math.log10((relRoughness / 3.7) + (5.74 / Math.pow(reynolds, 0.9))), 2);
                 }
 
                 const majorLoss = frictionFactor * (pipeLength / D_m) * (Math.pow(velocity, 2) / (2 * g));
@@ -480,7 +537,7 @@
                 const staticHead = systemState.staticHead;
 
                 charts.systemCurve.data.labels = [0, systemState.flowRate * 0.5, systemState.flowRate, systemState.flowRate * 1.5].map(q => q.toFixed(2));
-                const lossCoefficient = (majorLoss + minorLoss) / Math.pow(systemState.flowRate, 2);
+                const lossCoefficient = systemState.flowRate > 0 ? (majorLoss + minorLoss) / Math.pow(systemState.flowRate, 2) : 0;
                 charts.systemCurve.data.datasets = [{
                     label: '系統曲線 (總揚程)',
                     data: charts.systemCurve.data.labels.map(q => staticHead + lossCoefficient * Math.pow(parseFloat(q), 2)),
