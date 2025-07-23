@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式剛性鋪面設計指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Engineered Earth -->
+    <!-- Application Structure Plan: 本應用程式採用主題式分頁導覽結構，而非線性報告格式。此設計旨在讓使用者能自由探索最感興趣的主題，提高易用性與參與度。結構分為五大核心區塊：「首頁」提供引人入勝的概覽；「結構核心」透過互動圖解闡述基本原理；「設計金三角」是核心互動區，讓使用者模擬調整厚度、材料與接縫三大要素；「品質與施工」強調實務面的重要性；「進階應用」則探討特殊場景。此架構將複雜的工程資訊分解為易於消化的模組，引導使用者從基礎到進階，循序漸進地建構知識。 -->
+    <!-- Visualization & Content Choices: 報告資訊 -> 目標 -> 視覺化/呈現方式 -> 互動 -> 理由 -> 使用技術。 1. 剛性 vs. 柔性鋪面 -> 目標: 比較 -> 視覺化: HTML/CSS 動態圖解 -> 互動: 按鈕觸發載重動畫 -> 理由: 直觀展示「版體作用」的根本差異 -> 技術: HTML/CSS。 2. 鋪面厚度設計 -> 目標: 關係 -> 視覺化: 條形圖 -> 互動: 滑桿調整交通量、路基強度、混凝土強度 -> 理由: 動態顯示多變數如何影響最終設計決策，將複雜的AASHTO公式概念化 -> 技術: Chart.js。 3. 接縫系統 -> 目標: 組織/探索 -> 視覺化: 結構化HTML圖解 -> 互動: 點擊不同接縫類型顯示其功能與細節 -> 理由: 將靜態圖說轉化為可探索的資訊節點 -> 技術: HTML/JS。 4. 施工品管 -> 目標: 告知 -> 視覺化: 互動式清單/時間軸 -> 互動: 點擊步驟顯示關鍵品管要求 -> 理由: 將繁瑣的規範條文整理成清晰的流程檢查點 -> 技術: HTML/JS。 -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F5F5F4; /* stone-100 */
+            color: #292524; /* stone-800 */
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            border-color: #0891B2; /* cyan-600 */
+            color: #0891B2; /* cyan-600 */
+            font-weight: 700;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .interactive-diagram-base {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            background-color: #A8A29E; /* stone-400 */
+            border-bottom: 5px solid #78716C; /* stone-500 */
+        }
+        .pavement-layer {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+        .load-anim {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: #FBBF24; /* amber-400 */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #44403C; /* stone-700 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .stress-distribution {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.5s ease-in-out;
+        }
+        .stress-rigid {
+            width: 80%;
+            height: 10px;
+            background: rgba(239, 68, 68, 0.5);
+            border-radius: 5px;
+        }
+        .stress-flexible {
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 60px solid rgba(239, 68, 68, 0.5);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .radio-label {
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        .radio-label:has(input:checked) {
+            border-color: #0891B2;
+            background-color: #ecfeff;
+        }
+        .status-sufficient {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+        }
+        .status-insufficient {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-800">互動式剛性鋪面設計指南</h1>
+        </header>
+
+        <nav class="mb-8 border-b border-stone-300">
+            <ul class="flex flex-wrap justify-center -mb-px">
+                <li><button class="tab-btn active text-lg px-4 py-3" data-tab="calculator">剛性鋪面計算</button></li>
+                <li><button class="tab-btn text-lg px-4 py-3" data-tab="supplement">補充說明</button></li>
+            </ul>
+        </nav>
+
+        <main>
+            <!-- 剛性鋪面計算 -->
+            <section id="calculator" class="content-section active">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-cyan-700 mb-2">剛性鋪面計算：類型、厚度與接縫的權衡</h2>
+                    <p class="text-lg text-stone-600 max-w-3xl mx-auto">剛性鋪面設計是在多個相互關聯的因素中尋求最佳平衡的過程。調整其中一項，都會影響其他決策。</p>
+                </div>
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- 厚度設計 -->
+                    <div class="lg:col-span-2 card p-6">
+                        <h3 class="text-xl font-bold mb-4">1. 厚度設計模擬器</h3>
+                        <p class="text-sm text-stone-600 mb-6">試著調整下方參數，觀察它們如何影響所需的鋪面厚度。此模型已將鋪面類型對載重傳遞效率的影響納入考量。</p>
+                        <div class="grid md:grid-cols-3 gap-6 mb-6">
+                            <div>
+                                <label for="traffic-slider" class="block font-semibold mb-1">交通量 (ESALs)</label>
+                                <input id="traffic-slider" type="range" min="0" max="6" value="3" step="1" class="w-full">
+                                <div id="traffic-value" class="text-center text-stone-800 mt-1 font-bold text-lg">100萬</div>
+                            </div>
+                            <div>
+                                <label for="subgrade-slider" class="block font-semibold mb-1">路基強度 (CBR)</label>
+                                <input id="subgrade-slider" type="range" min="0" max="4" value="2" step="1" class="w-full">
+                                <div class="text-center text-stone-800 mt-1 font-bold text-lg"><span id="subgrade-value">15</span></div>
+                            </div>
+                            <div>
+                                <label for="concrete-slider" class="block font-semibold mb-1">抗彎強度 S'c (kgf/cm²)</label>
+                                <input id="concrete-slider" type="range" min="0" max="4" value="2" step="1" class="w-full">
+                                <div class="text-center text-stone-800 mt-1 font-bold text-lg"><span id="concrete-value">45</span></div>
+                            </div>
+                        </div>
+                        <div class="chart-container mt-auto">
+                            <canvas id="thicknessChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- 鋪面類型選擇 -->
+                    <div class="lg:col-span-1 card p-6">
+                        <h3 class="text-xl font-bold mb-4">2. 鋪面類型與鋼筋</h3>
+                        <p class="text-sm text-stone-600 mb-4">選擇鋪面類型，決定了裂縫控制策略與鋼筋的角色。</p>
+                        <div class="space-y-3">
+                            <label class="radio-label block p-3 rounded-lg cursor-pointer">
+                                <input type="radio" name="pavement-type" value="JPCP" class="hidden" checked>
+                                <h4 class="font-semibold">JPCP (無鋼筋接縫式)</h4>
+                                <p class="text-xs text-stone-600">依賴緊密間距的接縫控制裂縫，不設溫度鋼筋。</p>
+                            </label>
+                            <label class="radio-label block p-3 rounded-lg cursor-pointer">
+                                <input type="radio" name="pavement-type" value="JRCP" class="hidden">
+                                <h4 class="font-semibold">JRCP (鋼筋接縫式)</h4>
+                                <p class="text-xs text-stone-600">設置鋼筋網，允許較長的接縫間距。</p>
+                            </label>
+                            <label class="radio-label block p-3 rounded-lg cursor-pointer">
+                                <input type="radio" name="pavement-type" value="CRCP" class="hidden">
+                                <h4 class="font-semibold">CRCP (連續鋼筋式)</h4>
+                                <p class="text-xs text-stone-600">不設收縮縫，用大量鋼筋控制裂縫。</p>
+                            </label>
+                        </div>
+                        <div id="steel-check-module" class="mt-auto pt-4">
+                            <div id="jpcp-steel-info" class="text-center p-3 bg-stone-100 rounded-lg">
+                                <h4 class="font-semibold">溫度鋼筋檢核</h4>
+                                <p class="text-stone-700 font-bold text-lg mt-1">不需配置溫度鋼筋</p>
+                            </div>
+                            <div id="steel-calculator" class="hidden space-y-3">
+                                <h4 class="font-semibold text-center">溫度鋼筋檢核</h4>
+                                <div class="grid grid-cols-2 gap-3 text-center">
+                                    <div class="bg-stone-50 p-2 rounded">
+                                        <div class="text-xs text-stone-500">所需鋼筋量 (As, req)</div>
+                                        <div id="steel-required" class="font-bold">0 cm²/m</div>
+                                    </div>
+                                    <div class="bg-stone-50 p-2 rounded">
+                                        <div class="text-xs text-stone-500">提供鋼筋量 (As, prov)</div>
+                                        <div id="steel-provided" class="font-bold">0 cm²/m</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="wwm-select" class="text-sm font-medium">選擇鋼線網規格:</label>
+                                    <select id="wwm-select" class="w-full mt-1 p-2 border border-stone-300 rounded-md">
+                                        <!-- Options will be populated by JS -->
+                                    </select>
+                                </div>
+                                <div id="steel-status" class="p-2 text-center font-bold rounded-md">
+                                    檢核狀態
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- 接縫系統 -->
+                    <div class="lg:col-span-3 card p-6 mt-8">
+                        <h3 class="text-xl font-bold mb-4">3. 接縫系統與間距</h3>
+                        <p class="text-sm text-stone-600 mb-4">鋪面類型與版厚直接影響接縫的配置策略。以下為根據上方參數計算的建議間距。</p>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center bg-stone-50 p-3 rounded-md">
+                                <div>
+                                    <h4 class="font-semibold">收縮縫 (橫向) 間距</h4>
+                                    <p class="text-xs text-stone-500">用以控制乾縮及溫度裂縫。</p>
+                                </div>
+                                <span id="contraction-joint-spacing" class="font-bold text-cyan-700 text-lg">4.5 m</span>
+                            </div>
+                            <div class="flex justify-between items-center bg-stone-50 p-3 rounded-md">
+                                <div>
+                                    <h4 class="font-semibold">伸縮縫間距</h4>
+                                    <p class="text-xs text-stone-500">用以提供版體膨脹空間。</p>
+                                </div>
+                                <span id="expansion-joint-spacing" class="font-bold text-cyan-700 text-lg">視結構物位置</span>
+                            </div>
+                            <div class="flex justify-between items-center bg-stone-50 p-3 rounded-md">
+                                <div>
+                                    <h4 class="font-semibold">縱向縫間距</h4>
+                                    <p class="text-xs text-stone-500">用以控制寬度方向開裂。</p>
+                                </div>
+                                <span id="longitudinal-joint-spacing" class="font-bold text-cyan-700 text-lg">3.75 m</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 補充說明 -->
+            <section id="supplement" class="content-section">
+                <div class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                    <h2 class="text-3xl font-bold text-cyan-700 mb-4 text-center">承載未來的藝術與科學</h2>
+                    <p class="text-lg text-stone-700 leading-relaxed max-w-3xl mx-auto text-center">
+                        設計一條剛性道路，就像為一本經典鉅著設計封面。封面不僅要有吸引人的外觀（表面平整度），更要考慮其材質（混凝土材料）和裝訂方式（接縫設計），確保它能經久耐用。然而，一本好書的「設計」還包括其內在的骨架（路面結構與厚度）、承載內容的紙張品質（路基與基底層），以及如何應對潮濕或破損問題（排水設施）。只有將這些內外兼修的設計重點整合起來，這本書（道路）才能真正地被「讀者」（用路人）長期欣賞與使用。
+                    </p>
+                    <div class="mt-8 p-6 bg-stone-50 rounded-md border border-stone-200">
+                        <h3 class="text-xl font-semibold text-stone-800 mb-3 text-center">為何選擇剛性鋪面？</h3>
+                        <div class="grid md:grid-cols-3 gap-6 text-left">
+                            <div class="flex items-start space-x-3">
+                                <span class="text-3xl">🛡️</span>
+                                <div>
+                                    <h4 class="font-bold">高耐久性</h4>
+                                    <p class="text-stone-600 text-sm">使用年限長，養護成本低，能抵抗重載與車轍變形。</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="text-3xl">💰</span>
+                                <div>
+                                    <h4 class="font-bold">生命週期成本優勢</h4>
+                                    <p class="text-stone-600 text-sm">雖初期建造成本較高，但長期維護需求低，總體更經濟。</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="text-3xl">🌙</span>
+                                <div>
+                                    <h4 class="font-bold">夜間安全</h4>
+                                    <p class="text-stone-600 text-sm">淺色表面能反射更多光線，提升夜間行車的能見度。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                    <div class="text-center mb-10">
+                        <h2 class="text-3xl font-bold text-cyan-700 mb-2">結構核心：版體作用與分層原理</h2>
+                        <p class="text-lg text-stone-600 max-w-3xl mx-auto">剛性鋪面的力量來自其高抗彎勁度，能像一塊堅固的板子將載重分散到大面積的基礎上。這與柔性鋪面逐層傳遞應力的方式截然不同。</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8 items-center mb-12">
+                        <div class="card p-6">
+                            <h3 class="text-xl font-bold text-center mb-4">剛性鋪面 (PCC)</h3>
+                            <div class="interactive-diagram-base rounded-t-lg">
+                                <div id="load-rigid" class="load-anim">▼</div>
+                                <div class="pavement-layer" style="top: 20px; background: #6B7280;">混凝土版</div>
+                                <div id="stress-rigid" class="stress-distribution stress-rigid" style="width: 0%;"></div>
+                            </div>
+                             <div class="bg-stone-100 p-4 rounded-b-lg text-sm text-stone-700">
+                               <p><strong>版體作用 (Slab Action):</strong> 應力被廣泛分佈，對路基壓力低。</p>
+                            </div>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="text-xl font-bold text-center mb-4">柔性鋪面 (瀝青)</h3>
+                            <div class="interactive-diagram-base rounded-t-lg">
+                                <div id="load-flexible" class="load-anim">▼</div>
+                                <div class="pavement-layer" style="top: 10px; height: 30px; background: #374151;">瀝青層</div>
+                                <div class="pavement-layer" style="top: 40px; height: 40px; background: #4B5563;">基底層</div>
+                                <div id="stress-flexible" class="stress-distribution stress-flexible" style="border-bottom-width: 0px;"></div>
+                            </div>
+                            <div class="bg-stone-100 p-4 rounded-b-lg text-sm text-stone-700">
+                               <p><strong>逐層傳遞:</strong> 應力呈錐狀集中，對路基壓力高。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button id="animate-load-btn" class="bg-cyan-600 text-white font-bold py-2 px-6 rounded-full hover:bg-cyan-700 transition-colors">模擬載重</button>
+                    </div>
+                    
+                    <div class="mt-16">
+                         <div class="text-center mb-10">
+                            <h2 class="text-3xl font-bold text-cyan-700 mb-2">鋪面結構剖析</h2>
+                            <p class="text-lg text-stone-600 max-w-3xl mx-auto">一個完整的剛性鋪面結構由多個功能各異的層次構成，共同確保道路的穩定與耐久。</p>
+                        </div>
+                        <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-inner border border-stone-200">
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-600 text-white rounded-md shadow-md">
+                                    <h4 class="font-bold text-lg">混凝土版 (面層)</h4>
+                                    <p class="text-sm">主要承重構件，其抗彎強度是設計成敗的關鍵。</p>
+                                </div>
+                                <div class="p-4 bg-stone-500 text-white rounded-md shadow-md">
+                                    <h4 class="font-bold text-lg">基層/底層</h4>
+                                    <p class="text-sm">提供均勻支撐、防止唧水現象、並可作為排水層。</p>
+                                </div>
+                                <div class="p-4 bg-amber-800 text-white rounded-md shadow-md">
+                                    <h4 class="font-bold text-lg">路基</h4>
+                                    <p class="text-sm">鋪面結構的最終基礎，其強度與均勻性至關重要。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                     <h2 class="text-3xl font-bold text-cyan-700 mb-6 text-center">設計考量深度解析</h2>
+                     <div class="space-y-8">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-stone-800 mb-3 border-b-2 border-cyan-500 pb-2">鋪面類型選擇考量 (JPCP, JRCP, CRCP)</h3>
+                            <p class="text-stone-700 mb-4">選擇何種類型的剛性鋪面，是一項涉及初期成本、預期壽命、維護策略與施工複雜度的綜合決策。</p>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-stone-50 rounded-lg">
+                                    <h4 class="font-bold text-lg">JPCP (無鋼筋接縫式)</h4>
+                                    <ul class="list-disc list-inside text-stone-600 mt-2 space-y-1 text-sm">
+                                        <li><b>原理：</b>不配置溫度鋼筋，完全依賴設置間距較短 (約4-6公尺) 的收縮縫來控制裂縫。</li>
+                                        <li><b>優點：</b>施工最單純，初期建造成本最低。</li>
+                                        <li><b>缺點：</b>接縫數量多，長期的接縫維護成本較高，行車舒適度可能因接縫退化而降低。</li>
+                                        <li><b>適用情境：</b>交通量較低、重車比例不高的道路，如鄉道、市區次要道路。</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-stone-50 rounded-lg">
+                                    <h4 class="font-bold text-lg">JRCP (鋼筋接縫式)</h4>
+                                    <ul class="list-disc list-inside text-stone-600 mt-2 space-y-1 text-sm">
+                                        <li><b>原理：</b>在版中配置鋼筋網，其作用不是增加承載力，而是將收縮縫之間可能產生的裂縫緊緊拉住，維持粒料嵌鎖力。</li>
+                                        <li><b>優點：</b>允許使用更長的收縮縫間距 (約8-15公尺)，減少了接縫總數，可能提升行車平順度。</li>
+                                        <li><b>缺點：</b>初期成本高於JPCP，施工較複雜，且鋼筋的角色僅是拉住裂縫，無法阻止裂縫發生。</li>
+                                        <li><b>適用情境：</b>交通量中等的道路，作為JPCP與CRCP之間的平衡選項。</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-stone-50 rounded-lg">
+                                    <h4 class="font-bold text-lg">CRCP (連續鋼筋式)</h4>
+                                    <ul class="list-disc list-inside text-stone-600 mt-2 space-y-1 text-sm">
+                                        <li><b>原理：</b>不設橫向收縮縫，而是配置大量的縱向鋼筋 (鋼筋比約0.6%-0.7%)。這些鋼筋會迫使混凝土產生大量、間距極近且非常細微的橫向裂縫，並將其緊緊束制住。</li>
+                                        <li><b>優點：</b>沒有橫向接縫，提供最優越的行車舒適度；長期維護成本極低，使用壽命最長。</li>
+                                        <li><b>缺點：</b>初期建造成本最高，對施工品質要求極為嚴格，修復困難。</li>
+                                        <li><b>適用情境：</b>交通量極大、重車比例高的高速公路或重要幹道，追求最低生命週期成本的場所。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-stone-800 mb-3 border-b-2 border-cyan-500 pb-2">鋪面厚度計算過程說明</h3>
+                            <p class="text-stone-700">本計算工具採用簡化的經驗模型，其核心邏輯源自AASHTO等國際設計方法，旨在呈現各關鍵參數對鋪面厚度的影響關係。計算過程主要考量以下因素：</p>
+                             <ul class="list-decimal list-inside text-stone-600 mt-4 space-y-2">
+                                <li><b>交通量 (ESALs)：</b>交通量越大，對鋪面造成的累積疲勞損傷越高，因此需要更厚的版體來抵抗。</li>
+                                <li><b>路基強度 (CBR)：</b>路基是鋪面的最終基礎。CBR值越高，代表基礎越穩固，能提供的支撐力越強，有助於分擔版體的應力，因此可允許稍薄的版厚。</li>
+                                <li><b>混凝土抗彎強度 (S'c)：</b>這是混凝土版抵抗彎曲變形的核心能力。強度越高的混凝土，抵抗相同載重應力的能力越強，因此所需的厚度也越薄。</li>
+                                <li><b>鋪面類型：</b>不同類型的鋪面因其接縫與鋼筋配置，有不同的載重傳遞效率。CRCP因其連續性，載重傳遞效率最佳，所需厚度最薄；JPCP則因依賴接縫傳遞，效率較差，所需厚度最厚。</li>
+                             </ul>
+                             <p class="text-sm text-stone-500 mt-4"><b>註：</b>計算結果最終會與實務上建議的最小施工厚度(15cm)進行比較，取其大者，以確保結構的耐久性與施工可行性。</p>
+                        </div>
+                         <div>
+                            <h3 class="text-2xl font-semibold text-stone-800 mb-3 border-b-2 border-cyan-500 pb-2">接縫間距考量</h3>
+                            <p class="text-stone-700">接縫的配置是管理混凝土內應力的關鍵，其間距的決定基於明確的工程原則：</p>
+                             <ul class="list-disc list-inside text-stone-600 mt-4 space-y-3">
+                                <li><b>收縮縫 (橫向) 間距：</b>
+                                    <p class="ml-4">其主要目的是控制因乾縮及溫度變化產生的拉應力。間距必須足夠短，以確保應力能在累積到足以造成隨機開裂前，就在預設的鋸縫位置被釋放。對於最常見的JPCP，經驗法則是間距(公尺)不應超過版厚(公分)的24倍，且一般不建議超過6公尺，以避免版塊中央翹曲過度。JRCP因有鋼筋束制，可採用較長的間距。</p>
+                                </li>
+                                <li><b>伸縮縫間距：</b>
+                                    <p class="ml-4">其功能是吸收大範圍的熱膨脹壓力，防止鋪面擠壓橋梁、隧道等固定結構物。因此，它並非依固定間距設置，而是**「視結構物位置而定」**。在一條長直且沒有結構物的路段，理論上可以完全不設伸縮縫。</p>
+                                </li>
+                                 <li><b>縱向縫間距：</b>
+                                    <p class="ml-4">主要用以防止寬向的開裂。其間距通常由**車道寬度**決定，例如台灣的標準車道寬度約為3.5至3.75公尺，因此縱向縫也依此間距設置，將多車道的寬鋪面分割成獨立的車道版塊。</p>
+                                </li>
+                             </ul>
+                        </div>
+                     </div>
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.content-section');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Section: Structure Core (in supplement)
+            const animateBtn = document.getElementById('animate-load-btn');
+            if (animateBtn) {
+                const stressRigid = document.getElementById('stress-rigid');
+                const stressFlexible = document.getElementById('stress-flexible');
+
+                animateBtn.addEventListener('click', () => {
+                    stressRigid.style.width = '0%';
+                    stressFlexible.style.borderBottomWidth = '0px';
+
+                    setTimeout(() => {
+                        stressRigid.style.width = '80%';
+                        stressFlexible.style.borderBottomWidth = '60px';
+                    }, 100);
+                });
+            }
+
+
+            // Section: Calculator
+            const trafficSlider = document.getElementById('traffic-slider');
+            const subgradeSlider = document.getElementById('subgrade-slider');
+            const concreteSlider = document.getElementById('concrete-slider');
+            const trafficValueSpan = document.getElementById('traffic-value');
+            const subgradeValueSpan = document.getElementById('subgrade-value');
+            const concreteValueSpan = document.getElementById('concrete-value');
+            const pavementTypeRadios = document.querySelectorAll('input[name="pavement-type"]');
+            
+            const jpcpSteelInfo = document.getElementById('jpcp-steel-info');
+            const steelCalculator = document.getElementById('steel-calculator');
+            const wwmSelect = document.getElementById('wwm-select');
+            const steelRequiredEl = document.getElementById('steel-required');
+            const steelProvidedEl = document.getElementById('steel-provided');
+            const steelStatusEl = document.getElementById('steel-status');
+
+            const contractionJointSpacingEl = document.getElementById('contraction-joint-spacing');
+            const expansionJointSpacingEl = document.getElementById('expansion-joint-spacing');
+            const longitudinalJointSpacingEl = document.getElementById('longitudinal-joint-spacing');
+
+            const trafficLevels = [1000, 10000, 100000, 500000, 1000000, 5000000, 10000000]; // ESALs
+            const trafficDescriptions = ['產業/農路', '鄉道', '次要市區道路', '主要市區道路', '主要幹道', '次要高速公路', '主要高速公路'];
+            const cbrLevels = [3, 7, 15, 40, 80]; // CBR values
+            const subgradeKLevels = [30, 50, 70, 100, 150]; // Corresponding k-values in MPa/m
+            const concreteLevelsKgf = [35, 40, 45, 50, 55]; // S'c in kgf/cm^2
+            
+            const wwmData = [
+                { name: "150x150-D6x_D6 (W4.0x_W4.0)", wireArea_cm2: 0.258, spacing_cm: 15.24 },
+                { name: "150x150-D8x_D8 (W5.5x_W5.5)", wireArea_cm2: 0.355, spacing_cm: 15.24 },
+                { name: "100x100-D8x_D8 (W5.5x_W5.5)", wireArea_cm2: 0.355, spacing_cm: 10.16 },
+                { name: "150x150-D10x_D10", wireArea_cm2: 0.785, spacing_cm: 15.24 },
+                { name: "100x100-D10x_D10", wireArea_cm2: 0.785, spacing_cm: 10.16 },
+                { name: "100x100-D13x_D13", wireArea_cm2: 1.29, spacing_cm: 10.16 },
+            ];
+            
+            let thicknessChart;
+            let requiredSteelArea = 0;
+
+            function populateWWMSelect() {
+                wwmData.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify(item);
+                    option.textContent = item.name;
+                    wwmSelect.appendChild(option);
+                });
+            }
+
+            function verifySteel() {
+                if (!wwmSelect.value) return;
+                const selectedWWM = JSON.parse(wwmSelect.value);
+                const providedArea = (selectedWWM.wireArea_cm2 * 100) / selectedWWM.spacing_cm;
+                steelProvidedEl.textContent = `${providedArea.toFixed(2)} cm²/m`;
+
+                if (providedArea >= requiredSteelArea) {
+                    steelStatusEl.textContent = '✔ 足夠';
+                    steelStatusEl.className = 'p-2 text-center font-bold rounded-md status-sufficient';
+                } else {
+                    steelStatusEl.textContent = '✘ 不足';
+                    steelStatusEl.className = 'p-2 text-center font-bold rounded-md status-insufficient';
+                }
+            }
+
+            function updateCalculator() {
+                const trafficIndex = parseInt(trafficSlider.value);
+                const subgradeIndex = parseInt(subgradeSlider.value);
+                const concreteIndex = parseInt(concreteSlider.value);
+                const pavementType = document.querySelector('input[name="pavement-type"]:checked').value;
+
+                const trafficValue = trafficLevels[trafficIndex];
+                const trafficDescription = trafficDescriptions[trafficIndex];
+                const cbrValue = cbrLevels[subgradeIndex];
+                const subgradeKValue = subgradeKLevels[subgradeIndex];
+                const concreteValueKgf = concreteLevelsKgf[concreteIndex];
+                const concreteValueMPa = 3.5 + concreteIndex * 0.5; // Back-calculate MPa for formula
+
+                trafficValueSpan.innerHTML = `${trafficValue.toLocaleString()}<span class="text-sm font-normal">次 (${trafficDescription})</span>`;
+                subgradeValueSpan.textContent = cbrValue;
+                concreteValueSpan.textContent = concreteValueKgf;
+                
+                let jFactorEffect = 0;
+                let steelPercentage = 0;
+
+                const baseThickness = 12.5; // cm, adjusted base for lower traffic and 15cm goal
+                const trafficEffect = Math.log10(trafficValue / 1000) * 3; // Scaled for new range, base is 1000
+                const subgradeEffect = (150 - subgradeKValue) / 20;
+                const concreteEffect = (5.5 - concreteValueMPa) * 3.5;
+
+                let requiredThickness = baseThickness + trafficEffect + subgradeEffect + concreteEffect + jFactorEffect;
+                
+                switch(pavementType) {
+                    case 'JPCP':
+                        jpcpSteelInfo.classList.remove('hidden');
+                        steelCalculator.classList.add('hidden');
+                        jFactorEffect = 3.0; 
+                        
+                        requiredThickness += jFactorEffect;
+                        requiredThickness = Math.max(15, requiredThickness);
+
+                        let jpcp_spacing = (24 * requiredThickness / 100).toFixed(1);
+                        jpcp_spacing = Math.min(jpcp_spacing, 6.0).toFixed(1);
+                        contractionJointSpacingEl.textContent = `${jpcp_spacing} m`;
+                        expansionJointSpacingEl.textContent = '視結構物位置';
+                        longitudinalJointSpacingEl.textContent = '3.75 m';
+                        break;
+                    case 'JRCP':
+                        jpcpSteelInfo.classList.add('hidden');
+                        steelCalculator.classList.remove('hidden');
+                        jFactorEffect = 1.5;
+                        steelPercentage = 0.0015; // 0.15%
+
+                        requiredThickness += jFactorEffect;
+                        requiredThickness = Math.max(15, requiredThickness);
+
+                        contractionJointSpacingEl.textContent = '8.0 ~ 15.0 m';
+                        expansionJointSpacingEl.textContent = '視結構物位置';
+                        longitudinalJointSpacingEl.textContent = '3.75 m';
+                        break;
+                    case 'CRCP':
+                        jpcpSteelInfo.classList.add('hidden');
+                        steelCalculator.classList.remove('hidden');
+                        jFactorEffect = 0; 
+                        steelPercentage = 0.0065; // 0.65%
+
+                        requiredThickness += jFactorEffect;
+                        requiredThickness = Math.max(15, requiredThickness);
+
+                        contractionJointSpacingEl.textContent = '無';
+                        expansionJointSpacingEl.textContent = '僅設於起迄點';
+                        longitudinalJointSpacingEl.textContent = '3.75 m';
+                        break;
+                }
+
+                thicknessChart.data.datasets[0].data[0] = requiredThickness;
+                thicknessChart.update();
+
+                if (steelPercentage > 0) {
+                    requiredSteelArea = steelPercentage * (requiredThickness * 100); // Ac = D * 100 cm
+                    steelRequiredEl.textContent = `${requiredSteelArea.toFixed(2)} cm²/m`;
+                    verifySteel();
+                }
+            }
+
+            function initChart() {
+                const ctx = document.getElementById('thicknessChart').getContext('2d');
+                thicknessChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['所需鋪面厚度'],
+                        datasets: [{
+                            label: '厚度 (cm)',
+                            data: [25],
+                            backgroundColor: ['#06B6D4'],
+                            borderColor: ['#0891B2'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 40,
+                                title: {
+                                    display: true,
+                                    text: '厚度 (公分)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `厚度: ${context.raw.toFixed(1)} cm`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            if (document.getElementById('thicknessChart')) {
+                populateWWMSelect();
+                initChart();
+                updateCalculator(); // Initial call to set everything up
+                
+                trafficSlider.addEventListener('input', updateCalculator);
+                subgradeSlider.addEventListener('input', updateCalculator);
+                concreteSlider.addEventListener('input', updateCalculator);
+                pavementTypeRadios.forEach(radio => radio.addEventListener('change', updateCalculator));
+                wwmSelect.addEventListener('change', verifySteel);
+            }
+        });
+    </script>
+</body>
+</html>
