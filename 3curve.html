@@ -137,26 +137,26 @@
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
                                 <label for="offsetXSlider" class="font-medium">L1 偏移值 (+X)</label>
-                                <span id="offsetXValue" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">50</span>
+                                <span id="offsetXValue" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">15</span>
                             </div>
-                            <!-- Changed step to 0.1 -->
-                            <input id="offsetXSlider" type="range" min="0" max="100" value="50" step="0.1" class="slider-input">
+                            <!-- Changed min and max for L1 Offset slider -->
+                            <input id="offsetXSlider" type="range" min="0" max="50" value="15" step="0.1" class="slider-input">
                         </div>
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
                                 <label for="offsetL2Slider" class="font-medium">L2 偏移值 (內縮)</label>
-                                <span id="offsetL2Value" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">50</span>
+                                <span id="offsetL2Value" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">15</span>
                             </div>
-                            <!-- Changed step to 0.1 -->
-                            <input id="offsetL2Slider" type="range" min="0" max="100" value="50" step="0.1" class="slider-input">
+                            <!-- Changed min and max for L2 Offset slider -->
+                            <input id="offsetL2Slider" type="range" min="0" max="50" value="15" step="0.1" class="slider-input">
                         </div>
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
                                 <label for="r0Slider" class="font-medium">輔助圓半徑 (R0)</label>
-                                <span id="r0Value" class="font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">30</span>
+                                <span id="r0Value" class="font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">10</span>
                             </div>
-                            <!-- Changed step to 0.1 -->
-                            <input id="r0Slider" type="range" min="0" max="150" value="30" step="0.1" class="slider-input">
+                            <!-- Changed min and max for R0 slider -->
+                            <input id="r0Slider" type="range" min="0" max="50" value="10" step="0.1" class="slider-input">
                         </div>
                         <hr/>
                         <!-- Angle Slider -->
@@ -170,9 +170,10 @@
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
                                 <label for="r2Slider" class="font-medium">R2 半徑</label>
-                                <span id="r2Value" class="font-mono text-rose-600 bg-rose-50 px-2 py-1 rounded">100</span>
+                                <span id="r2Value" class="font-mono text-rose-600 bg-rose-50 px-2 py-1 rounded">20</span>
                             </div>
-                            <input id="r2Slider" type="range" min="1" max="500" value="100" step="0.1" class="slider-input">
+                            <!-- Changed min and max for R2 slider -->
+                            <input id="r2Slider" type="range" min="0" max="50" value="20" step="0.1" class="slider-input">
                         </div>
                     </div>
                 </div>
@@ -383,11 +384,12 @@
                 }
             }
 
-            // --- Step 2: Set Fixed Viewport [0, 200] x [50, -150] ---
+            // --- Step 2: Set Fixed Viewport ---
+            // X顯示範圍0-100, Y顯示範圍+25~-75
             worldMinX = 0;
-            worldMaxX = 200;
-            worldMinY = -150;
-            worldMaxY = 50;
+            worldMaxX = 100;
+            worldMinY = -75; // Corresponds to +75 in standard Cartesian, but canvas Y is inverted
+            worldMaxY = 25;  // Corresponds to -25 in standard Cartesian, but canvas Y is inverted
 
             const bboxWidth = worldMaxX - worldMinX;
             const bboxHeight = worldMaxY - worldMinY;
@@ -410,7 +412,7 @@
             ctx.beginPath();
             ctx.strokeStyle = '#f0f0f0';
             ctx.lineWidth = 1 / scale;
-            const gridSpacing = 50;
+            const gridSpacing = 25; // Adjusted grid spacing for new range
             for (let x = Math.ceil(worldMinX / gridSpacing) * gridSpacing; x < worldMaxX; x += gridSpacing) {
                 ctx.moveTo(x, worldMinY);
                 ctx.lineTo(x, worldMaxY);
