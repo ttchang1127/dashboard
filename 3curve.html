@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>道路轉角幾何設計(AASHTO)</title>
+    <title>轉角三心圓複曲線設計(AASHTO)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
@@ -23,18 +23,6 @@
         }
         .coord-table td {
             @apply px-2 py-1.5 font-mono text-sm;
-        }
-        .tooltip {
-            @apply absolute bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full mb-2;
-            transform: translateX(-50%);
-            left: 50%;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-        .slider-container:hover .tooltip {
-            opacity: 1;
         }
         .legend-item {
             @apply flex items-center gap-2 text-sm;
@@ -95,53 +83,44 @@
             text-align: center;
         }
         .param-title {
-            font-size: 0.9rem;
+            font-size: 1.25rem; /* Increased font size to text-lg */
             font-weight: 600;
             margin-bottom: 5px;
             color: #e0f2fe;
         }
         .param-value {
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.5rem; /* Increased font size to text-xl */
+            font-weight: 900; /* Made it font-black for maximum boldness */
             font-family: 'Courier New', monospace;
-            color: white;
-        }
-        .aashto-badge {
-            background: #c2410c;
-            color: white;
-            font-size: 0.8rem;
-            padding: 3px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 5px;
+            color: white; 
         }
     </style>
 </head>
 <body class="text-gray-800 min-h-screen">
     <div class="container mx-auto p-4 md:p-8 max-w-7xl">
         <header class="text-center mb-8 p-6 rounded-xl header-gradient text-white">
-            <h1 class="text-3xl md:text-4xl font-bold">道路轉角幾何設計<span class="aashto-badge">AASHTO</span></h1>
+            <h1 class="text-3xl md:text-4xl font-bold">轉角三心圓複曲線設計(AASHTO)<span class="text-2xl md:text-3xl">_右轉</span></h1>
             
             <div class="param-display">
                 <div class="param-box">
                     <div class="param-title">進入偏移值</div>
-                    <div id="param-offset-enter" class="param-value">40.00</div>
+                    <div id="param-offset-enter" class="param-value text-cyan-400">40.00</div>
                 </div>
                 <div class="param-box">
                     <div class="param-title">離開偏移值</div>
-                    <div id="param-offset-leave" class="param-value">40.00</div>
+                    <div id="param-offset-leave" class="param-value text-cyan-400">40.00</div>
                 </div>
                 <div class="param-box">
                     <div class="param-title">R1 半徑</div>
-                    <div id="param-radius-r1" class="param-value">124.32</div>
+                    <div id="param-radius-r1" class="param-value text-green-400">124.32</div>
                 </div>
                 <div class="param-box">
                     <div class="param-title">R3 半徑</div>
-                    <div id="param-radius-r3" class="param-value">98.76</div>
+                    <div id="param-radius-r3" class="param-value text-purple-400">98.76</div>
                 </div>
                 <div class="param-box">
                     <div class="param-title">R4 半徑</div>
-                    <div id="param-radius-r4" class="param-value">100.00</div>
+                    <div id="param-radius-r4" class="param-value text-rose-400">100.00</div>
                 </div>
             </div>
         </header>
@@ -165,7 +144,6 @@
                                 <span id="offsetXValue" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">50</span>
                             </div>
                             <input id="offsetXSlider" type="range" min="0" max="100" value="50" class="slider-input">
-                            <div class="tooltip">調整道路進入點的偏移距離</div>
                         </div>
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
@@ -173,17 +151,15 @@
                                 <span id="offsetL2Value" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">50</span>
                             </div>
                             <input id="offsetL2Slider" type="range" min="0" max="100" value="50" class="slider-input">
-                            <div class="tooltip">調整道路離開點的偏移距離</div>
                         </div>
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
                                 <label for="r0Slider" class="font-medium">輔助圓半徑 (R0)</label>
-                                <span id="r0Value" class="font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">40</span>
+                                <span id="r0Value" class="font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">30</span>
                             </div>
-                            <input id="r0Slider" type="range" min="0" max="150" value="40" class="slider-input">
-                            <div class="tooltip">調整輔助圓半徑大小 (虛線顯示)</div>
+                            <input id="r0Slider" type="range" min="0" max="150" value="30" class="slider-input">
                         </div>
-                         <hr/>
+                        <hr/>
                         <!-- Angle Slider -->
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
@@ -191,7 +167,6 @@
                                 <span id="angleValue" class="font-mono text-blue-600 bg-blue-50 px-2 py-1 rounded">90°</span>
                             </div>
                             <input id="angleSlider" type="range" min="60" max="120" value="90" class="slider-input">
-                            <div class="tooltip">調整道路轉彎角度</div>
                         </div>
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
@@ -199,31 +174,30 @@
                                 <span id="r4Value" class="font-mono text-rose-600 bg-rose-50 px-2 py-1 rounded">100</span>
                             </div>
                             <input id="r4Slider" type="range" min="1" max="500" value="100" class="slider-input">
-                            <div class="tooltip">調整R4圓弧半徑</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="info-panel p-6 flex-grow">
-                     <h3 class="text-lg font-bold mb-3">關鍵點座標及半徑</h3>
-                     <table class="w-full coord-table">
-                         <thead class="bg-gray-100">
-                             <tr><td class="font-medium text-gray-700">項目</td><td class="font-medium text-gray-700">數值 / 座標 (X, Y)</td></tr>
-                         </thead>
-                         <tbody>
-                             <tr class="border-b"><td class="text-red-500 font-bold">PI</td><td id="coord-pi"></td></tr>
-                             <tr class="border-b"><td class="text-cyan-500 font-bold">L0</td><td id="coord-l0"></td></tr>
-                             <tr class="border-b"><td class="text-orange-500 font-bold">C1</td><td id="coord-c1"></td></tr>
-                             <tr class="border-b"><td class="text-orange-500 font-bold">C2</td><td id="coord-c2"></td></tr>
-                             <tr class="border-b"><td class="text-indigo-500 font-bold">S1</td><td id="coord-s1"></td></tr>
-                             <tr class="border-b"><td class="text-teal-500 font-bold">E1</td><td id="coord-e1"></td></tr>
-                             <tr class="border-b"><td class="font-medium text-gray-700">進入偏移值</td><td id="offset-enter"></td></tr>
-                             <tr class="border-b"><td class="font-medium text-gray-700">離開偏移值</td><td id="offset-leave"></td></tr>
-                             <tr class="border-b"><td class="text-green-500 font-bold">R1 半徑</td><td id="radius-r1"></td></tr>
-                             <tr class="border-b"><td class="text-purple-500 font-bold">R3 半徑</td><td id="radius-r3"></td></tr>
-                             <tr class="border-b"><td class="text-rose-500 font-bold">R4 半徑</td><td id="radius-r4"></td></tr>
-                         </tbody>
-                     </table>
+                    <h3 class="text-lg font-bold mb-3">關鍵點座標及半徑</h3>
+                    <table class="w-full coord-table">
+                        <thead class="bg-gray-100">
+                            <tr><td class="font-medium text-gray-700">項目</td><td class="font-medium text-gray-700">數值 / 座標 (X, Y)</td></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b"><td class="text-red-500 font-bold">PI</td><td id="coord-pi"></td></tr>
+                            <tr class="border-b"><td class="text-cyan-500 font-bold">L0</td><td id="coord-l0"></td></tr>
+                            <tr class="border-b"><td class="text-orange-500 font-bold">C1</td><td id="coord-c1"></td></tr>
+                            <tr class="border-b"><td class="text-orange-500 font-bold">C2</td><td id="coord-c2"></td></tr>
+                            <tr class="border-b"><td class="text-indigo-500 font-bold">S1</td><td id="coord-s1"></td></tr>
+                            <tr class="border-b"><td class="text-teal-500 font-bold">E1</td><td id="coord-e1"></td></tr>
+                            <tr class="border-b"><td class="font-medium text-gray-700">進入偏移值</td><td id="offset-enter"></td></tr>
+                            <tr class="border-b"><td class="font-medium text-gray-700">離開偏移值</td><td id="offset-leave"></td></tr>
+                            <tr class="border-b"><td class="text-green-500 font-bold">R1 半徑</td><td id="radius-r1"></td></tr>
+                            <tr class="border-b"><td class="text-purple-500 font-bold">R3 半徑</td><td id="radius-r3"></td></tr>
+                            <tr class="border-b"><td class="text-rose-500 font-bold">R4 半徑</td><td id="radius-r4"></td></tr>
+                        </tbody>
+                    </table>
                 </div>
                 
                 <div class="legend-panel p-6">
@@ -267,7 +241,7 @@
         </div>
         
         <footer class="mt-12 text-center text-gray-500 text-sm">
-            <p>道路轉角幾何設計工具 &copy; 2023 - 基於AASHTO標準</p>
+            <!-- Removed the previous footer text -->
         </footer>
     </div>
 
@@ -410,9 +384,9 @@
                 if (solutions_h.length > 0) {
                     let best_h = solutions_h[0];
                     if (solutions_h.length > 1) {
-                         const k0 = slope_perp * solutions_h[0] + k_intercept;
-                         const k1 = slope_perp * solutions_h[1] + k_intercept;
-                         if (solutions_h[1] > 0 && k1 < 0) best_h = solutions_h[1];
+                           const k0 = slope_perp * solutions_h[0] + k_intercept;
+                           const k1 = slope_perp * solutions_h[1] + k_intercept;
+                           if (solutions_h[1] > 0 && k1 < 0) best_h = solutions_h[1];
                     }
                     const h = best_h;
                     const k = slope_perp * h + k_intercept;
@@ -495,7 +469,7 @@
             // Draw offset lines
             ctx.beginPath();
             ctx.lineWidth = 1 / scale;
-            ctx.strokeStyle = '#0891b2';
+            ctx.strokeStyle = '#0891b2'; // Cyan-700
             ctx.setLineDash(dash);
             ctx.moveTo(offsetX, worldMinY); ctx.lineTo(offsetX, worldMaxY);
             const l2_prime_y = (x) => (-offsetL2 - x * Math.cos(angleRad)) / Math.sin(angleRad);
@@ -518,7 +492,7 @@
             if (typeof R1_val === 'number') {
                 ctx.beginPath();
                 ctx.lineWidth = arcLineWidth;
-                ctx.strokeStyle = '#22c55e';
+                ctx.strokeStyle = '#22c55e'; // Green-500
                 const startAngleR1 = Math.atan2(s1_coord.y - o_r1_coord.y, s1_coord.x - o_r1_coord.x);
                 const endAngleR1 = Math.atan2(c2_coord.y - o_r1_coord.y, c2_coord.x - o_r1_coord.x);
                 ctx.arc(o_r1_coord.x, o_r1_coord.y, R1_val, startAngleR1, endAngleR1, true);
@@ -529,7 +503,7 @@
             if (typeof R3_val === 'number' && o_r3_coord) {
                 ctx.beginPath();
                 ctx.lineWidth = arcLineWidth;
-                ctx.strokeStyle = '#8b5cf6';
+                ctx.strokeStyle = '#8b5cf6'; // Purple-500
                 const startAngleR3 = Math.atan2(e1_coord.y - o_r3_coord.y, e1_coord.x - o_r3_coord.x);
                 const endAngleR3 = Math.atan2(c1_coord.y - o_r3_coord.y, c1_coord.x - o_r3_coord.x);
                 ctx.arc(o_r3_coord.x, o_r3_coord.y, R3_val, startAngleR3, endAngleR3, false);
@@ -554,7 +528,7 @@
                 // Draw the long arc (dashed)
                 ctx.beginPath();
                 ctx.lineWidth = 1 / scale; 
-                ctx.strokeStyle = '#fda4af'; 
+                ctx.strokeStyle = '#fda4af'; // Pink-300
                 ctx.setLineDash(dash);
                 ctx.arc(o_r4_coord.x, o_r4_coord.y, R4_val, startAngleR4, endAngleR4, !shortArcDirection);
                 ctx.stroke();
@@ -562,7 +536,7 @@
                 // Draw the short arc (solid)
                 ctx.beginPath();
                 ctx.lineWidth = arcLineWidth;
-                ctx.strokeStyle = '#e11d48';
+                ctx.strokeStyle = '#e11d48'; // Rose-600
                 ctx.setLineDash([]);
                 ctx.arc(o_r4_coord.x, o_r4_coord.y, R4_val, startAngleR4, endAngleR4, shortArcDirection);
                 ctx.stroke();
