@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道路轉角幾何設計(AASHTO)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+        }
+        .slider-label {
+            @apply flex justify-between items-center text-sm text-gray-600;
+        }
+        .slider-input {
+            @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+        }
+        .coord-table td {
+            @apply px-2 py-1.5 font-mono text-sm;
+        }
+        .tooltip {
+            @apply absolute bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full mb-2;
+            transform: translateX(-50%);
+            left: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .slider-container:hover .tooltip {
+            opacity: 1;
+        }
+        .legend-item {
+            @apply flex items-center gap-2 text-sm;
+        }
+        .legend-color {
+            @apply w-4 h-4 rounded-full;
+        }
+        .header-gradient {
+            background: linear-gradient(120deg, #1e3a8a 0%, #0ea5e9 100%);
+        }
+        canvas {
+            display: block;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .control-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .info-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .legend-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .coordinate-label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            pointer-events: none;
+            transform: translate(-50%, -100%);
+        }
+        .param-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .param-box {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .param-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #e0f2fe;
+        }
+        .param-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            color: white;
+        }
+        .aashto-badge {
+            background: #c2410c;
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen">
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-8 p-6 rounded-xl header-gradient text-white">
+            <h1 class="text-3xl md:text-4xl font-bold">道路轉角幾何設計<span class="aashto-badge">AASHTO</span></h1>
+            
+            <div class="param-display">
+                <div class="param-box">
+                    <div class="param-title">進入偏移值</div>
+                    <div id="param-offset-enter" class="param-value">40.00</div>
+                </div>
+                <div class="param-box">
+                    <div class="param-title">離開偏移值</div>
+                    <div id="param-offset-leave" class="param-value">40.00</div>
+                </div>
+                <div class="param-box">
+                    <div class="param-title">R1 半徑</div>
+                    <div id="param-radius-r1" class="param-value">124.32</div>
+                </div>
+                <div class="param-box">
+                    <div class="param-title">R3 半徑</div>
+                    <div id="param-radius-r3" class="param-value">98.76</div>
+                </div>
+                <div class="param-box">
+                    <div class="param-title">R4 半徑</div>
+                    <div id="param-radius-r4" class="param-value">100.00</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Canvas Area -->
+            <div class="w-full md:w-2/3 aspect-square relative">
+                <canvas id="curveCanvas"></canvas>
+                <div id="coordinateDisplay" class="absolute top-3 right-3 bg-black/70 text-white px-3 py-1 rounded-lg text-sm font-mono">X: 0, Y: 0</div>
+            </div>
+
+            <!-- Controls Area -->
+            <div class="w-full md:w-1/3 flex flex-col gap-6">
+                <div class="control-panel p-6">
+                    <h2 class="text-xl font-bold mb-6 border-b pb-3">參數控制</h2>
+                    <div class="space-y-6">
+                        <!-- Offset & R0 Sliders -->
+                        <div class="slider-container relative">
+                            <div class="slider-label mb-2">
+                                <label for="offsetXSlider" class="font-medium">L1 偏移值 (+X)</label>
+                                <span id="offsetXValue" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">50</span>
+                            </div>
+                            <input id="offsetXSlider" type="range" min="0" max="100" value="50" class="slider-input">
+                            <div class="tooltip">調整道路進入點的偏移距離</div>
+                        </div>
+                        <div class="slider-container relative">
+                            <div class="slider-label mb-2">
+                                <label for="offsetL2Slider" class="font-medium">L2 偏移值 (內縮)</label>
+                                <span id="offsetL2Value" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">50</span>
+                            </div>
+                            <input id="offsetL2Slider" type="range" min="0" max="100" value="50" class="slider-input">
+                            <div class="tooltip">調整道路離開點的偏移距離</div>
+                        </div>
+                        <div class="slider-container relative">
+                            <div class="slider-label mb-2">
+                                <label for="r0Slider" class="font-medium">輔助圓半徑 (R0)</label>
+                                <span id="r0Value" class="font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">40</span>
+                            </div>
+                            <input id="r0Slider" type="range" min="0" max="150" value="40" class="slider-input">
+                            <div class="tooltip">調整輔助圓半徑大小 (虛線顯示)</div>
+                        </div>
+                         <hr/>
+                        <!-- Angle Slider -->
+                        <div class="slider-container relative">
+                            <div class="slider-label mb-2">
+                                <label for="angleSlider" class="font-medium">轉彎角度 (Δ)</label>
+                                <span id="angleValue" class="font-mono text-blue-600 bg-blue-50 px-2 py-1 rounded">90°</span>
+                            </div>
+                            <input id="angleSlider" type="range" min="60" max="120" value="90" class="slider-input">
+                            <div class="tooltip">調整道路轉彎角度</div>
+                        </div>
+                        <div class="slider-container relative">
+                            <div class="slider-label mb-2">
+                                <label for="r4Slider" class="font-medium">R4 半徑</label>
+                                <span id="r4Value" class="font-mono text-rose-600 bg-rose-50 px-2 py-1 rounded">100</span>
+                            </div>
+                            <input id="r4Slider" type="range" min="1" max="500" value="100" class="slider-input">
+                            <div class="tooltip">調整R4圓弧半徑</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-panel p-6 flex-grow">
+                     <h3 class="text-lg font-bold mb-3">關鍵點座標及半徑</h3>
+                     <table class="w-full coord-table">
+                         <thead class="bg-gray-100">
+                             <tr><td class="font-medium text-gray-700">項目</td><td class="font-medium text-gray-700">數值 / 座標 (X, Y)</td></tr>
+                         </thead>
+                         <tbody>
+                             <tr class="border-b"><td class="text-red-500 font-bold">PI</td><td id="coord-pi"></td></tr>
+                             <tr class="border-b"><td class="text-cyan-500 font-bold">L0</td><td id="coord-l0"></td></tr>
+                             <tr class="border-b"><td class="text-orange-500 font-bold">C1</td><td id="coord-c1"></td></tr>
+                             <tr class="border-b"><td class="text-orange-500 font-bold">C2</td><td id="coord-c2"></td></tr>
+                             <tr class="border-b"><td class="text-indigo-500 font-bold">S1</td><td id="coord-s1"></td></tr>
+                             <tr class="border-b"><td class="text-teal-500 font-bold">E1</td><td id="coord-e1"></td></tr>
+                             <tr class="border-b"><td class="font-medium text-gray-700">進入偏移值</td><td id="offset-enter"></td></tr>
+                             <tr class="border-b"><td class="font-medium text-gray-700">離開偏移值</td><td id="offset-leave"></td></tr>
+                             <tr class="border-b"><td class="text-green-500 font-bold">R1 半徑</td><td id="radius-r1"></td></tr>
+                             <tr class="border-b"><td class="text-purple-500 font-bold">R3 半徑</td><td id="radius-r3"></td></tr>
+                             <tr class="border-b"><td class="text-rose-500 font-bold">R4 半徑</td><td id="radius-r4"></td></tr>
+                         </tbody>
+                     </table>
+                </div>
+                
+                <div class="legend-panel p-6">
+                    <h3 class="text-lg font-bold mb-3">圖例說明</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="legend-item">
+                            <div class="legend-color bg-cyan-500"></div>
+                            <span>偏移線</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color bg-gray-300 border border-dashed border-gray-500"></div>
+                            <span>輔助圓(R0)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color bg-green-500"></div>
+                            <span>R1圓弧</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color bg-purple-500"></div>
+                            <span>R3圓弧</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color bg-red-500"></div>
+                            <span>R4短圓弧</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color bg-pink-300"></div>
+                            <span>R4長圓弧</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color bg-orange-500"></div>
+                            <span>關鍵點(C1,C2)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color bg-indigo-500"></div>
+                            <span>關鍵點(S1,E1)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>道路轉角幾何設計工具 &copy; 2023 - 基於AASHTO標準</p>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('curveCanvas');
+        const ctx = canvas.getContext('2d');
+        const coordDisplay = document.getElementById('coordinateDisplay');
+
+        // Input sliders
+        const offsetXSlider = document.getElementById('offsetXSlider');
+        const offsetL2Slider = document.getElementById('offsetL2Slider');
+        const r0Slider = document.getElementById('r0Slider');
+        const angleSlider = document.getElementById('angleSlider');
+        const r4Slider = document.getElementById('r4Slider'); // R4 slider
+
+        // Value displays
+        const offsetXValue = document.getElementById('offsetXValue');
+        const offsetL2Value = document.getElementById('offsetL2Value');
+        const r0Value = document.getElementById('r0Value');
+        const angleValue = document.getElementById('angleValue');
+        const r4Value = document.getElementById('r4Value'); // R4 value display
+
+        // Parameter displays
+        const paramOffsetEnter = document.getElementById('param-offset-enter');
+        const paramOffsetLeave = document.getElementById('param-offset-leave');
+        const paramRadiusR1 = document.getElementById('param-radius-r1');
+        const paramRadiusR3 = document.getElementById('param-radius-r3');
+        const paramRadiusR4 = document.getElementById('param-radius-r4');
+
+        let dpi = window.devicePixelRatio || 1;
+        let scale, worldMinX, worldMaxX, worldMinY, worldMaxY, bboxCenterX, bboxCenterY;
+
+        function setupCanvas() {
+            const container = canvas.parentElement;
+            const size = container.clientWidth;
+            canvas.width = size * dpi;
+            canvas.height = size * dpi;
+            canvas.style.width = `${size}px`;
+            canvas.style.height = `${size}px`;
+            ctx.scale(dpi, dpi);
+            draw();
+        }
+        
+        function updateCoordTable(id, point, isRadius = false) {
+            const el = document.getElementById(id);
+            if (el) {
+                if (isRadius) {
+                    if (typeof point === 'number') {
+                        el.textContent = point.toFixed(2);
+                    } else {
+                        el.textContent = point;
+                    }
+                } else if (point && typeof point.x === 'number' && typeof point.y === 'number') {
+                    el.textContent = `(${point.x.toFixed(2)}, ${point.y.toFixed(2)})`;
+                } else {
+                    el.textContent = '(N/A, N/A)';
+                }
+            }
+        }
+
+        function solveQuadratic(a, b, c) {
+            const discriminant = b * b - 4 * a * c;
+            if (discriminant < 0) {
+                return [];
+            } else if (discriminant === 0) {
+                return [-b / (2 * a)];
+            } else {
+                return [
+                    (-b + Math.sqrt(discriminant)) / (2 * a),
+                    (-b - Math.sqrt(discriminant)) / (2 * a)
+                ];
+            }
+        }
+
+        function draw() {
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            ctx.clearRect(0, 0, w * dpi, h * dpi);
+
+            const offsetX = parseFloat(offsetXSlider.value);
+            const offsetL2 = parseFloat(offsetL2Slider.value);
+            const R0 = parseFloat(r0Slider.value);
+            const angleDeg = parseFloat(angleSlider.value);
+            const R4_val = parseFloat(r4Slider.value); // Get R4 radius from slider
+
+            offsetXValue.textContent = offsetX;
+            offsetL2Value.textContent = offsetL2;
+            r0Value.textContent = R0;
+            angleValue.textContent = `${angleDeg}°`;
+            r4Value.textContent = R4_val; // Update R4 display
+
+            const angleRad = angleDeg * Math.PI / 180;
+
+            // --- Step 1: Calculate all coordinates in "world space" (PI at {0,0}) ---
+            const L0_coord = {
+                x: offsetX,
+                y: (-offsetX * Math.cos(angleRad) - offsetL2) / Math.sin(angleRad)
+            };
+
+            const c1_coord = { x: L0_coord.x, y: L0_coord.y + R0 };
+            
+            const c2_coord = {
+                x: L0_coord.x - R0 * Math.sin(angleRad),
+                y: L0_coord.y + R0 * Math.cos(angleRad) 
+            };
+            
+            const s1_coord = { x: 0, y: c2_coord.y - (4 * (offsetX - R0)) };
+            
+            const e1_x = c1_coord.x + (4 * (offsetL2 - R0));
+            const e1_coord = {
+                x: e1_x,
+                y: -e1_x / Math.tan(angleRad)
+            };
+
+            let R1_val = (Math.pow(c2_coord.x, 2) + Math.pow(c2_coord.y - s1_coord.y, 2)) / (2 * c2_coord.x);
+            let o_r1_coord = { x: R1_val, y: s1_coord.y };
+            if (R1_val <= 0 || !isFinite(R1_val)) { R1_val = 'N/A'; }
+
+            // R2 has been removed
+
+            let R3_val = 'N/A';
+            let o_r3_coord = null;
+
+            const M = { x: (c1_coord.x + e1_coord.x) / 2, y: (c1_coord.y + e1_coord.y) / 2 };
+            const slope_C1E1 = (e1_coord.y - c1_coord.y) / (e1_coord.x - c1_coord.x);
+            
+            if (Math.abs(e1_coord.x - c1_coord.x) > 1e-6) {
+                const slope_perp = -1 / slope_C1E1;
+                const k_intercept = M.y - slope_perp * M.x;
+                const cosA = Math.cos(angleRad);
+                const sinA = Math.sin(angleRad);
+                const C = cosA + sinA * slope_perp;
+                const D = sinA * k_intercept;
+                const E = slope_perp;
+                const F = k_intercept - c1_coord.y;
+                const a = C * C - 1 - E * E;
+                const b = 2 * C * D + 2 * c1_coord.x - 2 * E * F;
+                const c = D * D - c1_coord.x * c1_coord.x - F * F;
+                const solutions_h = solveQuadratic(a, b, c);
+                if (solutions_h.length > 0) {
+                    let best_h = solutions_h[0];
+                    if (solutions_h.length > 1) {
+                         const k0 = slope_perp * solutions_h[0] + k_intercept;
+                         const k1 = slope_perp * solutions_h[1] + k_intercept;
+                         if (solutions_h[1] > 0 && k1 < 0) best_h = solutions_h[1];
+                    }
+                    const h = best_h;
+                    const k = slope_perp * h + k_intercept;
+                    o_r3_coord = { x: h, y: k };
+                    R3_val = Math.sqrt(Math.pow(h - c1_coord.x, 2) + Math.pow(k - c1_coord.y, 2));
+                    if (!isFinite(R3_val)) R3_val = 'N/A';
+                }
+            }
+
+            // --- Calculate R4 center based on slider radius and quadrant ---
+            let o_r4_coord = null;
+            const dx = c2_coord.x - c1_coord.x;
+            const dy = c2_coord.y - c1_coord.y;
+            const d_sq = dx * dx + dy * dy;
+            const d = Math.sqrt(d_sq);
+            
+            if (d > 0 && R4_val >= d / 2) {
+                const mid_x = (c1_coord.x + c2_coord.x) / 2;
+                const mid_y = (c1_coord.y + c2_coord.y) / 2;
+                const h = Math.sqrt(R4_val * R4_val - d_sq / 4);
+                
+                const candidates = [
+                    { x: mid_x + h * dy / d, y: mid_y - h * dx / d },
+                    { x: mid_x - h * dy / d, y: mid_y + h * dx / d }
+                ];
+                
+                const valid_centers = candidates.filter(c => c.x > 0 && c.y < 0);
+                if (valid_centers.length > 0) {
+                    o_r4_coord = valid_centers[0];
+                }
+            }
+
+            // --- Step 2: Set Fixed Viewport [0, 200] x [50, -150] ---
+            worldMinX = 0;
+            worldMaxX = 200;
+            worldMinY = -150;
+            worldMaxY = 50;
+
+            const bboxWidth = worldMaxX - worldMinX;
+            const bboxHeight = worldMaxY - worldMinY;
+            bboxCenterX = worldMinX + bboxWidth / 2;
+            bboxCenterY = worldMinY + bboxHeight / 2;
+
+            scale = Math.min(w / bboxWidth, h / bboxHeight) * 0.9;
+
+            ctx.save();
+            ctx.translate(w / 2, h / 2);
+            ctx.scale(scale, -scale);
+            ctx.translate(-bboxCenterX, -bboxCenterY);
+
+            // --- Step 3: Drawing in World Coordinates ---
+            const lineWidth = 1.5 / scale;
+            const pointRadius = 4 / scale;
+            const dash = [5 / scale, 5 / scale];
+
+            // Drawing grid
+            ctx.beginPath();
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1 / scale;
+            const gridSpacing = 50;
+            for (let x = Math.ceil(worldMinX / gridSpacing) * gridSpacing; x < worldMaxX; x += gridSpacing) {
+                ctx.moveTo(x, worldMinY);
+                ctx.lineTo(x, worldMaxY);
+            }
+            for (let y = Math.ceil(worldMinY / gridSpacing) * gridSpacing; y < worldMaxY; y += gridSpacing) {
+                ctx.moveTo(worldMinX, y);
+                ctx.lineTo(worldMaxX, y);
+            }
+            ctx.stroke();
+
+            // Draw coordinate system
+            ctx.beginPath();
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = '#4b5563';
+            ctx.moveTo(0, worldMinY); ctx.lineTo(0, worldMaxY);
+            const l2_y = (x) => -x / Math.tan(angleRad);
+            ctx.moveTo(worldMinX, l2_y(worldMinX)); ctx.lineTo(worldMaxX, l2_y(worldMaxX));
+            ctx.stroke();
+
+            // Draw offset lines
+            ctx.beginPath();
+            ctx.lineWidth = 1 / scale;
+            ctx.strokeStyle = '#0891b2';
+            ctx.setLineDash(dash);
+            ctx.moveTo(offsetX, worldMinY); ctx.lineTo(offsetX, worldMaxY);
+            const l2_prime_y = (x) => (-offsetL2 - x * Math.cos(angleRad)) / Math.sin(angleRad);
+            ctx.moveTo(worldMinX, l2_prime_y(worldMinX)); ctx.lineTo(worldMaxX, l2_prime_y(worldMaxX));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw R0 circle - now as dashed
+            ctx.beginPath();
+            ctx.lineWidth = 1 / scale;
+            ctx.strokeStyle = '#a0aec0';
+            ctx.setLineDash(dash);
+            ctx.arc(L0_coord.x, L0_coord.y, R0, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            const arcLineWidth = 4 / scale;
+
+            // Draw R1 arc
+            if (typeof R1_val === 'number') {
+                ctx.beginPath();
+                ctx.lineWidth = arcLineWidth;
+                ctx.strokeStyle = '#22c55e';
+                const startAngleR1 = Math.atan2(s1_coord.y - o_r1_coord.y, s1_coord.x - o_r1_coord.x);
+                const endAngleR1 = Math.atan2(c2_coord.y - o_r1_coord.y, c2_coord.x - o_r1_coord.x);
+                ctx.arc(o_r1_coord.x, o_r1_coord.y, R1_val, startAngleR1, endAngleR1, true);
+                ctx.stroke();
+            }
+
+            // Draw R3 arc
+            if (typeof R3_val === 'number' && o_r3_coord) {
+                ctx.beginPath();
+                ctx.lineWidth = arcLineWidth;
+                ctx.strokeStyle = '#8b5cf6';
+                const startAngleR3 = Math.atan2(e1_coord.y - o_r3_coord.y, e1_coord.x - o_r3_coord.x);
+                const endAngleR3 = Math.atan2(c1_coord.y - o_r3_coord.y, c1_coord.x - o_r3_coord.x);
+                ctx.arc(o_r3_coord.x, o_r3_coord.y, R3_val, startAngleR3, endAngleR3, false);
+                ctx.stroke();
+            }
+
+            // Draw R4 arcs
+            if (o_r4_coord) {
+                const startAngleR4 = Math.atan2(c2_coord.y - o_r4_coord.y, c2_coord.x - o_r4_coord.x);
+                const endAngleR4 = Math.atan2(c1_coord.y - o_r4_coord.y, c1_coord.x - o_r4_coord.x);
+                
+                // Calculate angle difference to determine the short arc
+                let angleDiff = Math.abs(endAngleR4 - startAngleR4);
+                if (angleDiff > Math.PI) {
+                    angleDiff = 2 * Math.PI - angleDiff;
+                }
+                
+                // Determine the direction for the short arc
+                const isClockwise = startAngleR4 > endAngleR4;
+                const shortArcDirection = angleDiff <= Math.PI;
+                
+                // Draw the long arc (dashed)
+                ctx.beginPath();
+                ctx.lineWidth = 1 / scale; 
+                ctx.strokeStyle = '#fda4af'; 
+                ctx.setLineDash(dash);
+                ctx.arc(o_r4_coord.x, o_r4_coord.y, R4_val, startAngleR4, endAngleR4, !shortArcDirection);
+                ctx.stroke();
+                
+                // Draw the short arc (solid)
+                ctx.beginPath();
+                ctx.lineWidth = arcLineWidth;
+                ctx.strokeStyle = '#e11d48';
+                ctx.setLineDash([]);
+                ctx.arc(o_r4_coord.x, o_r4_coord.y, R4_val, startAngleR4, endAngleR4, shortArcDirection);
+                ctx.stroke();
+            }
+
+            // Draw points with labels
+            const drawPointFixedSize = (p, label, color) => {
+                if (!p || isNaN(p.x) || isNaN(p.y)) return;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, pointRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = color;
+                ctx.fill();
+                if (label) {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.scale(1 / scale, -1 / scale);
+                    ctx.fillStyle = '#374151';
+                    ctx.font = 'bold 14px Inter';
+                    ctx.fillText(label, pointRadius * scale + 4, 5);
+                    ctx.restore();
+                }
+            };
+            
+            drawPointFixedSize({x: 0, y: 0}, 'PI', '#ef4444');
+            drawPointFixedSize(L0_coord, 'L0', '#0891b2');
+            drawPointFixedSize(c1_coord, 'C1', '#f97316');
+            drawPointFixedSize(c2_coord, 'C2', '#f97316');
+            drawPointFixedSize(s1_coord, 'S1', '#4f46e5');
+            drawPointFixedSize(e1_coord, 'E1', '#0d9488');
+            
+            ctx.restore();
+
+            // --- Step 4: Update UI Table ---
+            updateCoordTable('coord-pi', {x: 0, y: 0});
+            updateCoordTable('coord-l0', L0_coord);
+            updateCoordTable('coord-c1', c1_coord);
+            updateCoordTable('coord-c2', c2_coord);
+            updateCoordTable('coord-s1', s1_coord);
+            updateCoordTable('coord-e1', e1_coord);
+            updateCoordTable('radius-r1', R1_val, true);
+            updateCoordTable('radius-r3', R3_val, true);
+            updateCoordTable('radius-r4', R4_val, true);
+            
+            const offsetEnter = (offsetX - R0).toFixed(2);
+            const offsetLeave = (offsetL2 - R0).toFixed(2);
+            
+            document.getElementById('offset-enter').textContent = offsetEnter;
+            document.getElementById('offset-leave').textContent = offsetLeave;
+            
+            // Update parameter display
+            paramOffsetEnter.textContent = offsetEnter;
+            paramOffsetLeave.textContent = offsetLeave;
+            paramRadiusR1.textContent = typeof R1_val === 'number' ? R1_val.toFixed(2) : 'N/A';
+            paramRadiusR3.textContent = typeof R3_val === 'number' ? R3_val.toFixed(2) : 'N/A';
+            paramRadiusR4.textContent = R4_val.toFixed(2);
+        }
+
+        const allSliders = [offsetXSlider, offsetL2Slider, r0Slider, angleSlider, r4Slider];
+        for (let i = 0; i < allSliders.length; i++) {
+            allSliders[i].addEventListener('input', draw);
+        }
+
+        window.addEventListener('load', setupCanvas);
+        window.addEventListener('resize', setupCanvas);
+        
+        // Add mouse move coordinate display
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * dpi;
+            const y = (e.clientY - rect.top) * dpi;
+            
+            // Convert to world coordinates
+            const worldX = ((x / dpi - canvas.clientWidth / 2) / scale + bboxCenterX).toFixed(1);
+            const worldY = -((y / dpi - canvas.clientHeight / 2) / scale - bboxCenterY).toFixed(1);
+            
+            coordDisplay.textContent = `X: ${worldX}, Y: ${worldY}`;
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            coordDisplay.textContent = 'X: 0, Y: 0';
+        });
+        
+        // Initialize with default values
+        draw();
+    </script>
+</body>
+</html>
