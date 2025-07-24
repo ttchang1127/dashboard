@@ -360,11 +360,11 @@
                 }
             }
 
-            // --- Step 2: Set Fixed Viewport [0, 100] x [25, -75] ---
+            // --- Step 2: Set Fixed Viewport [0, 60] x [10, -50] ---
             worldMinX = 0;
-            worldMaxX = 100;
-            worldMinY = -75; // Corresponds to +75 in standard Cartesian, but canvas Y is inverted
-            worldMaxY = 25;  // Corresponds to -25 in standard Cartesian, but canvas Y is inverted
+            worldMaxX = 60;
+            worldMinY = -50; 
+            worldMaxY = 10; 
 
             const bboxWidth = worldMaxX - worldMinX;
             const bboxHeight = worldMaxY - worldMinY;
