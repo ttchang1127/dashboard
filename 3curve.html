@@ -385,11 +385,11 @@
             }
 
             // --- Step 2: Set Fixed Viewport ---
-            // X顯示範圍0-100, Y顯示範圍+25~-75
+            // X顯示範圍0-60, Y顯示範圍+10~-50
             worldMinX = 0;
-            worldMaxX = 100;
-            worldMinY = -75; // Corresponds to +75 in standard Cartesian, but canvas Y is inverted
-            worldMaxY = 25;  // Corresponds to -25 in standard Cartesian, but canvas Y is inverted
+            worldMaxX = 60;
+            worldMinY = -50; 
+            worldMaxY = 10;  
 
             const bboxWidth = worldMaxX - worldMinX;
             const bboxHeight = worldMaxY - worldMinY;
@@ -412,7 +412,7 @@
             ctx.beginPath();
             ctx.strokeStyle = '#f0f0f0';
             ctx.lineWidth = 1 / scale;
-            const gridSpacing = 25; // Adjusted grid spacing for new range
+            const gridSpacing = 10; // Adjusted grid spacing for new range
             for (let x = Math.ceil(worldMinX / gridSpacing) * gridSpacing; x < worldMaxX; x += gridSpacing) {
                 ctx.moveTo(x, worldMinY);
                 ctx.lineTo(x, worldMaxY);
