@@ -68,6 +68,7 @@
             <aside class="w-full md:w-1/4">
                 <nav id="calculator-nav" class="space-y-2">
                     <a href="#" data-target="content-hydro" class="nav-link active-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">水文計算</a>
+                    <a href="#" data-target="content-road-geometry" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">道路幾何</a>
                     <a href="#" data-target="content-bridge" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">三跨預力箱型梁檢核</a>
                     <a href="#" data-target="content-pavement" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">鋪面設計</a>
                     <a href="#" data-target="content-electric" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">電氣計算</a>
@@ -85,14 +86,21 @@
                     </ul>
                 </div>
 
+                <!-- 新增的道路幾何內容區塊 -->
+                <div id="content-road-geometry" class="nav-content hidden">
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <li><a href="./3curve.html" target="_blank" class="calc-item bg-orange-50 hover:bg-orange-100 border-orange-200"><h3 class="text-orange-800">轉角三心圓複曲線設計(AASHTO)</h3><p class="text-orange-700">依據 AASHTO 設計規範，計算轉角處三心圓複曲線的幾何參數。</p></a></li>
+                    </ul>
+                </div>
+
                 <div id="content-bridge" class="nav-content hidden">
-                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <li><a href="./brg_deck.html" target="_blank" class="calc-item bg-slate-50 hover:bg-slate-100 border-slate-200"><h3 class="text-slate-800">橋面板檢核</h3><p class="text-slate-700">基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。</p></a></li>
                     </ul>
                 </div>
 
                 <div id="content-pavement" class="nav-content hidden">
-                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <li><a href="./rigidpav.html" target="_blank" class="calc-item bg-indigo-50 hover:bg-indigo-100 border-indigo-200"><h3 class="text-indigo-800">剛性鋪面設計</h3><p class="text-indigo-700">依據 AASHTO 1993 設計方法，計算剛性鋪面所需的版厚與相關參數。</p></a></li>
                     </ul>
                 </div>
