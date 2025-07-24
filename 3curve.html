@@ -139,21 +139,24 @@
                                 <label for="offsetXSlider" class="font-medium">L1 偏移值 (+X)</label>
                                 <span id="offsetXValue" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">50</span>
                             </div>
-                            <input id="offsetXSlider" type="range" min="0" max="100" value="50" class="slider-input">
+                            <!-- Changed step to 0.1 -->
+                            <input id="offsetXSlider" type="range" min="0" max="100" value="50" step="0.1" class="slider-input">
                         </div>
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
                                 <label for="offsetL2Slider" class="font-medium">L2 偏移值 (內縮)</label>
                                 <span id="offsetL2Value" class="font-mono text-cyan-600 bg-cyan-50 px-2 py-1 rounded">50</span>
                             </div>
-                            <input id="offsetL2Slider" type="range" min="0" max="100" value="50" class="slider-input">
+                            <!-- Changed step to 0.1 -->
+                            <input id="offsetL2Slider" type="range" min="0" max="100" value="50" step="0.1" class="slider-input">
                         </div>
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
                                 <label for="r0Slider" class="font-medium">輔助圓半徑 (R0)</label>
                                 <span id="r0Value" class="font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">30</span>
                             </div>
-                            <input id="r0Slider" type="range" min="0" max="150" value="30" class="slider-input">
+                            <!-- Changed step to 0.1 -->
+                            <input id="r0Slider" type="range" min="0" max="150" value="30" step="0.1" class="slider-input">
                         </div>
                         <hr/>
                         <!-- Angle Slider -->
@@ -169,7 +172,7 @@
                                 <label for="r2Slider" class="font-medium">R2 半徑</label>
                                 <span id="r2Value" class="font-mono text-rose-600 bg-rose-50 px-2 py-1 rounded">100</span>
                             </div>
-                            <input id="r2Slider" type="range" min="1" max="500" value="100" class="slider-input">
+                            <input id="r2Slider" type="range" min="1" max="500" value="100" step="0.1" class="slider-input">
                         </div>
                     </div>
                 </div>
@@ -286,13 +289,14 @@
             const offsetL2 = parseFloat(offsetL2Slider.value);
             const R0 = parseFloat(r0Slider.value);
             const angleDeg = parseFloat(angleSlider.value);
-            const R2_val = parseFloat(r2Slider.value); // Changed from R4_val
+            const R2_val = parseFloat(r2Slider.value); // Changed from r4_val
 
-            offsetXValue.textContent = offsetX;
-            offsetL2Value.textContent = offsetL2;
-            r0Value.textContent = R0;
+            // Display values with one decimal place for consistency with 0.1 step
+            offsetXValue.textContent = offsetX.toFixed(1);
+            offsetL2Value.textContent = offsetL2.toFixed(1);
+            r0Value.textContent = R0.toFixed(1);
             angleValue.textContent = `${angleDeg}°`;
-            r2Value.textContent = R2_val; // Changed from r4Value
+            r2Value.textContent = R2_val.toFixed(1); // Display R2 value with one decimal place
 
             const angleRad = angleDeg * Math.PI / 180;
 
@@ -321,8 +325,6 @@
             let o_r1_coord = { x: R1_val, y: s1_coord.y };
             if (R1_val <= 0 || !isFinite(R1_val)) { R1_val = 'N/A'; }
 
-            // R2 has been removed
-
             let R3_val = 'N/A';
             let o_r3_coord = null;
 
@@ -345,9 +347,9 @@
                 if (solutions_h.length > 0) {
                     let best_h = solutions_h[0];
                     if (solutions_h.length > 1) {
-                           const k0 = slope_perp * solutions_h[0] + k_intercept;
-                           const k1 = slope_perp * solutions_h[1] + k_intercept;
-                           if (solutions_h[1] > 0 && k1 < 0) best_h = solutions_h[1];
+                            const k0 = slope_perp * solutions_h[0] + k_intercept;
+                            const k1 = slope_perp * solutions_h[1] + k_intercept;
+                            if (solutions_h[1] > 0 && k1 < 0) best_h = solutions_h[1];
                     }
                     const h = best_h;
                     const k = slope_perp * h + k_intercept;
@@ -367,13 +369,14 @@
             if (d > 0 && R2_val >= d / 2) { // Changed from R4_val
                 const mid_x = (c1_coord.x + c2_coord.x) / 2;
                 const mid_y = (c1_coord.y + c2_coord.y) / 2;
-                const h = Math.sqrt(R2_val * R2_val - d_sq / 4); // Changed from R4_val
+                const h_dist = Math.sqrt(R2_val * R2_val - d_sq / 4); // Changed from R4_val
                 
                 const candidates = [
-                    { x: mid_x + h * dy / d, y: mid_y - h * dx / d },
-                    { x: mid_x - h * dy / d, y: mid_y + h * dx / d }
+                    { x: mid_x + h_dist * dy / d, y: mid_y - h_dist * dx / d },
+                    { x: mid_x - h_dist * dy / d, y: mid_y + h_dist * dx / d }
                 ];
                 
+                // Select the candidate in the desired quadrant (e.g., x > 0 and y < 0 for right turn)
                 const valid_centers = candidates.filter(c => c.x > 0 && c.y < 0);
                 if (valid_centers.length > 0) {
                     o_r2_coord = valid_centers[0]; // Changed from o_r4_coord
