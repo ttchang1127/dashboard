@@ -51,12 +51,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             border: 1px solid #e2e8f0;
         }
-        .legend-panel {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e2e8f0;
-        }
+        /* .legend-panel is removed */
         .coordinate-label {
             position: absolute;
             background: rgba(0, 0, 0, 0.7);
@@ -114,13 +109,14 @@
                     <div class="param-title">R1 半徑</div>
                     <div id="param-radius-r1" class="param-value text-green-400">124.32</div>
                 </div>
+                <!-- Moved R2 (formerly R4) here -->
+                <div class="param-box">
+                    <div class="param-title">R2 半徑</div>
+                    <div id="param-radius-r2" class="param-value text-rose-400">100.00</div>
+                </div>
                 <div class="param-box">
                     <div class="param-title">R3 半徑</div>
                     <div id="param-radius-r3" class="param-value text-purple-400">98.76</div>
-                </div>
-                <div class="param-box">
-                    <div class="param-title">R4 半徑</div>
-                    <div id="param-radius-r4" class="param-value text-rose-400">100.00</div>
                 </div>
             </div>
         </header>
@@ -170,14 +166,15 @@
                         </div>
                         <div class="slider-container relative">
                             <div class="slider-label mb-2">
-                                <label for="r4Slider" class="font-medium">R4 半徑</label>
-                                <span id="r4Value" class="font-mono text-rose-600 bg-rose-50 px-2 py-1 rounded">100</span>
+                                <label for="r2Slider" class="font-medium">R2 半徑</label>
+                                <span id="r2Value" class="font-mono text-rose-600 bg-rose-50 px-2 py-1 rounded">100</span>
                             </div>
-                            <input id="r4Slider" type="range" min="1" max="500" value="100" class="slider-input">
+                            <input id="r2Slider" type="range" min="1" max="500" value="100" class="slider-input">
                         </div>
                     </div>
                 </div>
                 
+                <!-- Moved info-panel here, outside the main flex container for better layout control -->
                 <div class="info-panel p-6 flex-grow">
                     <h3 class="text-lg font-bold mb-3">關鍵點座標及半徑</h3>
                     <table class="w-full coord-table">
@@ -194,49 +191,13 @@
                             <tr class="border-b"><td class="font-medium text-gray-700">進入偏移值</td><td id="offset-enter"></td></tr>
                             <tr class="border-b"><td class="font-medium text-gray-700">離開偏移值</td><td id="offset-leave"></td></tr>
                             <tr class="border-b"><td class="text-green-500 font-bold">R1 半徑</td><td id="radius-r1"></td></tr>
+                            <tr class="border-b"><td class="text-rose-500 font-bold">R2 半徑</td><td id="radius-r2"></td></tr> <!-- Moved R2 here -->
                             <tr class="border-b"><td class="text-purple-500 font-bold">R3 半徑</td><td id="radius-r3"></td></tr>
-                            <tr class="border-b"><td class="text-rose-500 font-bold">R4 半徑</td><td id="radius-r4"></td></tr>
                         </tbody>
                     </table>
                 </div>
                 
-                <div class="legend-panel p-6">
-                    <h3 class="text-lg font-bold mb-3">圖例說明</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="legend-item">
-                            <div class="legend-color bg-cyan-500"></div>
-                            <span>偏移線</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color bg-gray-300 border border-dashed border-gray-500"></div>
-                            <span>輔助圓(R0)</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color bg-green-500"></div>
-                            <span>R1圓弧</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color bg-purple-500"></div>
-                            <span>R3圓弧</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color bg-red-500"></div>
-                            <span>R4短圓弧</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color bg-pink-300"></div>
-                            <span>R4長圓弧</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color bg-orange-500"></div>
-                            <span>關鍵點(C1,C2)</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color bg-indigo-500"></div>
-                            <span>關鍵點(S1,E1)</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- Removed the legend-panel -->
             </div>
         </div>
         
@@ -255,21 +216,21 @@
         const offsetL2Slider = document.getElementById('offsetL2Slider');
         const r0Slider = document.getElementById('r0Slider');
         const angleSlider = document.getElementById('angleSlider');
-        const r4Slider = document.getElementById('r4Slider'); // R4 slider
+        const r2Slider = document.getElementById('r2Slider'); // Changed from r4Slider
 
         // Value displays
         const offsetXValue = document.getElementById('offsetXValue');
         const offsetL2Value = document.getElementById('offsetL2Value');
         const r0Value = document.getElementById('r0Value');
         const angleValue = document.getElementById('angleValue');
-        const r4Value = document.getElementById('r4Value'); // R4 value display
+        const r2Value = document.getElementById('r2Value'); // Changed from r4Value
 
         // Parameter displays
         const paramOffsetEnter = document.getElementById('param-offset-enter');
         const paramOffsetLeave = document.getElementById('param-offset-leave');
         const paramRadiusR1 = document.getElementById('param-radius-r1');
         const paramRadiusR3 = document.getElementById('param-radius-r3');
-        const paramRadiusR4 = document.getElementById('param-radius-r4');
+        const paramRadiusR2 = document.getElementById('param-radius-r2'); // Changed from paramRadiusR4
 
         let dpi = window.devicePixelRatio || 1;
         let scale, worldMinX, worldMaxX, worldMinY, worldMaxY, bboxCenterX, bboxCenterY;
@@ -325,13 +286,13 @@
             const offsetL2 = parseFloat(offsetL2Slider.value);
             const R0 = parseFloat(r0Slider.value);
             const angleDeg = parseFloat(angleSlider.value);
-            const R4_val = parseFloat(r4Slider.value); // Get R4 radius from slider
+            const R2_val = parseFloat(r2Slider.value); // Changed from R4_val
 
             offsetXValue.textContent = offsetX;
             offsetL2Value.textContent = offsetL2;
             r0Value.textContent = R0;
             angleValue.textContent = `${angleDeg}°`;
-            r4Value.textContent = R4_val; // Update R4 display
+            r2Value.textContent = R2_val; // Changed from r4Value
 
             const angleRad = angleDeg * Math.PI / 180;
 
@@ -396,17 +357,17 @@
                 }
             }
 
-            // --- Calculate R4 center based on slider radius and quadrant ---
-            let o_r4_coord = null;
+            // --- Calculate R2 (formerly R4) center based on slider radius and quadrant ---
+            let o_r2_coord = null; // Changed from o_r4_coord
             const dx = c2_coord.x - c1_coord.x;
             const dy = c2_coord.y - c1_coord.y;
             const d_sq = dx * dx + dy * dy;
             const d = Math.sqrt(d_sq);
             
-            if (d > 0 && R4_val >= d / 2) {
+            if (d > 0 && R2_val >= d / 2) { // Changed from R4_val
                 const mid_x = (c1_coord.x + c2_coord.x) / 2;
                 const mid_y = (c1_coord.y + c2_coord.y) / 2;
-                const h = Math.sqrt(R4_val * R4_val - d_sq / 4);
+                const h = Math.sqrt(R2_val * R2_val - d_sq / 4); // Changed from R4_val
                 
                 const candidates = [
                     { x: mid_x + h * dy / d, y: mid_y - h * dx / d },
@@ -415,7 +376,7 @@
                 
                 const valid_centers = candidates.filter(c => c.x > 0 && c.y < 0);
                 if (valid_centers.length > 0) {
-                    o_r4_coord = valid_centers[0];
+                    o_r2_coord = valid_centers[0]; // Changed from o_r4_coord
                 }
             }
 
@@ -510,19 +471,19 @@
                 ctx.stroke();
             }
 
-            // Draw R4 arcs
-            if (o_r4_coord) {
-                const startAngleR4 = Math.atan2(c2_coord.y - o_r4_coord.y, c2_coord.x - o_r4_coord.x);
-                const endAngleR4 = Math.atan2(c1_coord.y - o_r4_coord.y, c1_coord.x - o_r4_coord.x);
+            // Draw R2 (formerly R4) arcs
+            if (o_r2_coord) { // Changed from o_r4_coord
+                const startAngleR2 = Math.atan2(c2_coord.y - o_r2_coord.y, c2_coord.x - o_r2_coord.x); // Changed from startAngleR4
+                const endAngleR2 = Math.atan2(c1_coord.y - o_r2_coord.y, c1_coord.x - o_r2_coord.x); // Changed from endAngleR4
                 
                 // Calculate angle difference to determine the short arc
-                let angleDiff = Math.abs(endAngleR4 - startAngleR4);
+                let angleDiff = Math.abs(endAngleR2 - startAngleR2); // Changed from angleDiff
                 if (angleDiff > Math.PI) {
                     angleDiff = 2 * Math.PI - angleDiff;
                 }
                 
                 // Determine the direction for the short arc
-                const isClockwise = startAngleR4 > endAngleR4;
+                const isClockwise = startAngleR2 > endAngleR2; // Changed from startAngleR4
                 const shortArcDirection = angleDiff <= Math.PI;
                 
                 // Draw the long arc (dashed)
@@ -530,7 +491,7 @@
                 ctx.lineWidth = 1 / scale; 
                 ctx.strokeStyle = '#fda4af'; // Pink-300
                 ctx.setLineDash(dash);
-                ctx.arc(o_r4_coord.x, o_r4_coord.y, R4_val, startAngleR4, endAngleR4, !shortArcDirection);
+                ctx.arc(o_r2_coord.x, o_r2_coord.y, R2_val, startAngleR2, endAngleR2, !shortArcDirection); // Changed from o_r4_coord, R4_val, startAngleR4, endAngleR4
                 ctx.stroke();
                 
                 // Draw the short arc (solid)
@@ -538,7 +499,7 @@
                 ctx.lineWidth = arcLineWidth;
                 ctx.strokeStyle = '#e11d48'; // Rose-600
                 ctx.setLineDash([]);
-                ctx.arc(o_r4_coord.x, o_r4_coord.y, R4_val, startAngleR4, endAngleR4, shortArcDirection);
+                ctx.arc(o_r2_coord.x, o_r2_coord.y, R2_val, startAngleR2, endAngleR2, shortArcDirection); // Changed from o_r4_coord, R4_val, startAngleR4, endAngleR4
                 ctx.stroke();
             }
 
@@ -577,8 +538,8 @@
             updateCoordTable('coord-s1', s1_coord);
             updateCoordTable('coord-e1', e1_coord);
             updateCoordTable('radius-r1', R1_val, true);
+            updateCoordTable('radius-r2', R2_val, true); // Moved R2 here
             updateCoordTable('radius-r3', R3_val, true);
-            updateCoordTable('radius-r4', R4_val, true);
             
             const offsetEnter = (offsetX - R0).toFixed(2);
             const offsetLeave = (offsetL2 - R0).toFixed(2);
@@ -591,10 +552,10 @@
             paramOffsetLeave.textContent = offsetLeave;
             paramRadiusR1.textContent = typeof R1_val === 'number' ? R1_val.toFixed(2) : 'N/A';
             paramRadiusR3.textContent = typeof R3_val === 'number' ? R3_val.toFixed(2) : 'N/A';
-            paramRadiusR4.textContent = R4_val.toFixed(2);
+            paramRadiusR2.textContent = R2_val.toFixed(2); // Changed from paramRadiusR4
         }
 
-        const allSliders = [offsetXSlider, offsetL2Slider, r0Slider, angleSlider, r4Slider];
+        const allSliders = [offsetXSlider, offsetL2Slider, r0Slider, angleSlider, r2Slider]; // Changed from r4Slider
         for (let i = 0; i < allSliders.length; i++) {
             allSliders[i].addEventListener('input', draw);
         }
