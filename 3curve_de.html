@@ -98,27 +98,40 @@
     <div class="container mx-auto p-4 md:p-8 max-w-7xl">
         <header class="text-center mb-8 p-6 rounded-xl header-gradient text-white">
             <h1 class="text-3xl md:text-4xl font-bold">轉角三心圓複曲線設計(德國)_右轉</h1>
-            
+           
             <div class="param-display justify-center">
                 <!-- R1 Box -->
                 <div class="param-box">
                     <div class="param-title">R1 半徑</div>
-                    <div id="param-radius-r1" class="param-value">49.60</div>
+                    <div id="param-radius-r1" class="param-value">16.000</div>
                 </div>
                 <!-- R2 Box -->
                 <div class="param-box">
                     <div class="param-title">R2 半徑</div>
-                    <div id="param-radius-r2" class="param-value">24.80</div>
+                    <div id="param-radius-r2" class="param-value">8.000</div>
                 </div>
                 <!-- R3 Box -->
                 <div class="param-box">
                     <div class="param-title">R3 半徑</div>
-                    <div id="param-radius-r3" class="param-value">74.40</div>
+                    <div id="param-radius-r3" class="param-value">24.000</div>
                 </div>
             </div>
             <!-- Ratio Display -->
             <div class="text-center mt-4 text-gray-300 font-mono text-lg">
                 R1:R2:R3 = 2:1:3
+            </div>
+
+            <!-- Validation Section -->
+            <div id="validation-panel" class="text-left mt-4 text-gray-300 font-mono text-sm bg-black/20 p-3 rounded-lg max-w-sm mx-auto">
+                <h4 class="text-white font-bold text-base mb-2 text-center">接點檢核</h4>
+                <div id="dist-q21" class="flex justify-between items-center">
+                    <span>Q21 &lt;-&gt; S2' 距離:</span>
+                    <span>--</span>
+                </div>
+                <div id="dist-q22" class="flex justify-between items-center">
+                    <span>Q22 &lt;-&gt; E2' 距離:</span>
+                    <span>--</span>
+                </div>
             </div>
         </header>
 
@@ -145,31 +158,25 @@
                         <div class="slider-container relative">
                             <div class="slider-label mb-2 px-1">
                                 <label for="r2Slider" class="font-medium">R2 半徑</label>
-                                <span id="r2Value" class="font-mono text-red-600 bg-red-50 px-2 py-1 rounded">24.80</span>
+                                <span id="r2Value" class="font-mono text-red-600 bg-red-50 px-2 py-1 rounded">8.00</span>
                             </div>
-                            <input id="r2Slider" type="range" min="0" max="50" value="24.8" step="0.01" class="slider-input">
+                            <input id="r2Slider" type="range" min="0" max="10" value="8" step="0.01" class="slider-input">
                         </div>
                         <hr/>
                         <!-- S1 Y Input -->
-                        <div class="slider-container relative">
-                            <div class="slider-label mb-2 px-1">
-                                <label for="s1ySlider" class="font-medium">S1 Y 座標</label>
-                                <span id="s1yValue" class="font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded">-35.0</span>
-                            </div>
-                            <input id="s1ySlider" type="range" min="-100" max="0" value="-35" step="0.1" class="slider-input">
+                        <div class="slider-label px-1">
+                            <label for="s1yInput" class="font-medium">S1 Y 座標</label>
+                            <input id="s1yInput" type="number" value="-11.1" step="0.1" class="w-28 text-right font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
                         </div>
 
                         <!-- E1 X Input -->
-                        <div class="slider-container relative">
-                            <div class="slider-label mb-2 px-1">
-                                <label for="e1xSlider" class="font-medium">E1 X 座標</label>
-                                <span id="e1xValue" class="font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded">42.5</span>
-                            </div>
-                            <input id="e1xSlider" type="range" min="0" max="100" value="42.5" step="0.1" class="slider-input">
+                        <div class="slider-label px-1">
+                            <label for="e1xInput" class="font-medium">E1 X 座標</label>
+                            <input id="e1xInput" type="number" value="13.9" step="0.1" class="w-28 text-right font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
                         </div>
                     </div>
                 </div>
-                
+               
                 <div class="info-panel p-6 flex-grow">
                     <h3 class="text-lg font-bold mb-3">關鍵點座標</h3>
                     <table class="w-full coord-table">
@@ -185,13 +192,15 @@
                             <tr class="border-b"><td class="font-bold" style="color: #DD0000;">E2</td><td id="coord-e2"></td></tr>
                             <tr class="border-b"><td class="font-bold" style="color: #DD0000;">E2'</td><td id="coord-e2-prime"></td></tr>
                             <tr class="border-b"><td class="font-bold" style="color: #FFCC00;">Q2</td><td id="coord-q2"></td></tr>
+                            <tr class="border-b"><td class="font-bold" style="color: #FFCC00;">Q21</td><td id="coord-q21"></td></tr>
+                            <tr class="border-b"><td class="font-bold" style="color: #FFCC00;">Q22</td><td id="coord-q22"></td></tr>
                             <tr class="border-b"><td class="font-bold" style="color: #FFCC00;">R2 半徑</td><td id="radius-r2"></td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        
+       
         <footer class="mt-12 text-center text-gray-500 text-sm">
         </footer>
     </div>
@@ -201,22 +210,24 @@
         const ctx = canvas.getContext('2d');
         const coordDisplay = document.getElementById('coordinateDisplay');
 
-        // Input sliders
+        // Input controls
         const angleSlider = document.getElementById('angleSlider');
         const r2Slider = document.getElementById('r2Slider');
-        const s1ySlider = document.getElementById('s1ySlider');
-        const e1xSlider = document.getElementById('e1xSlider');
+        const s1yInput = document.getElementById('s1yInput');
+        const e1xInput = document.getElementById('e1xInput');
 
         // Value displays
         const angleValue = document.getElementById('angleValue');
         const r2Value = document.getElementById('r2Value');
-        const s1yValue = document.getElementById('s1yValue');
-        const e1xValue = document.getElementById('e1xValue');
-
+        
         // Parameter displays
         const paramRadiusR1 = document.getElementById('param-radius-r1');
         const paramRadiusR2 = document.getElementById('param-radius-r2');
         const paramRadiusR3 = document.getElementById('param-radius-r3');
+        
+        // Validation displays
+        const distQ21El = document.getElementById('dist-q21');
+        const distQ22El = document.getElementById('dist-q22');
 
 
         let dpi = window.devicePixelRatio || 1;
@@ -237,18 +248,18 @@
             ctx.scale(dpi, dpi);
             draw();
         }
-        
+       
         function updateCoordTable(id, point, isRadius = false) {
             const el = document.getElementById(id);
             if (el) {
                 if (isRadius) {
                     if (typeof point === 'number') {
-                        el.textContent = point.toFixed(2);
+                        el.textContent = point.toFixed(3);
                     } else {
                         el.textContent = point;
                     }
                 } else if (point && typeof point.x === 'number' && typeof point.y === 'number') {
-                    el.textContent = `(${point.x.toFixed(2)}, ${point.y.toFixed(2)})`;
+                    el.textContent = `(${point.x.toFixed(3)}, ${point.y.toFixed(3)})`;
                 } else {
                     el.textContent = '(N/A, N/A)';
                 }
@@ -264,6 +275,17 @@
                 y: p1.y + t * (p2.y - p1.y),
             };
         }
+        
+        /**
+         * Calculates the Euclidean distance between two points.
+         * @param {{x: number, y: number}} p1 - The first point.
+         * @param {{x: number, y: number}} p2 - The second point.
+         * @returns {number} The distance between the two points.
+         */
+        function distance(p1, p2) {
+            if (!p1 || !p2 || isNaN(p1.x) || isNaN(p1.y) || isNaN(p2.x) || isNaN(p2.y)) return Infinity;
+            return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+        }
 
 
         function draw() {
@@ -273,21 +295,20 @@
 
             const angleDeg = parseFloat(angleSlider.value);
             const R2_val = parseFloat(r2Slider.value);
-            const s1_y = parseFloat(s1ySlider.value);
-            const e1_x = parseFloat(e1xSlider.value);
- 
+            const s1_y = parseFloat(s1yInput.value);
+            const e1_x = parseFloat(e1xInput.value);
+
             const offsetX = 2 * R2_val;
             const offsetL2 = 3 * R2_val;
-            
+           
             // Define R1 and R3 based on offsets
             const R1_val = offsetX;
             const R3_val = offsetL2;
 
+            // Update UI displays for sliders
             angleValue.textContent = `${angleDeg.toFixed(1)}°`;
             r2Value.textContent = R2_val.toFixed(2);
-            s1yValue.textContent = s1_y.toFixed(1);
-            e1xValue.textContent = e1_x.toFixed(1);
-
+            
             const angleRad = angleDeg * Math.PI / 180;
 
             const s1_coord = { x: 0, y: s1_y };
@@ -308,7 +329,7 @@
                 x: e1_coord.x + t_e2 * Math.cos(angleRad),
                 y: e1_coord.y + t_e2 * Math.sin(angleRad)
             };
-            
+           
             const rotationGonE2 = 22.5;
             const rotationRadE2 = rotationGonE2 * Math.PI / 200;
             const startAngleE2Arc = Math.atan2(e1_coord.y - e2_coord.y, e1_coord.x - e2_coord.x);
@@ -317,11 +338,12 @@
                 x: e2_coord.x + offsetL2 * Math.cos(endAngleE2Arc),
                 y: e2_coord.y + offsetL2 * Math.sin(endAngleE2Arc)
             };
-            
+           
             const q2_coord = lineLineIntersection(s2_coord, s2_prime_coord, e2_coord, e2_prime_coord);
 
-            worldMinX = 0; worldMaxX = 80;
-            worldMinY = -80; worldMaxY = 20; 
+            // Updated world coordinates
+            worldMinX = 0; worldMaxX = 30;
+            worldMinY = -40; worldMaxY = 10; 
 
             const bboxWidth = worldMaxX - worldMinX;
             const bboxHeight = worldMaxY - worldMinY;
@@ -371,7 +393,7 @@
             ctx.moveTo(worldMinX, l2_prime_y(worldMinX)); ctx.lineTo(worldMaxX, l2_prime_y(worldMaxX));
             ctx.stroke();
             ctx.setLineDash([]);
-            
+           
             // Draw S1-S2-S2' sector (BLACK)
             ctx.beginPath();
             ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
@@ -409,7 +431,7 @@
             ctx.strokeStyle = GERMAN_BLACK;
             ctx.arc(s2_coord.x, s2_coord.y, offsetX, startAngleS2Arc, endAngleS2Arc, true);
             ctx.stroke();
-            
+           
             // E1 to E2 perpendicular line
             ctx.beginPath();
             ctx.lineWidth = 1 / scale;
@@ -419,7 +441,7 @@
             ctx.lineTo(e2_coord.x, e2_coord.y);
             ctx.stroke();
             ctx.setLineDash([]);
-            
+           
             // Draw E1-E2-E2' sector (RED)
             ctx.beginPath();
             ctx.fillStyle = 'rgba(221, 0, 0, 0.2)';
@@ -457,6 +479,9 @@
             ctx.strokeStyle = GERMAN_RED;
             ctx.arc(e2_coord.x, e2_coord.y, offsetL2, startAngleE2Arc, endAngleE2Arc, false);
             ctx.stroke();
+            
+            let q21_coord = null;
+            let q22_coord = null;
 
             // Draw Q2 arc (GOLD)
             if (q2_coord) {
@@ -466,6 +491,17 @@
                 const radius = R2_val; 
                 const startAngle = Math.atan2(s2_prime_coord.y - q2_coord.y, s2_prime_coord.x - q2_coord.x);
                 const endAngle = Math.atan2(e2_prime_coord.y - q2_coord.y, e2_prime_coord.x - q2_coord.x);
+                
+                // --- NEW: Calculate Q21 and Q22 coordinates ---
+                q21_coord = {
+                    x: q2_coord.x + radius * Math.cos(startAngle),
+                    y: q2_coord.y + radius * Math.sin(startAngle)
+                };
+                q22_coord = {
+                    x: q2_coord.x + radius * Math.cos(endAngle),
+                    y: q2_coord.y + radius * Math.sin(endAngle)
+                };
+                
                 const isAnticlockwise = true;
                 ctx.arc(q2_coord.x, q2_coord.y, radius, startAngle, endAngle, isAnticlockwise);
                 ctx.stroke();
@@ -488,7 +524,7 @@
                     ctx.restore();
                 }
             };
-            
+           
             drawPointFixedSize({x: 0, y: 0}, 'PI', GERMAN_RED);
             drawPointFixedSize(s1_coord, 'S1', GERMAN_BLACK);
             drawPointFixedSize(s2_coord, 'S2', GERMAN_BLACK);
@@ -497,7 +533,7 @@
             drawPointFixedSize(e2_coord, 'E2', GERMAN_RED);
             drawPointFixedSize(e2_prime_coord, "E2'", GERMAN_RED);
             drawPointFixedSize(q2_coord, 'Q2', GERMAN_GOLD);
-            
+           
             ctx.restore();
 
             // --- Update UI Table ---
@@ -509,35 +545,56 @@
             updateCoordTable('coord-e2', e2_coord);
             updateCoordTable('coord-e2-prime', e2_prime_coord);
             updateCoordTable('coord-q2', q2_coord);
+            updateCoordTable('coord-q21', q21_coord);
+            updateCoordTable('coord-q22', q22_coord);
             updateCoordTable('radius-r2', R2_val, true); 
+           
+            // --- Update Validation Panel ---
+            if (q21_coord && q22_coord) {
+                const dist1 = distance(q21_coord, s2_prime_coord);
+                const dist2 = distance(q22_coord, e2_prime_coord);
+                const okHtml = '<span class="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-2">OK</span>';
+
+                distQ21El.innerHTML = `
+                    <span>Q21 &lt;-&gt; S2' 距離:</span>
+                    <span class="font-bold">${dist1.toFixed(4)} ${dist1 < 0.1 ? okHtml : ''}</span>
+                `;
+                distQ22El.innerHTML = `
+                    <span>Q22 &lt;-&gt; E2' 距離:</span>
+                    <span class="font-bold">${dist2.toFixed(4)} ${dist2 < 0.1 ? okHtml : ''}</span>
+                `;
+            } else {
+                distQ21El.innerHTML = `<span>Q21 &lt;-&gt; S2' 距離:</span><span>--</span>`;
+                distQ22El.innerHTML = `<span>Q22 &lt;-&gt; E2' 距離:</span><span>--</span>`;
+            }
             
             // Update header parameter display
-            paramRadiusR1.textContent = R1_val.toFixed(2);
-            paramRadiusR2.textContent = R2_val.toFixed(2);
-            paramRadiusR3.textContent = R3_val.toFixed(2);
+            paramRadiusR1.textContent = R1_val.toFixed(3);
+            paramRadiusR2.textContent = R2_val.toFixed(3);
+            paramRadiusR3.textContent = R3_val.toFixed(3);
         }
 
-        const allSliders = [angleSlider, r2Slider, s1ySlider, e1xSlider];
-        allSliders.forEach(slider => slider.addEventListener('input', draw));
+        const allControls = [angleSlider, r2Slider, s1yInput, e1xInput];
+        allControls.forEach(control => control.addEventListener('input', draw));
 
         window.addEventListener('load', setupCanvas);
         window.addEventListener('resize', setupCanvas);
-        
+       
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX - rect.left) * dpi;
             const y = (e.clientY - rect.top) * dpi;
-            
-            const worldX = ((x / dpi - canvas.clientWidth / 2) / scale + bboxCenterX).toFixed(1);
-            const worldY = -((y / dpi - canvas.clientHeight / 2) / scale - bboxCenterY).toFixed(1);
-            
+           
+            const worldX = ((x / dpi - canvas.clientWidth / 2) / scale + bboxCenterX).toFixed(3);
+            const worldY = -((y / dpi - canvas.clientHeight / 2) / scale - bboxCenterY).toFixed(3);
+           
             coordDisplay.textContent = `X: ${worldX}, Y: ${worldY}`;
         });
-        
+       
         canvas.addEventListener('mouseleave', () => {
             coordDisplay.textContent = 'X: 0, Y: 0';
         });
-        
+       
         draw();
     </script>
 </body>
