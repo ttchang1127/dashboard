@@ -148,14 +148,15 @@
                     <h2 class="text-xl font-bold mb-6 border-b pb-3">參數控制</h2>
                     <div class="space-y-6">
                         <!-- Angle Slider -->
-                        <div class="slider-container relative">
+                        <div>
                             <div class="slider-label mb-2 px-1">
                                 <label for="angleSlider" class="font-medium">轉彎角度 (Δ)</label>
                                 <span id="angleValue" class="font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded">90.0°</span>
                             </div>
                             <input id="angleSlider" type="range" min="60" max="120" value="90" step="0.1" class="slider-input">
                         </div>
-                        <div class="slider-container relative">
+                        <!-- R2 Slider -->
+                        <div>
                             <div class="slider-label mb-2 px-1">
                                 <label for="r2Slider" class="font-medium">R2 半徑</label>
                                 <span id="r2Value" class="font-mono text-red-600 bg-red-50 px-2 py-1 rounded">8.00</span>
@@ -164,15 +165,21 @@
                         </div>
                         <hr/>
                         <!-- S1 Y Input -->
-                        <div class="slider-label px-1">
-                            <label for="s1yInput" class="font-medium">S1 Y 座標</label>
-                            <input id="s1yInput" type="number" value="-11.15" step="0.01" class="w-28 text-right font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <div>
+                            <div class="slider-label mb-2 px-1">
+                                <label for="s1yInput" class="font-medium">S1 Y 座標</label>
+                                <input id="s1yInput" type="number" value="-11.15" step="0.01" class="w-28 text-right font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                             <input id="s1ySlider" type="range" min="-20" max="0" value="-11.15" step="0.5" class="slider-input">
                         </div>
 
                         <!-- E1 X Input -->
-                        <div class="slider-label px-1">
-                            <label for="e1xInput" class="font-medium">E1 X 座標</label>
-                            <input id="e1xInput" type="number" value="13.85" step="0.01" class="w-28 text-right font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <div>
+                            <div class="slider-label mb-2 px-1">
+                                <label for="e1xInput" class="font-medium">E1 X 座標</label>
+                                <input id="e1xInput" type="number" value="13.85" step="0.01" class="w-28 text-right font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                             <input id="e1xSlider" type="range" min="0" max="20" value="13.85" step="0.5" class="slider-input">
                         </div>
                     </div>
                 </div>
@@ -215,6 +222,8 @@
         const r2Slider = document.getElementById('r2Slider');
         const s1yInput = document.getElementById('s1yInput');
         const e1xInput = document.getElementById('e1xInput');
+        const s1ySlider = document.getElementById('s1ySlider');
+        const e1xSlider = document.getElementById('e1xSlider');
 
         // Value displays
         const angleValue = document.getElementById('angleValue');
@@ -574,7 +583,24 @@
             paramRadiusR3.textContent = R3_val.toFixed(3);
         }
 
-        const allControls = [angleSlider, r2Slider, s1yInput, e1xInput];
+        // Sync S1Y controls
+        s1ySlider.addEventListener('input', () => {
+            s1yInput.value = parseFloat(s1ySlider.value).toFixed(2);
+        });
+        s1yInput.addEventListener('input', () => {
+            s1ySlider.value = s1yInput.value;
+        });
+
+        // Sync E1X controls
+        e1xSlider.addEventListener('input', () => {
+            e1xInput.value = parseFloat(e1xSlider.value).toFixed(2);
+        });
+        e1xInput.addEventListener('input', () => {
+            e1xSlider.value = e1xInput.value;
+        });
+
+
+        const allControls = [angleSlider, r2Slider, s1yInput, e1xInput, s1ySlider, e1xSlider];
         allControls.forEach(control => control.addEventListener('input', draw));
 
         window.addEventListener('load', setupCanvas);
