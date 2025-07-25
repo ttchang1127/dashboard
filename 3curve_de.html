@@ -121,16 +121,31 @@
                 R1:R2:R3 = 2:1:3
             </div>
 
-            <!-- Validation Section -->
-            <div id="validation-panel" class="text-left mt-4 text-gray-300 font-mono text-sm bg-black/20 p-3 rounded-lg max-w-sm mx-auto">
-                <h4 class="text-white font-bold text-base mb-2 text-center">接點檢核</h4>
-                <div id="dist-q21" class="flex justify-between items-center">
-                    <span>Q21 &lt;-&gt; S2' 距離:</span>
-                    <span>--</span>
+            <!-- Validation & Distance Wrapper -->
+            <div class="flex justify-center items-start gap-4 flex-wrap">
+                <!-- Validation Section -->
+                <div class="text-left mt-4 text-gray-300 font-mono text-sm bg-black/20 p-3 rounded-lg flex-1 min-w-[280px]">
+                    <h4 class="text-white font-bold text-base mb-2 text-center">接點檢核</h4>
+                    <div id="dist-q21" class="flex justify-between items-center">
+                        <span>Q21 &lt;-&gt; S2' 距離:</span>
+                        <span>--</span>
+                    </div>
+                    <div id="dist-q22" class="flex justify-between items-center">
+                        <span>Q22 &lt;-&gt; E2' 距離:</span>
+                        <span>--</span>
+                    </div>
                 </div>
-                <div id="dist-q22" class="flex justify-between items-center">
-                    <span>Q22 &lt;-&gt; E2' 距離:</span>
-                    <span>--</span>
+                 <!-- Distance Check Section -->
+                <div class="text-left mt-4 text-gray-300 font-mono text-sm bg-black/20 p-3 rounded-lg flex-1 min-w-[280px]">
+                    <h4 class="text-white font-bold text-base mb-2 text-center">距離檢核</h4>
+                    <div id="dist-pi-s1" class="flex justify-between items-center">
+                        <span>PI &lt;-&gt; S1 距離:</span>
+                        <span>--</span>
+                    </div>
+                    <div id="dist-pi-e1" class="flex justify-between items-center">
+                        <span>PI &lt;-&gt; E1 距離:</span>
+                        <span>--</span>
+                    </div>
                 </div>
             </div>
         </header>
@@ -237,6 +252,8 @@
         // Validation displays
         const distQ21El = document.getElementById('dist-q21');
         const distQ22El = document.getElementById('dist-q22');
+        const distPiS1El = document.getElementById('dist-pi-s1');
+        const distPiE1El = document.getElementById('dist-pi-e1');
 
 
         let dpi = window.devicePixelRatio || 1;
@@ -576,6 +593,21 @@
                 distQ21El.innerHTML = `<span>Q21 &lt;-&gt; S2' 距離:</span><span>--</span>`;
                 distQ22El.innerHTML = `<span>Q22 &lt;-&gt; E2' 距離:</span><span>--</span>`;
             }
+            
+            // --- Update Distance Check Panel ---
+            const pi_coord = {x: 0, y: 0};
+            const distPiS1 = distance(pi_coord, s1_coord);
+            const distPiE1 = distance(pi_coord, e1_coord);
+
+            distPiS1El.innerHTML = `
+                <span>PI &lt;-&gt; S1 距離:</span>
+                <span class="font-bold">${distPiS1.toFixed(3)}</span>
+            `;
+            distPiE1El.innerHTML = `
+                <span>PI &lt;-&gt; E1 距離:</span>
+                <span class="font-bold">${distPiE1.toFixed(3)}</span>
+            `;
+
             
             // Update header parameter display
             paramRadiusR1.textContent = R1_val.toFixed(3);
