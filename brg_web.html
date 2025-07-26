@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式預力混凝土橋梁檢核指南_腹版及下翼版 v25</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU07EWHEZrWCsZQAAEoAxpHy2xAftGTgWFSgC8BH31ZSFcvlALTMWC_">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    
+    <!-- Chosen Palette: Warm Neutrals (Stone, Slate, Sky, Amber) -->
+    <!-- Application Structure Plan: Made the "Durability Performance Check" interactive by adding inputs for fatigue and corrosion moments. The app now calculates the resulting steel stress and compares it against code limits. -->
+    <!-- Visualization & Content Choices: Added input fields for fatigue/corrosion moments and display spans for calculated stresses. Implemented `calculateSteelStress` based on cracked transformed section analysis. Updated `updateCheckResults` to use this new logic. The `xintegrity` typo is definitively corrected to `integrity`. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .active-btn {
+            background-color: #0284c7; /* sky-600 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            z-index: 10;
+        }
+        .inactive-btn {
+            background-color: #e2e8f0; /* slate-200 */
+            color: #475569; /* slate-600 */
+        }
+        .result-box {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        .ok-result {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+        }
+        .ng-result {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+        }
+        dl dd {
+             padding-left: 0.5rem;
+        }
+        .rebar-input-group {
+             display: grid;
+             grid-template-columns: 1fr 1fr;
+             gap: 0.5rem;
+        }
+        #section-canvas {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            aspect-ratio: 800 / 500;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">互動式預力混凝土橋梁檢核指南_腹版及下翼版</h1>
+            <p class="mt-2 text-lg text-slate-600 max-w-4xl mx-auto">本檢核指南基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。所有檢核均基於一個三跨連續PC箱型梁橋的範例，其設計使用年限為100年。以下將逐一檢核設計中的關鍵環節。</p>
+        </header>
+
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                 <h2 class="text-xl font-bold mb-4 text-sky-800 text-center">斷面參考圖</h2>
+                 <img src="https://lh3.googleusercontent.com/d/19ARfsgIyCDvLXvSsZnsbTKY4WaA834V7" alt="橋梁斷面圖" class="rounded-lg object-contain w-full max-w-4xl mx-auto">
+            </div>
+
+            <div class="mb-8 text-center">
+                <p class="mb-3 text-lg font-medium">請選擇要檢核的部位編號：</p>
+                <div id="section-selector" class="inline-flex flex-wrap justify-center rounded-lg shadow-sm" role="group">
+                    <button type="button" id="btn-sec15" data-section="sec15" class="px-5 py-3 text-base font-medium rounded-l-lg transition-colors duration-300">Sec-15</button>
+                    <button type="button" id="btn-sec16" data-section="sec16" class="px-5 py-3 text-base font-medium transition-colors duration-300">Sec-16</button>
+                    <button type="button" id="btn-sec24" data-section="sec24" class="px-5 py-3 text-base font-medium transition-colors duration-300">Sec-24</button>
+                    <button type="button" id="btn-sec25" data-section="sec25" class="px-5 py-3 text-base font-medium rounded-r-lg transition-colors duration-300">Sec-25</button>
+                </div>
+            </div>
+            
+            <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left Column: Inputs (50%) -->
+                <aside class="lg:col-span-1">
+                    <div class="bg-white p-6 rounded-xl shadow-md h-full">
+                        <h2 class="text-xl font-bold mb-4 text-sky-800">斷面性質與抵抗能力 (可編輯)</h2>
+                        <div id="properties-display" class="space-y-4 text-slate-700">
+                            <!-- Dynamic content here -->
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Column: Results (50%) -->
+                <section class="lg:col-span-1">
+                    <div class="bg-white p-6 rounded-xl shadow-md h-full space-y-6">
+                        <div id="merged-check-block">
+                            <h2 class="text-xl font-bold text-sky-800">🛡️ 耐荷性能檢核</h2>
+                            <div class="mt-2 space-y-4">
+                               <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-3 bg-slate-100 rounded-lg">
+                                        <label for="design-moment-ls1" class="block text-sm font-medium text-slate-700 mb-1">設計彎矩 \(M_{d,1}\)</label>
+                                        <div class="relative">
+                                            <input type="number" step="0.1" id="design-moment-ls1" class="w-full p-2 border rounded-md bg-white text-center text-sm pr-12">
+                                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">kN·m</span>
+                                        </div>
+                                    </div>
+                                     <div class="p-3 bg-slate-100 rounded-lg">
+                                        <label for="design-moment-ls3" class="block text-sm font-medium text-slate-700 mb-1">設計彎矩 \(M_{d,3}\)</label>
+                                         <div class="relative">
+                                            <input type="number" step="0.1" id="design-moment-ls3" class="w-full p-2 border rounded-md bg-white text-center text-sm pr-12">
+                                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">kN·m</span>
+                                        </div>
+                                    </div>
+                               </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-3 bg-sky-50 rounded-lg">
+                                        <label class="block text-sm font-medium text-sky-800 mb-2">計算降伏彎矩 \(M_{yc}\) (kN·m)</label>
+                                        <div class="grid grid-cols-2 gap-2 text-center">
+                                             <div>
+                                                <div id="myc-pos-display" class="text-lg font-bold text-sky-900">---</div>
+                                                <div class="text-xs text-slate-500">正彎矩</div>
+                                             </div>
+                                              <div>
+                                                <div id="myc-neg-display" class="text-lg font-bold text-sky-900">---</div>
+                                                <div class="text-xs text-slate-500">負彎矩</div>
+                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 bg-amber-50 rounded-lg">
+                                        <label class="block text-sm font-medium text-amber-800 mb-2">計算破壞彎矩 \(M_{uc}\) (kN·m)</label>
+                                        <div class="grid grid-cols-2 gap-2 text-center">
+                                             <div>
+                                                <div id="muc-pos-display" class="text-lg font-bold text-amber-900">---</div>
+                                                <div class="text-xs text-slate-500">正彎矩</div>
+                                             </div>
+                                              <div>
+                                                <div id="muc-neg-display" class="text-lg font-bold text-amber-900">---</div>
+                                                <div class="text-xs text-slate-500">負彎矩</div>
+                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                             <div class="grid grid-cols-2 gap-4 mt-4 text-center">
+                                <div>
+                                    <h3 class="font-semibold text-slate-700 mb-1 text-sm">極限狀態1</h3>
+                                    <div id="load-bearing-result-1" class="result-box"></div>
+                                    <div class="text-xs mt-1 text-slate-500">
+                                        <span>比值 \(|M_{d,1}/M_{yc}|\)</span>
+                                        <span id="ratio-ls1" class="font-bold">---</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-slate-700 mb-1 text-sm">極限狀態3</h3>
+                                    <div id="load-bearing-result-3" class="result-box"></div>
+                                     <div class="text-xs mt-1 text-slate-500">
+                                        <span>比值 \(|M_{d,3}/M_{uc}|\)</span>
+                                        <span id="ratio-ls3" class="font-bold">---</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h2 class="text-xl font-bold text-sky-800">🔄 相反應力構件檢核</h2>
+                            <div class="mt-2 space-y-3">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-2 bg-slate-100 rounded-lg">
+                                        <label for="moment-d" class="block text-sm font-medium text-slate-700 mb-1">永久荷載彎矩 \(M_D\)</label>
+                                        <div class="relative">
+                                            <input type="number" step="0.1" id="moment-d" class="w-full p-2 border rounded-md bg-white text-center text-sm pr-12">
+                                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">kN·m</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-2 bg-slate-100 rounded-lg">
+                                        <label for="moment-l" class="block text-sm font-medium text-slate-700 mb-1">活荷載彎矩 \(M_L\)</label>
+                                        <div class="relative">
+                                            <input type="number" step="0.1" id="moment-l" class="w-full p-2 border rounded-md bg-white text-center text-sm pr-12">
+                                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">kN·m</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center text-sm text-slate-500">
+                                    比值 \(|M_D/M_L|\): <span id="dl-ratio" class="font-bold">---</span>
+                                </div>
+                                <div class="text-center">
+                                     <h3 class="font-semibold text-slate-700 mb-1 text-sm">檢核結果</h3>
+                                     <div id="reversing-stress-result" class="result-box"></div>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="border-t pt-6">
+                            <h2 class="text-xl font-bold text-sky-800">⏳ 耐久性能檢核</h2>
+                            <div class="mt-2 space-y-3">
+                                <div class="grid grid-cols-2 gap-4">
+                                     <div class="p-2 bg-slate-100 rounded-lg">
+                                        <label for="moment-fatigue" class="block text-sm font-medium text-slate-700 mb-1">疲勞檢核彎矩 \(M_{fat}\)</label>
+                                        <div class="relative">
+                                            <input type="number" step="0.1" id="moment-fatigue" class="w-full p-2 border rounded-md bg-white text-center text-sm pr-12">
+                                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">kN·m</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-2 bg-slate-100 rounded-lg">
+                                        <label for="moment-corrosion" class="block text-sm font-medium text-slate-700 mb-1">腐蝕控制彎矩 \(M_{corr}\)</label>
+                                        <div class="relative">
+                                            <input type="number" step="0.1" id="moment-corrosion" class="w-full p-2 border rounded-md bg-white text-center text-sm pr-12">
+                                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">kN·m</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 text-center">
+                                     <div>
+                                        <h3 class="font-semibold text-slate-700 mb-1 text-sm">疲勞</h3>
+                                        <div id="durability-fatigue-result" class="result-box"></div>
+                                        <div class="text-xs mt-1 text-slate-500">
+                                            計算應力: <span id="stress-fatigue" class="font-bold">---</span> N/mm²
+                                        </div>
+                                    </div>
+                                     <div>
+                                        <h3 class="font-semibold text-slate-700 mb-1 text-sm">腐蝕</h3>
+                                        <div id="durability-corrosion-result" class="result-box"></div>
+                                        <div class="text-xs mt-1 text-slate-500">
+                                            計算應力: <span id="stress-corrosion" class="font-bold">---</span> N/mm²
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Bottom Section: Descriptions -->
+            <footer class="mt-8 space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-bold mb-2 text-sky-800">🛡️ 耐荷性能檢核 (極限狀態) 詳細說明</h2>
+                    <dl class="mt-4 border-t border-slate-200 pt-4 text-sm text-slate-600 space-y-2">
+                        <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">檢核目標：</dt>
+                            <dd>確保在設計荷載下，構件不會發生降伏（功能維持）或崩塌（結構安全），以維持其正常使用功能與最終安全性。</dd>
+                        </div>
+                        <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">規範來源：</dt>
+                            <dd>《道路橋示方書》III篇 鋼構造篇 5.5.1 及 5.7.1。</dd>
+                        </div>
+                        <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">判定基準：</dt>
+                            <dd class="w-full">
+                                設計彎矩 \(M_d\) 必須小於或等於經過部分係數折減後的抵抗彎矩。
+                                <div class="mt-4">
+                                    <b class="text-slate-800">1. 降伏彎矩 \(M_{yc}\) (極限狀態1 - 功能維持):</b>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li><b>定義:</b> 當斷面受拉側鋼筋應變達到降伏點 \(\epsilon_{sy}\)，且壓力側混凝土應力為 \( \frac{2}{3}f'_{ck} \) 時的抵抗彎矩。</li>
+                                        <li><b>計算步驟:</b>
+                                            <ol class="list-decimal pl-5">
+                                                <li>依據應變相容性與力平衡原則 (拉力 = 壓力)，建立方程式求解中性軸深度 \(c\)。</li>
+                                                <li>計算壓力側混凝土應力塊合力 \(C_c\)、壓力側鋼筋作用力 \(C_s\)。</li>
+                                                <li>對拉力側鋼筋中心取力矩，即可求得彎矩: \(M_{yc} = C_c \cdot d_{cc} + C_s \cdot d_{sc}\)，其中 \(d\) 為力臂。</li>
+                                            </ol>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="mt-4">
+                                    <b class="text-slate-800">2. 破壞抵抗彎矩 \(M_{uc}\) (極限狀態3 - 結構安全):</b>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                         <li><b>定義:</b> 當斷面壓力側混凝土應變達到極限壓應變 \(\epsilon_{cu} = 0.0035\) 時的抵抗彎矩。</li>
+                                        <li><b>計算步驟:</b>
+                                            <ol class="list-decimal pl-5">
+                                                <li>採用惠特尼等值應力塊 (Whitney Stress Block) 進行分析，壓力塊深度 \( a = \beta_1 c \)。</li>
+                                                <li>透過迭代計算，求解滿足力平衡方程式 \( T_s = C_c + C_s \) 的中性軸深度 \(c\)。</li>
+                                                <li>對拉力側鋼筋中心取力矩，即可求得彎矩: \(M_{uc} = C_c(d - a/2) + C_s(d-d')\)。</li>
+                                            </ol>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-bold mb-2 text-sky-800">🔄 相反應力構件檢核 詳細說明</h2>
+                    <dl class="mt-4 border-t border-slate-200 pt-4 text-sm text-slate-600 space-y-2">
+                         <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">檢核目標：</dt>
+                            <dd>針對在不同荷載工況下，可能發生彎矩正負號反轉的構件，進行特別的加嚴檢核，以防止因應力反覆逆轉造成的疲勞累積與其他潛在風險。</dd>
+                        </div>
+                         <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">規範來源：</dt>
+                            <dd>《道路橋示方書》III篇，基於工程實踐所訂之特別條款。</dd>
+                        </div>
+                        <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">判定基準：</dt>
+                             <dd class="w-full">此檢核為一多步驟的邏輯判斷流程，旨在確保結構在特殊荷載下的安全性：
+                                <ul class="list-disc pl-5 mt-2 space-y-2">
+                                    <li><b>步驟一 (識別)：</b>判斷構件彎矩正負號是否會因永久荷載(D)與活荷載(L)組合而反轉。若會，則此構件被視為「相反應力構件」，需進行後續加嚴檢核。應力反覆逆轉會加速疲勞損傷，並可能引發單向荷載下不會出現的劣化機制。</li>
+                                    <li><b>步驟二 (加嚴)：</b>當相反應力構件的永久荷載與活荷載效應均較顯著時（規範以 \(|M_D/M_L| \ge 0.3\) 作為判斷依據），必須採用一組更為嚴苛的荷載組合來計算檢核用的設計彎矩。此組合會放大活荷載的影響（如 \(M_d = M_D + 1.3 \cdot M_L\)），以模擬更極端的作用力情況。</li>
+                                    <li><b>步驟三 (判定)：</b>使用此加嚴後的設計彎矩，分別與極限狀態1及極限狀態3的抵抗限制值進行比較。必須**同時滿足**這兩個極限狀態的要求，最終的檢核結果才判定為OK。</li>
+                                </ul>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-bold mb-2 text-sky-800">⏳ 耐久性能檢核 詳細說明</h2>
+                     <dl class="mt-4 border-t border-slate-200 pt-4 text-sm text-slate-600 space-y-2">
+                        <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">檢核目標：</dt>
+                            <dd>控制結構因疲勞與鋼筋腐蝕引發的長期劣化，確保橋梁在百年設計使用年限內的服務品質與安全。</dd>
+                        </div>
+                         <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">規範來源：</dt>
+                            <dd>《道路橋示方書》III篇 使用性極限狀態相關規定 (如 7.2節 疲勞、7.3節 腐蝕控制)。</dd>
+                        </div>
+                        <div class="flex">
+                            <dt class="font-semibold text-slate-800 w-24 flex-shrink-0">判定基準：</dt>
+                            <dd class="w-full">
+                                透過限制特定荷載組合下鋼筋的拉應力，來控制混凝土的裂縫寬度，以達到耐久性目標。
+                                <div class="mt-4">
+                                    <b class="text-slate-800">1. 疲勞檢核:</b>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li><b>目的:</b> 控制變動荷載（如車流）作用下裂縫的反覆開合，防止鋼筋疲勞。</li>
+                                        <li><b>荷載組合:</b> \( M_{fat} = 1.0 \cdot (D+L+PS+CR+SH+E+HP+U) \) </li>
+                                        <li><b>應力限制:</b> 計算出的鋼筋拉應力 \(\sigma_s \le 180~N/mm^2\)。</li>
+                                    </ul>
+                                </div>
+                                <div class="mt-4">
+                                    <b class="text-slate-800">2. 腐蝕控制檢核:</b>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                         <li><b>目的:</b> 控制永久荷載作用下的裂縫寬度，從根本上防止或延緩腐蝕因子（如氯離子）侵入。</li>
+                                         <li><b>荷載組合:</b> \( M_{corr} \) 採用「永久作用支配狀況」，即僅考慮恆久存在的荷載。</li>
+                                         <li><b>應力限制:</b> 計算出的鋼筋拉應力 \(\sigma_s \le 100~N/mm^2\)。</li>
+                                    </ul>
+                                </div>
+                                 <div class="mt-4">
+                                    <b class="text-slate-800">鋼筋應力計算步驟:</b>
+                                    <ol class="list-decimal pl-5 mt-1 space-y-1">
+                                        <li>採用「開裂轉換斷面法」，將鋼筋面積轉換為等效混凝土面積 (\(nA_s\))。</li>
+                                        <li>對轉換後斷面的形心軸取面積一次矩，求解中性軸深度 \(kd\)。</li>
+                                        <li>計算開裂轉換斷面的慣性矩 \(I_{cr}\)。</li>
+                                        <li>使用撓曲公式計算鋼筋應力: \(\sigma_s = n \cdot \frac{M \cdot y}{I_{cr}}\)，其中 \(M\) 為對應的檢核彎矩，\(y\) 為中性軸至受拉鋼筋的距離。</li>
+                                    </ol>
+                                </div>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+<script>
+    const designData = {
+        sec15: {
+            name: "腹版 Sec-15",
+            dimensions: { W: 1000, H: 450, topCover: 50, botCover: 50 },
+            rebar: { top: { type: 'D16', spacing: 15 }, bottom: { type: 'D16', spacing: 15 } },
+            properties: { '混凝土強度 f\'ck': '36 N/mm²' },
+            myc: { pos: 204.6, neg: 204.6 },
+            muc: { pos: 215.4, neg: 215.4 },
+            loadBearing: { designMoment: -80.3, limitState1Factor: 0.765, limitState3Factor: 0.648 },
+            durability: { momentFatigue: -66.7, momentCorrosion: -16.3, fatigueLimit: 180, corrosionLimit: 100 },
+            reversingStress: { momentD: -15.55, momentL: 67.21, checkResult: 'OK' }
+        },
+        sec16: {
+            name: "腹版 Sec-16",
+            dimensions: { W: 1000, H: 450, topCover: 50, botCover: 50 },
+            rebar: { top: { type: 'D16', spacing: 15 }, bottom: { type: 'D16', spacing: 15 } },
+            properties: { '混凝土強度 f\'ck': '36 N/mm²' },
+            myc: { pos: 204.6, neg: 204.6 },
+            muc: { pos: 215.4, neg: 215.4 },
+            loadBearing: { designMoment: -80.3, limitState1Factor: 0.765, limitState3Factor: 0.648 },
+            durability: { momentFatigue: -25.0, momentCorrosion: -12.3, fatigueLimit: 180, corrosionLimit: 100 },
+            reversingStress: { momentD: -11.40, momentL: 16.77, checkResult: 'OK' }
+        },
+        sec24: {
+            name: "下翼版 Sec-24",
+            dimensions: { W: 1000, H: 220, topCover: 50, botCover: 50 },
+            rebar: { top: { type: 'D13', spacing: 15 }, bottom: { type: 'D13', spacing: 15 } },
+            properties: { '混凝土強度 f\'ck': '36 N/mm²' },
+            myc: { pos: 26.2, neg: 55.3 },
+            muc: { pos: 27.5, neg: 58.5 },
+            loadBearing: { designMoment: -21.9, limitState1Factor: 0.765, limitState3Factor: 0.648 },
+            durability: { momentFatigue: -17.6, momentCorrosion: -6.1, fatigueLimit: 180, corrosionLimit: 100 },
+            reversingStress: { momentD: 5.86, momentL: -12.65, checkResult: 'OK' }
+        },
+        sec25: {
+            name: "下翼版 Sec-25",
+            dimensions: { W: 1000, H: 220, topCover: 50, botCover: 50 },
+            rebar: { top: { type: 'D13', spacing: 15 }, bottom: { type: 'D13', spacing: 15 } },
+            properties: { '混凝土強度 f\'ck': '36 N/mm²' },
+            myc: { pos: 26.2, neg: 55.3 },
+            muc: { pos: 27.5, neg: 58.5 },
+            loadBearing: { designMoment: -21.9, limitState1Factor: 0.765, limitState3Factor: 0.648 },
+            durability: { momentFatigue: 6.7, momentCorrosion: 6.2, fatigueLimit: 180, corrosionLimit: 100 },
+            reversingStress: { momentD: -4.92, momentL: 12.36, checkResult: 'OK' }
+        }
+    };
+
+    const rebarData = {
+        'D10': { area: 71.33, dia: 9.53 },
+        'D13': { area: 126.7, dia: 12.7 },
+        'D16': { area: 198.6, dia: 15.9 },
+        'D19': { area: 286.5, dia: 19.1 },
+        'D22': { area: 387.1, dia: 22.2 },
+        'D25': { area: 506.7, dia: 25.4 },
+        'D29': { area: 642.4, dia: 28.6 },
+        'D32': { area: 794.2, dia: 31.8 }
+    };
+
+    let currentSection = 'sec15';
+    
+    const drawSection = (canvas, sectionData) => {
+        if (!canvas) return;
+        
+        const { H, W, topCover, botCover } = sectionData.dimensions;
+        
+        const dpi = window.devicePixelRatio || 1;
+        const style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+        const style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+        canvas.setAttribute('height', style_height * dpi);
+        canvas.setAttribute('width', style_width * dpi);
+
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpi, dpi);
+        
+        const canvasW = style_width;
+        const canvasH = style_height;
+        ctx.clearRect(0, 0, canvasW, canvasH);
+        
+        const h_scale = (canvasH * 0.6) / H;
+        const w_scale = (canvasW * 0.5) / W;
+        const scale = Math.min(h_scale, w_scale);
+
+        const sectionWidth = W * scale;
+        const sectionHeight = H * scale;
+
+        const x = (canvasW - sectionWidth) / 2;
+        const y = (canvasH - sectionHeight) / 2;
+        
+        ctx.strokeStyle = '#475569'; // slate-600
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x, y, sectionWidth, sectionHeight);
+
+        // Draw rebars
+        const rebarRadius = 2.5;
+        const topRebarCenterY = y + topCover * scale + rebarRadius;
+        const botRebarCenterY = y + sectionHeight - botCover * scale - rebarRadius;
+        
+        ctx.fillStyle = '#1e293b'; // slate-800
+        const rebarCount = 8;
+        const rebarMargin = 15;
+
+        for (let i = 0; i < rebarCount; i++) {
+            const rebarX = x + rebarMargin + i * ((sectionWidth - 2 * rebarMargin) / (rebarCount - 1));
+            ctx.beginPath();
+            ctx.arc(rebarX, topRebarCenterY, rebarRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(rebarX, botRebarCenterY, rebarRadius, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        // Draw dimensions
+        const FONT_SIZE = 12 * 1.4;
+        ctx.font = `bold ${FONT_SIZE}px "Noto Sans TC"`;
+        ctx.fillStyle = '#334155';
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1;
+        
+        // Height dimension
+        const dimX = x - 50;
+        ctx.beginPath();
+        ctx.moveTo(dimX, y); ctx.lineTo(dimX, y + sectionHeight);
+        ctx.moveTo(dimX - 5, y); ctx.lineTo(dimX + 5, y);
+        ctx.moveTo(dimX - 5, y + sectionHeight); ctx.lineTo(dimX + 5, y + sectionHeight);
+        ctx.stroke();
+        ctx.save();
+        ctx.translate(dimX - 15, canvasH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.textAlign = 'center';
+        ctx.fillText(`H = ${H}`, 0, 0);
+        ctx.restore();
+        
+        // Width dimension
+        const dimY = y - 40;
+        ctx.beginPath();
+        ctx.moveTo(x, dimY); ctx.lineTo(x + sectionWidth, dimY);
+        ctx.moveTo(x, dimY - 5); ctx.lineTo(x, dimY + 5);
+        ctx.moveTo(x + sectionWidth, dimY - 5); ctx.lineTo(x + sectionWidth, dimY + 5);
+        ctx.stroke();
+        ctx.textAlign = 'center';
+        ctx.fillText(`W = ${W}`, canvasW / 2, dimY - 12);
+
+        // Cover dimensions
+        const COVER_FONT_SIZE = 10 * 1.4;
+        ctx.font = `${COVER_FONT_SIZE}px "Noto Sans TC"`;
+        const coverDimX = x + sectionWidth + 15;
+        
+        // Top Cover
+        const topRebarEdgeY = topRebarCenterY - rebarRadius;
+        ctx.beginPath();
+        ctx.moveTo(coverDimX, y); ctx.lineTo(coverDimX, topRebarEdgeY);
+        ctx.moveTo(coverDimX - 4, y); ctx.lineTo(coverDimX + 4, y);
+        ctx.moveTo(coverDimX - 4, topRebarEdgeY); ctx.lineTo(coverDimX + 4, topRebarEdgeY);
+        ctx.stroke();
+        ctx.textAlign = 'left';
+        ctx.fillText(topCover, coverDimX + 8, y + (topRebarEdgeY - y) / 2 + (COVER_FONT_SIZE / 3));
+
+        // Bottom Cover
+        const bottomRebarEdgeY = botRebarCenterY + rebarRadius;
+        ctx.beginPath();
+        ctx.moveTo(coverDimX, bottomRebarEdgeY); ctx.lineTo(coverDimX, y + sectionHeight);
+        ctx.moveTo(coverDimX - 4, bottomRebarEdgeY); ctx.lineTo(coverDimX + 4, bottomRebarEdgeY);
+        ctx.moveTo(coverDimX - 4, y + sectionHeight); ctx.lineTo(coverDimX + 4, y + sectionHeight);
+        ctx.stroke();
+        ctx.textAlign = 'left';
+        ctx.fillText(botCover, coverDimX + 8, bottomRebarEdgeY + (y + sectionHeight - bottomRebarEdgeY) / 2 + (COVER_FONT_SIZE / 3));
+
+    };
+    
+    const calculateYieldMoment = (inputs) => {
+        const Es = 200000; // N/mm^2
+        const yield_strain = 0.001725;
+        const fy = Es * yield_strain;
+        const fck = 36; // N/mm^2
+
+        const W = inputs.W;
+        const H = inputs.H;
+        
+        const top_rebar_spec = rebarData[inputs.topRebarType];
+        const bot_rebar_spec = rebarData[inputs.botRebarType];
+
+        const Ast = top_rebar_spec.area * (W / (inputs.topRebarSpacing * 10)); 
+        const Asb = bot_rebar_spec.area * (W / (inputs.botRebarSpacing * 10)); 
+        
+        const dt = inputs.topCover + top_rebar_spec.dia / 2;
+        const db = H - (inputs.botCover + bot_rebar_spec.dia / 2);
+
+        // --- POSITIVE MOMENT CALCULATION ---
+        let myc_pos = NaN;
+        if (db > 0 && (db - dt) > 0) {
+            const A = -(1/3) * fck * W;
+            const B = (1/3) * fck * W * db + Ast * Es * yield_strain + Asb * fy;
+            const C = -(Ast * Es * yield_strain * dt + Asb * fy * db);
+            
+            const discriminant = B*B - 4*A*C;
+            if (discriminant >= 0) {
+                const c1 = (-B + Math.sqrt(discriminant)) / (2 * A);
+                const c2 = (-B - Math.sqrt(discriminant)) / (2 * A);
+                let c_pos = (c1 > 0 && c1 < H) ? c1 : c2;
+                
+                if (c_pos > dt && c_pos < db) {
+                    const Cc = (1/3) * fck * c_pos * W;
+                    const strain_st = yield_strain * (c_pos - dt) / (db - c_pos);
+                    const Cs = Ast * Es * strain_st;
+                    myc_pos = (Cc * (db - c_pos/3) + Cs * (db - dt)) / 1e6;
+                } else {
+                    c_pos = (3 * Asb * fy) / (fck * W);
+                    if (c_pos < db) {
+                       myc_pos = (Asb * fy * (db - c_pos/3)) / 1e6;
+                    }
+                }
+            }
+        }
+        
+        // --- NEGATIVE MOMENT CALCULATION ---
+        let myc_neg = NaN;
+        const dt_neg = H - dt;
+        const db_neg = H - db;
+        
+        if (dt_neg > 0 && (dt_neg - db_neg) > 0) {
+            const A = -(1/3) * fck * W;
+            const B = (1/3) * fck * W * dt_neg + Asb * Es * yield_strain + Ast * fy;
+            const C = -(Asb * Es * yield_strain * db_neg + Ast * fy * dt_neg);
+            
+            const discriminant = B*B - 4*A*C;
+            if (discriminant >= 0) {
+                const c1 = (-B + Math.sqrt(discriminant)) / (2 * A);
+                const c2 = (-B - Math.sqrt(discriminant)) / (2 * A);
+                let c_neg = (c1 > 0 && c1 < H) ? c1 : c2;
+
+                if (c_neg > db_neg && c_neg < dt_neg) {
+                     const Cc = (1/3) * fck * c_neg * W;
+                     const strain_sb = yield_strain * (c_neg - db_neg) / (dt_neg - c_neg);
+                     const Cs = Asb * Es * strain_sb;
+                     myc_neg = (Cc * (dt_neg - c_neg/3) + Cs * (dt_neg - db_neg)) / 1e6;
+                } else {
+                    c_neg = (3 * Ast * fy) / (fck * W);
+                    if (c_neg < dt_neg) {
+                       myc_neg = (Ast * fy * (dt_neg - c_neg/3)) / 1e6;
+                    }
+                }
+            }
+        }
+
+        return { pos: myc_pos, neg: myc_neg };
+    };
+    
+    const calculateUltimateMoment = (inputs) => {
+        const Es = 200000;
+        const fy = 345;
+        const fck = 36;
+        const ε_cu = 0.0035;
+        const β1 = 0.8;
+
+        const W = inputs.W;
+        const H = inputs.H;
+
+        const top_rebar_spec = rebarData[inputs.topRebarType];
+        const bot_rebar_spec = rebarData[inputs.botRebarType];
+
+        const Ast = top_rebar_spec.area * (W / (inputs.topRebarSpacing * 10));
+        const Asb = bot_rebar_spec.area * (W / (inputs.botRebarSpacing * 10));
+
+        const dt = inputs.topCover + top_rebar_spec.dia / 2;
+        const db = H - (inputs.botCover + bot_rebar_spec.dia / 2);
+
+        // --- POSITIVE MOMENT (Bottom tension) ---
+        let muc_pos = NaN;
+        let c = (Asb * fy) / (0.85 * fck * β1 * W); // Initial guess assuming no compression steel
+        for (let i = 0; i < 10; i++) { // Iterate to find neutral axis c
+            const ε_st = ε_cu * ((c - dt) / c);
+            const f_st = Math.max(0, Math.min(Es * ε_st, fy)); // Compression steel stress, cannot be tension
+            const T = Asb * fy;
+            const C = 0.85 * fck * β1 * c * W + Ast * f_st;
+            c = c * (T / C);
+        }
+        if (c > 0 && c < H) {
+            const a = β1 * c;
+            const ε_st = ε_cu * ((c - dt) / c);
+            const f_st = Math.max(0, Math.min(Es * ε_st, fy));
+            muc_pos = (Ast * f_st * (db - dt) + 0.85 * fck * a * W * (db - a / 2)) / 1e6;
+        }
+
+
+        // --- NEGATIVE MOMENT (Top tension) ---
+        let muc_neg = NaN;
+        const dt_neg = H - dt;
+        const db_neg = H - db;
+        c = (Ast * fy) / (0.85 * fck * β1 * W); // Initial guess
+        for (let i = 0; i < 10; i++) {
+            const ε_sb = ε_cu * ((c - db_neg) / c);
+            const f_sb = Math.max(0, Math.min(Es * ε_sb, fy));
+            const T = Ast * fy;
+            const C = 0.85 * fck * β1 * c * W + Asb * f_sb;
+            c = c * (T / C);
+        }
+        if (c > 0 && c < H) {
+            const a = β1 * c;
+            const ε_sb = ε_cu * ((c - db_neg) / c);
+            const f_sb = Math.max(0, Math.min(Es * ε_sb, fy));
+            muc_neg = (Asb * f_sb * (dt_neg - db_neg) + 0.85 * fck * a * W * (dt_neg - a / 2)) / 1e6;
+        }
+
+        return { pos: muc_pos, neg: muc_neg };
+    };
+
+    const calculateSteelStress = (inputs, moment) => {
+        const n = 15; // Modular ratio
+        const W = inputs.W;
+        const H = inputs.H;
+        
+        const top_rebar_spec = rebarData[inputs.topRebarType];
+        const bot_rebar_spec = rebarData[inputs.botRebarType];
+
+        const Ast = top_rebar_spec.area * (W / (inputs.topRebarSpacing * 10)); 
+        const Asb = bot_rebar_spec.area * (W / (inputs.botRebarSpacing * 10)); 
+        
+        const dt = inputs.topCover + top_rebar_spec.dia / 2;
+        const db = H - (inputs.botCover + bot_rebar_spec.dia / 2);
+
+        let stress = NaN;
+        const M = Math.abs(moment) * 1e6; // to N·mm
+
+        if (moment >= 0) { // Positive moment, bottom steel in tension
+            const A = W / 2;
+            const B = (n - 1) * Ast + n * Asb;
+            const C = -((n - 1) * Ast * dt + n * Asb * db);
+            const kd = (-B + Math.sqrt(B*B - 4*A*C)) / (2*A);
+            if (kd > 0 && kd < H) {
+                const Icr = (W * kd**3) / 3 + (n - 1) * Ast * (kd - dt)**2 + n * Asb * (db - kd)**2;
+                stress = n * M * (db - kd) / Icr;
+            }
+        } else { // Negative moment, top steel in tension
+            const A = W / 2;
+            const B = n * Ast + (n - 1) * Asb;
+            const C = -(n * Ast * dt + (n - 1) * Asb * db);
+            const kd = (-B + Math.sqrt(B*B - 4*A*C)) / (2*A);
+            if (kd > 0 && kd < H) {
+                const Icr = (W * kd**3) / 3 + n * Ast * (kd - dt)**2 + (n - 1) * Asb * (db - kd)**2;
+                stress = n * M * (kd - dt) / Icr;
+            }
+        }
+        return stress;
+    };
+
+    const runCalculationsAndDisplay = () => {
+        const inputs = {
+            W: parseFloat(document.getElementById('dim-w').value) || 0,
+            H: parseFloat(document.getElementById('dim-h').value) || 0,
+            topCover: parseFloat(document.getElementById('cover-top').value) || 0,
+            botCover: parseFloat(document.getElementById('cover-bottom').value) || 0,
+            topRebarType: document.getElementById('rebar-top-type').value,
+            topRebarSpacing: parseFloat(document.getElementById('rebar-top-spacing').value) || 0,
+            botRebarType: document.getElementById('rebar-bottom-type').value,
+            botRebarSpacing: parseFloat(document.getElementById('rebar-bottom-spacing').value) || 0,
+        };
+
+        const mycPosDisplay = document.getElementById('myc-pos-display');
+        const mycNegDisplay = document.getElementById('myc-neg-display');
+        const mucPosDisplay = document.getElementById('muc-pos-display');
+        const mucNegDisplay = document.getElementById('muc-neg-display');
+
+        if (inputs.H <= 0 || inputs.topRebarSpacing <= 0 || inputs.botRebarSpacing <= 0) {
+            mycPosDisplay.textContent = '---'; mycNegDisplay.textContent = '---';
+            mucPosDisplay.textContent = '---'; mucNegDisplay.textContent = '---';
+            designData[currentSection].myc = { pos: 0, neg: 0 };
+            designData[currentSection].muc = { pos: 0, neg: 0 };
+            return;
+        }
+
+        const calculatedMyc = calculateYieldMoment(inputs);
+        const calculatedMuc = calculateUltimateMoment(inputs);
+        
+        designData[currentSection].myc.pos = isNaN(calculatedMyc.pos) ? 0 : calculatedMyc.pos;
+        designData[currentSection].myc.neg = isNaN(calculatedMyc.neg) ? 0 : calculatedMyc.neg;
+        designData[currentSection].muc.pos = isNaN(calculatedMuc.pos) ? 0 : calculatedMuc.pos;
+        designData[currentSection].muc.neg = isNaN(calculatedMuc.neg) ? 0 : calculatedMuc.neg;
+
+        mycPosDisplay.innerHTML = isNaN(calculatedMyc.pos) ? '<span class="text-rose-600">--</span>' : `${calculatedMyc.pos.toFixed(1)}`;
+        mycNegDisplay.innerHTML = isNaN(calculatedMyc.neg) ? '<span class="text-rose-600">--</span>' : `-${calculatedMyc.neg.toFixed(1)}`;
+        mucPosDisplay.innerHTML = isNaN(calculatedMuc.pos) ? '<span class="text-rose-600">--</span>' : `${calculatedMuc.pos.toFixed(1)}`;
+        mucNegDisplay.innerHTML = isNaN(calculatedMuc.neg) ? '<span class="text-rose-600">--</span>' : `-${calculatedMuc.neg.toFixed(1)}`;
+    };
+
+    
+    const renderEditableProperties = () => {
+        const data = designData[currentSection];
+        const propertiesDisplay = document.getElementById('properties-display');
+        const rebarOptions = ['D10', 'D13', 'D16', 'D19', 'D22', 'D25', 'D29', 'D32'];
+        
+        propertiesDisplay.innerHTML = `
+            <div class="flex justify-between items-center border-b pb-2">
+                <span class="font-medium">構件名稱</span>
+                <span class="font-bold text-sky-700 text-lg">${data.name}</span>
+            </div>
+             <div class="space-y-4 pt-2">
+                <div>
+                    <label class="font-medium text-base mb-2 block">斷面尺寸 (mm)</label>
+                    <div class="grid grid-cols-2 gap-x-6 gap-y-3">
+                        <div>
+                           <label for="dim-w" class="text-sm font-medium text-slate-600 block mb-1">寬度 W</label>
+                           <input type="number" id="dim-w" value="${data.dimensions.W}" class="w-full p-2 border rounded-md bg-slate-200 text-center" readonly>
+                        </div>
+                        <div>
+                           <label for="dim-h" class="text-sm font-medium text-slate-600 block mb-1">高度 H</label>
+                           <input type="number" id="dim-h" value="${data.dimensions.H}" class="w-full p-2 border rounded-md bg-slate-50 text-center">
+                        </div>
+                        <div>
+                           <label for="cover-top" class="text-sm font-medium text-slate-600 block mb-1">頂部保護層</label>
+                           <input type="number" id="cover-top" value="${data.dimensions.topCover}" class="w-full p-2 border rounded-md bg-slate-50 text-center">
+                        </div>
+                        <div>
+                           <label for="cover-bottom" class="text-sm font-medium text-slate-600 block mb-1">底部保護層</label>
+                           <input type="number" id="cover-bottom" value="${data.dimensions.botCover}" class="w-full p-2 border rounded-md bg-slate-50 text-center">
+                        </div>
+                    </div>
+                </div>
+                 <div class="space-y-4 pt-2 border-t mt-4">
+                    <label class="font-medium text-base">鋼筋配置</label>
+                     <div class="grid grid-cols-1 md:grid-cols-[120px,1fr] gap-x-4 gap-y-3 items-center">
+                        <label for="rebar-top-type" class="text-sm">頂部</label>
+                        <div class="rebar-input-group">
+                           <select id="rebar-top-type" class="w-full p-2 border rounded-md bg-slate-50">
+                            ${rebarOptions.map(opt => `<option value="${opt}" ${data.rebar.top.type === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                           </select>
+                           <div class="relative">
+                            <input type="number" step="1" id="rebar-top-spacing" value="${data.rebar.top.spacing}" class="w-full p-2 border rounded-md bg-slate-50 pr-8 text-center">
+                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm">cm</span>
+                           </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-[120px,1fr] gap-x-4 gap-y-3 items-center">
+                        <label for="rebar-bottom-type" class="text-sm">底部</label>
+                        <div class="rebar-input-group">
+                           <select id="rebar-bottom-type" class="w-full p-2 border rounded-md bg-slate-50">
+                            ${rebarOptions.map(opt => `<option value="${opt}" ${data.rebar.bottom.type === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                           </select>
+                           <div class="relative">
+                             <input type="number" step="1" id="rebar-bottom-spacing" value="${data.rebar.bottom.spacing}" class="w-full p-2 border rounded-md bg-slate-50 pr-8 text-center">
+                             <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm">cm</span>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+                ${Object.entries(data.properties).map(([key, value]) => `
+                    <div class="flex justify-between items-center border-t pt-4 mt-4">
+                        <span class="font-medium">${key.replace("f'ck", " \\(f'_{ck}\\) ")}</span>
+                        <span class="font-bold text-sky-700">${value.replace("N/mm²", " \\(N/mm^2\\)")}</span>
+                    </div>`
+                ).join('')}
+            </div>
+
+            <div class="mt-4 p-2 bg-slate-50 rounded-lg flex justify-center items-center">
+                <canvas id="section-canvas" width="800" height="500"></canvas>
+            </div>
+        `;
+        
+        const canvas = document.getElementById('section-canvas');
+        drawSection(canvas, data);
+
+        renderMathInElement(document.body);
+        
+        document.querySelectorAll('#properties-display input, #properties-display select').forEach(el => {
+            el.addEventListener('input', updateStateAndRender);
+        });
+    };
+
+    const updateStateAndRender = () => {
+        const currentData = designData[currentSection];
+        currentData.dimensions.H = parseFloat(document.getElementById('dim-h').value) || 0;
+        currentData.dimensions.topCover = parseFloat(document.getElementById('cover-top').value) || 0;
+        currentData.dimensions.botCover = parseFloat(document.getElementById('cover-bottom').value) || 0;
+        currentData.rebar.top.type = document.getElementById('rebar-top-type').value;
+        currentData.rebar.top.spacing = parseFloat(document.getElementById('rebar-top-spacing').value);
+        currentData.rebar.bottom.type = document.getElementById('rebar-bottom-type').value;
+        currentData.rebar.bottom.spacing = parseFloat(document.getElementById('rebar-bottom-spacing').value);
+        
+        runCalculationsAndDisplay();
+        updateCheckResults();
+        
+        const canvas = document.getElementById('section-canvas');
+        drawSection(canvas, currentData);
+    };
+
+    const updateCheckResults = () => {
+        const data = designData[currentSection];
+        const myc_pos = data.myc.pos || 0;
+        const myc_neg = data.myc.neg || 0;
+        const muc_pos = data.muc.pos || 0;
+        const muc_neg = data.muc.neg || 0;
+        
+        const designMomentLs1 = parseFloat(document.getElementById('design-moment-ls1').value) || 0;
+        const designMomentLs3 = parseFloat(document.getElementById('design-moment-ls3').value) || 0;
+
+        const setResultStyle = (element, isOk) => {
+            element.textContent = isOk ? 'OK' : 'NG';
+            element.classList.remove('ok-result', 'ng-result');
+            element.classList.add(isOk ? 'ok-result' : 'ng-result');
+        };
+
+        const myc_limit_raw = (designMomentLs1 >= 0) ? myc_pos : Math.abs(myc_neg);
+        const limitState1Limit = myc_limit_raw * data.loadBearing.limitState1Factor;
+        const isState1Ok = Math.abs(designMomentLs1) <= limitState1Limit;
+        setResultStyle(document.getElementById('load-bearing-result-1'), isState1Ok);
+
+        const ratio_ls1_val = myc_limit_raw > 0 ? (Math.abs(designMomentLs1) / myc_limit_raw) : 0;
+        document.getElementById('ratio-ls1').textContent = ratio_ls1_val.toFixed(3);
+ 
+        const muc_limit_raw = (designMomentLs3 >= 0) ? muc_pos : Math.abs(muc_neg);
+        const limitState3Limit = muc_limit_raw * data.loadBearing.limitState3Factor;
+        const isState3Ok = Math.abs(designMomentLs3) <= limitState3Limit;
+        setResultStyle(document.getElementById('load-bearing-result-3'), isState3Ok);
+
+        const ratio_ls3_val = muc_limit_raw > 0 ? (Math.abs(designMomentLs3) / muc_limit_raw) : 0;
+        document.getElementById('ratio-ls3').textContent = ratio_ls3_val.toFixed(3);
+        
+        // Reversing Stress Check
+        const momentD = parseFloat(document.getElementById('moment-d').value) || 0;
+        const momentL = parseFloat(document.getElementById('moment-l').value) || 0;
+        const dlRatio = (momentL !== 0) ? Math.abs(momentD / momentL) : 0;
+        document.getElementById('dl-ratio').textContent = dlRatio.toFixed(3);
+
+        let Md_revised;
+        if (dlRatio >= 0.3) {
+            Md_revised = momentD + 1.3 * momentL;
+        } else {
+            Md_revised = momentD + momentL; 
+        }
+
+        const checkMycLimit = (Md_revised >= 0) ? myc_pos : Math.abs(myc_neg);
+        const checkMucLimit = (Md_revised >= 0) ? muc_pos : Math.abs(muc_neg);
+        const isRevState1Ok = Math.abs(Md_revised) <= checkMycLimit * data.loadBearing.limitState1Factor;
+        const isRevState3Ok = Math.abs(Md_revised) <= checkMucLimit * data.loadBearing.limitState3Factor;
+        setResultStyle(document.getElementById('reversing-stress-result'), isRevState1Ok && isRevState3Ok);
+
+
+        // Durability Checks
+        const inputs = {
+             W: parseFloat(document.getElementById('dim-w').value) || 0, H: parseFloat(document.getElementById('dim-h').value) || 0,
+            topCover: parseFloat(document.getElementById('cover-top').value) || 0, botCover: parseFloat(document.getElementById('cover-bottom').value) || 0,
+            topRebarType: document.getElementById('rebar-top-type').value, topRebarSpacing: parseFloat(document.getElementById('rebar-top-spacing').value) || 0,
+            botRebarType: document.getElementById('rebar-bottom-type').value, botRebarSpacing: parseFloat(document.getElementById('rebar-bottom-spacing').value) || 0,
+        };
+        
+        const momentFatigue = parseFloat(document.getElementById('moment-fatigue').value) || 0;
+        const stressFatigue = calculateSteelStress(inputs, momentFatigue);
+        document.getElementById('stress-fatigue').textContent = isNaN(stressFatigue) ? '---' : stressFatigue.toFixed(1);
+        const isFatigueOk = isNaN(stressFatigue) ? false : stressFatigue <= data.durability.fatigueLimit;
+        setResultStyle(document.getElementById('durability-fatigue-result'), isFatigueOk);
+
+        const momentCorrosion = parseFloat(document.getElementById('moment-corrosion').value) || 0;
+        const stressCorrosion = calculateSteelStress(inputs, momentCorrosion);
+        document.getElementById('stress-corrosion').textContent = isNaN(stressCorrosion) ? '---' : stressCorrosion.toFixed(1);
+        const isCorrosionOk = isNaN(stressCorrosion) ? false : stressCorrosion <= data.durability.corrosionLimit;
+        setResultStyle(document.getElementById('durability-corrosion-result'), isCorrosionOk);
+    };
+    
+    const renderAll = () => {
+        const data = designData[currentSection];
+        document.getElementById('design-moment-ls1').value = data.loadBearing.designMoment;
+        document.getElementById('design-moment-ls3').value = data.loadBearing.designMoment;
+        document.getElementById('moment-d').value = data.reversingStress.momentD;
+        document.getElementById('moment-l').value = data.reversingStress.momentL;
+        document.getElementById('moment-fatigue').value = data.durability.momentFatigue;
+        document.getElementById('moment-corrosion').value = data.durability.momentCorrosion;
+
+        renderEditableProperties();
+        runCalculationsAndDisplay();
+        updateCheckResults();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ]
+            });
+        } catch (e) {
+            console.error("KaTeX rendering failed", e);
+        }
+
+        document.querySelectorAll('#section-selector button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                currentSection = e.currentTarget.dataset.section;
+                document.querySelectorAll('#section-selector button').forEach(b => {
+                    b.classList.toggle('active-btn', b.dataset.section === currentSection);
+                    b.classList.toggle('inactive-btn', b.dataset.section !== currentSection);
+                });
+                renderAll();
+            });
+        });
+        
+        document.getElementById('design-moment-ls1').addEventListener('input', updateCheckResults);
+        document.getElementById('design-moment-ls3').addEventListener('input', updateCheckResults);
+        document.getElementById('moment-d').addEventListener('input', updateCheckResults);
+        document.getElementById('moment-l').addEventListener('input', updateCheckResults);
+        document.getElementById('moment-fatigue').addEventListener('input', updateCheckResults);
+        document.getElementById('moment-corrosion').addEventListener('input', updateCheckResults);
+
+        const initialBtn = document.getElementById('btn-sec15');
+        initialBtn.classList.add('active-btn');
+        initialBtn.classList.remove('inactive-btn');
+        renderAll();
+    });
+</script>
+
+</body>
+</html>
