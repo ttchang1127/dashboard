@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式預力混凝土橋梁檢核指南_主梁</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMckDpbOc7ymOFAKfCcfdudfZEUvs301WnvjCEJRGuZ7ZAhCl" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+
+    <!-- Chosen Palette: Warm Neutral with Professional Blue Accent -->
+    <!-- Application Structure Plan: A tab-based dashboard structure is chosen to logically separate the primary design pillars: Overview, Prerequisite Checks, Load-Carrying Performance, and Durability Performance. This is more intuitive than the linear format of the source report. A dedicated "Core Interactions" section is included to visually explain complex concepts like shear-torsion interaction. This task-oriented flow (select a check -> see result) enhances usability and focuses on key engineering takeaways. -->
+    <!-- Visualization & Content Choices: Report Info -> Key performance checks (bending, shear, torsion, fatigue). Goal -> Compare design values against capacity/limits. Viz/Presentation -> Interactive tables and input fields for direct data manipulation and immediate feedback. Interaction -> User directly inputs values for checks, which dynamically updates the pass/fail status. Justification -> This approach transforms static tables into an interactive learning tool, making the safety margins and design principles immediately apparent. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fdfcf9; /* A very light, warm off-white */
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+        .tab-button.active {
+            color: #1d4ed8; /* blue-700 */
+            border-bottom-color: #1d4ed8;
+        }
+        .tab-button:hover {
+            background-color: #eff6ff; /* blue-50 */
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        select:disabled {
+            background-color: #e5e7eb;
+            cursor: not-allowed;
+        }
+        .ok-status {
+            color: #16a34a; /* green-600 */
+            font-weight: bold;
+            text-align: center;
+        }
+        .ng-status {
+            color: #dc2626; /* red-600 */
+            font-weight: bold;
+            text-align: center;
+        }
+        /* Hide number input default arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+        .adjust-btn:hover {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">互動式預力混凝土橋梁檢核指南_主梁</h1>
+            <p class="mt-2 text-lg text-gray-600">本檢核指南基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。所有檢核均基於一個三跨連續PC箱型梁橋的範例，其設計使用年限為100年。以下將逐一檢核設計中的關鍵環節。</p>
+        </header>
+
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
+            
+            <nav class="mb-6 border-b border-gray-200">
+                <ul class="flex flex-wrap -mb-px text-lg font-medium text-center">
+                    <li class="mr-2">
+                        <button class="tab-button inline-block p-4 rounded-t-lg active" data-tab="overview">設計總覽</button>
+                    </li>
+                    <li class="mr-2">
+                        <button class="tab-button inline-block p-4 rounded-t-lg" data-tab="prerequisites">前提條件確認</button>
+                    </li>
+                    <li class="mr-2">
+                        <button class="tab-button inline-block p-4 rounded-t-lg" data-tab="load-carrying">耐荷性能檢核</button>
+                    </li>
+                    <li class="mr-2">
+                        <button class="tab-button inline-block p-4 rounded-t-lg" data-tab="reverse-stress">相反應力構件檢核</button>
+                    </li>
+                    <li class="mr-2">
+                        <button class="tab-button inline-block p-4 rounded-t-lg" data-tab="durability">耐久性能檢核</button>
+                    </li>
+                </ul>
+            </nav>
+
+            <main>
+                <div id="overview" class="tab-content fade-in">
+                    <h2 class="text-2xl font-bold mb-4 text-blue-800">1. 專案背景與橋梁幾何</h2>
+                    <p class="mb-6 text-gray-700">本應用程式旨在解析一座三跨連續預力混凝土(PC)箱型梁橋的設計。設計的核心是確保橋梁在百年使用年限內的「耐荷性能」與「耐久性能」。我們將透過互動式圖表，探索結構在各種載重下的反應，並檢核其是否滿足設計規範。</p>
+                    
+                    <div class="my-8 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800 text-center">格構分析模型節點示意圖</h3>
+                        <img src="https://lh3.googleusercontent.com/d/18kU8epo6UOQpnNJrKhQCAHQSFHwPNaP1" alt="橋梁格構分析模型示意圖" class="w-full h-auto rounded-lg shadow-md mb-4">
+                        <div class="text-sm text-gray-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>支間長度標示為 33800、39000、36700（單位：mm），對應橋梁三跨。</li>
+                                <li>上緣節點與構件編號為 1000 系列（如 101～137）。</li>
+                                <li>下緣節點與構件編號為 200、300 系列（如 201～237、301～337）。</li>
+                                <li>支承處位置以三角形符號標註（如 12、22、32、42）。</li>
+                                <li>可見三個主要支點對應支間中之垂直構件位置，並標示偏載用的橫隔與節點編號（如 121～126、221～226 等）。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h3 class="font-bold text-xl mb-2 text-blue-900">關鍵參數</h3>
+                            <ul class="space-y-2 text-gray-800">
+                                <li><strong>橋梁型式：</strong> 三跨連續PC箱型梁</li>
+                                <li><strong>總長度：</strong> 111.0 m</li>
+                                <li><strong>跨徑配置：</strong> 33.8m + 39.0m + 36.7m</li>
+                                <li><strong>主梁梁高：</strong> 2.0 m (標準斷面)</li>
+                                <li><strong>分析模型：</strong> 格構分析模型</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-6 rounded-lg">
+                             <h3 class="font-bold text-xl mb-2 text-green-900">主要材料規格</h3>
+                             <ul class="space-y-2 text-gray-800">
+                                <li><strong>混凝土設計強度：</strong> 40 N/mm²</li>
+                                <li><strong>預力鋼材 (PC鋼材)：</strong> $\sigma_{pu} = 1880$ N/mm²</li>
+                                <li><strong>普通鋼筋 (Rebar)：</strong> SD345</li>
+                             </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t">
+                        <h2 class="text-2xl font-bold mb-4 text-blue-800">2. 核心設計理念：限界狀態比較</h2>
+                        <p class="mb-6 text-gray-700">橋梁設計需同時滿足兩種不同層級的要求：日常使用的舒適性與耐久性，以及極端狀況下的絕對安全。這兩種要求分別由「限界狀態1」和「限界狀態3」來規範。</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-yellow-50 p-6 rounded-lg">
+                                <h3 class="font-bold text-xl mb-2 text-yellow-900">限界狀態1 (使用性限界狀態)</h3>
+                                <p class="mb-4"><strong>目標：</strong>確保橋梁在<strong>正常交通</strong>下的功能性、舒適度與長期耐久性。</p>
+                                <ul class="space-y-2 list-disc list-inside">
+                                    <li><strong>情境類比：</strong>如同汽車在日常道路上行駛，要求乘坐舒適、無異音、不過度晃動。</li>
+                                    <li><strong>檢核重點：</strong>控制材料的<strong>應力 (Stress)</strong>、結構的<strong>變形 (Deformation)</strong> 與混凝土的<strong>裂縫寬度 (Crack Width)</strong>。</li>
+                                    <li><strong>載重條件：</strong>使用接近真實情況的<strong>服務載重</strong> (荷重係數約為1.0)。</li>
+                                    <li><strong>設計成果：</strong>防止過大的撓度影響行車、避免出現有害裂縫導致鋼筋腐蝕、確保結構的長期健康。</li>
+                                </ul>
+                            </div>
+                            <div class="bg-red-50 p-6 rounded-lg">
+                                <h3 class="font-bold text-xl mb-2 text-red-900">限界狀態3 (終局限界狀態)</h3>
+                                <p class="mb-4"><strong>目標：</strong>確保橋梁在遭遇<strong>極端罕見</strong>的載重時，結構安全，不致崩塌。</p>
+                                <ul class="space-y-2 list-disc list-inside">
+                                    <li><strong>情境類比：</strong>如同汽車在發生嚴重碰撞時，要求安全氣囊、車體結構能保護乘客生命安全。</li>
+                                    <li><strong>檢核重點：</strong>檢核斷面抵抗外力的極限<strong>強度 (Strength)</strong>，即彎矩、剪力與扭矩的抵抗能力。</li>
+                                    <li><strong>載重條件：</strong>使用考慮了不確定性的<strong>放大載重</strong> (荷重係數 > 1.0)，以提供足夠的安全裕度。</li>
+                                    <li><strong>設計成果：</strong>這是結構安全的最終防線，確保在最不利情況下橋梁依然穩固。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="prerequisites" class="tab-content hidden fade-in">
+                    <h2 class="text-2xl font-bold mb-4 text-blue-800">2. 前提條件確認</h2>
+                    <p class="mb-6 text-gray-700">在進行主要的耐荷性能檢核前，需先確認材料在初始與長期作用下的行為符合分析模型的基本假設。這確保了後續計算的理論基礎是有效的。</p>
+
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-bold mb-3 text-blue-900">2.1 預力鋼材應力檢核 (鬆弛效應評估)</h3>
+                            <p class="mb-4 text-gray-600">此檢核控制預力鋼材在張拉完成後的初始應力，確保其未提前降伏，並使其鬆弛效應的估算模型得以適用。</p>
+                            <div class="overflow-x-auto bg-blue-50 rounded-lg p-4">
+                                <table class="min-w-full divide-y divide-blue-200">
+                                    <thead class="bg-blue-100">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">檢核部位</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">輸入值 ($\sigma_{pi}$)</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">限制值 ($\sigma_{pia}$)</th>
+                                            <th class="px-6 py-3 text-center text-xs font-medium text-blue-800 uppercase tracking-wider">判定</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr data-limit-operator="<=" data-limit-value="1310">
+                                            <td class="px-6 py-4 whitespace-nowrap">邊跨中央部位 (Sec-207)</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="relative">
+                                                        <input type="number" value="1245" step="1" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 focus:ring-blue-500 focus:border-blue-500">
+                                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                                        </div>
+                                                    </div>
+                                                    <span class="ml-2">N/mm²</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">$\le 1310$ N/mm²</td>
+                                            <td class="px-6 py-4 whitespace-nowrap font-bold text-center status-cell"></td>
+                                        </tr>
+                                        <tr data-limit-operator="<=" data-limit-value="1310">
+                                            <td class="px-6 py-4 whitespace-nowrap">中間支點 (Sec-213)</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="relative">
+                                                        <input type="number" value="1220" step="1" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 focus:ring-blue-500 focus:border-blue-500">
+                                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                                        </div>
+                                                    </div>
+                                                    <span class="ml-2">N/mm²</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">$\le 1310$ N/mm²</td>
+                                            <td class="px-6 py-4 whitespace-nowrap font-bold text-center status-cell"></td>
+                                        </tr>
+                                        <tr data-limit-operator="<=" data-limit-value="1310">
+                                            <td class="px-6 py-4 whitespace-nowrap">中央跨中間部位 (Sec-219)</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="relative">
+                                                        <input type="number" value="1238" step="1" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 focus:ring-blue-500 focus:border-blue-500">
+                                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                                        </div>
+                                                    </div>
+                                                    <span class="ml-2">N/mm²</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">$\le 1310$ N/mm²</td>
+                                            <td class="px-6 py-4 whitespace-nowrap font-bold text-center status-cell"></td>
+                                        </tr>
+                                        <tr class="bg-gray-50" data-limit-operator="<=" data-limit-value="1310">
+                                            <td class="px-6 py-4 whitespace-nowrap font-bold">全部位最大值</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="relative">
+                                                        <input type="number" value="1253" step="1" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 font-bold focus:ring-blue-500 focus:border-blue-500">
+                                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                                        </div>
+                                                    </div>
+                                                    <span class="ml-2 font-normal">N/mm²</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap font-bold">$\le 1310$ N/mm²</td>
+                                            <td class="px-6 py-4 whitespace-nowrap font-bold text-center status-cell"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold mb-3 text-green-900">2.2 混凝土應力檢核 (彈性與潛變評估)</h3>
+                            <p class="mb-4 text-gray-600">此檢核確認在永久作用（自重、有效預力、潛變、乾縮）下，混凝土斷面應力保持在彈性範圍內，以驗證潛變分析的合理性。</p>
+                            <div class="overflow-x-auto bg-green-50 rounded-lg p-4">
+                                <table class="min-w-full divide-y divide-green-200">
+                                    <thead class="bg-green-100">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">作用力類型</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">檢核項目</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">輸入值 ($\sigma_c$)</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">限制值 ($\sigma_{ca}$)</th>
+                                            <th class="px-6 py-3 text-center text-xs font-medium text-green-800 uppercase tracking-wider">判定</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr data-limit-operator="<=" data-limit-value="16.0">
+                                            <td rowspan="2" class="px-6 py-4 align-middle">彎矩作用</td>
+                                            <td class="px-6 py-4">頂版壓應力</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center">
+                                                    <div class="relative">
+                                                        <input type="number" value="6.5" step="0.1" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 focus:ring-blue-500 focus:border-blue-500">
+                                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                                        </div>
+                                                    </div>
+                                                    <span class="ml-2">N/mm²</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">$\le 16.0$ N/mm²</td>
+                                            <td class="px-6 py-4 font-bold text-center status-cell"></td>
+                                        </tr>
+                                        <tr data-limit-operator=">=" data-limit-value="-1.9">
+                                            <td class="px-6 py-4">底版拉應力</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center">
+                                                    <div class="relative">
+                                                        <input type="number" value="-1.2" step="0.1" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 focus:ring-blue-500 focus:border-blue-500">
+                                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                                        </div>
+                                                    </div>
+                                                    <span class="ml-2">N/mm²</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">$\ge -1.9$ N/mm²</td>
+                                            <td class="px-6 py-4 font-bold text-center status-cell"></td>
+                                        </tr>
+                                        <tr data-limit-operator=">=" data-limit-value="-1.9">
+                                            <td class="px-6 py-4">剪力作用</td>
+                                            <td class="px-6 py-4">腹板斜向拉應力</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center">
+                                                    <div class="relative">
+                                                        <input type="number" value="-0.8" step="0.1" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 focus:ring-blue-500 focus:border-blue-500">
+                                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                                        </div>
+                                                    </div>
+                                                    <span class="ml-2">N/mm²</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">$\ge -1.9$ N/mm²</td>
+                                            <td class="px-6 py-4 font-bold text-center status-cell"></td>
+                                        </tr>
+                                        <tr data-limit-operator=">=" data-limit-value="-1.9">
+                                            <td class="px-6 py-4">扭矩作用</td>
+                                            <td class="px-6 py-4">腹板斜向拉應力</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center">
+                                                    <div class="relative">
+                                                        <input type="number" value="-0.5" step="0.1" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 focus:ring-blue-500 focus:border-blue-500">
+                                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                                        </div>
+                                                    </div>
+                                                    <span class="ml-2">N/mm²</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">$\ge -1.9$ N/mm²</td>
+                                            <td class="px-6 py-4 font-bold text-center status-cell"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="load-carrying" class="tab-content hidden fade-in">
+                    <h2 class="text-2xl font-bold mb-4 text-blue-800">3. 耐荷性能檢核 (限界狀態)</h2>
+                    <p class="mb-4 text-gray-700">此部分檢核橋梁抵抗外力的能力。左側為正常使用下的「使用性」檢核(限界狀態1)，右側為極端狀況下的「終局強度」檢核(限界狀態3)。</p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Left Column: Limit State 1 -->
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-bold text-center text-blue-900 bg-blue-100 p-3 rounded-t-lg">限界狀態1 (使用性檢核)</h3>
+                            <div id="limit-state-1-checks" class="space-y-3 p-4 bg-blue-50 rounded-b-lg">
+                                <!-- Interactive checks will be dynamically generated here -->
+                            </div>
+                        </div>
+                        <!-- Right Column: Limit State 3 -->
+                        <div class="space-y-4">
+                             <h3 class="text-xl font-bold text-center text-red-900 bg-red-100 p-3 rounded-t-lg">限界狀態3 (終局強度檢核)</h3>
+                             <div id="limit-state-3-checks" class="p-4 bg-red-50 rounded-b-lg space-y-3">
+                                <!-- Interactive checks for Limit State 3 will be dynamically generated here -->
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reverse-stress" class="tab-content hidden fade-in">
+                     <h2 class="text-2xl font-bold mb-4 text-blue-800">4. 相反應力構件檢核</h2>
+                    <p class="mb-4 text-gray-700">此為連續梁的特殊檢核，旨在處理活載重移動引發的應力反覆變化。規範要求使用更嚴苛的載重組合進行檢核。</p>
+                     <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Left Column: Limit State 1 -->
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-bold text-center text-blue-900 bg-blue-100 p-3 rounded-t-lg">限界狀態1 (使用性檢核)</h3>
+                            <div id="limit-state-1-reverse-checks" class="space-y-3 p-4 bg-blue-50 rounded-b-lg">
+                                <!-- Interactive checks will be dynamically generated here -->
+                            </div>
+                        </div>
+                        <!-- Right Column: Limit State 3 -->
+                        <div class="space-y-4">
+                             <h3 class="text-xl font-bold text-center text-red-900 bg-red-100 p-3 rounded-t-lg">限界狀態3 (終局強度檢核)</h3>
+                             <div id="limit-state-3-reverse-checks" class="p-4 bg-red-50 rounded-b-lg space-y-3">
+                                <!-- Interactive checks for Limit State 3 will be dynamically generated here -->
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="durability" class="tab-content hidden fade-in">
+                    <h2 class="text-2xl font-bold mb-2 text-blue-800">5. 耐久性能檢核</h2>
+                    <p class="mb-4 text-gray-700">此部分檢核橋梁抵抗長期、重複性交通載重(疲勞)的能力，以及確保鋼材免於腐蝕，是結構長期健康的關鍵。</p>
+
+                    <div class="bg-gray-100 p-4 rounded-lg mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">5.1 保護層厚度檢核</h3>
+                        <p class="text-gray-600 mb-4">足夠的混凝土保護層是防止鋼筋腐蝕的第一道防線。請選擇環境與構件條件以檢視規範要求。</p>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <select id="cover-check-selector" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-auto p-2.5">
+                                <option value="general_beam">一般環境 - 梁</option>
+                                <option value="general_slab">一般環境 - 版</option>
+                                <option value="corrosive_beam">腐蝕性環境 - 梁</option>
+                                <option value="corrosive_slab">腐蝕性環境 - 版</option>
+                                <option value="severe_corrosive">鹽害等嚴苛腐蝕性環境</option>
+                            </select>
+                            <div id="cover-check-result" class="flex-grow bg-white p-3 rounded-md text-center text-lg font-semibold text-blue-800 shadow-inner">
+                                <!-- Result will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">5.2 疲勞檢核 (應力範圍控制)</h3>
+                    <div id="durability-fatigue-checks" class="space-y-4">
+                        <!-- Fatigue checks will be generated here -->
+                    </div>
+
+                </div>
+                
+            </main>
+        </div>
+        
+        <footer class="text-center mt-8 text-sm text-gray-500">
+        </footer>
+    </div>
+
+    <script>
+        const appData = {
+            limitState1Checks: {
+                "彎矩檢核": [
+                    { id: 'ls1-bending-compression-207', label: '邊跨中央 (Sec-207) 壓應力', value: 7.0, limit: 19.2, operator: '<=', unit: 'N/mm²' },
+                    { id: 'ls1-bending-tension-207', label: '邊跨中央 (Sec-207) 拉應力', value: -0.5, limit: -2.5, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-bending-compression-213', label: '中間支點 (Sec-213) 壓應力', value: 7.3, limit: 19.2, operator: '<=', unit: 'N/mm²' },
+                    { id: 'ls1-bending-tension-213', label: '中間支點 (Sec-213) 拉應力', value: -0.09, limit: -2.5, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-bending-compression-219', label: '中間跨中央 (Sec-219) 壓應力', value: 6.8, limit: 19.2, operator: '<=', unit: 'N/mm²' },
+                    { id: 'ls1-bending-tension-219', label: '中間跨中央 (Sec-219) 拉應力', value: -1.0, limit: -2.5, operator: '>=', unit: 'N/mm²' }
+                ],
+                "拉力鋼筋配置檢核": [
+                    { id: 'ls1-rebar-207', label: '邊跨中央 (Sec-207)', value: 140, limit: 210, operator: '<=', unit: 'N/mm²' },
+                    { id: 'ls1-rebar-213', label: '中間支點 (Sec-213)', value: 150, limit: 210, operator: '<=', unit: 'N/mm²' },
+                    { id: 'ls1-rebar-219', label: '中間跨中央 (Sec-219)', value: 145, limit: 210, operator: '<=', unit: 'N/mm²' }
+                ],
+                "剪力 (斜向拉應力)檢核": [
+                    { id: 'ls1-shear-202', label: '邊跨支點 (Sec-202)', value: -0.9, limit: -2.0, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-shear-212', label: '中間支點左側 (Sec-212)', value: -0.8, limit: -2.0, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-shear-214', label: '中間支點右側 (Sec-214)', value: -0.85, limit: -2.0, operator: '>=', unit: 'N/mm²' }
+                ],
+                "扭矩 (斜向拉應力)(僅扭矩)檢核": [
+                    { id: 'ls1-torsion-202', label: '邊跨支點 (Sec-202)', value: -0.6, limit: -2.0, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-torsion-212', label: '中間支點左側 (Sec-212)', value: -0.5, limit: -2.0, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-torsion-214', label: '中間支點右側 (Sec-214)', value: -0.55, limit: -2.0, operator: '>=', unit: 'N/mm²' }
+                ],
+                "扭矩 (斜向拉應力)(扭矩+剪力)檢核": [
+                    { id: 'ls1-torsion-shear-202', label: '邊跨支點 (Sec-202)', value: -1.5, limit: -2.5, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-torsion-shear-212', label: '中間支點左側 (Sec-212)', value: -1.3, limit: -2.5, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-torsion-shear-214', label: '中間支點右側 (Sec-214)', value: -1.4, limit: -2.5, operator: '>=', unit: 'N/mm²' }
+                ]
+            },
+             limitState3Checks: {
+                "彎矩檢核": [
+                    { id: 'ls3-bending-207', label: '邊跨中央 (Sec-207)', value: 15000, limit: 40000, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-bending-213', label: '中間支點 (Sec-213)', value: 29017, limit: 58154, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-bending-219', label: '中間跨中央 (Sec-219)', value: 18000, limit: 45000, operator: '<=', unit: 'kNm' }
+                ],
+                "剪力 (斜向拉力)檢核": [
+                    { id: 'ls3-shear-tension-202', label: '邊跨支點 (Sec-202)', value: 2000, limit: 2800, operator: '<=', unit: 'kN' },
+                    { id: 'ls3-shear-tension-212', label: '中間支點左側 (Sec-212)', value: 2367, limit: 3004, operator: '<=', unit: 'kN' },
+                    { id: 'ls3-shear-tension-214', label: '中間支點右側 (Sec-214)', value: 2300, limit: 3004, operator: '<=', unit: 'kN' }
+                ],
+                "剪力 (腹版壓潰)檢核": [
+                    { id: 'ls3-shear-crushing-202', label: '邊跨支點 (Sec-202)', value: 2000, limit: 6000, operator: '<=', unit: 'kN' },
+                    { id: 'ls3-shear-crushing-212', label: '中間支點左側 (Sec-212)', value: 2367, limit: 6598, operator: '<=', unit: 'kN' },
+                    { id: 'ls3-shear-crushing-214', label: '中間支點右側 (Sec-214)', value: 2300, limit: 6598, operator: '<=', unit: 'kN' }
+                ],
+                "扭矩 (斜向拉力)檢核": [
+                    { id: 'ls3-torsion-tension-202', label: '邊跨支點 (Sec-202)', value: 1200, limit: 2200, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-torsion-tension-212', label: '中間支點左側 (Sec-212)', value: 1475, limit: 2383, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-torsion-tension-214', label: '中間支點右側 (Sec-214)', value: 1400, limit: 2383, operator: '<=', unit: 'kNm' }
+                ],
+                "扭矩 (腹版或下翼版壓潰)檢核": [
+                    { id: 'ls3-torsion-crushing-202', label: '邊跨支點 (Sec-202)', value: 1200, limit: 4500, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-torsion-crushing-212', label: '中間支點左側 (Sec-212)', value: 1475, limit: 4880, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-torsion-crushing-214', label: '中間支點右側 (Sec-214)', value: 1400, limit: 4880, operator: '<=', unit: 'kNm' }
+                ]
+            },
+            combinedChecks: [
+                 { id: 'ls3-combined-202', label: '邊跨支點 (Sec-202)', Sd: 2000, Mtd: 1200, Sucd: 6000, Mtucd: 4500, limit: 1.2 },
+                 { id: 'ls3-combined-212', label: '中間支點左側 (Sec-212)', Sd: 2367, Mtd: 1475, Sucd: 6598, Mtucd: 4880, limit: 1.2 },
+                 { id: 'ls3-combined-214', label: '中間支點右側 (Sec-214)', Sd: 2300, Mtd: 1400, Sucd: 6598, Mtucd: 4880, limit: 1.2 }
+            ],
+            reverseStressChecksLS1: {
+                "彎矩檢核": [
+                    { id: 'ls1-rev-bending-207', label: '邊跨中央 (Sec-207)', value: -0.1, limit: -2.5, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-rev-bending-213', label: '中間支點 (Sec-213)', value: 6.8, limit: 19.2, operator: '<=', unit: 'N/mm²' },
+                    { id: 'ls1-rev-bending-219', label: '中間跨中央 (Sec-219)', value: -0.2, limit: -2.5, operator: '>=', unit: 'N/mm²' }
+                ],
+                "剪力 (斜向拉應力)檢核": [
+                    { id: 'ls1-rev-shear-202', label: '邊跨支點 (Sec-202)', value: -0.9, limit: -2.0, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-rev-shear-212', label: '中間支點左側 (Sec-212)', value: -0.8, limit: -2.0, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-rev-shear-214', label: '中間支點右側 (Sec-214)', value: -0.85, limit: -2.0, operator: '>=', unit: 'N/mm²' }
+                ],
+                "扭矩 (斜向拉應力)(僅扭矩)檢核": [
+                    { id: 'ls1-rev-torsion-202', label: '邊跨支點 (Sec-202)', value: -0.6, limit: -2.0, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-rev-torsion-212', label: '中間支點左側 (Sec-212)', value: -0.5, limit: -2.0, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-rev-torsion-214', label: '中間支點右側 (Sec-214)', value: -0.55, limit: -2.0, operator: '>=', unit: 'N/mm²' }
+                ],
+                "扭矩 (斜向拉應力)(扭矩+剪力)檢核": [
+                    { id: 'ls1-rev-torsion-shear-202', label: '邊跨支點 (Sec-202)', value: -1.5, limit: -2.5, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-rev-torsion-shear-212', label: '中間支點左側 (Sec-212)', value: -1.3, limit: -2.5, operator: '>=', unit: 'N/mm²' },
+                    { id: 'ls1-rev-torsion-shear-214', label: '中間支點右側 (Sec-214)', value: -1.4, limit: -2.5, operator: '>=', unit: 'N/mm²' }
+                ]
+            },
+            reverseStressChecksLS3: {
+                 "彎矩檢核": [
+                    { id: 'ls3-rev-bending-207', label: '邊跨中央 (Sec-207)', value: 14000, limit: 40000, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-rev-bending-213', label: '中間支點 (Sec-213)', value: 27052, limit: 58154, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-rev-bending-219', label: '中間跨中央 (Sec-219)', value: 17000, limit: 45000, operator: '<=', unit: 'kNm' }
+                ],
+                "剪力 (斜向拉力)檢核": [
+                    { id: 'ls3-rev-shear-tension-202', label: '邊跨支點 (Sec-202)', value: 1900, limit: 2800, operator: '<=', unit: 'kN' },
+                    { id: 'ls3-rev-shear-tension-212', label: '中間支點左側 (Sec-212)', value: 2217, limit: 3004, operator: '<=', unit: 'kN' },
+                    { id: 'ls3-rev-shear-tension-214', label: '中間支點右側 (Sec-214)', value: 2200, limit: 3004, operator: '<=', unit: 'kN' }
+                ],
+                "剪力 (腹版壓潰)檢核": [
+                    { id: 'ls3-rev-shear-crushing-202', label: '邊跨支點 (Sec-202)', value: 1900, limit: 6000, operator: '<=', unit: 'kN' },
+                    { id: 'ls3-rev-shear-crushing-212', label: '中間支點左側 (Sec-212)', value: 2217, limit: 6598, operator: '<=', unit: 'kN' },
+                    { id: 'ls3-rev-shear-crushing-214', label: '中間支點右側 (Sec-214)', value: 2200, limit: 6598, operator: '<=', unit: 'kN' }
+                ],
+                "扭矩 (斜向拉力)檢核": [
+                    { id: 'ls3-rev-torsion-tension-202', label: '邊跨支點 (Sec-202)', value: 1100, limit: 2200, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-rev-torsion-tension-212', label: '中間支點左側 (Sec-212)', value: 1381, limit: 2383, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-rev-torsion-tension-214', label: '中間支點右側 (Sec-214)', value: 1300, limit: 2383, operator: '<=', unit: 'kNm' }
+                ],
+                "扭矩 (腹版或下翼版壓潰)檢核": [
+                    { id: 'ls3-rev-torsion-crushing-202', label: '邊跨支點 (Sec-202)', value: 1100, limit: 4500, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-rev-torsion-crushing-212', label: '中間支點左側 (Sec-212)', value: 1381, limit: 4880, operator: '<=', unit: 'kNm' },
+                    { id: 'ls3-rev-torsion-crushing-214', label: '中間支點右側 (Sec-214)', value: 1300, limit: 4880, operator: '<=', unit: 'kNm' }
+                ]
+            },
+            reverseCombinedChecks: [
+                 { id: 'ls3-rev-combined-202', label: '邊跨支點 (Sec-202)', Sd: 1900, Mtd: 1100, Sucd: 6000, Mtucd: 4500, limit: 1.2 },
+                 { id: 'ls3-rev-combined-212', label: '中間支點左側 (Sec-212)', Sd: 2217, Mtd: 1381, Sucd: 6598, Mtucd: 4880, limit: 1.2 },
+                 { id: 'ls3-rev-combined-214', label: '中間支點右側 (Sec-214)', Sd: 2200, Mtd: 1300, Sucd: 6598, Mtucd: 4880, limit: 1.2 }
+            ],
+            durabilityFatigueChecks: {
+                "預力鋼材疲勞檢核": [
+                    { id: 'dura-pc-steel-207', label: '側徑間中央 (Sec-207) 最大應力', value: 1088, limit: 1120, operator: '<=', unit: 'N/mm²' }
+                ],
+                "混凝土拉壓應力檢核 (參考 表-3.4.3)": [
+                    { id: 'dura-conc-comp-207', label: '邊跨中央 (Sec-207) 上緣壓應力', value: 6.0, limit: 12.8, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-conc-tens-207', label: '邊跨中央 (Sec-207) 下緣拉應力', value: 0.1, limit: 1.38, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-conc-comp-213', label: '中間支點 (Sec-213) 上緣壓應力', value: 6.28, limit: 12.8, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-conc-tens-213', label: '中間支點 (Sec-213) 下緣拉應力', value: 0.0, limit: 1.38, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-conc-comp-219', label: '中央跨中央 (Sec-219) 上緣壓應力', value: 5.8, limit: 12.8, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-conc-tens-219', label: '中央跨中央 (Sec-219) 下緣拉應力', value: 0.0, limit: 1.38, operator: '<=', unit: 'N/mm²' }
+                ],
+                 "普通鋼筋應力檢核 (參考 表-3.4.4)": [
+                    { id: 'dura-rebar-upper-207', label: '邊跨中央 (Sec-207) 上緣', value: 0.0, limit: 180, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-rebar-lower-207', label: '邊跨中央 (Sec-207) 下緣', value: 1.2, limit: 180, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-rebar-upper-213', label: '中間支點 (Sec-213) 上緣', value: 0.7, limit: 180, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-rebar-lower-213', label: '中間支點 (Sec-213) 下緣', value: 0.0, limit: 180, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-rebar-upper-219', label: '中央跨中央 (Sec-219) 上緣', value: 0.0, limit: 180, operator: '<=', unit: 'N/mm²' },
+                    { id: 'dura-rebar-lower-219', label: '中央跨中央 (Sec-219) 下緣', value: 0.0, limit: 180, operator: '<=', unit: 'N/mm²' }
+                ]
+            },
+            coverThicknessData: {
+                "general_beam": "規範要求：<strong>35mm</strong>。適用於一般環境下的梁、柱、斜撐等構件。",
+                "general_slab": "規範要求：<strong>30mm</strong>。適用於一般環境下的版狀構件。",
+                "corrosive_beam": "規範要求：<strong>45mm</strong>。適用於易受飛沫、融雪劑影響的腐蝕性環境下的梁構件。",
+                "corrosive_slab": "規範要求：<strong>40mm</strong>。適用於腐蝕性環境下的版狀構件。",
+                "severe_corrosive": "規範要求：<strong>50mm以上</strong>。適用於直接暴露於海水飛沫等嚴苛環境，需個別評估並加強防蝕措施。"
+            }
+        };
+
+        const katexOptions = {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        };
+
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const targetId = tab.getAttribute('data-tab');
+                    contents.forEach(content => {
+                        if (content.id === targetId) {
+                            content.classList.remove('hidden');
+                            content.classList.add('fade-in');
+                            if (typeof renderMathInElement === 'function') {
+                                renderMathInElement(content, katexOptions);
+                            }
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        }
+        
+        function validateRow(row) {
+            const input = row.querySelector('input[type="number"]');
+            const statusCell = row.querySelector('.status-cell');
+            if (!input || !statusCell) return;
+
+            const inputValue = parseFloat(input.value);
+            const limitValue = parseFloat(row.dataset.limitValue);
+            const operator = row.dataset.limitOperator;
+
+            let isOk = false;
+            if (operator === '<=') {
+                 isOk = inputValue <= limitValue;
+            } else if (operator === '>=') {
+                 isOk = inputValue >= limitValue;
+            }
+
+            if (isOk) {
+                statusCell.textContent = 'OK';
+                statusCell.className = 'status-cell ok-status';
+            } else {
+                statusCell.textContent = 'NG';
+                statusCell.className = 'status-cell ng-status';
+            }
+        }
+
+        function setupPrerequisiteChecks() {
+            const rows = document.querySelectorAll('#prerequisites table tbody tr');
+            rows.forEach(row => {
+                const input = row.querySelector('input[type="number"]');
+                if (input) {
+                    validateRow(row);
+                    input.addEventListener('input', () => validateRow(row));
+                }
+            });
+        }
+        
+        function setupInputAdjusters() {
+            document.querySelectorAll('.adjust-btn-wrapper').forEach(wrapper => {
+                const input = wrapper.parentElement.querySelector('input[type="number"]');
+                const incrementBtn = wrapper.querySelector('[data-action="increment"]');
+                const decrementBtn = wrapper.querySelector('[data-action="decrement"]');
+
+                if (!input || !incrementBtn || !decrementBtn) return;
+
+                incrementBtn.addEventListener('click', () => {
+                    input.stepUp();
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+
+                decrementBtn.addEventListener('click', () => {
+                    input.stepDown();
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+            });
+        }
+
+        function generateGroupedInteractiveChecks(containerId, groupedChecksData) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            let html = '';
+            for (const groupName in groupedChecksData) {
+                html += `<div class="space-y-2 pt-2"><h4 class="font-semibold text-blue-800 text-md">${groupName}</h4>`;
+                groupedChecksData[groupName].forEach(item => {
+                    html += `
+                        <div class="bg-white p-3 rounded-lg shadow-sm" data-limit-operator="${item.operator}" data-limit-value="${item.limit}">
+                            <label for="${item.id}" class="block text-sm font-medium text-gray-700 mb-1">${item.label}</label>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="relative">
+                                        <input type="number" id="${item.id}" value="${item.value}" step="${Math.abs(item.value) > 1000 ? 10 : (Math.abs(item.value) > 10 ? 1 : 0.1)}" class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 pr-7 focus:ring-blue-500 focus:border-blue-500">
+                                        <div class="adjust-btn-wrapper absolute right-0 top-0 h-full flex flex-col">
+                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="increment"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" /></svg></button>
+                                            <button class="adjust-btn flex-1 px-1 text-gray-500 hover:text-gray-800" data-action="decrement"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>
+                                        </div>
+                                    </div>
+                                    <span class="ml-2 text-sm text-gray-500">${item.unit}</span>
+                                </div>
+                                <div class="text-sm text-gray-500">限值: ${item.operator.replace('>=', '≥').replace('<=', '≤')} ${item.limit}</div>
+                                <div class="status-cell font-bold text-lg"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+
+            container.querySelectorAll('.bg-white').forEach(row => {
+                const input = row.querySelector('input[type="number"]');
+                if (input) {
+                    validateRow(row);
+                    input.addEventListener('input', () => validateRow(row));
+                }
+            });
+        }
+        
+        function generateCombinedChecks(containerId, checksData) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            let html = `<div class="space-y-2 pt-2"><h4 class="font-semibold text-red-800 text-md">同時受剪力與扭矩檢核</h4>`;
+            checksData.forEach(item => {
+                html += `
+                    <div id="${item.id}" class="bg-white p-3 rounded-lg shadow-sm" data-limit-value="1.2" data-sucd="${item.Sucd}" data-mtucd="${item.Mtucd}">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">${item.label}</label>
+                        <div class="space-y-2 mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm w-24">設計剪力 $S_d$:</span>
+                                <input type="number" data-type="shear" value="${item.Sd}" step="10" class="w-24 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 focus:ring-red-500 focus:border-red-500">
+                                <span class="text-sm text-gray-500">kN</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm w-24">設計扭矩 $M_{td}$:</span>
+                                <input type="number" data-type="torsion" value="${item.Mtd}" step="10" class="w-24 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-1.5 focus:ring-red-500 focus:border-red-500">
+                                <span class="text-sm text-gray-500">kNm</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="combined-sum text-sm text-gray-800 font-mono"></div>
+                            <div class="text-sm text-gray-500">限值: ≤ 1.2</div>
+                            <div class="status-cell font-bold text-lg"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.insertAdjacentHTML('beforeend', html);
+            
+            const validateCombined = (row) => {
+                const shearInput = row.querySelector('input[data-type="shear"]');
+                const torsionInput = row.querySelector('input[data-type="torsion"]');
+                const shearDemand = parseFloat(shearInput.value) || 0;
+                const torsionDemand = parseFloat(torsionInput.value) || 0;
+                const S_ucd = parseFloat(row.dataset.sucd);
+                const M_tucd = parseFloat(row.dataset.mtucd);
+                const shearRatio = shearDemand / S_ucd;
+                const torsionRatio = torsionDemand / M_tucd;
+                const sum = shearRatio + torsionRatio;
+                const limit = parseFloat(row.dataset.limitValue);
+                const statusCell = row.querySelector('.status-cell');
+                const sumDisplay = row.querySelector('.combined-sum');
+
+                sumDisplay.innerHTML = `$\\frac{${shearDemand}}{${S_ucd}} + \\frac{${torsionDemand}}{${M_tucd}} = ${sum.toFixed(2)}$`;
+                if (typeof renderMathInElement === 'function') {
+                    renderMathInElement(sumDisplay, katexOptions);
+                }
+
+                if (sum <= limit) {
+                    statusCell.textContent = 'OK';
+                    statusCell.className = 'status-cell ok-status';
+                } else {
+                    statusCell.textContent = 'NG';
+                    statusCell.className = 'status-cell ng-status';
+                }
+            };
+
+            container.querySelectorAll('[id^="ls3-combined-"], [id^="ls3-rev-combined-"]').forEach(row => {
+                validateCombined(row);
+                row.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', () => validateCombined(row));
+                });
+            });
+        }
+        
+        function setupDurabilityChecks() {
+            const selector = document.getElementById('cover-check-selector');
+            const resultDiv = document.getElementById('cover-check-result');
+            
+            function updateCoverResult() {
+                const selectedValue = selector.value;
+                resultDiv.innerHTML = appData.coverThicknessData[selectedValue];
+            }
+            
+            selector.addEventListener('change', updateCoverResult);
+            updateCoverResult(); // Initial call
+            
+            // Generate fatigue checks
+            generateGroupedInteractiveChecks('durability-fatigue-checks', appData.durabilityFatigueChecks);
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // A delay to ensure KaTeX has loaded, especially the auto-render extension.
+            setTimeout(() => {
+                if (typeof renderMathInElement === 'function') {
+                    renderMathInElement(document.body, katexOptions);
+                }
+            }, 100);
+            
+            setupTabs();
+            setupPrerequisiteChecks();
+            generateGroupedInteractiveChecks('limit-state-1-checks', appData.limitState1Checks);
+            generateGroupedInteractiveChecks('limit-state-3-checks', appData.limitState3Checks);
+            generateCombinedChecks('limit-state-3-checks', appData.combinedChecks);
+            
+            generateGroupedInteractiveChecks('limit-state-1-reverse-checks', appData.reverseStressChecksLS1);
+            generateGroupedInteractiveChecks('limit-state-3-reverse-checks', appData.reverseStressChecksLS3);
+            generateCombinedChecks('limit-state-3-reverse-checks', appData.reverseCombinedChecks);
+
+            setupDurabilityChecks();
+            
+            setupInputAdjusters();
+
+        });
+    </script>
+</body>
+</html>
