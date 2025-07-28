@@ -70,6 +70,7 @@
                     <a href="#" data-target="content-hydro" class="nav-link active-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">水文計算</a>
                     <a href="#" data-target="content-road-geometry" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">道路幾何</a>
                     <a href="#" data-target="content-bridge" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">三跨預力箱型梁檢核</a>
+                    <a href="#" data-target="content-structure" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">結構計算</a>
                     <a href="#" data-target="content-pavement" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">鋪面設計</a>
                     <a href="#" data-target="content-electric" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">電氣計算</a>
                 </nav>
@@ -86,14 +87,10 @@
                     </ul>
                 </div>
 
-                <!-- 道路幾何內容區塊 -->
                 <div id="content-road-geometry" class="nav-content hidden">
                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- 轉角三心圓複曲線設計(AASHTO) - 深藍色系 -->
                         <li><a href="./3curve.html" target="_blank" class="calc-item bg-blue-50 hover:bg-blue-100 border-blue-200"><h3 class="text-blue-800">轉角三心圓複曲線設計(AASHTO)</h3><p class="text-blue-700">依據 AASHTO 設計規範，計算轉角處三心圓複曲線的幾何參數。</p></a></li>
-                        <!-- 轉角漸變-單曲線設計(AASHTO) - 白灰色系 -->
                         <li><a href="./tap-curve.html" target="_blank" class="calc-item bg-gray-50 hover:bg-gray-100 border-gray-200"><h3 class="text-gray-800">轉角漸變-單曲線設計(AASHTO)</h3><p class="text-gray-700">依據 AASHTO 設計規範，計算轉角處漸變單曲線的幾何參數。</p></a></li>
-                        <!-- 新增：轉角三心圓複曲線設計(德國) - 淡黃色系 -->
                         <li><a href="./3curve_de.html" target="_blank" class="calc-item bg-yellow-50 hover:bg-yellow-100 border-yellow-200"><h3 class="text-yellow-800">轉角三心圓複曲線設計(德國)</h3><p class="text-yellow-700">依據德國設計規範，計算轉角處三心圓複曲線的幾何參數。</p></a></li>
                     </ul>
                 </div>
@@ -102,8 +99,14 @@
                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <li><a href="./brg_deck.html" target="_blank" class="calc-item bg-slate-50 hover:bg-slate-100 border-slate-200"><h3 class="text-slate-800">橋面板檢核</h3><p class="text-slate-700">基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。</p></a></li>
                         <li><a href="./brg_web.html" target="_blank" class="calc-item bg-teal-50 hover:bg-teal-100 border-teal-200"><h3 class="text-teal-800">腹版及下翼版檢核</h3><p class="text-teal-700">檢核預力箱型梁的腹版與下翼版在各種載重組合下的應力與剪力。</p></a></li>
-                        <!-- === 新增的主梁檢核區塊 (橘色系) === -->
                         <li><a href="./brg_girder.html" target="_blank" class="calc-item bg-orange-50 hover:bg-orange-100 border-orange-200"><h3 class="text-orange-800">主梁檢核</h3><p class="text-orange-700">檢核預力箱型梁的主梁在各種載重下的應力與剪力。</p></a></li>
+                    </ul>
+                </div>
+
+                <div id="content-structure" class="nav-content hidden">
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- === 連結已更新 === -->
+                        <li><a href="./I-girder.html" target="_blank" class="calc-item bg-cyan-50 hover:bg-cyan-100 border-cyan-200"><h3 class="text-cyan-800">I型梁彎矩計算</h3><p class="text-cyan-700">計算I型梁在不同載重下的彎矩分佈與最大彎矩。</p></a></li>
                     </ul>
                 </div>
 
@@ -134,24 +137,19 @@
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
 
-                    // 如果點擊的連結已經是啟用狀態，則不執行任何動作
                     if (this.classList.contains('active-link')) {
                         return;
                     }
 
-                    // 移除所有連結的 active 樣式
                     navLinks.forEach(l => l.classList.remove('active-link'));
-                    // 為點擊的連結加上 active 樣式
                     this.classList.add('active-link');
 
                     const targetId = this.getAttribute('data-target');
 
-                    // 隱藏所有內容面板
                     contentPanels.forEach(panel => {
                         panel.classList.add('hidden');
                     });
 
-                    // 顯示目標內容面板
                     document.getElementById(targetId).classList.remove('hidden');
                 });
             });
