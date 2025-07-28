@@ -154,254 +154,260 @@
                 <!-- Content panels will be dynamically shown/hidden by JavaScript -->
                 <section id="section-1" class="content-panel">
                      <h2 class="text-2xl font-bold text-slate-800 mb-6">1. 設計前提</h2>
-                    <section id="check-1-1" class="check-card bg-white rounded-lg shadow-md p-6 mb-8">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">1.1 一般說明</h2>
-                        <p class="text-slate-600 mb-4">本檢核指南依據日本《道路橋示方書》的性能設計法，針對橋梁結構的安全性與服務性進行驗證。檢核過程主要圍繞兩種核心的限界狀態：</p>
-                        <div class="space-y-4">
-                            <div class="bg-slate-50 p-4 rounded-md">
-                                <h4 class="font-bold text-slate-700 mb-2">限界狀態1 (服務性檢核)</h4>
-                                <p class="text-slate-600">此狀態主要從<strong>功能面</strong>考量，目標是確保橋梁在正常使用載重（如日常交通）下，構件的應力保持在容許範圍內，不會發生影響橋梁服務功能的損傷（如過大的裂縫或變形）。檢核重點在於控制混凝土的拉應力與壓應力。</p>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-md">
-                                <h4 class="font-bold text-slate-700 mb-2">限界狀態3 (安全性檢核)</h4>
-                                <p class="text-slate-600">此狀態主要從<strong>結構安全面</strong>考量，目標是確保橋梁在遭遇極端或最大設計載重時，結構具有足夠的抵抗能力，不會發生全面性的破壞或倒塌。檢核重點在於確認構件的設計彎矩強度 ($M_d$) 不超過其極限抵抗彎矩 ($M_{ud}$)。</p>
-                            </div>
-                        </div>
-                    </section>
+                     <!-- Added Image Section for Section 1 -->
+                     <div class="my-8 p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-slate-700 mb-4 text-center">橋梁斷面圖</h3>
+                        <img src="https://lh3.googleusercontent.com/d/19ARfsgIyCDvLXvSsZnsbTKY4WaA834V7" alt="橋梁斷面圖" class="mx-auto rounded-lg shadow-inner w-full max-w-3xl bg-slate-50 p-2">
+                    </div>
+                     <section id="check-1-1" class="check-card bg-white rounded-lg shadow-md p-6 mb-8">
+                         <h2 class="text-2xl font-bold text-slate-800 mb-4">1.1 一般說明</h2>
+                         <p class="text-slate-600 mb-4">本檢核指南依據日本《道路橋示方書》的性能設計法，針對橋梁結構的安全性與服務性進行驗證。檢核過程主要圍繞兩種核心的限界狀態：</p>
+                         <div class="space-y-4">
+                             <div class="bg-slate-50 p-4 rounded-md">
+                                 <h4 class="font-bold text-slate-700 mb-2">限界狀態1 (服務性檢核)</h4>
+                                 <p class="text-slate-600">此狀態主要從<strong>功能面</strong>考量，目標是確保橋梁在正常使用載重（如日常交通）下，構件的應力保持在容許範圍內，不會發生影響橋梁服務功能的損傷（如過大的裂縫或變形）。檢核重點在於控制混凝土的拉應力與壓應力。</p>
+                             </div>
+                             <div class="bg-slate-50 p-4 rounded-md">
+                                 <h4 class="font-bold text-slate-700 mb-2">限界狀態3 (安全性檢核)</h4>
+                                 <p class="text-slate-600">此狀態主要從<strong>結構安全面</strong>考量，目標是確保橋梁在遭遇極端或最大設計載重時，結構具有足夠的抵抗能力，不會發生全面性的破壞或倒塌。檢核重點在於確認構件的設計彎矩強度 ($M_d$) 不超過其極限抵抗彎矩 ($M_{ud}$)。</p>
+                             </div>
+                         </div>
+                     </section>
                     
-                    <details id="check-1-2" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h2 class="text-2xl font-bold text-slate-700">1.2 設計條件總表</h2>
-                            <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full text-sm border border-slate-200">
-                                    <thead class="bg-slate-100">
-                                        <tr>
-                                            <th class="p-3 text-left font-bold text-slate-700" colspan="2">分類</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">項目</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">設計內容</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-200">
-                                        <!-- 構造諸元 -->
-                                        <tr class="bg-slate-50">
-                                            <td class="p-3 font-semibold text-slate-600 align-top" rowspan="15" style="writing-mode: vertical-rl; text-orientation: upright; text-align: center;">與構造構件有關的設計條件</td>
-                                        </tr>
-                                        <tr><td class="p-2 font-medium">①</td><td class="p-2">橋梁種類</td><td class="p-2">預力混凝土道路橋</td></tr>
-                                        <tr><td class="p-2 font-medium">②</td><td class="p-2">結構形式</td><td class="p-2">後張法三跨連續PC箱型梁橋</td></tr>
-                                        <tr><td class="p-2 font-medium">③</td><td class="p-2">橋面版</td><td class="p-2">預力混凝土橋面版</td></tr>
-                                        <tr><td class="p-2 font-medium">④</td><td class="p-2">橋梁全長</td><td class="p-2">111.000 m</td></tr>
-                                        <tr><td class="p-2 font-medium">⑤</td><td class="p-2">主梁長度</td><td class="p-2">110.650 m</td></tr>
-                                        <tr><td class="p-2 font-medium">⑥</td><td class="p-2">支間長</td><td class="p-2">33.800m + 39.000m + 36.700m (於橋梁中心線)</td></tr>
-                                        <tr><td class="p-2 font-medium">⑦</td><td class="p-2">支承條件</td><td class="p-2">P7, P8, P9, P10: 均為分散型支承</td></tr>
-                                        <tr><td class="p-2 font-medium">⑧</td><td class="p-2">斜角</td><td class="p-2">P7, P8, P9, P10: 均為 90°</td></tr>
-                                        <tr><td class="p-2 font-medium">⑨</td><td class="p-2">平面線形</td><td class="p-2">R = ∞ (直線)</td></tr>
-                                        <tr><td class="p-2 font-medium">⑩</td><td class="p-2">縱斷坡度</td><td class="p-2">-0.300% ~ -4.000%</td></tr>
-                                        <tr><td class="p-2 font-medium">⑪</td><td class="p-2">橫斷坡度</td><td class="p-2">2.0% (單向坡)</td></tr>
-                                        <tr><td class="p-2 font-medium">⑫</td><td class="p-2">鋪裝厚度</td><td class="p-2">瀝青鋪裝 t=80mm</td></tr>
-                                        <tr><td class="p-2 font-medium">⑬</td><td class="p-2">有效橋寬</td><td class="p-2">8.750 m</td></tr>
-                                        <tr><td class="p-2 font-medium">⑭</td><td class="p-2">架設工法</td><td class="p-2">固定支撐工法</td></tr>
-                                        <!-- 耐荷性能 -->
-                                        <tr class="bg-slate-50"><td class="p-3 font-semibold text-slate-600 align-top" rowspan="11" style="writing-mode: vertical-rl; text-orientation: upright; text-align: center;">與耐荷性能有關的設計條件</td></tr>
-                                        <tr><td class="p-2 font-medium">①</td><td class="p-2">活荷重</td><td class="p-2">B活荷重</td></tr>
-                                        <tr><td class="p-2 font-medium">②</td><td class="p-2">雪荷重</td><td class="p-2">3.5 kN/m² (無活載) / 1.0 kN/m² (有活載)</td></tr>
-                                        <tr><td class="p-2 font-medium">③</td><td class="p-2">衝擊荷重</td><td class="p-2">13.0 kN (對防護柵的作用力)</td></tr>
-                                        <tr><td class="p-2 font-medium">④</td><td class="p-2">風荷重</td><td class="p-2">迎風側 3.0 kN/m², 背風側 1.5 kN/m²</td></tr>
-                                        <tr><td class="p-2 font-medium">⑤</td><td class="p-2">隔音牆荷重</td><td class="p-2">1.450 kN/m (左側)</td></tr>
-                                        <tr><td class="p-2 font-medium">⑥</td><td class="p-2">附掛物</td><td class="p-2">0.300 kN/m</td></tr>
-                                        <tr><td class="p-2 font-medium">⑦</td><td class="p-2">溫度變化</td><td class="p-2">±15°C</td></tr>
-                                        <tr><td class="p-2 font-medium">⑧</td><td class="p-2">溫度差</td><td class="p-2">+5°C</td></tr>
-                                        <tr><td class="p-2 font-medium">⑨</td><td class="p-2">地盤種類</td><td class="p-2">第 I 種地盤</td></tr>
-                                        <tr><td class="p-2 font-medium">⑩</td><td class="p-2">設計水平震度</td><td class="p-2">kh = 0.20 (Level 1 地震動)</td></tr>
-                                        <!-- 耐久性能 -->
-                                        <tr class="bg-slate-50"><td class="p-3 font-semibold text-slate-600 align-top" rowspan="4" style="writing-mode: vertical-rl; text-orientation: upright; text-align: center;">與耐久性能有關的設計條件</td></tr>
-                                        <tr><td class="p-2 font-medium">①</td><td class="p-2">各構件設計耐久年限</td><td class="p-2">所有構件均為100年</td></tr>
-                                        <tr><td class="p-2 font-medium">②</td><td class="p-2">鹽害地區區分</td><td class="p-2">C地區</td></tr>
-                                        <tr><td class="p-2 font-medium">③</td><td class="p-2">防止凍結劑散布</td><td class="p-2">有</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </details>
+                     <details id="check-1-2" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h2 class="text-2xl font-bold text-slate-700">1.2 設計條件總表</h2>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                             <div class="overflow-x-auto">
+                                 <table class="min-w-full text-sm border border-slate-200">
+                                     <thead class="bg-slate-100">
+                                         <tr>
+                                             <th class="p-3 text-left font-bold text-slate-700" colspan="2">分類</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">項目</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">設計內容</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody class="divide-y divide-slate-200">
+                                         <!-- 構造諸元 -->
+                                         <tr class="bg-slate-50">
+                                             <td class="p-3 font-semibold text-slate-600 align-top" rowspan="15" style="writing-mode: vertical-rl; text-orientation: upright; text-align: center;">與構造構件有關的設計條件</td>
+                                         </tr>
+                                         <tr><td class="p-2 font-medium">①</td><td class="p-2">橋梁種類</td><td class="p-2">預力混凝土道路橋</td></tr>
+                                         <tr><td class="p-2 font-medium">②</td><td class="p-2">結構形式</td><td class="p-2">後張法三跨連續PC箱型梁橋</td></tr>
+                                         <tr><td class="p-2 font-medium">③</td><td class="p-2">橋面版</td><td class="p-2">預力混凝土橋面版</td></tr>
+                                         <tr><td class="p-2 font-medium">④</td><td class="p-2">橋梁全長</td><td class="p-2">111.000 m</td></tr>
+                                         <tr><td class="p-2 font-medium">⑤</td><td class="p-2">主梁長度</td><td class="p-2">110.650 m</td></tr>
+                                         <tr><td class="p-2 font-medium">⑥</td><td class="p-2">支間長</td><td class="p-2">33.800m + 39.000m + 36.700m (於橋梁中心線)</td></tr>
+                                         <tr><td class="p-2 font-medium">⑦</td><td class="p-2">支承條件</td><td class="p-2">P7, P8, P9, P10: 均為分散型支承</td></tr>
+                                         <tr><td class="p-2 font-medium">⑧</td><td class="p-2">斜角</td><td class="p-2">P7, P8, P9, P10: 均為 90°</td></tr>
+                                         <tr><td class="p-2 font-medium">⑨</td><td class="p-2">平面線形</td><td class="p-2">R = ∞ (直線)</td></tr>
+                                         <tr><td class="p-2 font-medium">⑩</td><td class="p-2">縱斷坡度</td><td class="p-2">-0.300% ~ -4.000%</td></tr>
+                                         <tr><td class="p-2 font-medium">⑪</td><td class="p-2">橫斷坡度</td><td class="p-2">2.0% (單向坡)</td></tr>
+                                         <tr><td class="p-2 font-medium">⑫</td><td class="p-2">鋪裝厚度</td><td class="p-2">瀝青鋪裝 t=80mm</td></tr>
+                                         <tr><td class="p-2 font-medium">⑬</td><td class="p-2">有效橋寬</td><td class="p-2">8.750 m</td></tr>
+                                         <tr><td class="p-2 font-medium">⑭</td><td class="p-2">架設工法</td><td class="p-2">固定支撐工法</td></tr>
+                                         <!-- 耐荷性能 -->
+                                         <tr class="bg-slate-50"><td class="p-3 font-semibold text-slate-600 align-top" rowspan="11" style="writing-mode: vertical-rl; text-orientation: upright; text-align: center;">與耐荷性能有關的設計條件</td></tr>
+                                         <tr><td class="p-2 font-medium">①</td><td class="p-2">活荷重</td><td class="p-2">B活荷重</td></tr>
+                                         <tr><td class="p-2 font-medium">②</td><td class="p-2">雪荷重</td><td class="p-2">3.5 kN/m² (無活載) / 1.0 kN/m² (有活載)</td></tr>
+                                         <tr><td class="p-2 font-medium">③</td><td class="p-2">衝擊荷重</td><td class="p-2">13.0 kN (對防護柵的作用力)</td></tr>
+                                         <tr><td class="p-2 font-medium">④</td><td class="p-2">風荷重</td><td class="p-2">迎風側 3.0 kN/m², 背風側 1.5 kN/m²</td></tr>
+                                         <tr><td class="p-2 font-medium">⑤</td><td class="p-2">隔音牆荷重</td><td class="p-2">1.450 kN/m (左側)</td></tr>
+                                         <tr><td class="p-2 font-medium">⑥</td><td class="p-2">附掛物</td><td class="p-2">0.300 kN/m</td></tr>
+                                         <tr><td class="p-2 font-medium">⑦</td><td class="p-2">溫度變化</td><td class="p-2">±15°C</td></tr>
+                                         <tr><td class="p-2 font-medium">⑧</td><td class="p-2">溫度差</td><td class="p-2">+5°C</td></tr>
+                                         <tr><td class="p-2 font-medium">⑨</td><td class="p-2">地盤種類</td><td class="p-2">第 I 種地盤</td></tr>
+                                         <tr><td class="p-2 font-medium">⑩</td><td class="p-2">設計水平震度</td><td class="p-2">kh = 0.20 (Level 1 地震動)</td></tr>
+                                         <!-- 耐久性能 -->
+                                         <tr class="bg-slate-50"><td class="p-3 font-semibold text-slate-600 align-top" rowspan="4" style="writing-mode: vertical-rl; text-orientation: upright; text-align: center;">與耐久性能有關的設計條件</td></tr>
+                                         <tr><td class="p-2 font-medium">①</td><td class="p-2">各構件設計耐久年限</td><td class="p-2">所有構件均為100年</td></tr>
+                                         <tr><td class="p-2 font-medium">②</td><td class="p-2">鹽害地區區分</td><td class="p-2">C地區</td></tr>
+                                         <tr><td class="p-2 font-medium">③</td><td class="p-2">防止凍結劑散布</td><td class="p-2">有</td></tr>
+                                     </tbody>
+                                 </table>
+                             </div>
+                         </div>
+                     </details>
 
-                    <details id="check-1-3" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h2 class="text-xl font-bold text-slate-700">1.3 使用材料一覽表</h2>
-                            <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full text-sm border border-slate-200">
-                                    <thead class="bg-slate-100">
-                                        <tr>
-                                            <th class="p-3 text-left font-bold text-slate-700">部位</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">材料種類</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">規格</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">適用</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-200">
-                                        <tr>
-                                            <td class="p-2 font-semibold align-top" rowspan="4">主桁</td>
-                                            <td class="p-2">混凝土</td>
-                                            <td class="p-2">σck = 36 N/mm² (早強水泥)</td>
-                                            <td class="p-2">W/C=43%(目安) JIS A5308</td>
-                                        </tr>
-                                        <tr><td class="p-2">PC鋼材 主方向</td><td class="p-2">SWPR7BL 12S15.2</td><td class="p-2">JIS G3536</td></tr>
-                                        <tr><td class="p-2">PC鋼材 橫方向</td><td class="p-2">SWPR19L 1S21.8</td><td class="p-2">JIS G3536</td></tr>
-                                        <tr><td class="p-2">鋼筋</td><td class="p-2">SD345</td><td class="p-2">JIS G3112</td></tr>
-                                        <tr class="bg-slate-50">
-                                            <td class="p-2 font-semibold align-top" rowspan="2">壁高欄/地覆</td>
-                                            <td class="p-2">混凝土</td>
-                                            <td class="p-2">σck = 30 N/mm² (普通水泥)</td>
-                                            <td class="p-2">W/C=50%(目安) JIS A5308</td>
-                                        </tr>
-                                        <tr class="bg-slate-50"><td class="p-2">鋼筋</td><td class="p-2">SD345</td><td class="p-2">JIS G3112</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </details>
+                     <details id="check-1-3" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h2 class="text-xl font-bold text-slate-700">1.3 使用材料一覽表</h2>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                             <div class="overflow-x-auto">
+                                 <table class="min-w-full text-sm border border-slate-200">
+                                     <thead class="bg-slate-100">
+                                         <tr>
+                                             <th class="p-3 text-left font-bold text-slate-700">部位</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">材料種類</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">規格</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">適用</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody class="divide-y divide-slate-200">
+                                         <tr>
+                                             <td class="p-2 font-semibold align-top" rowspan="4">主桁</td>
+                                             <td class="p-2">混凝土</td>
+                                             <td class="p-2">σck = 36 N/mm² (早強水泥)</td>
+                                             <td class="p-2">W/C=43%(目安) JIS A5308</td>
+                                         </tr>
+                                         <tr><td class="p-2">PC鋼材 主方向</td><td class="p-2">SWPR7BL 12S15.2</td><td class="p-2">JIS G3536</td></tr>
+                                         <tr><td class="p-2">PC鋼材 橫方向</td><td class="p-2">SWPR19L 1S21.8</td><td class="p-2">JIS G3536</td></tr>
+                                         <tr><td class="p-2">鋼筋</td><td class="p-2">SD345</td><td class="p-2">JIS G3112</td></tr>
+                                         <tr class="bg-slate-50">
+                                             <td class="p-2 font-semibold align-top" rowspan="2">壁高欄/地覆</td>
+                                             <td class="p-2">混凝土</td>
+                                             <td class="p-2">σck = 30 N/mm² (普通水泥)</td>
+                                             <td class="p-2">W/C=50%(目安) JIS A5308</td>
+                                         </tr>
+                                         <tr class="bg-slate-50"><td class="p-2">鋼筋</td><td class="p-2">SD345</td><td class="p-2">JIS G3112</td></tr>
+                                     </tbody>
+                                 </table>
+                             </div>
+                         </div>
+                     </details>
 
-                    <details id="check-1-4" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h2 class="text-xl font-bold text-slate-700">1.4 混凝土的特性值與物理定數</h2>
-                            <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full text-sm border border-slate-200">
-                                    <thead class="bg-slate-100">
-                                        <tr>
-                                            <th class="p-3 text-left font-bold text-slate-700">項目</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">數值</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">出典/備註</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-200">
-                                        <tr><td class="p-2">設計基準強度 $f_{ck}$</td><td class="p-2">36 N/mm²</td><td class="p-2">-</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">預力導入時壓縮強度</td><td class="p-2">30 N/mm²</td><td class="p-2">-</td></tr>
-                                        <tr><td class="p-2" rowspan="2">楊氏係數 (彈性模數)</td><td class="p-2">導入時: $2.80 \times 10^4$ N/mm²</td><td class="p-2" rowspan="2">道示III編 4.2.3</td></tr>
-                                        <tr><td class="p-2">材齡28日以後: $2.98 \times 10^4$ N/mm²</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">クリープ係數 (主桁荷重)</td><td class="p-2">φ = 2.6</td><td class="p-2">道示III編 表-4.2.4 (材齡5日)</td></tr>
-                                        <tr><td class="p-2">クリープ係數 (橋面荷重)</td><td class="p-2">φ = 1.7</td><td class="p-2">道示III編 表-4.2.4 (主桁完成後90日施工)</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">乾燥收縮度</td><td class="p-2">$15 \times 10^{-5}$</td><td class="p-2">道示I編 8.6(4)1) (結構系無變化時)</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </details>
+                     <details id="check-1-4" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h2 class="text-xl font-bold text-slate-700">1.4 混凝土的特性值與物理定數</h2>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                             <div class="overflow-x-auto">
+                                 <table class="min-w-full text-sm border border-slate-200">
+                                     <thead class="bg-slate-100">
+                                         <tr>
+                                             <th class="p-3 text-left font-bold text-slate-700">項目</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">數值</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">出典/備註</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody class="divide-y divide-slate-200">
+                                         <tr><td class="p-2">設計基準強度 $f_{ck}$</td><td class="p-2">36 N/mm²</td><td class="p-2">-</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">預力導入時壓縮強度</td><td class="p-2">30 N/mm²</td><td class="p-2">-</td></tr>
+                                         <tr><td class="p-2" rowspan="2">楊氏係數 (彈性模數)</td><td class="p-2">導入時: $2.80 \times 10^4$ N/mm²</td><td class="p-2" rowspan="2">道示III編 4.2.3</td></tr>
+                                         <tr><td class="p-2">材齡28日以後: $2.98 \times 10^4$ N/mm²</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">クリープ係數 (主桁荷重)</td><td class="p-2">φ = 2.6</td><td class="p-2">道示III編 表-4.2.4 (材齡5日)</td></tr>
+                                         <tr><td class="p-2">クリープ係數 (橋面荷重)</td><td class="p-2">φ = 1.7</td><td class="p-2">道示III編 表-4.2.4 (主桁完成後90日施工)</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">乾燥收縮度</td><td class="p-2">$15 \times 10^{-5}$</td><td class="p-2">道示I編 8.6(4)1) (結構系無變化時)</td></tr>
+                                     </tbody>
+                                 </table>
+                             </div>
+                         </div>
+                     </details>
 
-                    <details id="check-1-5" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h2 class="text-xl font-bold text-slate-700">1.5 PC 鋼材的特性值與物理定數</h2>
-                            <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full text-sm border border-slate-200">
-                                    <thead class="bg-slate-100">
-                                        <tr>
-                                            <th class="p-3 text-left font-bold text-slate-700">項目</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">主方向</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">橫方向</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">備註/適用條文</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-200">
-                                        <tr><td class="p-2">PC鋼材種類</td><td class="p-2">SWPR7BL (12S15.2)</td><td class="p-2">SWPR19L (1S21.8)</td><td class="p-2">-</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">引張強度 $\sigma_{pu}$ (N/mm²)</td><td class="p-2">1880</td><td class="p-2">1830</td><td class="p-2">道示III編 4.1.2</td></tr>
-                                        <tr><td class="p-2">降伏強度 $\sigma_{py}$ (N/mm²)</td><td class="p-2">1600</td><td class="p-2">1580</td><td class="p-2">道示III編 4.1.2</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">初期緊張力 $\sigma_{pi}$ (N/mm²)</td><td class="p-2">1340</td><td class="p-2">1280</td><td class="p-2">緊張中應力限制值 x 0.93以下</td></tr>
-                                        <tr><td class="p-2">鋼材斷面積 (mm²)</td><td class="p-2">1664.4</td><td class="p-2">312.9</td><td class="p-2">-</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">護套外徑 (mm)</td><td class="p-2">78</td><td class="p-2">36</td><td class="p-2">-</td></tr>
-                                        <tr><td class="p-2">錨固收縮量 (mm)</td><td class="p-2">11.0</td><td class="p-2">4.0</td><td class="p-2">定著工法標準值</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">楊氏係數 Ep (N/mm²)</td><td class="p-2">$1.95 \times 10^5$</td><td class="p-2">$1.95 \times 10^5$</td><td class="p-2">道示III編 4.2.2</td></tr>
-                                        <tr><td class="p-2" rowspan="2">PC鋼材與護套的摩擦係數</td><td class="p-2">λ (1/m) = 0.004</td><td class="p-2">λ (1/m) = 0.003 ※</td><td class="p-2">道示I編 8.4 解說</td></tr>
-                                        <tr><td class="p-2">μ (1/rad) = 0.3</td><td class="p-2">μ (1/rad) = 0.1 ※</td><td class="p-2">道示I編 8.4 解說</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">鬆弛率 (%)</td><td class="p-2">1.5</td><td class="p-2">1.5</td><td class="p-2">道示III編 4.2.2</td></tr>
-                                    </tbody>
-                                </table>
-                                <p class="text-xs text-slate-500 mt-2">※ 橫方向因鋼材為直線且較短，故採用較小的摩擦係數。</p>
-                            </div>
-                        </div>
-                    </details>
+                     <details id="check-1-5" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h2 class="text-xl font-bold text-slate-700">1.5 PC 鋼材的特性值與物理定數</h2>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                             <div class="overflow-x-auto">
+                                 <table class="min-w-full text-sm border border-slate-200">
+                                     <thead class="bg-slate-100">
+                                         <tr>
+                                             <th class="p-3 text-left font-bold text-slate-700">項目</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">主方向</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">橫方向</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">備註/適用條文</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody class="divide-y divide-slate-200">
+                                         <tr><td class="p-2">PC鋼材種類</td><td class="p-2">SWPR7BL (12S15.2)</td><td class="p-2">SWPR19L (1S21.8)</td><td class="p-2">-</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">引張強度 $\sigma_{pu}$ (N/mm²)</td><td class="p-2">1880</td><td class="p-2">1830</td><td class="p-2">道示III編 4.1.2</td></tr>
+                                         <tr><td class="p-2">降伏強度 $\sigma_{py}$ (N/mm²)</td><td class="p-2">1600</td><td class="p-2">1580</td><td class="p-2">道示III編 4.1.2</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">初期緊張力 $\sigma_{pi}$ (N/mm²)</td><td class="p-2">1340</td><td class="p-2">1280</td><td class="p-2">緊張中應力限制值 x 0.93以下</td></tr>
+                                         <tr><td class="p-2">鋼材斷面積 (mm²)</td><td class="p-2">1664.4</td><td class="p-2">312.9</td><td class="p-2">-</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">護套外徑 (mm)</td><td class="p-2">78</td><td class="p-2">36</td><td class="p-2">-</td></tr>
+                                         <tr><td class="p-2">錨固收縮量 (mm)</td><td class="p-2">11.0</td><td class="p-2">4.0</td><td class="p-2">定著工法標準值</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">楊氏係數 Ep (N/mm²)</td><td class="p-2">$1.95 \times 10^5$</td><td class="p-2">$1.95 \times 10^5$</td><td class="p-2">道示III編 4.2.2</td></tr>
+                                         <tr><td class="p-2" rowspan="2">PC鋼材與護套的摩擦係數</td><td class="p-2">λ (1/m) = 0.004</td><td class="p-2">λ (1/m) = 0.003 ※</td><td class="p-2">道示I編 8.4 解說</td></tr>
+                                         <tr><td class="p-2">μ (1/rad) = 0.3</td><td class="p-2">μ (1/rad) = 0.1 ※</td><td class="p-2">道示I編 8.4 解說</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">鬆弛率 (%)</td><td class="p-2">1.5</td><td class="p-2">1.5</td><td class="p-2">道示III編 4.2.2</td></tr>
+                                     </tbody>
+                                 </table>
+                                 <p class="text-xs text-slate-500 mt-2">※ 橫方向因鋼材為直線且較短，故採用較小的摩擦係數。</p>
+                             </div>
+                         </div>
+                     </details>
 
-                    <details id="check-1-6" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h2 class="text-xl font-bold text-slate-700">1.6 設計保護層厚度</h2>
-                            <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full text-sm border border-slate-200">
-                                    <thead class="bg-slate-100">
-                                        <tr>
-                                            <th class="p-3 text-left font-bold text-slate-700">位置</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">道示最小保護層 (mm) (耐荷/耐久)</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">施工誤差增厚 (mm)</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">設計保護層【採用值】 (mm)</th>
-                                            <th class="p-3 text-left font-bold text-slate-700">前提施工條件</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-200">
-                                        <tr>
-                                            <td class="p-2 font-semibold" colspan="5">預力混凝土構造 (PC箱型梁)</td>
-                                        </tr>
-                                        <tr><td class="p-2">箱梁外面-上翼版上面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5</td><td class="p-2 font-bold">40</td><td class="p-2">床版兼用、施作床版防水、計測棒管理</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">箱梁外面-上翼版下面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5 + 段取筋 D13</td><td class="p-2 font-bold">53</td><td class="p-2">床版兼用、水泥砂漿墊塊(≥4個/m²)</td></tr>
-                                        <tr><td class="p-2">箱梁外面-腹版側面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5</td><td class="p-2 font-bold">40</td><td class="p-2">水泥砂漿墊塊(≥2個/m²)</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">箱梁外面-下翼版下面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5 + 段取筋 D13</td><td class="p-2 font-bold">53</td><td class="p-2">水泥砂漿墊塊(≥4個/m²)</td></tr>
-                                        <tr><td class="p-2">箱梁內面-上翼版下面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5 + 段取筋 D13</td><td class="p-2 font-bold">53</td><td class="p-2">床版兼用、水泥砂漿墊塊(≥4個/m²)</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">箱梁內面-腹版側面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5</td><td class="p-2 font-bold">40</td><td class="p-2">水泥砂漿墊塊(≥2個/m²)</td></tr>
-                                        <tr><td class="p-2">箱梁內面-下翼版上面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5</td><td class="p-2 font-bold">40</td><td class="p-2">計測棒管理</td></tr>
-                                        <tr>
-                                            <td class="p-2 font-semibold" colspan="5">鋼筋混凝土構造 (地覆、壁高欄)</td>
-                                        </tr>
-                                        <tr><td class="p-2">上面</td><td class="p-2">30 (50)</td><td class="p-2">施工誤差 20</td><td class="p-2 font-bold">50</td><td class="p-2">丁張管理、考量錨栓等施工誤差</td></tr>
-                                        <tr class="bg-slate-50"><td class="p-2">側面</td><td class="p-2">30 (50)</td><td class="p-2">施工誤差 20</td><td class="p-2 font-bold">50</td><td class="p-2">考量建築界線限制、主筋預埋施工</td></tr>
-                                        <tr><td class="p-2">下面</td><td class="p-2">30 (50)</td><td class="p-2">施工誤差 20</td><td class="p-2 font-bold">50</td><td class="p-2">水泥砂漿墊塊(≥4個/m²)</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </details>
+                     <details id="check-1-6" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h2 class="text-xl font-bold text-slate-700">1.6 設計保護層厚度</h2>
+                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                             <div class="overflow-x-auto">
+                                 <table class="min-w-full text-sm border border-slate-200">
+                                     <thead class="bg-slate-100">
+                                         <tr>
+                                             <th class="p-3 text-left font-bold text-slate-700">位置</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">道示最小保護層 (mm) (耐荷/耐久)</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">施工誤差增厚 (mm)</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">設計保護層【採用值】 (mm)</th>
+                                             <th class="p-3 text-left font-bold text-slate-700">前提施工條件</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody class="divide-y divide-slate-200">
+                                         <tr>
+                                             <td class="p-2 font-semibold" colspan="5">預力混凝土構造 (PC箱型梁)</td>
+                                         </tr>
+                                         <tr><td class="p-2">箱梁外面-上翼版上面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5</td><td class="p-2 font-bold">40</td><td class="p-2">床版兼用、施作床版防水、計測棒管理</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">箱梁外面-上翼版下面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5 + 段取筋 D13</td><td class="p-2 font-bold">53</td><td class="p-2">床版兼用、水泥砂漿墊塊(≥4個/m²)</td></tr>
+                                         <tr><td class="p-2">箱梁外面-腹版側面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5</td><td class="p-2 font-bold">40</td><td class="p-2">水泥砂漿墊塊(≥2個/m²)</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">箱梁外面-下翼版下面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5 + 段取筋 D13</td><td class="p-2 font-bold">53</td><td class="p-2">水泥砂漿墊塊(≥4個/m²)</td></tr>
+                                         <tr><td class="p-2">箱梁內面-上翼版下面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5 + 段取筋 D13</td><td class="p-2 font-bold">53</td><td class="p-2">床版兼用、水泥砂漿墊塊(≥4個/m²)</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">箱梁內面-腹版側面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5</td><td class="p-2 font-bold">40</td><td class="p-2">水泥砂漿墊塊(≥2個/m²)</td></tr>
+                                         <tr><td class="p-2">箱梁內面-下翼版上面</td><td class="p-2">35 (30)</td><td class="p-2">施工誤差 5</td><td class="p-2 font-bold">40</td><td class="p-2">計測棒管理</td></tr>
+                                         <tr>
+                                             <td class="p-2 font-semibold" colspan="5">鋼筋混凝土構造 (地覆、壁高欄)</td>
+                                         </tr>
+                                         <tr><td class="p-2">上面</td><td class="p-2">30 (50)</td><td class="p-2">施工誤差 20</td><td class="p-2 font-bold">50</td><td class="p-2">丁張管理、考量錨栓等施工誤差</td></tr>
+                                         <tr class="bg-slate-50"><td class="p-2">側面</td><td class="p-2">30 (50)</td><td class="p-2">施工誤差 20</td><td class="p-2 font-bold">50</td><td class="p-2">考量建築界線限制、主筋預埋施工</td></tr>
+                                         <tr><td class="p-2">下面</td><td class="p-2">30 (50)</td><td class="p-2">施工誤差 20</td><td class="p-2 font-bold">50</td><td class="p-2">水泥砂漿墊塊(≥4個/m²)</td></tr>
+                                     </tbody>
+                                 </table>
+                             </div>
+                         </div>
+                     </details>
 
-                    <section id="check-1-7" class="check-card bg-white rounded-lg shadow-md p-6 mb-8">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">1.7 設計前提條件</h2>
-                        <p class="text-slate-600 mb-4">本檢核指南基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。所有檢核均基於一個三跨連續PC箱型梁橋的範例，其設計使用年限為100年。以下將逐一檢核設計中的關鍵環節。</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div class="bg-slate-50 p-4 rounded-md">
-                                <h4 class="font-bold text-slate-700 mb-2">主要材料</h4>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>混凝土: $f'_{ck}$ = 36 N/mm²</li>
-                                    <li>主方向PC鋼材: SWPR7BL (12S15.2)</li>
-                                    <li>橫方向PC鋼材: SWPR19L (1S21.8)</li>
-                                    <li>鋼筋: SD345</li>
-                                </ul>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-md">
-                                <h4 class="font-bold text-slate-700 mb-2">主要尺寸</h4>
+                     <section id="check-1-7" class="check-card bg-white rounded-lg shadow-md p-6 mb-8">
+                         <h2 class="text-2xl font-bold text-slate-800 mb-4">1.7 設計前提條件</h2>
+                         <p class="text-slate-600 mb-4">本檢核指南基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。所有檢核均基於一個三跨連續PC箱型梁橋的範例，其設計使用年限為100年。以下將逐一檢核設計中的關鍵環節。</p>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                             <div class="bg-slate-50 p-4 rounded-md">
+                                 <h4 class="font-bold text-slate-700 mb-2">主要材料</h4>
                                  <ul class="list-disc list-inside space-y-1">
-                                     <li>橋面版厚度: 300 mm</li>
-                                     <li>腹版厚度: 450 mm</li>
-                                     <li>下翼版厚度: 220 mm</li>
-                                     <li>瀝青鋪裝厚度: 80 mm</li>
+                                     <li>混凝土: $f'_{ck}$ = 36 N/mm²</li>
+                                     <li>主方向PC鋼材: SWPR7BL (12S15.2)</li>
+                                     <li>橫方向PC鋼材: SWPR19L (1S21.8)</li>
+                                     <li>鋼筋: SD345</li>
                                  </ul>
-                            </div>
-                        </div>
-                        <!-- Inserted Image Section -->
-                        <div class="mt-8">
-                            <h3 class="text-xl font-bold text-slate-700 mb-4 text-center">橋梁斷面圖</h3>
-                            <img src="https://lh3.googleusercontent.com/d/19ARfsgIyCDvLXvSsZnsbTKY4WaA834V7" alt="橋梁斷面圖" class="mx-auto rounded-lg shadow-md w-full max-w-3xl">
-                        </div>
-                    </section>
+                             </div>
+                             <div class="bg-slate-50 p-4 rounded-md">
+                                 <h4 class="font-bold text-slate-700 mb-2">主要尺寸</h4>
+                                  <ul class="list-disc list-inside space-y-1">
+                                      <li>橋面版厚度: 300 mm</li>
+                                      <li>腹版厚度: 450 mm</li>
+                                      <li>下翼版厚度: 220 mm</li>
+                                      <li>瀝青鋪裝厚度: 80 mm</li>
+                                  </ul>
+                             </div>
+                         </div>
+                     </section>
                 </section>
 
                 <section id="section-2" class="content-panel">
                     <h2 class="text-2xl font-bold text-slate-800 mb-6">2. 橋面板檢核(垂直橋軸方向)</h2>
+                    
+                    <!-- Moved Image Section -->
+                    <div class="my-8 p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-slate-700 mb-4 text-center">橋梁斷面圖</h3>
+                        <img src="https://lh3.googleusercontent.com/d/19ARfsgIyCDvLXvSsZnsbTKY4WaA834V7" alt="橋梁斷面圖" class="mx-auto rounded-lg shadow-inner w-full max-w-3xl bg-slate-50 p-2">
+                    </div>
                     
                     <details id="check-2-0" class="check-card bg-white rounded-lg shadow-md mb-6">
                         <summary class="p-6 flex justify-between items-center">
@@ -410,18 +416,18 @@
                         </summary>
                         <div class="px-6 pb-6 pt-4 border-t border-slate-200">
                              <p class="mb-4"><strong>目標：</strong>確保橋面版有足夠的厚度以抵抗輪載產生的穿刺剪力破壞。</p>
-                            <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.4.2</p>
-                            <div class="mb-4">
-                                <h4 class="font-semibold text-slate-600 mb-2">判定基準：</h4>
-                                <p>最小全厚要求公式： $d_{min} = (30L + 110) \times 90\%$</p>
-                                <p>計算： $d_{min} = (30 \times 4.40 + 110) \times 0.90 = 218$ mm</p>
-                                <p class="mt-2"><strong>限制值：設計版厚 $\ge 218$ mm</strong></p>
-                            </div>
-                            <div class="flex items-center gap-4 mt-4">
-                                <label for="deck-thickness-2-0">請輸入您的設計版厚 (mm):</label>
-                                <input type="number" id="deck-thickness-2-0" value="300" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500">
-                                <span id="deck-thickness-result-2-0"></span>
-                            </div>
+                             <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.4.2</p>
+                             <div class="mb-4">
+                                 <h4 class="font-semibold text-slate-600 mb-2">判定基準：</h4>
+                                 <p>最小全厚要求公式： $d_{min} = (30L + 110) \times 90\%$</p>
+                                 <p>計算： $d_{min} = (30 \times 4.40 + 110) \times 0.90 = 218$ mm</p>
+                                 <p class="mt-2"><strong>限制值：設計版厚 $\ge 218$ mm</strong></p>
+                             </div>
+                             <div class="flex items-center gap-4 mt-4">
+                                 <label for="deck-thickness-2-0">請輸入您的設計版厚 (mm):</label>
+                                 <input type="number" id="deck-thickness-2-0" value="300" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500">
+                                 <span id="deck-thickness-result-2-0"></span>
+                             </div>
                         </div>
                     </details>
 
@@ -588,279 +594,279 @@
                     </details>
                     
                      <details id="check-2-2-explanation" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-slate-700">降伏彎矩及破壞抵抗彎矩計算說明</h3>
-                            <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
-                            <div>
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">概要</h4>
-                                <p>降伏彎矩 ($M_{yc}$) 與破壞抵抗彎矩 ($M_{uc}$) 是評估斷面抵抗彎曲能力的兩個關鍵指標，分別對應服務性限界狀態（限界狀態1）與安全性限界狀態（限界狀態3）。計算的核心基於「應變協調性」（斷面應變呈線性分佈）與「斷面內力平衡」（壓力合力等於拉力合力）兩大原則。</p>
-                            </div>
-                            <div class="pt-6 border-t border-slate-200">
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">1. 降伏彎矩 ($M_{yc}$) 計算過程 (服務性檢核)</h4>
-                                <p class="mb-2">此彎矩定義為斷面中拉力側鋼筋應力首次達到其降伏強度($f_y$)的瞬間。</p>
-                                <ol class="list-decimal list-inside space-y-2 text-slate-600">
-                                    <li><strong>假設中性軸(N.A.)深度 (x)</strong>：從斷面受壓最外緣起算。</li>
-                                    <li><strong>計算應變</strong>：根據應變協調性，假設拉力側最外層鋼筋應變為降伏應變 $\epsilon_y = f_y / E_s$。以此為基準，呈線性計算斷面內各點（混凝土、其他鋼筋、預力鋼材）的應變值。</li>
-                                    <li><strong>計算應力</strong>：
-                                        <ul class="list-disc list-inside ml-4">
-                                            <li><strong>混凝土</strong>：根據應變值，由混凝土的應力-應變曲線（通常在此階段為線性）求得壓應力分佈。</li>
-                                            <li><strong>鋼筋/PC鋼材</strong>：根據應變值與初始預力應變（若有），由鋼材的應力-應變曲線求得各自的應力。</li>
-                                        </ul>
-                                    </li>
-                                    <li><strong>校核內力平衡</strong>：計算混凝土壓力總合力 ($C_c$)、壓力側鋼筋作用力 ($C_s$)、拉力側鋼筋作用力 ($T_s$) 及預力鋼材作用力 ($T_{ps}$)。校核是否滿足 $\Sigma C = \Sigma T$。</li>
-                                    <li><strong>迭代求解</strong>：若內力不平衡，則調整中性軸深度 (x) 並重複步驟2至4，直到滿足平衡條件。</li>
-                                    <li><strong>計算彎矩</strong>：當內力平衡時，對斷面任一點（如壓力中心）取力矩，即可求得降伏彎矩 $M_{yc}$。</li>
-                                </ol>
-                            </div>
-                            <div class="pt-6 border-t border-slate-200">
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">2. 破壞抵抗彎矩 ($M_{uc}$) 計算過程 (安全性檢核)</h4>
-                                <p class="mb-2">此彎矩定義為斷面受壓最外緣混凝土達到其極限壓縮應變 $\epsilon_{cu}$ (=0.0035) 的瞬間。</p>
-                                <ol class="list-decimal list-inside space-y-2 text-slate-600">
-                                    <li><strong>假設中性軸(N.A.)深度 (x)</strong>：從斷面受壓最外緣起算。</li>
-                                    <li><strong>計算混凝土壓力</strong>：採用「惠特尼等效矩形應力塊 (Whitney Stress Block)」。混凝土壓力總合力 $C_c = 0.85 \cdot f'_{c} \cdot a \cdot b$，其中 $a = \beta_1 \cdot x$。($b$為斷面寬度，$\beta_1$為係數)</li>
-                                    <li><strong>計算鋼材應變與應力</strong>：根據應變協調性，以混凝土極限應變0.0035為基準，計算各層鋼筋與PC鋼材的應變，並由其應力-應變關係求得應力（通常此時鋼材皆已降伏）。</li>
-                                    <li><strong>校核內力平衡</strong>：計算拉力總合力 $\Sigma T$ (來自鋼筋與PC鋼材)。校核是否滿足 $C_c = \Sigma T$。</li>
-                                    <li><strong>迭代求解</strong>：若內力不平衡，則調整中性軸深度 (x) 並重複步驟2至4，直到滿足平衡條件。</li>
-                                    <li><strong>計算彎矩</strong>：當內力平衡時，對壓力塊中心取力矩，計算標稱彎矩強度 $M_n$。$M_{uc}$ 為標稱彎矩強度再乘上一個強度折減係數 $\phi$ ($M_{uc} = \phi M_n$)。</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </details>
-                    
-                    <details id="check-2-3" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-slate-700">2.3 彎矩檢核 (限界狀態1 & 3)</h3>
+                         <summary class="p-6 flex justify-between items-center">
+                             <h3 class="text-xl font-bold text-slate-700">降伏彎矩及破壞抵抗彎矩計算說明</h3>
                              <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
-                            <div>
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">限界狀態 1 (服務性檢核)</h4>
-                                <p class="mb-4"><strong>目標：</strong>確保在正常使用載重下，混凝土應力在容許範圍內，防止功能性損壞。</p>
-                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.3.1(4), 5.6.1(3)</p>
-                                <p class="mb-4"><strong>判定基準：</strong>拉應力 $\sigma_t \le 2.5$ N/mm²，壓應力 $\sigma_c \le 20.7$ N/mm²。即 <strong>$-2.5 \le \sigma_c \le 20.7$ N/mm²</strong>。</p>
-                                <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的設計應力 min/max)：</h4>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full text-sm">
-                                        <thead class="bg-slate-50">
-                                            <tr>
-                                                <th class="p-3">斷面</th>
-                                                <th class="p-3">位置</th>
-                                                <th class="p-3">最小應力 (N/mm²)</th>
-                                                <th class="p-3">最大應力 (N/mm²)</th>
-                                                <th class="p-3">判定</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="check-2-3-1-body">
-                                            <!-- Rows will be generated by JS -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="pt-6 border-t border-slate-200">
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">限界狀態 3 (安全性檢核)</h4>
-                                <p class="mb-4"><strong>目標：</strong>確保在極限載重下，設計彎矩 $M_d$ 不超過斷面的破壞抵抗彎矩 $M_{ud}$，防止結構破壞。</p>
-                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.4.1(4), 5.8.1(3)</p>
-                                 <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的設計彎矩)：</h4>
-                                <div class="overflow-x-auto">
-                                     <table class="min-w-full text-sm">
-                                        <thead class="bg-slate-50">
-                                            <tr>
-                                                <th class="p-3">斷面</th>
-                                                <th class="p-3">最大設計彎矩 $M_{d,max}$ (kN.m)</th>
-                                                <th class="p-3">最小設計彎矩 $M_{d,min}$ (kN.m)</th>
-                                                <th class="p-3">限制值 (kN.m)</th>
-                                                <th class="p-3">判定</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="check-2-3-2-body">
-                                            <!-- Rows will be generated by JS -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <details id="check-2-4" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-slate-700">2.4 剪力檢核 (穿刺剪力)</h3>
-                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200">
-                             <p class="mb-4"><strong>目標：</strong>確保橋面版有足夠的厚度以抵抗輪載產生的穿刺剪力破壞。</p>
-                            <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.3.2, 9.4.2</p>
-                            <p class="mb-4"><strong>判定基準：</strong>限界狀態1的檢核可由限界狀態3的檢核替代。限界狀態3要求實際版厚需大於最小全厚要求。</p>
-                            <p class="mb-4"><strong>結果：</strong>本橋設計的橋面版厚度已於 <strong>2.0 橋面板最小厚度檢核</strong> 中確認符合規定。 <span class="result-tag result-ok">OK</span></p>
-                        </div>
-                    </details>
-
-                    <details id="check-2-5" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-slate-700">2.5 特殊荷重檢核</h3>
-                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
+                         </summary>
                          <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
-                           <div>
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">相反應力構件檢核</h4>
-                                <p class="mb-4"><strong>目標：</strong>針對靜載重與活載重產生應力符號相反的斷面，進行特殊載重組合下的檢核。</p>
-                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 式(解5.1.2)</p>
-                                <p class="mb-4"><strong>檢核用荷重組合：</strong> $1.0 \times (L+PS+CR+SH)$</p>
-                                
-                                <h5 class="font-semibold text-slate-600 mb-2 mt-4">限界狀態1 (應力檢核)</h5>
-                                
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full text-sm">
-                                        <thead class="bg-slate-50">
-                                            <tr>
-                                                <th class="p-3">斷面</th>
-                                                <th class="p-3">位置</th>
-                                                <th class="p-3">最小應力 (N/mm²)</th>
-                                                <th class="p-3">最大應力 (N/mm²)</th>
-                                                <th class="p-3">判定</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="check-2-5-1-body"></tbody>
-                                    </table>
-                                </div>
-
-                                <h5 class="font-semibold text-slate-600 mb-2 mt-6">限界狀態3 (彎矩檢核)</h5>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full text-sm">
-                                        <thead class="bg-slate-50">
-                                            <tr>
-                                                <th class="p-3">斷面</th>
-                                                <th class="p-3">設計彎矩 $M_d$ (kN.m)</th>
-                                                <th class="p-3">限制值 (kN.m)</th>
-                                                <th class="p-3">判定</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="check-2-5-2-body"></tbody>
-                                    </table>
-                                </div>
-                                <div class="mt-6 p-4 bg-slate-50 rounded-lg text-sm text-slate-600 space-y-2">
-                                     <h5 class="font-bold text-slate-700">限制值計算說明</h5>
-                                     <p><strong>限界狀態1 (應力):</strong> 限制值依據《道示》III編 9.3.1(4) 與 5.6.1(3) 規定，為標準的服務性應力限制，即 $-2.5 \le \sigma_{c} \le 20.7$ N/mm²。</p>
-                                     <p><strong>限界狀態3 (彎矩):</strong> 限制值為考量材料係數($\gamma_m$)與構件係數($\gamma_b$)後的設計抵抗彎矩。計算方式為：$M_{ud} = \frac{1}{\gamma_b} \cdot M_u(\frac{f_{ck}}{\gamma_m}, \frac{f_{yk}}{\gamma_m})$。在此特殊荷重組合下，這些係數通常取為 1.0，故限制值等同於在 2.2 節中計算的破壞抵抗彎矩 $M_{uc}$。</p>
-                                </div>
-                            </div>
-                        </div>
-                    </details>
-                    
-                    <details id="check-2-6" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-slate-700">2.6 施工階段檢核</h3>
-                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
-                            <div>
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">PC鋼材應力檢核</h4>
-                                <p class="mb-4"><strong>目標：</strong>確保在張拉過程與張拉完成後，PC鋼材應力不超過臨時狀況的容許值。</p>
-                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 表-解3.4.1</p>
-                                <p class="mb-4"><strong>結果：</strong>張拉中應力 $\le 1420$ N/mm²，張拉後應力 $\le 1280$ N/mm²。範例中所有斷面計算值均在限制內。 <span class="result-tag result-ok">OK</span></p>
-                            </div>
+                             <div>
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">概要</h4>
+                                 <p>降伏彎矩 ($M_{yc}$) 與破壞抵抗彎矩 ($M_{uc}$) 是評估斷面抵抗彎曲能力的兩個關鍵指標，分別對應服務性限界狀態（限界狀態1）與安全性限界狀態（限界狀態3）。計算的核心基於「應變協調性」（斷面應變呈線性分佈）與「斷面內力平衡」（壓力合力等於拉力合力）兩大原則。</p>
+                             </div>
                              <div class="pt-6 border-t border-slate-200">
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">混凝土應力檢核</h4>
-                                <p class="mb-4"><strong>目標：</strong>確保在施工階段（如主梁完成、橋面完成），混凝土應力在臨時容許範圍內。</p>
-                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 3.4.1(8)解說</p>
-                                <div class="mb-4">
-                                     <h5 class="font-semibold text-slate-600 mb-2">判定基準：</h5>
-                                     <ul class="list-disc list-inside">
-                                         <li>主梁完成階段: <strong>$-1.48 \le \sigma_c \le 17.6$ N/mm²</strong></li>
-                                         <li>橋面完成階段: <strong>$-1.67 \le \sigma_c \le 14.7$ N/mm²</strong></li>
-                                     </ul>
-                                </div>
-                                <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的計算值)：</h4>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full text-sm">
-                                        <thead class="bg-slate-50">
-                                            <tr>
-                                                <th class="p-3">斷面</th>
-                                                <th class="p-3">施工階段</th>
-                                                <th class="p-3">上緣應力 (N/mm²)</th>
-                                                <th class="p-3">下緣應力 (N/mm²)</th>
-                                                <th class="p-3">判定</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="check-2-6-body">
-                                            <!-- Rows will be generated by JS -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </details>
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">1. 降伏彎矩 ($M_{yc}$) 計算過程 (服務性檢核)</h4>
+                                 <p class="mb-2">此彎矩定義為斷面中拉力側鋼筋應力首次達到其降伏強度($f_y$)的瞬間。</p>
+                                 <ol class="list-decimal list-inside space-y-2 text-slate-600">
+                                     <li><strong>假設中性軸(N.A.)深度 (x)</strong>：從斷面受壓最外緣起算。</li>
+                                     <li><strong>計算應變</strong>：根據應變協調性，假設拉力側最外層鋼筋應變為降伏應變 $\epsilon_y = f_y / E_s$。以此為基準，呈線性計算斷面內各點（混凝土、其他鋼筋、預力鋼材）的應變值。</li>
+                                     <li><strong>計算應力</strong>：
+                                         <ul class="list-disc list-inside ml-4">
+                                             <li><strong>混凝土</strong>：根據應變值，由混凝土的應力-應變曲線（通常在此階段為線性）求得壓應力分佈。</li>
+                                             <li><strong>鋼筋/PC鋼材</strong>：根據應變值與初始預力應變（若有），由鋼材的應力-應變曲線求得各自的應力。</li>
+                                         </ul>
+                                     </li>
+                                     <li><strong>校核內力平衡</strong>：計算混凝土壓力總合力 ($C_c$)、壓力側鋼筋作用力 ($C_s$)、拉力側鋼筋作用力 ($T_s$) 及預力鋼材作用力 ($T_{ps}$)。校核是否滿足 $\Sigma C = \Sigma T$。</li>
+                                     <li><strong>迭代求解</strong>：若內力不平衡，則調整中性軸深度 (x) 並重複步驟2至4，直到滿足平衡條件。</li>
+                                     <li><strong>計算彎矩</strong>：當內力平衡時，對斷面任一點（如壓力中心）取力矩，即可求得降伏彎矩 $M_{yc}$。</li>
+                                 </ol>
+                             </div>
+                             <div class="pt-6 border-t border-slate-200">
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">2. 破壞抵抗彎矩 ($M_{uc}$) 計算過程 (安全性檢核)</h4>
+                                 <p class="mb-2">此彎矩定義為斷面受壓最外緣混凝土達到其極限壓縮應變 $\epsilon_{cu}$ (=0.0035) 的瞬間。</p>
+                                 <ol class="list-decimal list-inside space-y-2 text-slate-600">
+                                     <li><strong>假設中性軸(N.A.)深度 (x)</strong>：從斷面受壓最外緣起算。</li>
+                                     <li><strong>計算混凝土壓力</strong>：採用「惠特尼等效矩形應力塊 (Whitney Stress Block)」。混凝土壓力總合力 $C_c = 0.85 \cdot f'_{c} \cdot a \cdot b$，其中 $a = \beta_1 \cdot x$。($b$為斷面寬度，$\beta_1$為係數)</li>
+                                     <li><strong>計算鋼材應變與應力</strong>：根據應變協調性，以混凝土極限應變0.0035為基準，計算各層鋼筋與PC鋼材的應變，並由其應力-應變關係求得應力（通常此時鋼材皆已降伏）。</li>
+                                     <li><strong>校核內力平衡</strong>：計算拉力總合力 $\Sigma T$ (來自鋼筋與PC鋼材)。校核是否滿足 $C_c = \Sigma T$。</li>
+                                     <li><strong>迭代求解</strong>：若內力不平衡，則調整中性軸深度 (x) 並重複步驟2至4，直到滿足平衡條件。</li>
+                                     <li><strong>計算彎矩</strong>：當內力平衡時，對壓力塊中心取力矩，計算標稱彎矩強度 $M_n$。$M_{uc}$ 為標稱彎矩強度再乘上一個強度折減係數 $\phi$ ($M_{uc} = \phi M_n$)。</li>
+                                 </ol>
+                             </div>
+                         </div>
+                     </details>
+                    
+                     <details id="check-2-3" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h3 class="text-xl font-bold text-slate-700">2.3 彎矩檢核 (限界狀態1 & 3)</h3>
+                              <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
+                             <div>
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">限界狀態 1 (服務性檢核)</h4>
+                                 <p class="mb-4"><strong>目標：</strong>確保在正常使用載重下，混凝土應力在容許範圍內，防止功能性損壞。</p>
+                                 <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.3.1(4), 5.6.1(3)</p>
+                                 <p class="mb-4"><strong>判定基準：</strong>拉應力 $\sigma_t \le 2.5$ N/mm²，壓應力 $\sigma_c \le 20.7$ N/mm²。即 <strong>$-2.5 \le \sigma_c \le 20.7$ N/mm²</strong>。</p>
+                                 <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的設計應力 min/max)：</h4>
+                                 <div class="overflow-x-auto">
+                                     <table class="min-w-full text-sm">
+                                         <thead class="bg-slate-50">
+                                             <tr>
+                                                 <th class="p-3">斷面</th>
+                                                 <th class="p-3">位置</th>
+                                                 <th class="p-3">最小應力 (N/mm²)</th>
+                                                 <th class="p-3">最大應力 (N/mm²)</th>
+                                                 <th class="p-3">判定</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="check-2-3-1-body">
+                                             <!-- Rows will be generated by JS -->
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                             <div class="pt-6 border-t border-slate-200">
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">限界狀態 3 (安全性檢核)</h4>
+                                 <p class="mb-4"><strong>目標：</strong>確保在極限載重下，設計彎矩 $M_d$ 不超過斷面的破壞抵抗彎矩 $M_{ud}$，防止結構破壞。</p>
+                                 <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.4.1(4), 5.8.1(3)</p>
+                                  <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的設計彎矩)：</h4>
+                                 <div class="overflow-x-auto">
+                                      <table class="min-w-full text-sm">
+                                         <thead class="bg-slate-50">
+                                             <tr>
+                                                 <th class="p-3">斷面</th>
+                                                 <th class="p-3">最大設計彎矩 $M_{d,max}$ (kN.m)</th>
+                                                 <th class="p-3">最小設計彎矩 $M_{d,min}$ (kN.m)</th>
+                                                 <th class="p-3">限制值 (kN.m)</th>
+                                                 <th class="p-3">判定</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="check-2-3-2-body">
+                                             <!-- Rows will be generated by JS -->
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                         </div>
+                     </details>
 
-                    <details id="check-2-7" class="check-card bg-white rounded-lg shadow-md mb-6">
-                        <summary class="p-6 flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-slate-700">2.7 耐久性能檢核</h3>
-                             <span class="text-amber-500 transform transition-transform duration-300">▼</span>
-                        </summary>
-                        <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
-                            <div>
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">疲勞檢核</h4>
-                                <p class="mb-4"><strong>目標：</strong>控制在重複載重下，混凝土與PC鋼材的應力，防止疲勞破壞。</p>
-                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.5.1, 6.3.2, 表-6.3.4, 表-9.5.2</p>
-                                <p class="mb-4"><strong>判定基準：</strong>混凝土應力 $0.0 \le \sigma_c \le 13.8$ N/mm²；PC鋼材有效應力 $\sigma_p \le 1090$ N/mm²。</p>
-                                <p class="mb-4"><strong>結果：</strong>PC鋼材有效應力檢核 <span class="result-tag result-ok">OK</span> (1086 N/mm² $\le$ 1090 N/mm²)。混凝土應力請於下表輸入檢核。</p>
-                                <h4 class="font-semibold text-slate-600 mb-2">混凝土應力計算與判定 (請輸入您的設計應力 min/max)：</h4>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full text-sm">
-                                        <thead class="bg-slate-50">
-                                            <tr>
-                                                <th class="p-3">斷面</th>
-                                                <th class="p-3">位置</th>
-                                                <th class="p-3">最小應力 (N/mm²)</th>
-                                                <th class="p-3">最大應力 (N/mm²)</th>
-                                                <th class="p-3">判定</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="check-2-7-1-body">
-                                            <!-- Rows will be generated by JS -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="pt-6 border-t border-slate-200">
-                                <h4 class="text-lg font-semibold text-slate-600 mb-2">內部鋼筋腐蝕檢核</h4>
-                                <p class="mb-4"><strong>目標：</strong>透過控制保護層厚度與混凝土應力狀態，防止內部鋼筋腐蝕。</p>
-                                <p class="mb-4"><strong>規範來源：</strong>《道示》III編 6.2.3, 9.5.2, 表-5.1.2</p>
-                                <p class="mb-4"><strong>判定基準：</strong>保護層厚度需滿足規定；永久作用下混凝土應力 $0.0 \le \sigma_c \le 13.8$ N/mm²。</p>
-                                <p class="mb-4"><strong>結果：</strong>保護層厚度已確認符合規定。混凝土應力請於下表輸入檢核。</p>
-                                 <h4 class="font-semibold text-slate-600 mb-2">混凝土應力計算與判定 (請輸入您的計算值)：</h4>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full text-sm">
-                                        <thead class="bg-slate-50">
-                                            <tr>
-                                                <th class="p-3">斷面</th>
-                                                <th class="p-3">位置</th>
-                                                <th class="p-3">應力 (N/mm²)</th>
-                                                <th class="p-3">判定</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="check-2-7-2-body">
-                                            <!-- Rows will be generated by JS -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </details>
+                     <details id="check-2-4" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h3 class="text-xl font-bold text-slate-700">2.4 剪力檢核 (穿刺剪力)</h3>
+                              <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200">
+                              <p class="mb-4"><strong>目標：</strong>確保橋面版有足夠的厚度以抵抗輪載產生的穿刺剪力破壞。</p>
+                             <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.3.2, 9.4.2</p>
+                             <p class="mb-4"><strong>判定基準：</strong>限界狀態1的檢核可由限界狀態3的檢核替代。限界狀態3要求實際版厚需大於最小全厚要求。</p>
+                             <p class="mb-4"><strong>結果：</strong>本橋設計的橋面版厚度已於 <strong>2.0 橋面板最小厚度檢核</strong> 中確認符合規定。 <span class="result-tag result-ok">OK</span></p>
+                         </div>
+                     </details>
+
+                     <details id="check-2-5" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h3 class="text-xl font-bold text-slate-700">2.5 特殊荷重檢核</h3>
+                              <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                          <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
+                             <div>
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">相反應力構件檢核</h4>
+                                 <p class="mb-4"><strong>目標：</strong>針對靜載重與活載重產生應力符號相反的斷面，進行特殊載重組合下的檢核。</p>
+                                 <p class="mb-4"><strong>規範來源：</strong>《道示》III編 式(解5.1.2)</p>
+                                 <p class="mb-4"><strong>檢核用荷重組合：</strong> $1.0 \times (L+PS+CR+SH)$</p>
+                                
+                                 <h5 class="font-semibold text-slate-600 mb-2 mt-4">限界狀態1 (應力檢核)</h5>
+                                
+                                 <div class="overflow-x-auto">
+                                     <table class="min-w-full text-sm">
+                                         <thead class="bg-slate-50">
+                                             <tr>
+                                                 <th class="p-3">斷面</th>
+                                                 <th class="p-3">位置</th>
+                                                 <th class="p-3">最小應力 (N/mm²)</th>
+                                                 <th class="p-3">最大應力 (N/mm²)</th>
+                                                 <th class="p-3">判定</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="check-2-5-1-body"></tbody>
+                                     </table>
+                                 </div>
+
+                                 <h5 class="font-semibold text-slate-600 mb-2 mt-6">限界狀態3 (彎矩檢核)</h5>
+                                 <div class="overflow-x-auto">
+                                     <table class="min-w-full text-sm">
+                                         <thead class="bg-slate-50">
+                                             <tr>
+                                                 <th class="p-3">斷面</th>
+                                                 <th class="p-3">設計彎矩 $M_d$ (kN.m)</th>
+                                                 <th class="p-3">限制值 (kN.m)</th>
+                                                 <th class="p-3">判定</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="check-2-5-2-body"></tbody>
+                                     </table>
+                                 </div>
+                                 <div class="mt-6 p-4 bg-slate-50 rounded-lg text-sm text-slate-600 space-y-2">
+                                      <h5 class="font-bold text-slate-700">限制值計算說明</h5>
+                                      <p><strong>限界狀態1 (應力):</strong> 限制值依據《道示》III編 9.3.1(4) 與 5.6.1(3) 規定，為標準的服務性應力限制，即 $-2.5 \le \sigma_{c} \le 20.7$ N/mm²。</p>
+                                      <p><strong>限界狀態3 (彎矩):</strong> 限制值為考量材料係數($\gamma_m$)與構件係數($\gamma_b$)後的設計抵抗彎矩。計算方式為：$M_{ud} = \frac{1}{\gamma_b} \cdot M_u(\frac{f_{ck}}{\gamma_m}, \frac{f_{yk}}{\gamma_m})$。在此特殊荷重組合下，這些係數通常取為 1.0，故限制值等同於在 2.2 節中計算的破壞抵抗彎矩 $M_{uc}$。</p>
+                                 </div>
+                             </div>
+                         </div>
+                     </details>
+                    
+                     <details id="check-2-6" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h3 class="text-xl font-bold text-slate-700">2.6 施工階段檢核</h3>
+                              <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
+                             <div>
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">PC鋼材應力檢核</h4>
+                                 <p class="mb-4"><strong>目標：</strong>確保在張拉過程與張拉完成後，PC鋼材應力不超過臨時狀況的容許值。</p>
+                                 <p class="mb-4"><strong>規範來源：</strong>《道示》III編 表-解3.4.1</p>
+                                 <p class="mb-4"><strong>結果：</strong>張拉中應力 $\le 1420$ N/mm²，張拉後應力 $\le 1280$ N/mm²。範例中所有斷面計算值均在限制內。 <span class="result-tag result-ok">OK</span></p>
+                             </div>
+                              <div class="pt-6 border-t border-slate-200">
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">混凝土應力檢核</h4>
+                                 <p class="mb-4"><strong>目標：</strong>確保在施工階段（如主梁完成、橋面完成），混凝土應力在臨時容許範圍內。</p>
+                                 <p class="mb-4"><strong>規範來源：</strong>《道示》III編 3.4.1(8)解說</p>
+                                 <div class="mb-4">
+                                      <h5 class="font-semibold text-slate-600 mb-2">判定基準：</h5>
+                                      <ul class="list-disc list-inside">
+                                          <li>主梁完成階段: <strong>$-1.48 \le \sigma_c \le 17.6$ N/mm²</strong></li>
+                                          <li>橋面完成階段: <strong>$-1.67 \le \sigma_c \le 14.7$ N/mm²</strong></li>
+                                      </ul>
+                                 </div>
+                                 <h4 class="font-semibold text-slate-600 mb-2">計算與判定 (請輸入您的計算值)：</h4>
+                                 <div class="overflow-x-auto">
+                                     <table class="min-w-full text-sm">
+                                         <thead class="bg-slate-50">
+                                             <tr>
+                                                 <th class="p-3">斷面</th>
+                                                 <th class="p-3">施工階段</th>
+                                                 <th class="p-3">上緣應力 (N/mm²)</th>
+                                                 <th class="p-3">下緣應力 (N/mm²)</th>
+                                                 <th class="p-3">判定</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="check-2-6-body">
+                                             <!-- Rows will be generated by JS -->
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                         </div>
+                     </details>
+
+                     <details id="check-2-7" class="check-card bg-white rounded-lg shadow-md mb-6">
+                         <summary class="p-6 flex justify-between items-center">
+                             <h3 class="text-xl font-bold text-slate-700">2.7 耐久性能檢核</h3>
+                              <span class="text-amber-500 transform transition-transform duration-300">▼</span>
+                         </summary>
+                         <div class="px-6 pb-6 pt-4 border-t border-slate-200 space-y-6">
+                             <div>
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">疲勞檢核</h4>
+                                 <p class="mb-4"><strong>目標：</strong>控制在重複載重下，混凝土與PC鋼材的應力，防止疲勞破壞。</p>
+                                 <p class="mb-4"><strong>規範來源：</strong>《道示》III編 9.5.1, 6.3.2, 表-6.3.4, 表-9.5.2</p>
+                                 <p class="mb-4"><strong>判定基準：</strong>混凝土應力 $0.0 \le \sigma_c \le 13.8$ N/mm²；PC鋼材有效應力 $\sigma_p \le 1090$ N/mm²。</p>
+                                 <p class="mb-4"><strong>結果：</strong>PC鋼材有效應力檢核 <span class="result-tag result-ok">OK</span> (1086 N/mm² $\le$ 1090 N/mm²)。混凝土應力請於下表輸入檢核。</p>
+                                 <h4 class="font-semibold text-slate-600 mb-2">混凝土應力計算與判定 (請輸入您的設計應力 min/max)：</h4>
+                                 <div class="overflow-x-auto">
+                                     <table class="min-w-full text-sm">
+                                         <thead class="bg-slate-50">
+                                             <tr>
+                                                 <th class="p-3">斷面</th>
+                                                 <th class="p-3">位置</th>
+                                                 <th class="p-3">最小應力 (N/mm²)</th>
+                                                 <th class="p-3">最大應力 (N/mm²)</th>
+                                                 <th class="p-3">判定</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="check-2-7-1-body">
+                                             <!-- Rows will be generated by JS -->
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                             <div class="pt-6 border-t border-slate-200">
+                                 <h4 class="text-lg font-semibold text-slate-600 mb-2">內部鋼筋腐蝕檢核</h4>
+                                 <p class="mb-4"><strong>目標：</strong>透過控制保護層厚度與混凝土應力狀態，防止內部鋼筋腐蝕。</p>
+                                 <p class="mb-4"><strong>規範來源：</strong>《道示》III編 6.2.3, 9.5.2, 表-5.1.2</p>
+                                 <p class="mb-4"><strong>判定基準：</strong>保護層厚度需滿足規定；永久作用下混凝土應力 $0.0 \le \sigma_c \le 13.8$ N/mm²。</p>
+                                 <p class="mb-4"><strong>結果：</strong>保護層厚度已確認符合規定。混凝土應力請於下表輸入檢核。</p>
+                                  <h4 class="font-semibold text-slate-600 mb-2">混凝土應力計算與判定 (請輸入您的計算值)：</h4>
+                                 <div class="overflow-x-auto">
+                                     <table class="min-w-full text-sm">
+                                         <thead class="bg-slate-50">
+                                             <tr>
+                                                 <th class="p-3">斷面</th>
+                                                 <th class="p-3">位置</th>
+                                                 <th class="p-3">應力 (N/mm²)</th>
+                                                 <th class="p-3">判定</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="check-2-7-2-body">
+                                             <!-- Rows will be generated by JS -->
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                         </div>
+                     </details>
                 </section>
 
                 <section id="section-3" class="content-panel check-card bg-white rounded-lg shadow-md p-6 mt-8">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">3. 腹版與下翼版檢核</h2>
-                        <p class="text-slate-600">此部分的詳細檢核內容將在後續版本中提供。</p>
-                         <div class="mt-4">
-                             <a href="brg_web.html" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
-                                 查看腹版與下翼版圖面
-                                 <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                     <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-                                     <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
-                                 </svg>
-                             </a>
-                         </div>
+                     <h2 class="text-2xl font-bold text-slate-800 mb-4">3. 腹版與下翼版檢核</h2>
+                     <p class="text-slate-600">此部分的詳細檢核內容將在後續版本中提供。</p>
+                      <div class="mt-4">
+                           <a href="brg_web.html" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                               查看腹版與下翼版圖面
+                               <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                   <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                                   <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                               </svg>
+                           </a>
+                      </div>
                 </section>
 
             </main>
@@ -1104,18 +1110,18 @@
             if(check231Body){
                  check231Body.innerHTML = '';
                  check231Data.forEach((data, index) => {
-                    const isGroupStart = index % 2 === 0;
-                    const row = document.createElement('tr');
-                    row.className = Math.floor(index / 2) % 2 === 0 ? 'text-center' : 'bg-slate-50 text-center';
-                    row.innerHTML = `
-                        ${isGroupStart ? `<td class="p-3 font-medium" rowspan="2">${data.section}</td>` : ''}
-                        <td class="p-3">${data.pos}</td>
-                        <td class="p-3"><input type="number" value="${data.valMin}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit231Min}" data-limit-max="${limit231Max}" data-target="result-2-3-1-${index}"></td>
-                        <td class="p-3"><input type="number" value="${data.valMax}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit231Min}" data-limit-max="${limit231Max}" data-target="result-2-3-1-${index}"></td>
-                        <td class="p-3" id="result-2-3-1-${index}"></td>
-                    `;
-                    check231Body.appendChild(row);
-                });
+                     const isGroupStart = index % 2 === 0;
+                     const row = document.createElement('tr');
+                     row.className = Math.floor(index / 2) % 2 === 0 ? 'text-center' : 'bg-slate-50 text-center';
+                     row.innerHTML = `
+                         ${isGroupStart ? `<td class="p-3 font-medium" rowspan="2">${data.section}</td>` : ''}
+                         <td class="p-3">${data.pos}</td>
+                         <td class="p-3"><input type="number" value="${data.valMin}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit231Min}" data-limit-max="${limit231Max}" data-target="result-2-3-1-${index}"></td>
+                         <td class="p-3"><input type="number" value="${data.valMax}" step="0.01" class="p-2 border rounded-md border-slate-300 focus:ring-amber-500 focus:border-amber-500 stress-input" data-limit-min="${limit231Min}" data-limit-max="${limit231Max}" data-target="result-2-3-1-${index}"></td>
+                         <td class="p-3" id="result-2-3-1-${index}"></td>
+                     `;
+                     check231Body.appendChild(row);
+                 });
             }
 
             // Check 2.3.2: Limit State 3 Moment
