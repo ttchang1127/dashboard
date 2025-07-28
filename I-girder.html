@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACI 318-19 I形梁彎矩強度計算工具 (台灣單位版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX for beautiful math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMmg9ikOAiqPpbleCACPUPotA27Kk2zmj/5uCYMWYCsgpLotx" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .input-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
+        <!-- 標題 -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">I形梁彎矩強度計算器</h1>
+            <p class="mt-2 text-lg text-gray-600">依據 ACI 318-19 規範</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <!-- 左側：輸入參數 -->
+            <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-6 border-b pb-3 text-blue-700">1. 輸入參數</h2>
+                
+                <form id="beam-form">
+                    <!-- 梁斷面幾何尺寸 -->
+                    <fieldset class="mb-8">
+                        <legend class="text-xl font-semibold mb-4 text-gray-700">1.1 梁斷面幾何尺寸 (cm)</legend>
+                        <div class="input-group">
+                            <div class="input-item"><label for="b_f_top" class="text-sm font-medium text-gray-600 mb-1">上翼版寬度 ($b_{f,top}$)</label><input type="number" step="1" id="b_f_top" value="60" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            <div class="input-item"><label for="h_f_top" class="text-sm font-medium text-gray-600 mb-1">上翼版厚度 ($h_{f,top}$)</label><input type="number" step="1" id="h_f_top" value="15" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            <div class="input-item"><label for="b_w" class="text-sm font-medium text-gray-600 mb-1">腹版寬度 ($b_w$)</label><input type="number" step="1" id="b_w" value="15" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            <div class="input-item"><label for="h" class="text-sm font-medium text-gray-600 mb-1">梁總深度 ($h$)</label><input type="number" step="1" id="h" value="100" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            <div class="input-item"><label for="h_f_bot" class="text-sm font-medium text-gray-600 mb-1">下翼版厚度 ($h_{f,bot}$)</label><input type="number" step="1" id="h_f_bot" value="20" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            <div class="input-item"><label for="b_f_bot" class="text-sm font-medium text-gray-600 mb-1">下翼版寬度 ($b_{f,bot}$)</label><input type="number" step="1" id="b_f_bot" value="40" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                        </div>
+                    </fieldset>
+                    
+                    <!-- 材料性質 -->
+                    <fieldset class="mb-8">
+                        <legend class="text-xl font-semibold mb-4 text-gray-700">1.2 材料性質 (kgf/cm²)</legend>
+                        <div class="input-group">
+                            <div class="input-item"><label for="fc_prime" class="text-sm font-medium text-gray-600 mb-1">混凝土抗壓強度 $f'_c$</label><input type="number" step="1" id="fc_prime" value="350" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            <div class="input-item"><label for="fy" class="text-sm font-medium text-gray-600 mb-1">鋼筋降伏強度 $f_y$</label><input type="number" step="1" id="fy" value="4200" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            <div class="input-item"><label for="fpu" class="text-sm font-medium text-gray-600 mb-1">預力鋼鍵極限強度 $f_{pu}$</label><input type="number" step="1" id="fpu" value="18600" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                        </div>
+                    </fieldset>
+
+                    <!-- 鋼筋與鋼鍵 -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                        <fieldset>
+                            <legend class="text-xl font-semibold mb-4 text-gray-700">1.3 壓力鋼筋</legend>
+                            <div class="space-y-4">
+                                <div class="input-item"><label for="As_prime" class="text-sm font-medium text-gray-600 mb-1">總面積 $A'_s$ (cm²)</label><input type="number" step="1" id="As_prime" value="6" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                                <div class="input-item"><label for="d_prime" class="text-sm font-medium text-gray-600 mb-1">至頂面距離 $d'$ (cm)</label><input type="number" step="1" id="d_prime" value="7.5" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend class="text-xl font-semibold mb-4 text-gray-700">1.4 拉力鋼筋</legend>
+                            <div class="space-y-4">
+                                <div class="input-item"><label for="As" class="text-sm font-medium text-gray-600 mb-1">總面積 $A_s$ (cm²)</label><input type="number" step="1" id="As" value="20" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                                <div class="input-item"><label for="d" class="text-sm font-medium text-gray-600 mb-1">至頂面距離 $d$ (cm)</label><input type="number" step="1" id="d" value="90" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend class="text-xl font-semibold mb-4 text-gray-700">1.5 預力鋼鍵</legend>
+                             <div class="space-y-4">
+                                <div class="input-item"><label for="Aps" class="text-sm font-medium text-gray-600 mb-1">總面積 $A_{ps}$ (cm²)</label><input type="number" step="1" id="Aps" value="15" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                                <div class="input-item"><label for="dp" class="text-sm font-medium text-gray-600 mb-1">至頂面距離 $d_p$ (cm)</label><input type="number" step="1" id="dp" value="85" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                                <div class="input-item"><label for="fse" class="text-sm font-medium text-gray-600 mb-1">有效應力 $f_{se}$ (kgf/cm²)</label><input type="number" step="1" id="fse" value="11000" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- 操作按鈕 -->
+                    <div class="mt-6">
+                        <button type="submit" id="calculate-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out">
+                            計算彎矩強度
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 右側：計算結果 -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md h-fit">
+                <!-- 示意圖區塊 -->
+                <div class="mb-6 p-2 bg-gray-100 rounded-lg flex justify-center items-center border">
+                    <svg id="beam-diagram" width="100%" viewBox="0 0 450 400"></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-6 border-b pb-3 text-green-700">2. 計算結果</h2>
+                <div id="results-container" class="space-y-2">
+                    <div class="result-item">
+                        <span class="font-semibold text-gray-700">中性軸深度 ($c$)</span>
+                        <span id="result_c" class="font-mono text-lg font-bold text-gray-900">-- cm</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="font-semibold text-gray-700">極限拉力應變 ($\epsilon_t$)</span>
+                        <span id="result_epsilon_t" class="font-mono text-lg font-bold text-gray-900">--</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="font-semibold text-gray-700">強度折減係數 ($\phi$)</span>
+                        <span id="result_phi" class="font-mono text-lg font-bold text-gray-900">--</span>
+                    </div>
+                    <div class="result-item bg-blue-50 rounded-md">
+                        <span class="font-bold text-blue-800">標稱彎矩強度 ($M_n$)</span>
+                        <span id="result_Mn" class="font-mono text-xl font-extrabold text-blue-800">-- tf-m</span>
+                    </div>
+                    <div class="result-item bg-green-50 rounded-md">
+                        <span class="font-bold text-green-800">設計彎矩強度 ($\phi M_n$)</span>
+                        <span id="result_phiMn" class="font-mono text-xl font-extrabold text-green-800">-- tf-m</span>
+                    </div>
+                </div>
+                <div id="error-container" class="mt-4 p-4 text-red-700 bg-red-100 border border-red-400 rounded-md hidden"></div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initial render of math symbols
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ]
+            });
+            // Initial calculation on page load
+            runCalculation();
+        });
+
+        document.getElementById('beam-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            runCalculation();
+        });
+        
+        // --- 主計算函數 ---
+        function runCalculation() {
+            // 清除舊的結果和錯誤訊息
+            document.getElementById('error-container').classList.add('hidden');
+            document.getElementById('error-container').textContent = '';
+
+            // 1. 獲取並轉換輸入 (從台灣單位 -> SI單位)
+            const inputs = getAndConvertInputs();
+            if (!inputs) return;
+            
+            // 更新示意圖 (使用台灣單位)
+            updateDiagram(getRawInputs());
+
+            // 2. 定義常數與計算 β₁ (全為 SI 單位)
+            const constants = { Es: 200000, Eps: 200000, epsilon_c_ultimate: 0.003 };
+            const beta1 = calculateBeta1(inputs.fc_prime);
+
+            // 3. 迭代求解中性軸深度 c (全為 SI 單位)
+            const c_mm = findNeutralAxis(inputs, constants, beta1);
+            if (isNaN(c_mm)) {
+                displayError("計算無法收斂，請檢查輸入參數是否合理。");
+                return;
+            }
+
+            // 4. 計算最終內力 (全為 SI 單位)
+            const forces = calculateAllForces(c_mm, inputs, constants, beta1);
+
+            // 5. 計算彎矩強度 Mn (結果為 kN-m)
+            const Mn_kNm = calculateMomentStrength(c_mm, forces, inputs);
+
+            // 6. 計算強度折減係數 ϕ (全為 SI 單位)
+            const { phi, epsilon_t } = calculatePhi(c_mm, inputs, constants);
+            
+            // 7. 將結果轉換回顯示單位 (SI -> 台灣單位)
+            const finalResults = {
+                c_cm: c_mm / 10,
+                epsilon_t: epsilon_t,
+                phi: phi,
+                Mn_tfm: Mn_kNm / 9.80665, // 1 tf-m ≈ 9.80665 kN-m
+                phiMn_tfm: (Mn_kNm * phi) / 9.80665
+            };
+
+            // 8. 顯示結果
+            displayResults(finalResults);
+        }
+
+        // --- 單位轉換與輸入驗證 ---
+        const CONVERSIONS = {
+            kgfcm2_to_MPa: 0.0980665,
+            cm_to_mm: 10,
+            cm2_to_mm2: 100
+        };
+
+        function getRawInputs() {
+             const ids = ['b_f_top', 'h_f_top', 'b_w', 'h', 'h_f_bot', 'b_f_bot', 'fc_prime', 'fy', 'fpu', 'As_prime', 'd_prime', 'As', 'd', 'Aps', 'dp', 'fse'];
+             const rawInputs = {};
+             for (const id of ids) {
+                 rawInputs[id] = parseFloat(document.getElementById(id).value);
+             }
+             return rawInputs;
+        }
+
+        function getAndConvertInputs() {
+            const ids = ['b_f_top', 'h_f_top', 'b_w', 'h', 'h_f_bot', 'b_f_bot', 'fc_prime', 'fy', 'fpu', 'As_prime', 'd_prime', 'As', 'd', 'Aps', 'dp', 'fse'];
+            const si_inputs = {};
+            const raw_inputs = {};
+
+            // 讀取原始輸入值並驗證
+            for (const id of ids) {
+                const value = parseFloat(document.getElementById(id).value);
+                const label = document.querySelector(`label[for=${id}]`).innerHTML;
+                if (isNaN(value) || value < 0) {
+                    displayError(`輸入錯誤: '${label}' 必須為正數。`);
+                    return null;
+                }
+                raw_inputs[id] = value;
+            }
+
+            // 轉換為內部計算用的SI單位 (mm, MPa)
+            si_inputs.b_f_top = raw_inputs.b_f_top * CONVERSIONS.cm_to_mm;
+            si_inputs.h_f_top = raw_inputs.h_f_top * CONVERSIONS.cm_to_mm;
+            si_inputs.b_w = raw_inputs.b_w * CONVERSIONS.cm_to_mm;
+            si_inputs.h = raw_inputs.h * CONVERSIONS.cm_to_mm;
+            si_inputs.h_f_bot = raw_inputs.h_f_bot * CONVERSIONS.cm_to_mm;
+            si_inputs.b_f_bot = raw_inputs.b_f_bot * CONVERSIONS.cm_to_mm;
+            
+            si_inputs.fc_prime = raw_inputs.fc_prime * CONVERSIONS.kgfcm2_to_MPa;
+            si_inputs.fy = raw_inputs.fy * CONVERSIONS.kgfcm2_to_MPa;
+            si_inputs.fpu = raw_inputs.fpu * CONVERSIONS.kgfcm2_to_MPa;
+            si_inputs.fse = raw_inputs.fse * CONVERSIONS.kgfcm2_to_MPa;
+
+            si_inputs.As_prime = raw_inputs.As_prime * CONVERSIONS.cm2_to_mm2;
+            si_inputs.d_prime = raw_inputs.d_prime * CONVERSIONS.cm_to_mm;
+            si_inputs.As = raw_inputs.As * CONVERSIONS.cm2_to_mm2;
+            si_inputs.d = raw_inputs.d * CONVERSIONS.cm_to_mm;
+            si_inputs.Aps = raw_inputs.Aps * CONVERSIONS.cm2_to_mm2;
+            si_inputs.dp = raw_inputs.dp * CONVERSIONS.cm_to_mm;
+
+            // 幾何驗證 (使用原始單位，讓使用者易於理解)
+            if (raw_inputs.h_f_top + raw_inputs.h_f_bot >= raw_inputs.h || raw_inputs.b_w > raw_inputs.b_f_top || raw_inputs.b_w > raw_inputs.b_f_bot) {
+                displayError('幾何尺寸錯誤：翼版厚度總和不能大於總高，或腹版寬度不能大於翼版寬度。'); return null;
+            }
+            if (raw_inputs.d >= raw_inputs.h || raw_inputs.dp >= raw_inputs.h || raw_inputs.d_prime >= raw_inputs.h) {
+                displayError('鋼筋位置錯誤：d, dp, d\' 應在梁斷面內。'); return null;
+            }
+            return si_inputs;
+        }
+        
+        // --- 核心計算函數 (全使用 SI 單位: mm, MPa, N) ---
+        function calculateBeta1(fc_prime_MPa) {
+            if (fc_prime_MPa <= 28) return 0.85;
+            if (fc_prime_MPa < 55) return 0.85 - 0.05 * (fc_prime_MPa - 28) / 7;
+            return 0.65;
+        }
+
+        function findNeutralAxis(inputs, constants, beta1) {
+            let c_low = 0.001, c_high = inputs.h, c_mid;
+            const max_iter = 100, tolerance = 0.1; // 0.1 N 容許誤差
+            for (let i = 0; i < max_iter; i++) {
+                c_mid = (c_low + c_high) / 2;
+                if (c_mid <= 0) c_mid = 0.001;
+                const forces = calculateAllForces(c_mid, inputs, constants, beta1);
+                const p_total_N = forces.Cc + forces.Fs_prime - forces.Ts - forces.Tps;
+                if (Math.abs(p_total_N) < tolerance) return c_mid;
+                if (p_total_N > 0) c_high = c_mid; else c_low = c_mid;
+            }
+            return NaN;
+        }
+        
+        function calculateAllForces(c, inputs, constants, beta1) {
+            const a = beta1 * c;
+            const concreteResult = getConcreteCompressiveForce(a, inputs.b_f_top, inputs.h_f_top, inputs.b_w, inputs.fc_prime);
+            const Cc = concreteResult.force;
+            const epsilon_s_prime = constants.epsilon_c_ultimate * (c - inputs.d_prime) / c;
+            const f_s_prime = Math.max(-inputs.fy, Math.min(epsilon_s_prime * constants.Es, inputs.fy));
+            const Fs_prime = inputs.As_prime > 0 ? inputs.As_prime * (f_s_prime - 0.85 * inputs.fc_prime) : 0;
+            const epsilon_s = constants.epsilon_c_ultimate * (inputs.d - c) / c;
+            const f_s = Math.min(epsilon_s * constants.Es, inputs.fy);
+            const Ts = inputs.As * f_s;
+            const epsilon_se = inputs.fse / constants.Eps;
+            const delta_epsilon_p = constants.epsilon_c_ultimate * (inputs.dp - c) / c;
+            const epsilon_ps = epsilon_se + delta_epsilon_p;
+            const f_ps = Math.min(epsilon_ps * constants.Eps, inputs.fpu);
+            const Tps = inputs.Aps * f_ps;
+            return { Cc, Fs_prime, Ts, Tps, concreteCentroid: concreteResult.centroid };
+        }
+        
+        function getConcreteCompressiveForce(a, b_f_top, h_f_top, b_w, fc_prime) {
+            let Ac, centroid;
+            if (a <= h_f_top) {
+                Ac = b_f_top * a;
+                centroid = a / 2;
+            } else {
+                const Ac_flange = (b_f_top - b_w) * h_f_top;
+                const Ac_web = b_w * a;
+                Ac = Ac_flange + Ac_web;
+                centroid = (Ac_flange * (h_f_top / 2) + Ac_web * (a / 2)) / Ac;
+            }
+            return { force: 0.85 * fc_prime * Ac, centroid };
+        }
+        
+        function calculateMomentStrength(c, forces, inputs) {
+            const { Cc, Fs_prime, Ts, Tps, concreteCentroid } = forces;
+            const Mn_Cc = Cc * (c - concreteCentroid);
+            const Mn_Fs_prime = Fs_prime * (c - inputs.d_prime);
+            const Mn_Ts = Ts * (inputs.d - c);
+            const Mn_Tps = Tps * (inputs.dp - c);
+            const Mn_total_N_mm = Mn_Cc + Mn_Fs_prime + Mn_Ts + Mn_Tps;
+            return Mn_total_N_mm / 1e6; // Convert N-mm to kN-m for intermediate result
+        }
+
+        function calculatePhi(c, inputs, constants) {
+            const d_t = Math.max(inputs.d, inputs.dp);
+            const epsilon_t = constants.epsilon_c_ultimate * (d_t - c) / c;
+            const epsilon_y = inputs.fy / constants.Es;
+            let phi;
+            if (epsilon_t <= epsilon_y) phi = 0.65;
+            else if (epsilon_t >= 0.005) phi = 0.90;
+            else phi = 0.65 + 0.25 * (epsilon_t - epsilon_y) / (0.005 - epsilon_y);
+            return { phi, epsilon_t };
+        }
+
+        // --- 顯示與繪圖 ---
+        function displayResults(results) {
+            document.getElementById('result_c').textContent = `${results.c_cm.toFixed(2)} cm`;
+            document.getElementById('result_epsilon_t').textContent = `${results.epsilon_t.toFixed(5)}`;
+            document.getElementById('result_phi').textContent = `${results.phi.toFixed(3)}`;
+            document.getElementById('result_Mn').textContent = `${results.Mn_tfm.toFixed(2)} tf-m`;
+            document.getElementById('result_phiMn').textContent = `${results.phiMn_tfm.toFixed(2)} tf-m`;
+        }
+
+        function displayError(message) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.textContent = message;
+            errorContainer.classList.remove('hidden');
+        }
+
+        function updateDiagram(raw_inputs) {
+            if (!raw_inputs) return;
+            const svg = document.getElementById('beam-diagram');
+            svg.innerHTML = '';
+            const svgWidth = 450, svgHeight = 400;
+            const margin = { top: 40, right: 80, bottom: 40, left: 80 };
+            const h = raw_inputs.h, b_max = Math.max(raw_inputs.b_f_top, raw_inputs.b_f_bot, 1);
+            const scaleY = (svgHeight - margin.top - margin.bottom) / h;
+            const scaleX = (svgWidth - margin.left - margin.right) / b_max;
+            const beamDrawHeight = h * scaleY, beamDrawWidthTop = raw_inputs.b_f_top * scaleX, beamDrawWidthBot = raw_inputs.b_f_bot * scaleX;
+            const webDrawWidth = raw_inputs.b_w * scaleX, topFlangeDrawHeight = raw_inputs.h_f_top * scaleY, botFlangeDrawHeight = raw_inputs.h_f_bot * scaleY;
+            const x_center = svgWidth / 2, y_top = margin.top;
+            const points = [[x_center-beamDrawWidthTop/2,y_top],[x_center+beamDrawWidthTop/2,y_top],[x_center+beamDrawWidthTop/2,y_top+topFlangeDrawHeight],[x_center+webDrawWidth/2,y_top+topFlangeDrawHeight],[x_center+webDrawWidth/2,y_top+beamDrawHeight-botFlangeDrawHeight],[x_center+beamDrawWidthBot/2,y_top+beamDrawHeight-botFlangeDrawHeight],[x_center+beamDrawWidthBot/2,y_top+beamDrawHeight],[x_center-beamDrawWidthBot/2,y_top+beamDrawHeight],[x_center-beamDrawWidthBot/2,y_top+beamDrawHeight-botFlangeDrawHeight],[x_center-webDrawWidth/2,y_top+beamDrawHeight-botFlangeDrawHeight],[x_center-webDrawWidth/2,y_top+topFlangeDrawHeight],[x_center-beamDrawWidthTop/2,y_top+topFlangeDrawHeight]];
+            const beamPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            beamPath.setAttribute("d", "M" + points.map(p => p.join(',')).join(' L') + " Z");
+            beamPath.setAttribute("fill", "#e5e7eb"); beamPath.setAttribute("stroke", "#4b5563"); beamPath.setAttribute("stroke-width", "1.5");
+            svg.appendChild(beamPath);
+
+            const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+            const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+            marker.setAttribute("id", "arrow"); marker.setAttribute("viewBox", "0 0 10 10"); marker.setAttribute("refX", "5"); marker.setAttribute("refY", "5");
+            marker.setAttribute("markerWidth", "5"); marker.setAttribute("markerHeight", "5"); marker.setAttribute("orient", "auto-start-reverse");
+            const arrowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            arrowPath.setAttribute("d", "M 0 0 L 10 5 L 0 10 z"); marker.appendChild(arrowPath); defs.appendChild(marker); svg.appendChild(defs);
+
+            function drawReinforcement(y_cm, area_cm2, label, color) {
+                if (area_cm2 > 0 && y_cm > 0) {
+                    const y = y_top + y_cm * scaleY;
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", x_center - webDrawWidth / 2 + 10); line.setAttribute("y1", y); line.setAttribute("x2", x_center + webDrawWidth / 2 - 10); line.setAttribute("y2", y);
+                    line.setAttribute("stroke", color); line.setAttribute("stroke-width", "2.5"); line.setAttribute("stroke-dasharray", "5 3"); svg.appendChild(line);
+                    const dimLine = document.createElementNS("http://www.w3.org/2000/svg", "line"); const dimX = x_center + beamDrawWidthTop / 2 + 15;
+                    dimLine.setAttribute("x1", dimX); dimLine.setAttribute("y1", y_top); dimLine.setAttribute("x2", dimX); dimLine.setAttribute("y2", y);
+                    dimLine.setAttribute("stroke", color); dimLine.setAttribute("stroke-width", "1"); dimLine.setAttribute("marker-end", "url(#arrow)");
+                    marker.querySelector('path').setAttribute("fill", color); svg.appendChild(dimLine);
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text"); text.textContent = `${label} = ${y_cm}`;
+                    text.setAttribute("x", dimX + 8); text.setAttribute("y", y_top + (y - y_top) / 2); text.setAttribute("font-size", "14px");
+                    text.setAttribute("fill", color); text.setAttribute("dominant-baseline", "middle"); svg.appendChild(text);
+                }
+            }
+            drawReinforcement(raw_inputs.d_prime, raw_inputs.As_prime, "d'", "#3b82f6");
+            drawReinforcement(raw_inputs.d, raw_inputs.As, "d", "#16a34a");
+            drawReinforcement(raw_inputs.dp, raw_inputs.Aps, "d_p", "#f97316");
+            const h_dimX = x_center - beamDrawWidthTop / 2 - 15;
+            const h_dimLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            marker.querySelector('path').setAttribute("fill", "#4b5563");
+            h_dimLine.setAttribute("x1", h_dimX); h_dimLine.setAttribute("y1", y_top); h_dimLine.setAttribute("x2", h_dimX); h_dimLine.setAttribute("y2", y_top + beamDrawHeight);
+            h_dimLine.setAttribute("stroke", "#4b5563"); h_dimLine.setAttribute("stroke-width", "1");
+            h_dimLine.setAttribute("marker-start", "url(#arrow)"); h_dimLine.setAttribute("marker-end", "url(#arrow)"); svg.appendChild(h_dimLine);
+            const h_text = document.createElementNS("http://www.w3.org/2000/svg", "text"); h_text.textContent = `h = ${raw_inputs.h}`;
+            h_text.setAttribute("x", h_dimX - 8); h_text.setAttribute("y", y_top + beamDrawHeight / 2);
+            h_text.setAttribute("font-size", "14px"); h_text.setAttribute("fill", "#374151");
+            h_text.setAttribute("text-anchor", "end"); h_text.setAttribute("dominant-baseline", "middle"); svg.appendChild(h_text);
+        }
+
+        const inputElements = document.querySelectorAll('#beam-form input[type="number"]');
+        inputElements.forEach(input => {
+            input.addEventListener('input', runCalculation);
+        });
+        
+    </script>
+</body>
+</html>
