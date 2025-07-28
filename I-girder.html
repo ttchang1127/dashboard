@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACI 318-19 I形梁彎矩強度計算工具 (台灣單位版)</title>
+    <title>ACI 318-19 I形梁彎矩與剪力強度計算工具 (台灣單位版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
         }
         .input-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1.5rem;
         }
         .input-item {
@@ -44,7 +44,7 @@
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
         <!-- 標題 -->
         <header class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">I形梁彎矩強度計算器</h1>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">I形梁彎矩與剪力強度計算器</h1>
             <p class="mt-2 text-lg text-gray-600">依據 ACI 318-19 規範</p>
         </header>
 
@@ -54,9 +54,8 @@
                 <h2 class="text-2xl font-bold mb-6 border-b pb-3 text-blue-700">1. 輸入參數</h2>
                 
                 <form id="beam-form">
-                    <!-- 梁斷面幾何尺寸 -->
-                    <fieldset class="mb-8">
-                        <legend class="text-xl font-semibold mb-4 text-gray-700">1.1 梁斷面幾何尺寸 (cm)</legend>
+                    <!-- 幾何尺寸 -->
+                    <fieldset class="mb-6"><legend class="text-xl font-semibold mb-4 text-gray-700">1.1 梁斷面幾何尺寸 (cm)</legend>
                         <div class="input-group">
                             <div class="input-item"><label for="b_f_top" class="text-sm font-medium text-gray-600 mb-1">上翼版寬度 ($b_{f,top}$)</label><input type="number" step="1" id="b_f_top" value="60" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                             <div class="input-item"><label for="h_f_top" class="text-sm font-medium text-gray-600 mb-1">上翼版厚度 ($h_{f,top}$)</label><input type="number" step="1" id="h_f_top" value="15" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
@@ -66,97 +65,92 @@
                             <div class="input-item"><label for="b_f_bot" class="text-sm font-medium text-gray-600 mb-1">下翼版寬度 ($b_{f,bot}$)</label><input type="number" step="1" id="b_f_bot" value="40" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                         </div>
                     </fieldset>
-                    
                     <!-- 材料性質 -->
-                    <fieldset class="mb-8">
-                        <legend class="text-xl font-semibold mb-4 text-gray-700">1.2 材料性質 (kgf/cm²)</legend>
+                    <fieldset class="mb-6"><legend class="text-xl font-semibold mb-4 text-gray-700">1.2 材料性質 (kgf/cm²)</legend>
                         <div class="input-group">
                             <div class="input-item"><label for="fc_prime" class="text-sm font-medium text-gray-600 mb-1">混凝土抗壓強度 $f'_c$</label><input type="number" step="1" id="fc_prime" value="350" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                             <div class="input-item"><label for="fy" class="text-sm font-medium text-gray-600 mb-1">鋼筋降伏強度 $f_y$</label><input type="number" step="1" id="fy" value="4200" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                             <div class="input-item"><label for="fpu" class="text-sm font-medium text-gray-600 mb-1">預力鋼鍵極限強度 $f_{pu}$</label><input type="number" step="1" id="fpu" value="18600" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                         </div>
                     </fieldset>
-
-                    <!-- 鋼筋與鋼鍵 -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                        <fieldset>
-                            <legend class="text-xl font-semibold mb-4 text-gray-700">1.3 壓力鋼筋</legend>
+                    <!-- 彎矩鋼筋 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                        <fieldset><legend class="text-xl font-semibold mb-4 text-gray-700">1.3 壓力鋼筋</legend>
                             <div class="space-y-4">
                                 <div class="input-item"><label for="As_prime" class="text-sm font-medium text-gray-600 mb-1">總面積 $A'_s$ (cm²)</label><input type="number" step="1" id="As_prime" value="6" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
-                                <div class="input-item"><label for="d_prime" class="text-sm font-medium text-gray-600 mb-1">至頂面距離 $d'$ (cm)</label><input type="number" step="1" id="d_prime" value="7.5" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                                <div class="input-item"><label for="d_prime" class="text-sm font-medium text-gray-600 mb-1">至頂面距離 $d'$ (cm)</label><input type="number" step="0.1" id="d_prime" value="7.5" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                             </div>
                         </fieldset>
-                        <fieldset>
-                            <legend class="text-xl font-semibold mb-4 text-gray-700">1.4 拉力鋼筋</legend>
+                        <fieldset><legend class="text-xl font-semibold mb-4 text-gray-700">1.4 拉力鋼筋</legend>
                             <div class="space-y-4">
                                 <div class="input-item"><label for="As" class="text-sm font-medium text-gray-600 mb-1">總面積 $A_s$ (cm²)</label><input type="number" step="1" id="As" value="20" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                                 <div class="input-item"><label for="d" class="text-sm font-medium text-gray-600 mb-1">至頂面距離 $d$ (cm)</label><input type="number" step="1" id="d" value="90" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                             </div>
                         </fieldset>
-                        <fieldset>
-                            <legend class="text-xl font-semibold mb-4 text-gray-700">1.5 預力鋼鍵</legend>
+                    </div>
+                     <!-- 預力與剪力鋼筋 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                        <fieldset><legend class="text-xl font-semibold mb-4 text-gray-700">1.5 預力鋼鍵</legend>
                              <div class="space-y-4">
                                 <div class="input-item"><label for="Aps" class="text-sm font-medium text-gray-600 mb-1">總面積 $A_{ps}$ (cm²)</label><input type="number" step="1" id="Aps" value="15" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                                 <div class="input-item"><label for="dp" class="text-sm font-medium text-gray-600 mb-1">至頂面距離 $d_p$ (cm)</label><input type="number" step="1" id="dp" value="85" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                                 <div class="input-item"><label for="fse" class="text-sm font-medium text-gray-600 mb-1">有效應力 $f_{se}$ (kgf/cm²)</label><input type="number" step="1" id="fse" value="11000" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
                             </div>
                         </fieldset>
+                         <fieldset><legend class="text-xl font-semibold mb-4 text-gray-700">1.6 剪力鋼筋</legend>
+                             <div class="space-y-4">
+                                <div class="input-item"><label for="Av" class="text-sm font-medium text-gray-600 mb-1">剪力筋面積 $A_{v}$ (cm²)</label><input type="number" step="0.1" id="Av" value="1.42" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                                <div class="input-item"><label for="fyt" class="text-sm font-medium text-gray-600 mb-1">剪力筋降伏強度 $f_{yt}$ (kgf/cm²)</label><input type="number" step="1" id="fyt" value="2800" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                                <div class="input-item"><label for="s" class="text-sm font-medium text-gray-600 mb-1">剪力筋間距 $s$ (cm)</label><input type="number" step="1" id="s" value="15" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+                            </div>
+                        </fieldset>
                     </div>
 
                     <!-- 操作按鈕 -->
-                    <div class="mt-6">
+                    <div class="mt-8">
                         <button type="submit" id="calculate-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out">
-                            計算彎矩強度
+                            計算斷面強度
                         </button>
                     </div>
                 </form>
             </div>
 
             <!-- 右側：計算結果 -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md h-fit">
-                <!-- 示意圖區塊 -->
-                <div class="mb-6 p-2 bg-gray-100 rounded-lg flex justify-center items-center border">
-                    <svg id="beam-diagram" width="100%" viewBox="0 0 450 400"></svg>
-                </div>
-                <h2 class="text-2xl font-bold mb-6 border-b pb-3 text-green-700">2. 計算結果</h2>
-                <div id="results-container" class="space-y-2">
-                    <div class="result-item">
-                        <span class="font-semibold text-gray-700">中性軸深度 ($c$)</span>
-                        <span id="result_c" class="font-mono text-lg font-bold text-gray-900">-- cm</span>
+            <div class="lg:col-span-2 space-y-8">
+                <div class="bg-white p-6 rounded-xl shadow-md h-fit">
+                    <!-- 示意圖區塊 -->
+                    <div class="mb-6 p-2 bg-gray-100 rounded-lg flex justify-center items-center border">
+                        <svg id="beam-diagram" width="100%" viewBox="0 0 450 400"></svg>
                     </div>
-                    <div class="result-item">
-                        <span class="font-semibold text-gray-700">極限拉力應變 ($\epsilon_t$)</span>
-                        <span id="result_epsilon_t" class="font-mono text-lg font-bold text-gray-900">--</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="font-semibold text-gray-700">強度折減係數 ($\phi$)</span>
-                        <span id="result_phi" class="font-mono text-lg font-bold text-gray-900">--</span>
-                    </div>
-                    <div class="result-item bg-blue-50 rounded-md">
-                        <span class="font-bold text-blue-800">標稱彎矩強度 ($M_n$)</span>
-                        <span id="result_Mn" class="font-mono text-xl font-extrabold text-blue-800">-- tf-m</span>
-                    </div>
-                    <div class="result-item bg-green-50 rounded-md">
-                        <span class="font-bold text-green-800">設計彎矩強度 ($\phi M_n$)</span>
-                        <span id="result_phiMn" class="font-mono text-xl font-extrabold text-green-800">-- tf-m</span>
+                    <!-- 彎矩強度 -->
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-3 text-green-700">2. 彎矩強度結果</h2>
+                    <div id="flexure-results-container" class="space-y-2">
+                        <div class="result-item"><span class="font-semibold text-gray-700">中性軸深度 ($c$)</span><span id="result_c" class="font-mono text-lg font-bold text-gray-900">-- cm</span></div>
+                        <div class="result-item"><span class="font-semibold text-gray-700">極限拉力應變 ($\epsilon_t$)</span><span id="result_epsilon_t" class="font-mono text-lg font-bold text-gray-900">--</span></div>
+                        <div class="result-item"><span class="font-semibold text-gray-700">強度折減係數 ($\phi_b$)</span><span id="result_phi" class="font-mono text-lg font-bold text-gray-900">--</span></div>
+                        <div class="result-item bg-blue-50 rounded-md"><span class="font-bold text-blue-800">標稱彎矩強度 ($M_n$)</span><span id="result_Mn" class="font-mono text-xl font-extrabold text-blue-800">-- tf-m</span></div>
+                        <div class="result-item bg-green-50 rounded-md"><span class="font-bold text-green-800">設計彎矩強度 ($\phi_b M_n$)</span><span id="result_phiMn" class="font-mono text-xl font-extrabold text-green-800">-- tf-m</span></div>
                     </div>
                 </div>
+                 <div class="bg-white p-6 rounded-xl shadow-md h-fit">
+                     <!-- 剪力強度 -->
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-3 text-red-700">3. 剪力強度結果</h2>
+                    <div id="shear-results-container" class="space-y-2">
+                        <div class="result-item"><span class="font-semibold text-gray-700">強度折減係數 ($\phi_v$)</span><span id="result_phi_v" class="font-mono text-lg font-bold text-gray-900">--</span></div>
+                        <div class="result-item"><span class="font-semibold text-gray-700">混凝土剪力強度 ($V_c$)</span><span id="result_Vc" class="font-mono text-lg font-bold text-gray-900">-- tf</span></div>
+                        <div class="result-item"><span class="font-semibold text-gray-700">鋼筋剪力強度 ($V_s$)</span><span id="result_Vs" class="font-mono text-lg font-bold text-gray-900">-- tf</span></div>
+                        <div class="result-item bg-red-50 rounded-md"><span class="font-bold text-red-800">標稱剪力強度 ($V_n$)</span><span id="result_Vn" class="font-mono text-xl font-extrabold text-red-800">-- tf</span></div>
+                        <div class="result-item bg-purple-50 rounded-md"><span class="font-bold text-purple-800">設計剪力強度 ($\phi_v V_n$)</span><span id="result_phiVn" class="font-mono text-xl font-extrabold text-purple-800">-- tf</span></div>
+                    </div>
+                 </div>
                 <div id="error-container" class="mt-4 p-4 text-red-700 bg-red-100 border border-red-400 rounded-md hidden"></div>
             </div>
         </div>
-        
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Initial render of math symbols
-            renderMathInElement(document.body, {
-                delimiters: [
-                    {left: "$$", right: "$$", display: true},
-                    {left: "$", right: "$", display: false}
-                ]
-            });
-            // Initial calculation on page load
+            renderMathInElement(document.body, { delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}] });
             runCalculation();
         });
 
@@ -167,59 +161,87 @@
         
         // --- 主計算函數 ---
         function runCalculation() {
-            // 清除舊的結果和錯誤訊息
             document.getElementById('error-container').classList.add('hidden');
             document.getElementById('error-container').textContent = '';
 
-            // 1. 獲取並轉換輸入 (從台灣單位 -> SI單位)
             const inputs = getAndConvertInputs();
             if (!inputs) return;
             
-            // 更新示意圖 (使用台灣單位)
             updateDiagram(getRawInputs());
 
-            // 2. 定義常數與計算 β₁ (全為 SI 單位)
-            const constants = { Es: 200000, Eps: 200000, epsilon_c_ultimate: 0.003 };
-            const beta1 = calculateBeta1(inputs.fc_prime);
-
-            // 3. 迭代求解中性軸深度 c (全為 SI 單位)
-            const c_mm = findNeutralAxis(inputs, constants, beta1);
-            if (isNaN(c_mm)) {
-                displayError("計算無法收斂，請檢查輸入參數是否合理。");
-                return;
+            // --- 彎矩強度計算 ---
+            const flexureResults = calculateFlexureStrength(inputs);
+            if(flexureResults) {
+                displayFlexureResults(flexureResults);
             }
 
-            // 4. 計算最終內力 (全為 SI 單位)
+            // --- 剪力強度計算 ---
+            const shearResults = calculateShearStrength(inputs);
+            if(shearResults) {
+                displayShearResults(shearResults);
+            }
+        }
+        
+        function calculateFlexureStrength(inputs) {
+            const constants = { Es: 200000, Eps: 200000, epsilon_c_ultimate: 0.003 };
+            const beta1 = calculateBeta1(inputs.fc_prime);
+            const c_mm = findNeutralAxis(inputs, constants, beta1);
+            if (isNaN(c_mm)) {
+                displayError("彎矩計算無法收斂，請檢查輸入參數是否合理。");
+                return null;
+            }
             const forces = calculateAllForces(c_mm, inputs, constants, beta1);
-
-            // 5. 計算彎矩強度 Mn (結果為 kN-m)
             const Mn_kNm = calculateMomentStrength(c_mm, forces, inputs);
-
-            // 6. 計算強度折減係數 ϕ (全為 SI 單位)
             const { phi, epsilon_t } = calculatePhi(c_mm, inputs, constants);
-            
-            // 7. 將結果轉換回顯示單位 (SI -> 台灣單位)
-            const finalResults = {
+            return {
                 c_cm: c_mm / 10,
                 epsilon_t: epsilon_t,
                 phi: phi,
-                Mn_tfm: Mn_kNm / 9.80665, // 1 tf-m ≈ 9.80665 kN-m
+                Mn_tfm: Mn_kNm / 9.80665,
                 phiMn_tfm: (Mn_kNm * phi) / 9.80665
             };
-
-            // 8. 顯示結果
-            displayResults(finalResults);
         }
 
+        function calculateShearStrength(inputs) {
+            const lambda = 1.0; // Normal-weight concrete
+            const phi_v = 0.75;
+
+            // Vc: Concrete contribution (using simplified equation from ACI Table 22.5.5.1)
+            // Vc = 0.17 * lambda * sqrt(f'c) * bw * d
+            const Vc_N = 0.17 * lambda * Math.sqrt(inputs.fc_prime) * inputs.b_w * inputs.d;
+
+            // Vs: Steel contribution
+            // Vs = Av * fyt * d / s
+            let Vs_N = 0;
+            if (inputs.s > 0) {
+                 Vs_N = (inputs.Av * inputs.fyt * inputs.d) / inputs.s;
+            }
+            
+            // Vs limit check (ACI 22.5.1.2)
+            // Vs_max = 0.66 * sqrt(f'c) * bw * d
+            const Vs_max_N = 0.66 * Math.sqrt(inputs.fc_prime) * inputs.b_w * inputs.d;
+            Vs_N = Math.min(Vs_N, Vs_max_N);
+            
+            const Vn_N = Vc_N + Vs_N;
+            const phiVn_N = phi_v * Vn_N;
+
+            // Convert from N to tf for display
+            const N_to_tf = 1 / (9.80665 * 1000);
+            return {
+                phi_v: phi_v,
+                Vc_tf: Vc_N * N_to_tf,
+                Vs_tf: Vs_N * N_to_tf,
+                Vn_tf: Vn_N * N_to_tf,
+                phiVn_tf: phiVn_N * N_to_tf
+            };
+        }
+
+
         // --- 單位轉換與輸入驗證 ---
-        const CONVERSIONS = {
-            kgfcm2_to_MPa: 0.0980665,
-            cm_to_mm: 10,
-            cm2_to_mm2: 100
-        };
+        const CONVERSIONS = { kgfcm2_to_MPa: 0.0980665, cm_to_mm: 10, cm2_to_mm2: 100 };
 
         function getRawInputs() {
-             const ids = ['b_f_top', 'h_f_top', 'b_w', 'h', 'h_f_bot', 'b_f_bot', 'fc_prime', 'fy', 'fpu', 'As_prime', 'd_prime', 'As', 'd', 'Aps', 'dp', 'fse'];
+             const ids = ['b_f_top', 'h_f_top', 'b_w', 'h', 'h_f_bot', 'b_f_bot', 'fc_prime', 'fy', 'fpu', 'fyt', 'As_prime', 'd_prime', 'As', 'd', 'Aps', 'dp', 'fse', 'Av', 's'];
              const rawInputs = {};
              for (const id of ids) {
                  rawInputs[id] = parseFloat(document.getElementById(id).value);
@@ -228,48 +250,43 @@
         }
 
         function getAndConvertInputs() {
-            const ids = ['b_f_top', 'h_f_top', 'b_w', 'h', 'h_f_bot', 'b_f_bot', 'fc_prime', 'fy', 'fpu', 'As_prime', 'd_prime', 'As', 'd', 'Aps', 'dp', 'fse'];
-            const si_inputs = {};
-            const raw_inputs = {};
+            const ids = ['b_f_top', 'h_f_top', 'b_w', 'h', 'h_f_bot', 'b_f_bot', 'fc_prime', 'fy', 'fpu', 'fyt', 'As_prime', 'd_prime', 'As', 'd', 'Aps', 'dp', 'fse', 'Av', 's'];
+            const si_inputs = {}, raw_inputs = {};
 
-            // 讀取原始輸入值並驗證
             for (const id of ids) {
                 const value = parseFloat(document.getElementById(id).value);
                 const label = document.querySelector(`label[for=${id}]`).innerHTML;
-                if (isNaN(value) || value < 0) {
-                    displayError(`輸入錯誤: '${label}' 必須為正數。`);
-                    return null;
-                }
+                if (isNaN(value) || value < 0) { displayError(`輸入錯誤: '${label}' 必須為正數。`); return null; }
                 raw_inputs[id] = value;
             }
 
-            // 轉換為內部計算用的SI單位 (mm, MPa)
+            // Convert geometry to mm
             si_inputs.b_f_top = raw_inputs.b_f_top * CONVERSIONS.cm_to_mm;
             si_inputs.h_f_top = raw_inputs.h_f_top * CONVERSIONS.cm_to_mm;
             si_inputs.b_w = raw_inputs.b_w * CONVERSIONS.cm_to_mm;
             si_inputs.h = raw_inputs.h * CONVERSIONS.cm_to_mm;
             si_inputs.h_f_bot = raw_inputs.h_f_bot * CONVERSIONS.cm_to_mm;
             si_inputs.b_f_bot = raw_inputs.b_f_bot * CONVERSIONS.cm_to_mm;
+            si_inputs.d_prime = raw_inputs.d_prime * CONVERSIONS.cm_to_mm;
+            si_inputs.d = raw_inputs.d * CONVERSIONS.cm_to_mm;
+            si_inputs.dp = raw_inputs.dp * CONVERSIONS.cm_to_mm;
+            si_inputs.s = raw_inputs.s * CONVERSIONS.cm_to_mm;
             
+            // Convert stresses to MPa
             si_inputs.fc_prime = raw_inputs.fc_prime * CONVERSIONS.kgfcm2_to_MPa;
             si_inputs.fy = raw_inputs.fy * CONVERSIONS.kgfcm2_to_MPa;
             si_inputs.fpu = raw_inputs.fpu * CONVERSIONS.kgfcm2_to_MPa;
             si_inputs.fse = raw_inputs.fse * CONVERSIONS.kgfcm2_to_MPa;
+            si_inputs.fyt = raw_inputs.fyt * CONVERSIONS.kgfcm2_to_MPa;
 
+            // Convert areas to mm²
             si_inputs.As_prime = raw_inputs.As_prime * CONVERSIONS.cm2_to_mm2;
-            si_inputs.d_prime = raw_inputs.d_prime * CONVERSIONS.cm_to_mm;
             si_inputs.As = raw_inputs.As * CONVERSIONS.cm2_to_mm2;
-            si_inputs.d = raw_inputs.d * CONVERSIONS.cm_to_mm;
             si_inputs.Aps = raw_inputs.Aps * CONVERSIONS.cm2_to_mm2;
-            si_inputs.dp = raw_inputs.dp * CONVERSIONS.cm_to_mm;
+            si_inputs.Av = raw_inputs.Av * CONVERSIONS.cm2_to_mm2;
 
-            // 幾何驗證 (使用原始單位，讓使用者易於理解)
-            if (raw_inputs.h_f_top + raw_inputs.h_f_bot >= raw_inputs.h || raw_inputs.b_w > raw_inputs.b_f_top || raw_inputs.b_w > raw_inputs.b_f_bot) {
-                displayError('幾何尺寸錯誤：翼版厚度總和不能大於總高，或腹版寬度不能大於翼版寬度。'); return null;
-            }
-            if (raw_inputs.d >= raw_inputs.h || raw_inputs.dp >= raw_inputs.h || raw_inputs.d_prime >= raw_inputs.h) {
-                displayError('鋼筋位置錯誤：d, dp, d\' 應在梁斷面內。'); return null;
-            }
+            if (raw_inputs.h_f_top + raw_inputs.h_f_bot >= raw_inputs.h || raw_inputs.b_w > raw_inputs.b_f_top || raw_inputs.b_w > raw_inputs.b_f_bot) { displayError('幾何尺寸錯誤：翼版厚度總和不能大於總高，或腹版寬度不能大於翼版寬度。'); return null; }
+            if (raw_inputs.d >= raw_inputs.h || raw_inputs.dp >= raw_inputs.h || raw_inputs.d_prime >= raw_inputs.h) { displayError('鋼筋位置錯誤：d, dp, d\' 應在梁斷面內。'); return null; }
             return si_inputs;
         }
         
@@ -314,15 +331,8 @@
         
         function getConcreteCompressiveForce(a, b_f_top, h_f_top, b_w, fc_prime) {
             let Ac, centroid;
-            if (a <= h_f_top) {
-                Ac = b_f_top * a;
-                centroid = a / 2;
-            } else {
-                const Ac_flange = (b_f_top - b_w) * h_f_top;
-                const Ac_web = b_w * a;
-                Ac = Ac_flange + Ac_web;
-                centroid = (Ac_flange * (h_f_top / 2) + Ac_web * (a / 2)) / Ac;
-            }
+            if (a <= h_f_top) { Ac = b_f_top * a; centroid = a / 2; }
+            else { const Ac_flange = (b_f_top - b_w) * h_f_top; const Ac_web = b_w * a; Ac = Ac_flange + Ac_web; centroid = (Ac_flange * (h_f_top / 2) + Ac_web * (a / 2)) / Ac; }
             return { force: 0.85 * fc_prime * Ac, centroid };
         }
         
@@ -348,12 +358,20 @@
         }
 
         // --- 顯示與繪圖 ---
-        function displayResults(results) {
+        function displayFlexureResults(results) {
             document.getElementById('result_c').textContent = `${results.c_cm.toFixed(2)} cm`;
             document.getElementById('result_epsilon_t').textContent = `${results.epsilon_t.toFixed(5)}`;
             document.getElementById('result_phi').textContent = `${results.phi.toFixed(3)}`;
             document.getElementById('result_Mn').textContent = `${results.Mn_tfm.toFixed(2)} tf-m`;
             document.getElementById('result_phiMn').textContent = `${results.phiMn_tfm.toFixed(2)} tf-m`;
+        }
+
+        function displayShearResults(results) {
+            document.getElementById('result_phi_v').textContent = `${results.phi_v.toFixed(2)}`;
+            document.getElementById('result_Vc').textContent = `${results.Vc_tf.toFixed(2)} tf`;
+            document.getElementById('result_Vs').textContent = `${results.Vs_tf.toFixed(2)} tf`;
+            document.getElementById('result_Vn').textContent = `${results.Vn_tf.toFixed(2)} tf`;
+            document.getElementById('result_phiVn').textContent = `${results.phiVn_tf.toFixed(2)} tf`;
         }
 
         function displayError(message) {
