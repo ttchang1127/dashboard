@@ -101,7 +101,14 @@
                                     </div>
                                     <div>
                                         <label for="catchmentArea" class="block text-sm font-medium text-gray-700">集水面積 (A): <span id="areaValue" class="font-bold text-teal-600">10.00</span> 公頃</label>
-                                        <input id="catchmentArea" type="range" min="0.5" max="50" value="10" step="0.01" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                        <div class="flex items-center space-x-3 mt-1">
+                                            <!-- **FIX:** Set slider step to 0.01 to match the button's fine-tuning increment. This prevents browser from snapping the value. -->
+                                            <input id="catchmentArea" type="range" min="0.5" max="50" value="10" step="0.01" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer flex-grow" aria-label="集水面積微調">
+                                            <div class="flex items-center space-x-1 shrink-0">
+                                                <button id="area-down-btn" type="button" class="w-8 h-8 flex items-center justify-center text-lg font-bold bg-gray-200 text-gray-600 rounded-md hover:bg-gray-300 active:bg-gray-400" aria-label="減少集水面積">-</button>
+                                                <button id="area-up-btn" type="button" class="w-8 h-8 flex items-center justify-center text-lg font-bold bg-gray-200 text-gray-600 rounded-md hover:bg-gray-300 active:bg-gray-400" aria-label="增加集水面積">+</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <label for="surfaceType" class="block text-sm font-medium text-gray-700">主要地表類型 (影響逕流係數 C)</label>
@@ -261,6 +268,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // --- DOM Element References ---
             const recurrenceIntervalEl = document.getElementById('recurrenceInterval');
             const catchmentAreaEl = document.getElementById('catchmentArea');
             const surfaceTypeEl = document.getElementById('surfaceType');
@@ -282,12 +290,10 @@
             const freeboardDisplayEl = document.getElementById('freeboardDisplay');
             const statusMessageEl = document.getElementById('statusMessage');
 
-            const dataStore = {
-                rational: { C: 0.90, I: 150, A: 10 },
-                manning: { S: 0.005, n: 0.013, B: 0.5, H: 0.7 },
-                velocityLimits: { min: 0.8, max: 3.0 }
-            };
-
+            const areaUpBtn = document.getElementById('area-up-btn');
+            const areaDownBtn = document.getElementById('area-down-btn');
+            
+            // --- Chart.js Setup ---
             const ctx = document.getElementById('velocityChart').getContext('2d');
             const velocityChart = new Chart(ctx, {
                 type: 'bar',
@@ -307,43 +313,22 @@
                     maintainAspectRatio: false,
                     indexAxis: 'y',
                     scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: '流速 (m/s)'
-                            }
-                        },
-                        y: {
-                            ticks: { display: false }
-                        }
+                        x: { beginAtZero: true, title: { display: true, text: '流速 (m/s)' } },
+                        y: { ticks: { display: false } }
                     },
                     plugins: {
                         legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `流速: ${context.raw.toFixed(2)} m/s`;
-                                }
-                            }
-                        },
+                        tooltip: { callbacks: { label: context => `流速: ${context.raw.toFixed(2)} m/s` } },
                         annotation: {
                             annotations: {
                                 permissibleRange: {
                                     type: 'box',
-                                    yMin: -1,
-                                    yMax: 1,
-                                    xMin: 0.8,
-                                    xMax: 3.0,
+                                    yMin: -1, yMax: 1,
+                                    xMin: 0.8, xMax: 3.0,
                                     backgroundColor: 'rgba(74, 222, 128, 0.2)',
                                     borderColor: 'rgba(34, 197, 94, 0.5)',
                                     borderWidth: 1,
-                                    label: {
-                                        content: '容許範圍',
-                                        display: true,
-                                        position: 'start',
-                                        color: '#166534'
-                                    }
+                                    label: { content: '容許範圍', display: true, position: 'start', color: '#166534' }
                                 }
                             }
                         }
@@ -351,75 +336,77 @@
                 }
             });
 
+            /**
+             * The main function to calculate all values and update the entire UI.
+             */
             function updateSimulator() {
-                // Read values from UI
-                dataStore.rational.I = parseFloat(recurrenceIntervalEl.options[recurrenceIntervalEl.selectedIndex].dataset.i);
-                dataStore.rational.A = parseFloat(catchmentAreaEl.value);
-                dataStore.rational.C = parseFloat(surfaceTypeEl.value);
-                dataStore.manning.S = parseFloat(channelSlopeEl.value) / 100;
-                dataStore.manning.n = parseFloat(channelMaterialEl.value);
-                dataStore.manning.B = parseFloat(channelWidthEl.value);
-                dataStore.manning.H = parseFloat(channelDepthEl.value);
-
+                // --- 1. Read & Store All Input Values ---
+                const dataStore = {};
+                dataStore.rational = {
+                    C: parseFloat(surfaceTypeEl.value),
+                    I: parseFloat(recurrenceIntervalEl.options[recurrenceIntervalEl.selectedIndex].dataset.i),
+                    A: parseFloat(catchmentAreaEl.value)
+                };
+                dataStore.manning = {
+                    S: parseFloat(channelSlopeEl.value) / 100,
+                    n: parseFloat(channelMaterialEl.value),
+                    B: parseFloat(channelWidthEl.value),
+                    H: parseFloat(channelDepthEl.value)
+                };
                 const selectedMaterial = channelMaterialEl.options[channelMaterialEl.selectedIndex];
-                dataStore.velocityLimits.min = parseFloat(selectedMaterial.dataset.vmin);
-                dataStore.velocityLimits.max = parseFloat(selectedMaterial.dataset.vmax);
-
-                // Update UI labels
-                areaValueEl.textContent = dataStore.rational.A.toFixed(2);
-                slopeValueEl.textContent = (dataStore.manning.S * 100).toFixed(2);
-                widthValueEl.textContent = dataStore.manning.B.toFixed(1);
-                depthValueEl.textContent = dataStore.manning.H.toFixed(1);
-
-                // Calculations
-                // 1. Rational Method for Peak Flow (Qp)
-                const Qp = (dataStore.rational.C * dataStore.rational.I * dataStore.rational.A) / 360;
+                dataStore.velocityLimits = {
+                    min: parseFloat(selectedMaterial.dataset.vmin),
+                    max: parseFloat(selectedMaterial.dataset.vmax)
+                };
                 
-                // 2. Manning's Formula to find theoretical water depth (h_theo) for Qp
-                let h_theo = 0.5; // Initial guess for water depth
+                // --- 2. Perform Calculations ---
+                const Qp = (dataStore.rational.C * dataStore.rational.I * dataStore.rational.A) / 360;
+
+                let h_theo = 0.5; // Initial guess for theoretical water depth
                 for (let i = 0; i < 15; i++) {
-                    if (h_theo <= 0) h_theo = 0.01; 
-                    let A = dataStore.manning.B * h_theo;
-                    let P = dataStore.manning.B + 2 * h_theo;
-                    let R = A / P;
-                    let Q_calc = (1 / dataStore.manning.n) * A * Math.pow(R, 2/3) * Math.pow(dataStore.manning.S, 0.5);
+                    if (h_theo <= 0) h_theo = 0.01;
+                    const A_flow = dataStore.manning.B * h_theo;
+                    const P_flow = dataStore.manning.B + 2 * h_theo;
+                    if (P_flow === 0) break; // Avoid division by zero
+                    const R_flow = A_flow / P_flow;
+                    const Q_calc = (1 / dataStore.manning.n) * A_flow * Math.pow(R_flow, 2/3) * Math.pow(dataStore.manning.S, 0.5);
                     if (Q_calc > 0) {
-                      h_theo = h_theo * Math.pow(Qp / Q_calc, 0.4);
+                        h_theo = h_theo * Math.pow(Qp / Q_calc, 0.4);
                     } else {
-                      h_theo = h_theo * 1.1; 
+                        h_theo *= 1.1; 
                     }
                 }
                 
                 const V_actual = (dataStore.manning.B * h_theo > 0) ? Qp / (dataStore.manning.B * h_theo) : 0;
-
-                // 3. Theoretical Freeboard and Total Depth Calculation
                 const freeboard_theo = Math.max(h_theo * 0.25, 0.20);
                 const totalDepth_theo = h_theo + freeboard_theo;
 
-                // 4. Calculate Channel Capacity (Qn) based on user-set total depth H
                 const A_full = dataStore.manning.B * dataStore.manning.H;
                 const P_full = dataStore.manning.B + 2 * dataStore.manning.H;
-                const R_full = A_full / P_full;
+                const R_full = P_full > 0 ? A_full / P_full : 0;
                 const Qn = (1 / dataStore.manning.n) * A_full * Math.pow(R_full, 2/3) * Math.pow(dataStore.manning.S, 0.5);
                 
-                // 5. Calculate Load Ratio
                 const loadRatio = Qn > 0 ? Qp / Qn : 0;
 
-                // Update output elements
+                // --- 3. Update All UI Displays ---
+                areaValueEl.textContent = dataStore.rational.A.toFixed(2);
+                slopeValueEl.textContent = (dataStore.manning.S * 100).toFixed(2);
+                widthValueEl.textContent = dataStore.manning.B.toFixed(1);
+                depthValueEl.textContent = dataStore.manning.H.toFixed(1);
+                
                 flowRateDisplayEl.textContent = Qp.toFixed(2);
                 channelCapacityDisplayEl.textContent = Qn.toFixed(2);
                 loadRatioDisplayEl.textContent = loadRatio.toFixed(2);
                 theoreticalDepthDisplayEl.textContent = `${totalDepth_theo.toFixed(2)}m`;
                 waterDepthEl.textContent = h_theo.toFixed(2);
                 freeboardDisplayEl.textContent = freeboard_theo.toFixed(2);
-                
-                // Update Load Ratio color
-                loadRatioContainerEl.className = "p-4 rounded-lg border flex flex-col justify-center"; // reset classes
-                loadRatioDisplayEl.className = "text-2xl lg:text-3xl font-bold"; // reset classes
+
+                loadRatioContainerEl.className = "p-4 rounded-lg border flex flex-col justify-center";
+                loadRatioDisplayEl.className = "text-2xl lg:text-3xl font-bold";
                 if (loadRatio > 1.0) {
                     loadRatioContainerEl.classList.add('bg-red-100', 'border-red-300');
                     loadRatioDisplayEl.classList.add('text-red-600');
-                } else if (loadRatio > 0.8) {
+                } else if (loadRatio > 0.85) { // Adjusted for better visual feedback
                     loadRatioContainerEl.classList.add('bg-green-100', 'border-green-300');
                     loadRatioDisplayEl.classList.add('text-green-600');
                 } else {
@@ -427,14 +414,6 @@
                     loadRatioDisplayEl.classList.add('text-yellow-600');
                 }
 
-                // Update chart
-                velocityChart.data.datasets[0].data[0] = V_actual;
-                const range = velocityChart.options.plugins.annotation.annotations.permissibleRange;
-                range.xMin = dataStore.velocityLimits.min;
-                range.xMax = dataStore.velocityLimits.max;
-                velocityChart.update();
-                
-                // Update status message
                 if (loadRatio > 1.0) {
                     statusMessageEl.textContent = '❌ 危險：渠道容量不足，將會溢流！';
                     statusMessageEl.className = 'p-4 rounded-md text-center font-bold bg-red-100 text-red-800';
@@ -448,41 +427,61 @@
                     statusMessageEl.textContent = '✅ 設計穩定：流速在容許範圍內。';
                     statusMessageEl.className = 'p-4 rounded-md text-center font-bold bg-green-100 text-green-800';
                 }
+
+                velocityChart.data.datasets[0].data[0] = V_actual;
+                const range = velocityChart.options.plugins.annotation.annotations.permissibleRange;
+                range.xMin = dataStore.velocityLimits.min;
+                range.xMax = dataStore.velocityLimits.max;
+                velocityChart.update();
             }
 
-            // Accordion Logic
-            const accordionItems = document.querySelectorAll('.accordion-item');
-            accordionItems.forEach(item => {
+            // --- Accordion Logic ---
+            document.querySelectorAll('.accordion-item').forEach(item => {
                 const header = item.querySelector('.accordion-header');
                 const content = item.querySelector('.accordion-content');
-                const icon = header.querySelector('svg');
-
                 header.addEventListener('click', () => {
                     const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
-                    
-                    accordionItems.forEach(otherItem => {
-                        if (otherItem !== item) {
-                            otherItem.querySelector('.accordion-content').style.maxHeight = '0px';
-                            otherItem.querySelector('.accordion-header svg').classList.remove('rotate-180');
-                        }
-                    });
-
-                    if (isOpen) {
-                        content.style.maxHeight = '0px';
-                        icon.classList.remove('rotate-180');
-                    } else {
+                    // Close all other accordions first
+                    document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = '0px');
+                    document.querySelectorAll('.accordion-header svg').forEach(svg => svg.classList.remove('rotate-180'));
+                    // Open the clicked one if it was closed
+                    if (!isOpen) {
                         content.style.maxHeight = content.scrollHeight + 'px';
-                        icon.classList.add('rotate-180');
+                        header.querySelector('svg').classList.add('rotate-180');
                     }
                 });
             });
+            
+            // --- Event Listeners Setup ---
 
-            // Event Listeners for simulator controls
+            /**
+             * Handles fine-tuning adjustments from the +/- buttons.
+             * @param {number} amount - The amount to adjust by (+0.01 or -0.01).
+             */
+            function adjustAreaValue(amount) {
+                const min = parseFloat(catchmentAreaEl.min);
+                const max = parseFloat(catchmentAreaEl.max);
+                let currentValue = parseFloat(catchmentAreaEl.value);
+                let newValue = parseFloat((currentValue + amount).toFixed(2));
+                
+                // Clamp the value to the allowed range
+                newValue = Math.max(min, Math.min(max, newValue));
+                
+                // Set the slider's value and then trigger the master update function
+                catchmentAreaEl.value = newValue;
+                updateSimulator();
+            }
+            
+            // Listeners for fine-tuning buttons
+            areaUpBtn.addEventListener('click', () => adjustAreaValue(0.01));
+            areaDownBtn.addEventListener('click', () => adjustAreaValue(-0.01));
+
+            // Generic listeners for all controls that update on 'input'
             [recurrenceIntervalEl, catchmentAreaEl, surfaceTypeEl, channelSlopeEl, channelMaterialEl, channelWidthEl, channelDepthEl].forEach(el => {
                 el.addEventListener('input', updateSimulator);
             });
             
-            // Initial call
+            // --- Initial Load ---
             updateSimulator();
         });
     </script>
