@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACI 318-19 I形梁彎矩與剪力強度計算工具 (台灣單位版)</title>
+    <title>ACI 318-19 I形梁彎矩、剪力與慣性矩計算工具 (台灣單位版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,6 +17,7 @@
     <style>
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            scroll-behavior: smooth;
         }
         .input-group {
             display: grid;
@@ -44,7 +45,7 @@
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
         <!-- 標題 -->
         <header class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">I形梁彎矩與剪力強度計算器</h1>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">I形梁彎矩、剪力與慣性矩計算器</h1>
             <p class="mt-2 text-lg text-gray-600">依據 ACI 318-19 規範</p>
         </header>
 
@@ -122,27 +123,41 @@
                     <div class="mb-6 p-2 bg-gray-100 rounded-lg flex justify-center items-center border">
                         <svg id="beam-diagram" width="100%" viewBox="0 0 450 400"></svg>
                     </div>
+
+                    <!-- 斷面性質 -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold mb-4 border-b pb-3 text-gray-700">2. 斷面性質</h2>
+                        <div id="geometry-results-container" class="space-y-2">
+                             <div class="result-item"><span class="font-semibold text-gray-700">斷面面積 ($A_g$)</span><span id="result_Ag" class="font-mono text-lg font-bold text-gray-900">-- cm²</span></div>
+                             <div class="result-item"><span class="font-semibold text-gray-700">斷面慣性矩 ($I_g$)</span><span id="result_Ig" class="font-mono text-lg font-bold text-gray-900">-- cm⁴</span></div>
+                             <div class="result-item"><span class="font-semibold text-gray-700">迴轉半徑 ($r$)</span><span id="result_r" class="font-mono text-lg font-bold text-gray-900">-- cm</span></div>
+                        </div>
+                    </div>
+                    
                     <!-- 彎矩強度 -->
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-3 text-green-700">2. 彎矩強度結果</h2>
-                    <div id="flexure-results-container" class="space-y-2">
-                        <div class="result-item"><span class="font-semibold text-gray-700">中性軸深度 ($c$)</span><span id="result_c" class="font-mono text-lg font-bold text-gray-900">-- cm</span></div>
-                        <div class="result-item"><span class="font-semibold text-gray-700">極限拉力應變 ($\epsilon_t$)</span><span id="result_epsilon_t" class="font-mono text-lg font-bold text-gray-900">--</span></div>
-                        <div class="result-item"><span class="font-semibold text-gray-700">強度折減係數 ($\phi_b$)</span><span id="result_phi" class="font-mono text-lg font-bold text-gray-900">--</span></div>
-                        <div class="result-item bg-blue-50 rounded-md"><span class="font-bold text-blue-800">標稱彎矩強度 ($M_n$)</span><span id="result_Mn" class="font-mono text-xl font-extrabold text-blue-800">-- tf-m</span></div>
-                        <div class="result-item bg-green-50 rounded-md"><span class="font-bold text-green-800">設計彎矩強度 ($\phi_b M_n$)</span><span id="result_phiMn" class="font-mono text-xl font-extrabold text-green-800">-- tf-m</span></div>
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold mb-4 border-b pb-3 text-green-700">3. 彎矩強度結果</h2>
+                        <div id="flexure-results-container" class="space-y-2">
+                            <div class="result-item"><span class="font-semibold text-gray-700">中性軸深度 ($c$)</span><span id="result_c" class="font-mono text-lg font-bold text-gray-900">-- cm</span></div>
+                            <div class="result-item"><span class="font-semibold text-gray-700">極限拉力應變 ($\epsilon_t$)</span><span id="result_epsilon_t" class="font-mono text-lg font-bold text-gray-900">--</span></div>
+                            <div class="result-item"><span class="font-semibold text-gray-700">強度折減係數 ($\phi_b$)</span><span id="result_phi" class="font-mono text-lg font-bold text-gray-900">--</span></div>
+                            <div class="result-item bg-blue-50 rounded-md"><span class="font-bold text-blue-800">標稱彎矩強度 ($M_n$)</span><span id="result_Mn" class="font-mono text-xl font-extrabold text-blue-800">-- tf-m</span></div>
+                            <div class="result-item bg-green-50 rounded-md"><span class="font-bold text-green-800">設計彎矩強度 ($\phi_b M_n$)</span><span id="result_phiMn" class="font-mono text-xl font-extrabold text-green-800">-- tf-m</span></div>
+                        </div>
+                    </div>
+                    
+                     <!-- 剪力強度 -->
+                    <div>
+                        <h2 class="text-2xl font-bold mb-4 border-b pb-3 text-red-700">4. 剪力強度結果</h2>
+                        <div id="shear-results-container" class="space-y-2">
+                            <div class="result-item"><span class="font-semibold text-gray-700">強度折減係數 ($\phi_v$)</span><span id="result_phi_v" class="font-mono text-lg font-bold text-gray-900">--</span></div>
+                            <div class="result-item"><span class="font-semibold text-gray-700">混凝土剪力強度 ($V_c$)</span><span id="result_Vc" class="font-mono text-lg font-bold text-gray-900">-- tf</span></div>
+                            <div class="result-item"><span class="font-semibold text-gray-700">鋼筋剪力強度 ($V_s$)</span><span id="result_Vs" class="font-mono text-lg font-bold text-gray-900">-- tf</span></div>
+                            <div class="result-item bg-red-50 rounded-md"><span class="font-bold text-red-800">標稱剪力強度 ($V_n$)</span><span id="result_Vn" class="font-mono text-xl font-extrabold text-red-800">-- tf</span></div>
+                            <div class="result-item bg-purple-50 rounded-md"><span class="font-bold text-purple-800">設計剪力強度 ($\phi_v V_n$)</span><span id="result_phiVn" class="font-mono text-xl font-extrabold text-purple-800">-- tf</span></div>
+                        </div>
                     </div>
                 </div>
-                 <div class="bg-white p-6 rounded-xl shadow-md h-fit">
-                     <!-- 剪力強度 -->
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-3 text-red-700">3. 剪力強度結果</h2>
-                    <div id="shear-results-container" class="space-y-2">
-                        <div class="result-item"><span class="font-semibold text-gray-700">強度折減係數 ($\phi_v$)</span><span id="result_phi_v" class="font-mono text-lg font-bold text-gray-900">--</span></div>
-                        <div class="result-item"><span class="font-semibold text-gray-700">混凝土剪力強度 ($V_c$)</span><span id="result_Vc" class="font-mono text-lg font-bold text-gray-900">-- tf</span></div>
-                        <div class="result-item"><span class="font-semibold text-gray-700">鋼筋剪力強度 ($V_s$)</span><span id="result_Vs" class="font-mono text-lg font-bold text-gray-900">-- tf</span></div>
-                        <div class="result-item bg-red-50 rounded-md"><span class="font-bold text-red-800">標稱剪力強度 ($V_n$)</span><span id="result_Vn" class="font-mono text-xl font-extrabold text-red-800">-- tf</span></div>
-                        <div class="result-item bg-purple-50 rounded-md"><span class="font-bold text-purple-800">設計剪力強度 ($\phi_v V_n$)</span><span id="result_phiVn" class="font-mono text-xl font-extrabold text-purple-800">-- tf</span></div>
-                    </div>
-                 </div>
                 <div id="error-container" class="mt-4 p-4 text-red-700 bg-red-100 border border-red-400 rounded-md hidden"></div>
             </div>
         </div>
@@ -164,75 +179,135 @@
             document.getElementById('error-container').classList.add('hidden');
             document.getElementById('error-container').textContent = '';
 
-            const inputs = getAndConvertInputs();
-            if (!inputs) return;
+            const si_inputs = getAndConvertInputs();
+            const raw_inputs = getRawInputs();
+            if (!si_inputs || !raw_inputs) return;
             
-            updateDiagram(getRawInputs());
+            updateDiagram(raw_inputs);
+
+            // --- 斷面性質計算 ---
+            const geometryResults = calculateSectionProperties(raw_inputs);
+            displayGeometryResults(geometryResults);
 
             // --- 彎矩強度計算 ---
-            const flexureResults = calculateFlexureStrength(inputs);
+            const flexureResults = calculateFlexureStrength(si_inputs);
             if(flexureResults) {
                 displayFlexureResults(flexureResults);
             }
 
             // --- 剪力強度計算 ---
-            const shearResults = calculateShearStrength(inputs);
+            const shearResults = calculateShearStrength(si_inputs);
             if(shearResults) {
                 displayShearResults(shearResults);
             }
         }
         
+        function calculateSectionProperties(inputs) {
+            // 使用原始輸入(cm)進行幾何計算
+            const { b_f_top, h_f_top, b_w, h, h_f_bot, b_f_bot } = inputs;
+            const h_w = h - h_f_top - h_f_bot; // 腹版高度
+
+            if (h_w < 0) return { Ig_cm4: 0, Ag_cm2: 0, r_cm: 0 }; // 避免幾何錯誤
+
+            // 將斷面分為三塊：上翼版、腹版、下翼版
+            const parts = [
+                { name: 'top_flange', A: b_f_top * h_f_top, y_bar: h_f_top / 2 },
+                { name: 'web',        A: b_w * h_w,         y_bar: h_f_top + h_w / 2 },
+                { name: 'bot_flange', A: b_f_bot * h_f_bot, y_bar: h_f_top + h_w + h_f_bot / 2 }
+            ];
+
+            // 計算總面積與 A*y 的總和
+            let totalArea = 0;
+            let sumAy = 0;
+            parts.forEach(p => {
+                totalArea += p.A;
+                sumAy += p.A * p.y_bar;
+            });
+
+            // 計算整個 I 形梁的形心 (從頂部邊緣算起)
+            const y_c = totalArea > 0 ? sumAy / totalArea : 0;
+
+            // 使用平行軸定理計算各部分的慣性矩： I = I_c + A*d^2
+            let Ig = 0;
+            // 上翼版
+            const Ic_top = (b_f_top * Math.pow(h_f_top, 3)) / 12;
+            const d_top = y_c - parts[0].y_bar;
+            Ig += Ic_top + parts[0].A * Math.pow(d_top, 2);
+
+            // 腹版
+            const Ic_web = (b_w * Math.pow(h_w, 3)) / 12;
+            const d_web = y_c - parts[1].y_bar;
+            Ig += Ic_web + parts[1].A * Math.pow(d_web, 2);
+
+            // 下翼版
+            const Ic_bot = (b_f_bot * Math.pow(h_f_bot, 3)) / 12;
+            const d_bot = y_c - parts[2].y_bar;
+            Ig += Ic_bot + parts[2].A * Math.pow(d_bot, 2);
+
+            // 計算迴轉半徑
+            const r = totalArea > 0 ? Math.sqrt(Ig / totalArea) : 0;
+            
+            return { Ag_cm2: totalArea, Ig_cm4: Ig, r_cm: r };
+        }
+
         function calculateFlexureStrength(inputs) {
-            const constants = { Es: 200000, Eps: 200000, epsilon_c_ultimate: 0.003 };
-            const beta1 = calculateBeta1(inputs.fc_prime);
-            const c_mm = findNeutralAxis(inputs, constants, beta1);
-            if (isNaN(c_mm)) {
+            const constants = { Es: 2.04e6, Eps: 1.97e6, epsilon_c_ultimate: 0.003 }; // Es, Eps in kgf/cm^2
+            const beta1 = calculateBeta1(inputs.fc_prime); // 使用MPa單位計算
+            
+            // 將單位從 MPa, mm 轉回 kgf, cm 進行計算
+            const inputs_kgfcm = convertSiToKgfCm(inputs);
+
+            const c_cm = findNeutralAxis(inputs_kgfcm, constants, beta1);
+            if (isNaN(c_cm)) {
                 displayError("彎矩計算無法收斂，請檢查輸入參數是否合理。");
                 return null;
             }
-            const forces = calculateAllForces(c_mm, inputs, constants, beta1);
-            const Mn_kNm = calculateMomentStrength(c_mm, forces, inputs);
-            const { phi, epsilon_t } = calculatePhi(c_mm, inputs, constants);
+            const forces = calculateAllForces(c_cm, inputs_kgfcm, constants, beta1);
+            const Mn_tfm = calculateMomentStrength(c_cm, forces, inputs_kgfcm);
+            const { phi, epsilon_t } = calculatePhi(c_cm, inputs_kgfcm, constants);
             return {
-                c_cm: c_mm / 10,
+                c_cm: c_cm,
                 epsilon_t: epsilon_t,
                 phi: phi,
-                Mn_tfm: Mn_kNm / 9.80665,
-                phiMn_tfm: (Mn_kNm * phi) / 9.80665
+                Mn_tfm: Mn_tfm,
+                phiMn_tfm: Mn_tfm * phi
             };
         }
 
         function calculateShearStrength(inputs) {
-            const lambda = 1.0; // Normal-weight concrete
+             // 使用轉換回 kgf/cm2, cm 的單位
+            const inputs_kgfcm = convertSiToKgfCm(inputs);
+            const { fc_prime, b_w, d, Av, fyt, s } = inputs_kgfcm;
+
+            const lambda = 1.0; // 普通重量混凝土
             const phi_v = 0.75;
 
-            // Vc: Concrete contribution (using simplified equation from ACI Table 22.5.5.1)
-            // Vc = 0.17 * lambda * sqrt(f'c) * bw * d
-            const Vc_N = 0.17 * lambda * Math.sqrt(inputs.fc_prime) * inputs.b_w * inputs.d;
+            // Vc: 混凝土剪力強度貢獻 (ACI 表 22.5.5.1 簡化公式)
+            // Vc = 0.53 * lambda * sqrt(f'c) * bw * d
+            const Vc_kgf = 0.53 * lambda * Math.sqrt(fc_prime) * b_w * d;
 
-            // Vs: Steel contribution
+            // Vs: 鋼筋剪力強度貢獻
             // Vs = Av * fyt * d / s
-            let Vs_N = 0;
-            if (inputs.s > 0) {
-                 Vs_N = (inputs.Av * inputs.fyt * inputs.d) / inputs.s;
+            let Vs_kgf = 0;
+            if (s > 0) {
+                 Vs_kgf = (Av * fyt * d) / s;
             }
             
-            // Vs limit check (ACI 22.5.1.2)
-            // Vs_max = 0.66 * sqrt(f'c) * bw * d
-            const Vs_max_N = 0.66 * Math.sqrt(inputs.fc_prime) * inputs.b_w * inputs.d;
-            Vs_N = Math.min(Vs_N, Vs_max_N);
+            // Vs 上限檢核 (ACI 22.5.1.2)
+            // Vs_max = 2.1 * sqrt(f'c) * bw * d
+            const Vs_max_kgf = 2.1 * Math.sqrt(fc_prime) * b_w * d;
+            Vs_kgf = Math.min(Vs_kgf, Vs_max_kgf);
             
-            const Vn_N = Vc_N + Vs_N;
-            const phiVn_N = phi_v * Vn_N;
+            const Vn_kgf = Vc_kgf + Vs_kgf;
+            const phiVn_kgf = phi_v * Vn_kgf;
 
-            // Convert from N to tf for display
-            const N_to_tf = 1 / (9.80665 * 1000);
+            // 從 kgf 轉換為 tf 顯示
             return {
                 phi_v: phi_v,
-                Vc_tf: Vc_N * N_to_tf,
-                Vs_tf: Vs_N * N_to_tf,
-                Vn_tf: Vn_N * N_to_tf,
-                phiVn_tf: phiVn_N * N_to_tf
+                Vc_tf: Vc_kgf / 1000,
+                Vs_tf: Vs_kgf / 1000,
+                Vn_tf: Vn_kgf / 1000,
+                phiVn_tf: phiVn_kgf / 1000
             };
         }
 
@@ -244,7 +319,12 @@
              const ids = ['b_f_top', 'h_f_top', 'b_w', 'h', 'h_f_bot', 'b_f_bot', 'fc_prime', 'fy', 'fpu', 'fyt', 'As_prime', 'd_prime', 'As', 'd', 'Aps', 'dp', 'fse', 'Av', 's'];
              const rawInputs = {};
              for (const id of ids) {
-                 rawInputs[id] = parseFloat(document.getElementById(id).value);
+                 const value = parseFloat(document.getElementById(id).value);
+                 if (isNaN(value)) {
+                    displayError(`輸入無效：${id} 不是數字`);
+                    return null;
+                 }
+                 rawInputs[id] = value;
              }
              return rawInputs;
         }
@@ -255,58 +335,68 @@
 
             for (const id of ids) {
                 const value = parseFloat(document.getElementById(id).value);
-                const label = document.querySelector(`label[for=${id}]`).innerHTML;
+                const labelElement = document.querySelector(`label[for=${id}]`);
+                const label = labelElement ? labelElement.innerHTML : id;
                 if (isNaN(value) || value < 0) { displayError(`輸入錯誤: '${label}' 必須為正數。`); return null; }
                 raw_inputs[id] = value;
             }
 
             // Convert geometry to mm
-            si_inputs.b_f_top = raw_inputs.b_f_top * CONVERSIONS.cm_to_mm;
-            si_inputs.h_f_top = raw_inputs.h_f_top * CONVERSIONS.cm_to_mm;
-            si_inputs.b_w = raw_inputs.b_w * CONVERSIONS.cm_to_mm;
-            si_inputs.h = raw_inputs.h * CONVERSIONS.cm_to_mm;
-            si_inputs.h_f_bot = raw_inputs.h_f_bot * CONVERSIONS.cm_to_mm;
-            si_inputs.b_f_bot = raw_inputs.b_f_bot * CONVERSIONS.cm_to_mm;
-            si_inputs.d_prime = raw_inputs.d_prime * CONVERSIONS.cm_to_mm;
-            si_inputs.d = raw_inputs.d * CONVERSIONS.cm_to_mm;
-            si_inputs.dp = raw_inputs.dp * CONVERSIONS.cm_to_mm;
-            si_inputs.s = raw_inputs.s * CONVERSIONS.cm_to_mm;
+            si_inputs.b_f_top = raw_inputs.b_f_top * CONVERSIONS.cm_to_mm; si_inputs.h_f_top = raw_inputs.h_f_top * CONVERSIONS.cm_to_mm;
+            si_inputs.b_w = raw_inputs.b_w * CONVERSIONS.cm_to_mm; si_inputs.h = raw_inputs.h * CONVERSIONS.cm_to_mm;
+            si_inputs.h_f_bot = raw_inputs.h_f_bot * CONVERSIONS.cm_to_mm; si_inputs.b_f_bot = raw_inputs.b_f_bot * CONVERSIONS.cm_to_mm;
+            si_inputs.d_prime = raw_inputs.d_prime * CONVERSIONS.cm_to_mm; si_inputs.d = raw_inputs.d * CONVERSIONS.cm_to_mm;
+            si_inputs.dp = raw_inputs.dp * CONVERSIONS.cm_to_mm; si_inputs.s = raw_inputs.s * CONVERSIONS.cm_to_mm;
             
             // Convert stresses to MPa
-            si_inputs.fc_prime = raw_inputs.fc_prime * CONVERSIONS.kgfcm2_to_MPa;
-            si_inputs.fy = raw_inputs.fy * CONVERSIONS.kgfcm2_to_MPa;
-            si_inputs.fpu = raw_inputs.fpu * CONVERSIONS.kgfcm2_to_MPa;
-            si_inputs.fse = raw_inputs.fse * CONVERSIONS.kgfcm2_to_MPa;
+            si_inputs.fc_prime = raw_inputs.fc_prime * CONVERSIONS.kgfcm2_to_MPa; si_inputs.fy = raw_inputs.fy * CONVERSIONS.kgfcm2_to_MPa;
+            si_inputs.fpu = raw_inputs.fpu * CONVERSIONS.kgfcm2_to_MPa; si_inputs.fse = raw_inputs.fse * CONVERSIONS.kgfcm2_to_MPa;
             si_inputs.fyt = raw_inputs.fyt * CONVERSIONS.kgfcm2_to_MPa;
 
             // Convert areas to mm²
-            si_inputs.As_prime = raw_inputs.As_prime * CONVERSIONS.cm2_to_mm2;
-            si_inputs.As = raw_inputs.As * CONVERSIONS.cm2_to_mm2;
-            si_inputs.Aps = raw_inputs.Aps * CONVERSIONS.cm2_to_mm2;
-            si_inputs.Av = raw_inputs.Av * CONVERSIONS.cm2_to_mm2;
+            si_inputs.As_prime = raw_inputs.As_prime * CONVERSIONS.cm2_to_mm2; si_inputs.As = raw_inputs.As * CONVERSIONS.cm2_to_mm2;
+            si_inputs.Aps = raw_inputs.Aps * CONVERSIONS.cm2_to_mm2; si_inputs.Av = raw_inputs.Av * CONVERSIONS.cm2_to_mm2;
 
             if (raw_inputs.h_f_top + raw_inputs.h_f_bot >= raw_inputs.h || raw_inputs.b_w > raw_inputs.b_f_top || raw_inputs.b_w > raw_inputs.b_f_bot) { displayError('幾何尺寸錯誤：翼版厚度總和不能大於總高，或腹版寬度不能大於翼版寬度。'); return null; }
             if (raw_inputs.d >= raw_inputs.h || raw_inputs.dp >= raw_inputs.h || raw_inputs.d_prime >= raw_inputs.h) { displayError('鋼筋位置錯誤：d, dp, d\' 應在梁斷面內。'); return null; }
             return si_inputs;
         }
         
-        // --- 核心計算函數 (全使用 SI 單位: mm, MPa, N) ---
+        function convertSiToKgfCm(si_inputs) {
+            const kgfcm_inputs = {};
+            const MPa_to_kgfcm2 = 1 / CONVERSIONS.kgfcm2_to_MPa;
+            const mm_to_cm = 1 / CONVERSIONS.cm_to_mm;
+            const mm2_to_cm2 = 1 / CONVERSIONS.cm2_to_mm2;
+
+            for(const key in si_inputs) {
+                if (['fc_prime', 'fy', 'fpu', 'fse', 'fyt'].includes(key)) {
+                    kgfcm_inputs[key] = si_inputs[key] * MPa_to_kgfcm2;
+                } else if (['As_prime', 'As', 'Aps', 'Av'].includes(key)) {
+                    kgfcm_inputs[key] = si_inputs[key] * mm2_to_cm2;
+                } else { // geometry
+                    kgfcm_inputs[key] = si_inputs[key] * mm_to_cm;
+                }
+            }
+            return kgfcm_inputs;
+        }
+        
+        // --- 核心計算函數 (彎矩使用 kgf-cm 單位) ---
         function calculateBeta1(fc_prime_MPa) {
             if (fc_prime_MPa <= 28) return 0.85;
-            if (fc_prime_MPa < 55) return 0.85 - 0.05 * (fc_prime_MPa - 28) / 7;
-            return 0.65;
+            if (fc_prime_MPa >= 55) return 0.65;
+            return 0.85 - 0.05 * (fc_prime_MPa - 28) / 7;
         }
 
         function findNeutralAxis(inputs, constants, beta1) {
             let c_low = 0.001, c_high = inputs.h, c_mid;
-            const max_iter = 100, tolerance = 0.1; // 0.1 N 容許誤差
+            const max_iter = 100, tolerance = 1; // 1 kgf 容許誤差
             for (let i = 0; i < max_iter; i++) {
                 c_mid = (c_low + c_high) / 2;
                 if (c_mid <= 0) c_mid = 0.001;
                 const forces = calculateAllForces(c_mid, inputs, constants, beta1);
-                const p_total_N = forces.Cc + forces.Fs_prime - forces.Ts - forces.Tps;
-                if (Math.abs(p_total_N) < tolerance) return c_mid;
-                if (p_total_N > 0) c_high = c_mid; else c_low = c_mid;
+                const p_total_kgf = forces.Cc + forces.Fs_prime - forces.Ts - forces.Tps;
+                if (Math.abs(p_total_kgf) < tolerance) return c_mid;
+                if (p_total_kgf > 0) c_high = c_mid; else c_low = c_mid;
             }
             return NaN;
         }
@@ -338,12 +428,12 @@
         
         function calculateMomentStrength(c, forces, inputs) {
             const { Cc, Fs_prime, Ts, Tps, concreteCentroid } = forces;
-            const Mn_Cc = Cc * (c - concreteCentroid);
-            const Mn_Fs_prime = Fs_prime * (c - inputs.d_prime);
-            const Mn_Ts = Ts * (inputs.d - c);
-            const Mn_Tps = Tps * (inputs.dp - c);
-            const Mn_total_N_mm = Mn_Cc + Mn_Fs_prime + Mn_Ts + Mn_Tps;
-            return Mn_total_N_mm / 1e6; // Convert N-mm to kN-m for intermediate result
+            let Mn_total_kgf_cm = 0;
+            Mn_total_kgf_cm += Cc * (c - concreteCentroid);
+            Mn_total_kgf_cm += Fs_prime * (c - inputs.d_prime);
+            Mn_total_kgf_cm += Ts * (inputs.d - c);
+            Mn_total_kgf_cm += Tps * (inputs.dp - c);
+            return Mn_total_kgf_cm / 1000 / 100; // Convert kgf-cm to tf-m
         }
 
         function calculatePhi(c, inputs, constants) {
@@ -358,6 +448,12 @@
         }
 
         // --- 顯示與繪圖 ---
+        function displayGeometryResults(results) {
+             document.getElementById('result_Ag').textContent = `${results.Ag_cm2.toLocaleString('en-US', { maximumFractionDigits: 2 })} cm²`;
+             document.getElementById('result_Ig').textContent = `${results.Ig_cm4.toLocaleString('en-US', { maximumFractionDigits: 0 })} cm⁴`;
+             document.getElementById('result_r').textContent = `${results.r_cm.toFixed(2)} cm`;
+        }
+
         function displayFlexureResults(results) {
             document.getElementById('result_c').textContent = `${results.c_cm.toFixed(2)} cm`;
             document.getElementById('result_epsilon_t').textContent = `${results.epsilon_t.toFixed(5)}`;
@@ -383,7 +479,7 @@
         function updateDiagram(raw_inputs) {
             if (!raw_inputs) return;
             const svg = document.getElementById('beam-diagram');
-            svg.innerHTML = '';
+            svg.innerHTML = ''; // 清空舊圖
             const svgWidth = 450, svgHeight = 400;
             const margin = { top: 40, right: 80, bottom: 40, left: 80 };
             const h = raw_inputs.h, b_max = Math.max(raw_inputs.b_f_top, raw_inputs.b_f_bot, 1);
