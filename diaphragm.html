@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式預力混凝土橋梁檢核指南_橫梁</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU07EWHEZrWCsZQAAEoAxpHy2xAftGTgWFSgC8BH31ZSFcvlALTMWC_">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .result-box {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .ok-result {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+        }
+        .ng-result {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+        }
+        .stepper-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem; /* 28px */
+            height: 1.1rem; /* 17.6px */
+            font-size: 0.75rem; /* 12px */
+            line-height: 1;
+            color: #475569; /* slate-600 */
+            background-color: #f1f5f9; /* slate-100 */
+            border: 1px solid #cbd5e1; /* slate-300 */
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .stepper-btn:hover {
+            background-color: #e2e8f0; /* slate-200 */
+            z-index: 5;
+        }
+        .stepper-btn:active {
+            background-color: #cbd5e1; /* slate-300 */
+        }
+        .stepper-btn.up {
+            border-bottom: 0.5px solid #cbd5e1;
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+        .stepper-btn.down {
+             border-top: 0.5px solid #e2e8f0;
+             border-radius: 0 0 0.375rem 0.375rem;
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+        #crossbeam-canvas {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1.6 / 1;
+        }
+        .compact-input-group {
+             display: flex;
+             align-items: center;
+             border: 1px solid #cbd5e1; /* slate-300 */
+             border-radius: 0.375rem; /* rounded-lg */
+             background-color: white;
+             overflow: hidden;
+        }
+        .compact-input-group input {
+            flex-grow: 1;
+            width: 100%;
+            padding: 0.25rem; /* p-1 */
+            border: 0;
+            text-align: center;
+            font-size: 0.875rem; /* text-sm */
+        }
+        .compact-input-group input:focus {
+            ring: 0;
+            outline: none;
+        }
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            border-bottom: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #475569; /* slate-600 */
+            background-color: #f1f5f9; /* slate-100 */
+            transition: all 0.2s ease-in-out;
+            margin-bottom: -1px;
+        }
+        .tab-btn.active {
+            color: #0c4a6e; /* sky-900 */
+            background-color: white;
+            border-color: #e2e8f0; /* slate-200 */
+            border-bottom: 1px solid white;
+        }
+        .tab-btn:first-child { border-radius: 0.5rem 0 0 0; }
+        .tab-btn:last-child { border-radius: 0 0.5rem 0 0; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">互動式預力混凝土橋梁檢核指南</h1>
+            <h2 class="text-2xl md:text-3xl font-bold text-sky-700 mt-2">橫梁 (Diaphragm) 檢核</h2>
+            <p class="mt-2 text-lg text-slate-600 max-w-4xl mx-auto">本指南依據日本《道路橋示方書》對橫梁進行檢核。所有數值均基於三跨連續PC箱型梁橋範例，您可以修改輸入值以觀察檢核結果的變化。</p>
+        </header>
+
+        <div class="max-w-7xl mx-auto">
+            <main id="main-content" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Content will be dynamically inserted here -->
+            </main>
+            <footer id="footer-descriptions" class="mt-8">
+                <!-- Footer content will be dynamically inserted here -->
+            </footer>
+        </div>
+    </div>
+
+<script>
+    const rebarData = {
+        'D10': { area: 71.3, dia: 10 },
+        'D13': { area: 126.7, dia: 13 },
+        'D16': { area: 198.6, dia: 16 },
+        'D19': { area: 286.5, dia: 19 },
+        'D22': { area: 387.1, dia: 22 },
+        'D25': { area: 506.7, dia: 25 },
+    };
+
+    const designData = {
+        crossbeam: {
+            name: "橫梁檢核 (Sec-2)",
+            inputs: {
+                dimensions: {
+                    totalHeight: 2000, topSlabThickness: 300, topSlabOverhang: 150,
+                    webThickness: 400, webHaunch: 150, bottomSlabThickness: 500,
+                    bottomSlabOverhang: 438, netSpacing_l: 2000,
+                },
+                materials: {
+                    fck: 35,
+                    fpy: 1600, fpu: 1880, Eps: 195000, 
+                    tendonArea: 215, 
+                    fy_rebar: 420, Es_rebar: 200000,
+                },
+                rebar: {
+                    top: { type: 'D13', count: 13, cover: 60 },
+                    bottom: { type: 'D16', count: 16, cover: 60 }
+                },
+                 shearRebar: { type: 'D13', legs: 2, spacing: 150 },
+                tendonLayout: {
+                    top: [11],
+                    bottom: [8, 8, 6],
+                    topDepths: [190], 
+                    bottomDepths: [100, 250, 400],
+                    bottomHorizWidth: 1200 
+                },
+                factors: {
+                    phi_b: 0.8,
+                    xi_1: 0.9,
+                    xi_2: 0.9,
+                    xi_s: 0.9,
+                },
+                checks: {
+                    // Load-bearing - Pressure(+), Tension(-)
+                    ls1_concrete_stress_top: { val: -0.15, limit_tens: -2.55, limit_comp: 20.7 },
+                    ls1_concrete_stress_bot: { val: 5.59, limit_tens: -2.55, limit_comp: 20.7 },
+                    ls1_rebar: { val: 1647, limit: 841 },
+                    ls3_moment: { val: -5127.4 },
+                    ls1_shear_stress: { val: -1.31, limit: -2.00 },
+                    ls3_shear_diag: { val: 5856 },
+                    ls3_shear_web: { val: 5856 },
+                    // Durability
+                    fatigue_stress_top: { val: 2.86, limit_tens: 0.00, limit_comp: 13.80 },
+                    fatigue_stress_bot: { val: 5.25, limit_tens: -1.38, limit_comp: 13.80 },
+                    // Reversing Stress
+                    reversing_md: { val: -15.55 },
+                    reversing_ml: { val: 67.21 },
+                }
+            },
+            calculated: {
+                Myc_pos: 0, Myc_neg: 0,
+                Muc_pos: 0, Muc_neg: 0,
+                Mud_max: 0, Mud_min: 0,
+                Susd: 0, Sucd: 0
+            }
+        }
+    };
+    
+    let currentCheckTab = 'loadBearing';
+    let currentFooterTab = 'mechanics';
+
+    // --- Core Calculation Logic ---
+    function calculateAllResistances() {
+        calculateMomentResistance(false); // Negative moment
+        calculateMomentResistance(true);  // Positive moment
+        calculateShearResistance();
+    }
+
+    function calculateMomentResistance(isPositiveMoment) {
+        const { dimensions: dims, materials: mats, tendonLayout: layout, rebar, factors } = designData.crossbeam.inputs;
+        const EPSILON_CU = 0.0035; 
+        const BETA_1 = 0.8; 
+        const effectivePrestrain = 0.0058;
+
+        const getNetForce = (c) => {
+            if (c <= 0.1) return 1e9;
+            let netForce = 0;
+            
+            const a = BETA_1 * c;
+            let C_c = 0;
+            if (isPositiveMoment) { // Top flange in compression
+                const topFlangeWidth = dims.webThickness + 2 * dims.webHaunch;
+                C_c = (a <= dims.topSlabThickness) ?
+                    0.85 * mats.fck * a * topFlangeWidth :
+                    0.85 * mats.fck * dims.topSlabThickness * topFlangeWidth + 0.85 * mats.fck * (a - dims.topSlabThickness) * dims.webThickness;
+            } else { // Bottom flange in compression
+                const botFlangeWidth = dims.webThickness + 2 * dims.bottomSlabOverhang;
+                C_c = (a <= dims.bottomSlabThickness) ?
+                    0.85 * mats.fck * a * botFlangeWidth :
+                    0.85 * mats.fck * dims.bottomSlabThickness * botFlangeWidth + 0.85 * mats.fck * (a - dims.bottomSlabThickness) * dims.webThickness;
+            }
+            netForce -= C_c;
+
+            const getSteelStress = (d, isPrestressed) => {
+                const strain_bending = (isPositiveMoment ? (c - d) / c : (d - c) / c) * EPSILON_CU;
+                const final_strain = (isPrestressed ? effectivePrestrain : 0) + strain_bending;
+                return isPrestressed ? Math.min(mats.fpu, final_strain * mats.Eps) : Math.max(-mats.fy_rebar, Math.min(mats.fy_rebar, final_strain * mats.Es_rebar));
+            };
+            
+            const topRebarSpec = rebarData[rebar.top.type];
+            const d_s_top = rebar.top.cover + topRebarSpec.dia / 2;
+            netForce += rebar.top.count * topRebarSpec.area * getSteelStress(d_s_top, false);
+            
+            const botRebarSpec = rebarData[rebar.bottom.type];
+            const d_s_bot = dims.totalHeight - (rebar.bottom.cover + botRebarSpec.dia / 2);
+            netForce += rebar.bottom.count * botRebarSpec.area * getSteelStress(d_s_bot, false);
+
+            layout.top.forEach((count, idx) => {
+                const d_p = layout.topDepths[idx];
+                netForce += count * mats.tendonArea * getSteelStress(d_p, true);
+            });
+            layout.bottom.forEach((count, idx) => {
+                const d_p_bot = dims.totalHeight - layout.bottomDepths[idx];
+                netForce += count * mats.tendonArea * getSteelStress(d_p_bot, true);
+            });
+            return netForce;
+        };
+        
+        let c_low = 1, c_high = dims.totalHeight, c = (c_low + c_high) / 2;
+        for (let i = 0; i < 50; i++) {
+            c = (c_low + c_high) / 2;
+            const force = getNetForce(c);
+            if (Math.abs(force) < 100) break;
+            if (force > 0) { c_high = c; } else { c_low = c; }
+        }
+        
+        const a = BETA_1 * c;
+        let C_total_moment = 0, C_total_force = 0;
+
+        if (isPositiveMoment) {
+            const topFlangeWidth = dims.webThickness + 2 * dims.webHaunch;
+            if (a <= dims.topSlabThickness) {
+                const force = 0.85 * mats.fck * a * topFlangeWidth;
+                C_total_moment += force * (a / 2); C_total_force += force;
+            } else {
+                const force_flange = 0.85 * mats.fck * dims.topSlabThickness * topFlangeWidth;
+                const force_web = 0.85 * mats.fck * (a - dims.topSlabThickness) * dims.webThickness;
+                C_total_moment += force_flange * (dims.topSlabThickness / 2) + force_web * (dims.topSlabThickness + (a - dims.topSlabThickness) / 2);
+                C_total_force += force_flange + force_web;
+            }
+        } else {
+             const botFlangeWidth = dims.webThickness + 2 * dims.bottomSlabOverhang;
+             if (a <= dims.bottomSlabThickness) {
+                const force = 0.85 * mats.fck * a * botFlangeWidth;
+                C_total_moment += force * (dims.totalHeight - a / 2); C_total_force += force;
+            } else {
+                const force_flange = 0.85 * mats.fck * dims.bottomSlabThickness * botFlangeWidth;
+                const force_web = 0.85 * mats.fck * (a - dims.bottomSlabThickness) * dims.webThickness;
+                C_total_moment += force_flange * (dims.totalHeight - dims.bottomSlabThickness/2) + force_web * (dims.totalHeight - dims.bottomSlabThickness - (a - dims.bottomSlabThickness) / 2);
+                C_total_force += force_flange + force_web;
+            }
+        }
+        
+        const y_bar_c = C_total_force > 0 ? C_total_moment / C_total_force : 0;
+        let Muc = 0;
+
+        const getSteelStressAndMoment = (d, As, isPrestressed) => {
+            const strain_bending = (isPositiveMoment ? (c-d)/c : (d-c)/c) * EPSILON_CU;
+            const final_strain = (isPrestressed ? effectivePrestrain : 0) + strain_bending;
+            let stress = isPrestressed ? Math.min(mats.fpu, final_strain * mats.Eps) : Math.max(-mats.fy_rebar, Math.min(mats.fy_rebar, final_strain * mats.Es_rebar));
+            Muc += As * stress * (d - y_bar_c);
+        };
+        
+        const topRebarSpec = rebarData[rebar.top.type];
+        const d_s_top = rebar.top.cover + topRebarSpec.dia / 2;
+        getSteelStressAndMoment(d_s_top, rebar.top.count * topRebarSpec.area, false);
+        
+        const botRebarSpec = rebarData[rebar.bottom.type];
+        const d_s_bot = dims.totalHeight - (rebar.bottom.cover + botRebarSpec.dia / 2);
+        getSteelStressAndMoment(d_s_bot, rebar.bottom.count * botRebarSpec.area, false);
+
+        layout.top.forEach((count, idx) => getSteelStressAndMoment(layout.topDepths[idx], count * mats.tendonArea, true));
+        layout.bottom.forEach((count, idx) => getSteelStressAndMoment(dims.totalHeight - layout.bottomDepths[idx], count * mats.tendonArea, true));
+        
+        const Mud = Math.abs(Muc) / 1e6 * factors.phi_b * factors.xi_1 * factors.xi_2;
+        if (isPositiveMoment) {
+            designData.crossbeam.calculated.Muc_pos = Math.abs(Muc) / 1e6;
+            designData.crossbeam.calculated.Mud_max = Mud;
+        } else {
+            designData.crossbeam.calculated.Muc_neg = -Math.abs(Muc) / 1e6;
+            designData.crossbeam.calculated.Mud_min = -Mud;
+        }
+    }
+
+    function calculateShearResistance() {
+        const { dimensions: dims, materials: mats, shearRebar, factors } = designData.crossbeam.inputs;
+        const d_eff = dims.totalHeight * 0.8; // Effective depth approximation
+        
+        // Concrete contribution
+        const f_ctd = 0.21 * Math.pow(mats.fck, 2/3); // Design tensile strength
+        const Sc = (1/6) * f_ctd * dims.webThickness * d_eff / 1000; // in kN
+
+        // Shear rebar contribution
+        const Av = shearRebar.legs * rebarData[shearRebar.type].area;
+        const Ss = (Av * mats.fy_rebar * d_eff) / shearRebar.spacing / 1000; // in kN
+
+        // Prestress contribution (assumed 0 for diaphragm)
+        const Sp = 0;
+        
+        // Web crushing strength
+        const Suc = 0.25 * mats.fck * dims.webThickness * d_eff / 1000; // in kN
+
+        designData.crossbeam.calculated.Susd = factors.xi_s * factors.phi_b * (Sc + Ss + Sp);
+        designData.crossbeam.calculated.Sucd = factors.xi_s * factors.phi_b * Suc;
+    }
+
+
+    // --- UI Rendering ---
+    function renderAll() {
+        const mainContent = document.getElementById('main-content');
+        calculateAllResistances();
+        mainContent.innerHTML = `
+            <aside class="lg:col-span-1">${getCrossbeamInputsHTML()}</aside>
+            <section class="lg:col-span-1">${getChecksPanelHTML()}</section>
+        `;
+        drawCrossbeamSection();
+        addInputListeners();
+        renderFooter();
+        renderMathInElement(document.body);
+    }
+    
+    function renderFooter(){
+        const footer = document.getElementById('footer-descriptions');
+        footer.innerHTML = getFooterHTML();
+        addFooterEventListeners();
+        renderMathInElement(footer);
+    }
+
+    function createInputWithSteppers(id, value, step, unit, isRebar=false) {
+        if (isRebar) {
+             const options = Object.keys(rebarData).map(key => `<option value="${key}" ${value === key ? 'selected' : ''}>${key}</option>`).join('');
+             return `<select id="${id}" class="w-full p-2 border border-slate-300 rounded-lg bg-white focus:ring-sky-500 focus:border-sky-500">${options}</select>`;
+        }
+        return `<div class="flex items-center border border-slate-300 rounded-lg bg-white"><input type="number" step="${step}" id="${id}" value="${value}" class="flex-grow w-full p-2 border-0 rounded-l-lg bg-white text-center text-base focus:ring-0"><div class="flex flex-col"><button type="button" class="stepper-btn up" data-target="${id}" data-direction="up">▲</button><button type="button" class="stepper-btn down" data-target="${id}" data-direction="down">▼</button></div><div class="w-24 text-center text-slate-500 text-sm bg-slate-50 rounded-r-lg py-2 border-l flex items-center justify-center">${unit}</div></div>`;
+    }
+    
+    function createCompactCheckRow(id, title, unit, checkObject) {
+        let isOk, limit, sign, value;
+        
+        if (checkObject.hasOwnProperty('limit_comp')) { // Dual limit stress check
+            value = checkObject.val;
+            if (value >= 0) { // Compression
+                limit = checkObject.limit_comp;
+                isOk = value <= limit;
+                sign = '≤';
+            } else { // Tension
+                limit = checkObject.limit_tens;
+                isOk = value >= limit;
+                sign = '≥';
+            }
+        } else { // Single limit check
+            value = checkObject.val;
+            limit = checkObject.limit;
+            if (id.includes('rebar')) { // greater or equal check
+                isOk = value >= limit;
+                sign = '≥';
+            } else if (id.includes('moment')) {
+                limit = value >= 0 ? designData.crossbeam.calculated.Mud_max : designData.crossbeam.calculated.Mud_min;
+                isOk = value >= 0 ? value <= limit : value >= limit;
+                sign = '≤';
+            } else if (id.includes('ls1_shear_stress')){
+                isOk = value >= limit;
+                sign = '≥';
+            }
+            else { // default less or equal
+                isOk = Math.abs(value) <= Math.abs(limit);
+                sign = '≤';
+            }
+        }
+
+        const resultClass = isOk ? 'ok-result' : 'ng-result';
+        
+        const titleHTML = `<div><h5 class="font-medium text-sm text-slate-700 whitespace-nowrap">${title}</h5><div class="text-xs text-slate-500">(${unit})</div></div>`;
+        const valueInputHTML = `<div class="compact-input-group"><input type="number" step="0.01" id="${id}-val" value="${value}"><div class="flex flex-col"><button type="button" class="stepper-btn up" data-target="${id}-val" data-direction="up">▲</button><button type="button" class="stepper-btn down" data-target="${id}-val" data-direction="down">▼</button></div></div>`;
+        const limitDisplayHTML = `<div class="text-center text-sm text-slate-800 font-medium bg-slate-200 p-2 rounded-md w-full h-full flex items-center justify-center">${limit.toFixed(2)}</div>`;
+
+        return `<div class="grid grid-cols-[auto,1fr,1fr,auto] gap-x-3 items-center">${titleHTML}${valueInputHTML}<div class="flex items-center justify-center text-center text-sm text-slate-600"><span class="text-lg font-mono mx-2">${sign}</span>${limitDisplayHTML}</div><div class="result-box ${resultClass}">${isOk ? 'OK' : 'NG'}</div></div>`;
+    }
+
+    function getCrossbeamInputsHTML() {
+        const { inputs: { dimensions: dims, rebar, shearRebar, tendonLayout } } = designData.crossbeam;
+        const tendonLayoutHTML = `
+            <div class="p-3 bg-slate-100 rounded-lg">
+                <label class="block text-sm font-medium text-slate-700 mb-2">PC鋼材配置說明</label>
+                <ul class="text-sm text-slate-600 space-y-1 list-disc list-inside">
+                    <li><b>上層:</b> ${tendonLayout.top[0]} 束，位於距頂面 ${tendonLayout.topDepths[0]} mm 處。</li>
+                    <li><b>下層:</b> 共 ${tendonLayout.bottom.reduce((a,b)=>a+b,0)} 束，分三層:
+                        <ul class="list-['-_'] list-inside ml-4">
+                           <li>${tendonLayout.bottom[0]} 束，距底面 ${tendonLayout.bottomDepths[0]} mm</li>
+                           <li>${tendonLayout.bottom[1]} 束，距底面 ${tendonLayout.bottomDepths[1]} mm</li>
+                           <li>${tendonLayout.bottom[2]} 束，距底面 ${tendonLayout.bottomDepths[2]} mm</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        `;
+
+        return `<div class="bg-white p-6 rounded-xl shadow-md h-full">
+            <h2 class="text-xl font-bold mb-4 text-sky-800">輸入參數 (可編輯)</h2>
+            <div class="space-y-4 text-slate-700">
+                <div class="p-3 bg-slate-100 rounded-lg">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">斷面尺寸 (mm)</label>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        ${createInputWithSteppers('dim-totalHeight', dims.totalHeight, 1, '總高')}
+                        ${createInputWithSteppers('dim-netSpacing_l', dims.netSpacing_l, 1, '主梁淨間距 l')}
+                        ${createInputWithSteppers('dim-topSlabThickness', dims.topSlabThickness, 1, '上版厚')}
+                        ${createInputWithSteppers('dim-topSlabOverhang', dims.topSlabOverhang, 1, '上懸臂寬')}
+                        ${createInputWithSteppers('dim-webThickness', dims.webThickness, 1, '腹版厚')}
+                        ${createInputWithSteppers('dim-webHaunch', dims.webHaunch, 1, '腋角寬')}
+                        ${createInputWithSteppers('dim-bottomSlabThickness', dims.bottomSlabThickness, 1, '下版厚')}
+                        ${createInputWithSteppers('dim-bottomSlabOverhang', dims.bottomSlabOverhang, 1, '下懸臂寬')}
+                    </div>
+                </div>
+                <div class="p-3 bg-slate-100 rounded-lg">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">一般鋼筋配置 (非預力)</label>
+                     <div class="grid grid-cols-1 gap-3 mt-2">
+                        <div>
+                           <label class="block text-xs font-medium text-slate-600 mb-1">上層鋼筋</label>
+                           <div class="grid grid-cols-3 gap-2">
+                             ${createInputWithSteppers('rebar-top-type', rebar.top.type, 1, '號數', true)}
+                             ${createInputWithSteppers('rebar-top-count', rebar.top.count, 1, '數量(支)')}
+                             ${createInputWithSteppers('rebar-top-cover', rebar.top.cover, 1, '保護層(mm)')}
+                           </div>
+                        </div>
+                        <div>
+                           <label class="block text-xs font-medium text-slate-600 mb-1">下層鋼筋</label>
+                           <div class="grid grid-cols-3 gap-2">
+                            ${createInputWithSteppers('rebar-bottom-type', rebar.bottom.type, 1, '號數', true)}
+                            ${createInputWithSteppers('rebar-bottom-count', rebar.bottom.count, 1, '數量(支)')}
+                            ${createInputWithSteppers('rebar-bottom-cover', rebar.bottom.cover, 1, '保護層(mm)')}
+                           </div>
+                        </div>
+                     </div>
+                </div>
+                 <div class="p-3 bg-slate-100 rounded-lg">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">剪力鋼筋配置</label>
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        ${createInputWithSteppers('shearRebar-type', shearRebar.type, 1, '號數', true)}
+                        ${createInputWithSteppers('shearRebar-legs', shearRebar.legs, 1, '肢數')}
+                        ${createInputWithSteppers('shearRebar-spacing', shearRebar.spacing, 1, '間距(mm)')}
+                    </div>
+                 </div>
+                 ${tendonLayoutHTML}
+                 <div class="p-4 bg-slate-50 rounded-lg">
+                    <h3 class="font-medium text-base mb-2 text-center text-slate-700">橫梁斷面示意圖</h3>
+                    <canvas id="crossbeam-canvas"></canvas>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function getLoadBearingChecksHTML() {
+        const { inputs: { checks }, calculated } = designData.crossbeam;
+        
+        const ls1_stress_top_check = { ...checks.ls1_concrete_stress_top };
+        const ls1_stress_bot_check = { ...checks.ls1_concrete_stress_bot };
+        const ls1_rebar_check = { ...checks.ls1_rebar };
+        const ls3_moment_check = { val: checks.ls3_moment.val, limit: checks.ls3_moment.val >= 0 ? calculated.Mud_max : calculated.Mud_min };
+        const ls1_shear_check = { ...checks.ls1_shear_stress };
+        const ls3_shear_diag_check = { val: checks.ls3_shear_diag.val, limit: calculated.Susd };
+        const ls3_shear_web_check = { val: checks.ls3_shear_web.val, limit: calculated.Sucd };
+
+        return `
+            <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <h3 class="text-lg font-semibold text-amber-800 mb-2 text-center">限界狀態3 設計抵抗值 (計算結果)</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                    <div>
+                        <div class="text-sm text-slate-600">彎矩 \\(M_{ud,max}\\)</div>
+                        <div class="font-bold text-amber-900 text-lg">${calculated.Mud_max.toFixed(0)}</div>
+                        <div class="text-xs text-slate-500">kN·m</div>
+                    </div>
+                     <div>
+                        <div class="text-sm text-slate-600">彎矩 \\(M_{ud,min}\\)</div>
+                        <div class="font-bold text-amber-900 text-lg">${calculated.Mud_min.toFixed(0)}</div>
+                        <div class="text-xs text-slate-500">kN·m</div>
+                    </div>
+                     <div>
+                        <div class="text-sm text-slate-600">剪力 \\(S_{usd}\\)</div>
+                        <div class="font-bold text-amber-900 text-lg">${calculated.Susd.toFixed(0)}</div>
+                        <div class="text-xs text-slate-500">kN</div>
+                    </div>
+                     <div>
+                        <div class="text-sm text-slate-600">剪力 \\(S_{ucd}\\)</div>
+                        <div class="font-bold text-amber-900 text-lg">${calculated.Sucd.toFixed(0)}</div>
+                        <div class="text-xs text-slate-500">kN</div>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">彎矩檢核</h3>
+                    <div class="space-y-3 p-3 bg-slate-50 rounded-lg">
+                        <h4 class="font-medium text-base text-sky-700">限界狀態1</h4>
+                        <div class="pl-4 space-y-2 border-l-2 border-sky-200">
+                           ${createCompactCheckRow('check-ls1_concrete_stress_top', '混凝土上緣應力', 'N/mm²', ls1_stress_top_check, true)}
+                           ${createCompactCheckRow('check-ls1_concrete_stress_bot', '混凝土下緣應力', 'N/mm²', ls1_stress_bot_check, true)}
+                           ${createCompactCheckRow('check-ls1_rebar', '拉力鋼筋量', 'mm²', ls1_rebar_check)}
+                        </div>
+                        <h4 class="font-medium text-base text-sky-700 pt-2">限界狀態3</h4>
+                        <div class="pl-4 space-y-2 border-l-2 border-sky-200">
+                           ${createCompactCheckRow('check-ls3_moment', '設計彎矩', 'kN·m', ls3_moment_check, true)}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">剪力檢核</h3>
+                     <div class="space-y-3 p-3 bg-slate-50 rounded-lg">
+                        <h4 class="font-medium text-base text-sky-700">限界狀態1</h4>
+                        <div class="pl-4 space-y-2 border-l-2 border-sky-200">
+                           ${createCompactCheckRow('check-ls1_shear_stress', '斜向拉應力', 'N/mm²', ls1_shear_check)}
+                        </div>
+                        <h4 class="font-medium text-base text-sky-700 pt-2">限界狀態3</h4>
+                        <div class="pl-4 space-y-2 border-l-2 border-sky-200">
+                           ${createCompactCheckRow('check-ls3_shear_diag', '斜向拉力破壞', 'kN', ls3_shear_diag_check, true)}
+                           ${createCompactCheckRow('check-ls3_shear_web', '腹版壓潰', 'kN', ls3_shear_web_check, true)}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function getDurabilityChecksHTML() {
+        const { inputs: { checks } } = designData.crossbeam;
+        const fatigue_top_check = { ...checks.fatigue_stress_top };
+        const fatigue_bot_check = { ...checks.fatigue_stress_bot };
+        return `
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">疲勞檢核</h3>
+                    <div class="space-y-3 p-3 bg-slate-50 rounded-lg">
+                         <div class="pl-4 space-y-2 border-l-2 border-sky-200">
+                           ${createCompactCheckRow('check-fatigue_stress_top', '混凝土上緣應力', 'N/mm²', fatigue_top_check, true)}
+                           ${createCompactCheckRow('check-fatigue_stress_bot', '混凝土下緣應力', 'N/mm²', fatigue_bot_check, true)}
+                        </div>
+                    </div>
+                </div>
+                 <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">內部鋼材腐蝕之耐久性能檢核</h3>
+                    <div class="p-3 bg-slate-50 rounded-lg text-sm text-slate-700">
+                        <p>根據範例，橫梁之保護層厚度滿足規範要求，且永久作用下混凝土應力未超過限制值，故滿足關於內部鋼材腐蝕之耐久性能檢核。</p>
+                        <div class="mt-2 text-center"><div class="inline-block result-box ok-result">OK</div></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function getReversingStressChecksHTML() {
+        const { inputs: { checks } } = designData.crossbeam;
+        const md = checks.reversing_md.val;
+        const ml = checks.reversing_ml.val;
+        const isReversing = (md * ml) < 0;
+        const ratio = ml !== 0 ? Math.abs(md/ml) : 0;
+        
+        return `
+             <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">相反應力構件檢核</h3>
+                    <div class="space-y-3 p-3 bg-slate-50 rounded-lg">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">永久荷載彎矩 \\(M_D\\)</label>
+                                ${createInputWithSteppers('check-reversing_md-val', md, 1, 'kN·m')}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">活荷載彎矩 \\(M_L\\)</label>
+                                ${createInputWithSteppers('check-reversing_ml-val', ml, 1, 'kN·m')}
+                            </div>
+                        </div>
+                        <div class="text-center p-3 bg-white rounded-md">
+                           <h4 class="font-medium text-sm text-slate-700">是否為相反應力構件?</h4>
+                           <p class="text-2xl font-bold mt-1 ${isReversing ? 'text-red-600' : 'text-green-600'}">${isReversing ? '是' : '否'}</p>
+                           <p class="text-xs text-slate-500 mt-1">(永久荷載與活荷載彎矩正負號相反)</p>
+                        </div>
+                        <div class="text-center p-3 bg-white rounded-md">
+                           <h4 class="font-medium text-sm text-slate-700">彎矩比值</h4>
+                           <p class="text-lg font-bold mt-1">\\(|M_D / M_L| = ${ratio.toFixed(3)}\\)</p>
+                        </div>
+                        <div class="text-sm text-slate-600 mt-2">
+                           <p><b class="text-slate-700">檢核說明:</b> 根據範例，因永久作用與變動作用所產生之彎矩正負號相同，故非為相反應力構件。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function getChecksPanelHTML() {
+        return `
+            <div class="bg-white rounded-xl shadow-md h-full">
+                <div class="flex border-b border-slate-200">
+                    <button class="tab-btn ${currentCheckTab === 'loadBearing' ? 'active' : ''}" data-tab="loadBearing">耐荷性能檢核</button>
+                    <button class="tab-btn ${currentCheckTab === 'durability' ? 'active' : ''}" data-tab="durability">耐久性能檢核</button>
+                    <button class="tab-btn ${currentCheckTab === 'reversingStress' ? 'active' : ''}" data-tab="reversingStress">相反應力構件檢核</button>
+                </div>
+                <div class="p-6">
+                    <div id="tab-loadBearing" class="tab-content ${currentCheckTab === 'loadBearing' ? 'active' : ''}">
+                       ${getLoadBearingChecksHTML()}
+                    </div>
+                    <div id="tab-durability" class="tab-content ${currentCheckTab === 'durability' ? 'active' : ''}">
+                       ${getDurabilityChecksHTML()}
+                    </div>
+                    <div id="tab-reversingStress" class="tab-content ${currentCheckTab === 'reversingStress' ? 'active' : ''}">
+                        ${getReversingStressChecksHTML()}
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function getFooterHTML(){
+        return `
+         <div class="bg-white rounded-xl shadow-md h-full">
+            <div class="flex border-b border-slate-200">
+                <button class="tab-btn ${currentFooterTab === 'mechanics' ? 'active' : ''}" data-tab="mechanics">橫梁力學行為</button>
+                <button class="tab-btn ${currentFooterTab === 'limits' ? 'active' : ''}" data-tab="limits">耐荷性能檢核限制值說明</button>
+                <button class="tab-btn ${currentFooterTab === 'durability_limits' ? 'active' : ''}" data-tab="durability_limits">耐久性能檢核限制值說明</button>
+            </div>
+            <div class="p-6">
+                <div id="footer-tab-mechanics" class="tab-content ${currentFooterTab === 'mechanics' ? 'active' : ''}">
+                    ${getMechanicsFooterHTML()}
+                </div>
+                <div id="footer-tab-limits" class="tab-content ${currentFooterTab === 'limits' ? 'active' : ''}">
+                    ${getLimitsFooterHTML()}
+                </div>
+                <div id="footer-tab-durability_limits" class="tab-content ${currentFooterTab === 'durability_limits' ? 'active' : ''}">
+                    ${getDurabilityLimitsFooterHTML()}
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function getMechanicsFooterHTML(){
+        return `
+            <h2 class="text-xl font-bold mb-4 text-sky-800">橫梁 (Diaphragm) 的力學行為</h2>
+            <div class="text-slate-600 space-y-4 text-base">
+                <p>橫梁的核心力學功能是維持橋梁上部結構的「橫向斷面形狀」，並確保各主梁能協同作用。</p>
+                <div>
+                    <h3 class="font-semibold text-slate-800">主要力學行為：</h3>
+                    <ul class="list-disc list-inside mt-2 space-y-2 pl-2">
+                        <li><b>抗扭轉與抗變形 (Torsional and Distortional Resistance):</b> 這是橫梁最關鍵的功能。當橋梁（特別是開口斷面的I型梁或箱型梁）承受偏心載重或橫向力時，斷面有扭曲變形的趨勢。橫梁如同一個「橫向框架」，提供強大的面內剛度 (in-plane stiffness)，抵抗這種變形，將扭轉力矩轉換為傳遞給各主梁的橫向剪力。</li>
+                        <li><b>分配橫向載重 (Lateral Load Distribution):</b> 將風力、地震力、離心力等橫向作用力，均勻分配至各個主梁與支承系統。</li>
+                        <li><b>提供側向支撐 (Lateral Bracing):</b> 對主梁的受壓翼板提供側向支撐點，防止其發生側向挫屈 (Lateral Torsional Buckling, LTB)。</li>
+                        <li><b>均勻分配活載重 (Live Load Distribution):</b> 協助將作用在某一根主梁上方的車輛載重，更有效地分配給鄰近的主梁，使整個橋梁系統共同受力。</li>
+                    </ul>
+                </div>
+                 <div>
+                    <h3 class="font-semibold text-slate-800 mt-2">結構形式：</h3>
+                     <p class="pl-2">可以是實心的混凝土版、鋼鈑，或是由型鋼組成的構架 (Cross Frame)。</p>
+                 </div>
+            </div>
+        `;
+    }
+    
+    function getLimitsFooterHTML(){
+        return `
+            <h2 class="text-xl font-bold mb-4 text-sky-800">耐荷性能檢核限制值說明</h2>
+            <div class="text-slate-600 space-y-6 text-sm">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">彎矩檢核</h3>
+                    <div class="space-y-4 pl-2">
+                        <div>
+                           <h4 class="font-medium text-base text-sky-700">限界狀態1 (使用性檢核)</h4>
+                           <ul class="list-disc list-inside mt-2 space-y-2 pl-2">
+                              <li><b>混凝土應力:</b> 限制值旨在確保結構在正常使用(勤務)狀態下的耐久性。壓應力(+)限制 (如 \\(20.7 N/mm^2\\)) 是為了防止混凝土產生過度的非線性潛變；張應力(-)限制 (如 \\(-2.55 N/mm^2\\)) 則是為了控制裂縫寬度，防止鋼筋腐蝕。</li>
+                              <li><b>拉力鋼筋量:</b> 當混凝土應力超過其抗拉強度時，需配置足夠的鋼筋來承擔所有拉力，以控制裂縫。此處的限制值 (如 \\(841 mm^2\\)) 是根據規範要求，為抵抗開裂所需配置的最小鋼筋量。</li>
+                           </ul>
+                        </div>
+                        <div>
+                           <h4 class="font-medium text-base text-sky-700">限界狀態3 (終局強度檢核)</h4>
+                            <ul class="list-disc list-inside mt-2 space-y-2 pl-2">
+                              <li><b>設計抵抗彎矩 \\(M_{ud}\\):</b> 此值代表斷面最終的設計抵抗能力，用以和設計彎矩 \\(M_d\\) 比較。它的計算方式是將透過斷面分析算出的理論抵抗破壞彎矩 \\(M_{uc}\\)，再乘上多個安全係數，如構件係數 \\(\\phi_b\\) 與結構係數 \\(\\xi_1, \\xi_2\\)。
+                                 <div class="mt-1 pl-4"> \\(M_{ud} = \\phi_b \\xi_1 \\xi_2 M_{uc}\\)</div>
+                                 max/min 值分別對應斷面抵抗正向與負向彎矩的能力。
+                              </li>
+                           </ul>
+                        </div>
+                    </div>
+                </div>
+                 <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">剪力檢核</h3>
+                     <div class="space-y-4 pl-2">
+                        <div>
+                           <h4 class="font-medium text-base text-sky-700">限界狀態1 (使用性檢核)</h4>
+                           <ul class="list-disc list-inside mt-2 space-y-2 pl-2">
+                              <li><b>斜向拉應力:</b> 為控制腹版在勤務狀態下不出現過大的斜向裂縫，規範訂定了混凝土所能承受的最大斜向拉應力限制值 (如 \\(-2.00 N/mm^2\\))。</li>
+                           </ul>
+                        </div>
+                        <div>
+                           <h4 class="font-medium text-base text-sky-700">限界狀態3 (終局強度檢核)</h4>
+                           <ul class="list-disc list-inside mt-2 space-y-2 pl-2">
+                              <li><b>斜向拉力破壞之設計抵抗剪力 \\(S_{usd}\\):</b> 這是為了防止斷面發生脆性的剪力破壞。其值是綜合考量了混凝土的貢獻 \\(S_c\\)、剪力鋼筋的貢獻 \\(S_s\\) 與預力鋼材的貢獻 \\(S_p\\) 後，再經係數折減所得的設計剪力強度。
+                                <div class="mt-1 pl-4"> \\(S_{usd} = \\xi_s \\phi_b (S_c + S_s + S_p)\\)</div>
+                              </li>
+                               <li><b>腹版壓潰之設計抵抗剪力 \\(S_{ucd}\\):</b> 這是剪力強度的絕對上限，為防止因過大的剪力導致腹版混凝土被斜向壓力壓碎。其值主要由混凝土強度與腹版斷面積決定，再乘上相關係數。
+                                 <div class="mt-1 pl-4"> \\(S_{ucd} = \\xi_s \\phi_b S_{uc}\\)</div>
+                               </li>
+                           </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function getDurabilityLimitsFooterHTML() {
+        return `
+            <h2 class="text-xl font-bold mb-4 text-sky-800">耐久性能檢核限制值說明</h2>
+            <div class="text-slate-600 space-y-6 text-sm">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">疲勞檢核</h3>
+                    <div class="space-y-4 pl-2">
+                        <ul class="list-disc list-inside mt-2 space-y-2 pl-2">
+                            <li><b>混凝土應力:</b> 此檢核旨在控制變動荷載（如車流）作用下裂縫的反覆開合，以防止鋼筋與混凝土的疲勞損傷。限制值是為了確保應力變化範圍在材料的疲勞極限之內，以滿足橋梁的百年設計使用年限。
+                                <ul class="list-disc list-inside ml-4">
+                                    <li><b>混凝土上緣應力 (0 ~ 13.8 N/mm²):</b> 此區域通常為橋面板，直接承受輪載。為防止因反覆載重導致的微觀裂縫發展，規範要求此區域不應出現拉應力。</li>
+                                    <li><b>混凝土下緣應力 (-1.38 ~ 13.8 N/mm²):</b> 允許出現一定程度的拉應力，但必須限制在一個範圍內以控制裂縫，避免因裂縫反覆開合造成損傷。</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 pb-1 border-b">內部鋼材腐蝕之耐久性能檢核</h3>
+                    <div class="space-y-4 pl-2">
+                        <ul class="list-disc list-inside mt-2 space-y-2 pl-2">
+                            <li><b>檢核方法:</b> 此檢核的核心目標是從根本上防止或延緩腐蝕因子（如氯離子）侵入混凝土內部接觸鋼材。其判斷基準主要有兩點： 1) 確保鋼筋有足夠厚度的混凝土保護層。 2) 在永久荷載作用下，控制混凝土不產生永久性的有害裂縫。只要滿足這兩項條件，即可視為通過此項耐久性能檢核。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+
+    // --- Event Handling ---
+    function handleStepperClick(event) {
+        const btn = event.currentTarget;
+        const targetId = btn.dataset.target;
+        const dir = btn.dataset.direction;
+        const input = document.getElementById(targetId);
+        if (input) {
+            if (input.tagName === 'SELECT') return;
+            const step = parseFloat(input.step) || 1;
+            const val = parseFloat(input.value) || 0;
+            const precision = String(step).includes('.') ? String(step).split('.')[1].length : 0;
+            input.value = (dir === 'up' ? val + step : val - step).toFixed(precision);
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    function handleInputChange(event) {
+        const id = event.target.id;
+        const val = event.target.tagName === 'SELECT' ? event.target.value : (parseFloat(event.target.value) || 0);
+
+        const [type, key, prop] = id.split('-');
+        if (type === 'dim') {
+            designData.crossbeam.inputs.dimensions[key] = val;
+        } else if (type === 'rebar') {
+            designData.crossbeam.inputs.rebar[key][prop] = val;
+        } else if (type === 'shearRebar') {
+            designData.crossbeam.inputs.shearRebar[key] = val;
+        }
+        else if (type === 'check') {
+            designData.crossbeam.inputs.checks[key][prop] = val;
+        }
+        renderAll();
+    }
+    
+    function handleTabClick(event){
+        const tab = event.currentTarget.dataset.tab;
+        currentCheckTab = tab;
+        // More efficient re-render, just for the right panel
+        document.getElementById('main-content').querySelector('section').innerHTML = getChecksPanelHTML();
+        addInputListeners(); // Re-add listeners for the new content
+        renderMathInElement(document.body);
+    }
+    
+    function handleFooterTabClick(event) {
+        const tab = event.currentTarget.dataset.tab;
+        currentFooterTab = tab;
+        renderFooter();
+    }
+
+    function addInputListeners() {
+        document.querySelectorAll('#main-content input, #main-content select').forEach(i => i.addEventListener('input', handleInputChange));
+        document.querySelectorAll('#main-content .stepper-btn').forEach(b => b.addEventListener('click', handleStepperClick));
+        document.querySelectorAll('#main-content .tab-btn').forEach(b => b.addEventListener('click', handleTabClick));
+    }
+    
+    function addFooterEventListeners() {
+        document.querySelectorAll('#footer-descriptions .tab-btn').forEach(b => b.addEventListener('click', handleFooterTabClick));
+    }
+    
+    // --- Canvas Drawing ---
+    function drawCrossbeamSection() {
+        const canvas = document.getElementById('crossbeam-canvas');
+        if (!canvas) return;
+        const { dimensions: dims, tendonLayout, rebar } = designData.crossbeam.inputs;
+        const ctx = canvas.getContext('2d');
+        const dpi = window.devicePixelRatio || 1;
+        
+        const style_height = canvas.clientHeight;
+        const style_width = canvas.clientWidth;
+        canvas.height = style_height * dpi;
+        canvas.width = style_width * dpi;
+        ctx.scale(dpi, dpi);
+        ctx.clearRect(0, 0, style_width, style_height);
+
+        const { totalHeight: H, topSlabThickness: T_top, topSlabOverhang: O_top, webThickness: W_web, webHaunch: WH, bottomSlabThickness: T_bot, bottomSlabOverhang: O_bot, netSpacing_l } = dims;
+        
+        const lambda_top = (netSpacing_l / 8) + WH;
+        const lambda_bot = netSpacing_l / 8;
+        
+        const W_top_flange = W_web + 2 * WH + 2 * O_top;
+        const W_bot_flange = W_web + 2 * O_bot;
+        const totalPhysicalWidth = Math.max(W_top_flange, W_bot_flange);
+        
+        if (totalPhysicalWidth <= 0 || H <= 0) return;
+
+        const scale = Math.min(style_width * 0.7 / totalPhysicalWidth, style_height * 0.7 / H);
+        const s = (val) => val * scale;
+        const centerX = style_width / 2;
+        const centerY = style_height / 2;
+        const totalH_s = s(H);
+
+        const y_top = centerY - totalH_s / 2;
+        const y_top_slab_bot = y_top + s(T_top);
+        const y_bot_slab_top = y_top + totalH_s - s(T_bot);
+        const y_bot = y_top + totalH_s;
+        
+        const x_half_top_flange = s(W_web / 2 + WH + O_top);
+        const x_half_bot_flange = s(W_web / 2 + O_bot);
+        const x_half_web = s(W_web / 2);
+        
+        ctx.fillStyle = '#dc2626'; // Tendons (Red)
+        const tendonRadius = 2.5;
+        const topTendonY = y_top + s(tendonLayout.topDepths[0]);
+        const topTendonWidth = s(W_web + 2 * WH);
+        for (let i = 0; i < tendonLayout.top[0]; i++) {
+            const x = centerX - topTendonWidth / 2 + (tendonLayout.top[0] > 1 ? (i / (tendonLayout.top[0] - 1)) * topTendonWidth : 0);
+            ctx.beginPath(); ctx.arc(x, topTendonY, tendonRadius, 0, 2 * Math.PI); ctx.fill();
+        }
+        const bottomTendonHorizWidth_s = s(Math.min(tendonLayout.bottomHorizWidth, W_web + 2 * O_bot - 100));
+        tendonLayout.bottom.forEach((count, i) => {
+            const y = y_bot - s(tendonLayout.bottomDepths[i]);
+            if (y < y_top) return; 
+            for (let j = 0; j < count; j++) {
+                const x = centerX - bottomTendonHorizWidth_s / 2 + (count > 1 ? (j / (count - 1)) * bottomTendonHorizWidth_s : 0);
+                ctx.beginPath(); ctx.arc(x, y, tendonRadius, 0, 2 * Math.PI); ctx.fill();
+            }
+        });
+
+        ctx.fillStyle = '#2563eb'; // Rebar (Blue)
+        const rebarRadius = 2.0;
+        const topRebarY = y_top + s(rebar.top.cover);
+        const numTopRebar = rebar.top.count;
+        const topRebarDrawWidth_s = s(W_top_flange - 2 * rebar.top.cover);
+        const startXTop = centerX - topRebarDrawWidth_s / 2;
+        for(let i=0; i < numTopRebar; i++) {
+            const x = startXTop + (numTopRebar > 1 ? i * (topRebarDrawWidth_s / (numTopRebar - 1)) : 0);
+            ctx.beginPath(); ctx.arc(x, topRebarY, rebarRadius, 0, 2 * Math.PI); ctx.fill();
+        }
+        const botRebarY = y_bot - s(rebar.bottom.cover);
+        const numBotRebar = rebar.bottom.count;
+        const botRebarDrawWidth_s = s(W_bot_flange - 2 * rebar.bottom.cover);
+        const startXBot = centerX - botRebarDrawWidth_s/2;
+        for(let i=0; i < numBotRebar; i++) {
+            const x = startXBot + (numBotRebar > 1 ? i * (botRebarDrawWidth_s / (numBotRebar-1)) : 0);
+            ctx.beginPath(); ctx.arc(x, botRebarY, rebarRadius, 0, 2 * Math.PI); ctx.fill();
+        }
+        
+        ctx.strokeStyle = '#475569'; // Section Outline
+        ctx.lineWidth = 1.5;
+        const y_top_haunch_bot = y_top_slab_bot + s(WH);
+        ctx.beginPath();
+        ctx.moveTo(centerX - x_half_top_flange, y_top); ctx.lineTo(centerX + x_half_top_flange, y_top);
+        ctx.lineTo(centerX + x_half_top_flange, y_top_slab_bot); ctx.lineTo(centerX + x_half_web + s(WH), y_top_slab_bot);
+        ctx.lineTo(centerX + x_half_web, y_top_haunch_bot); ctx.lineTo(centerX + x_half_web, y_bot_slab_top);
+        ctx.lineTo(centerX + x_half_bot_flange, y_bot_slab_top); ctx.lineTo(centerX + x_half_bot_flange, y_bot);
+        ctx.lineTo(centerX - x_half_bot_flange, y_bot); ctx.lineTo(centerX - x_half_bot_flange, y_bot_slab_top);
+        ctx.lineTo(centerX - x_half_web, y_bot_slab_top); ctx.lineTo(centerX - x_half_web, y_top_haunch_bot);
+        ctx.lineTo(centerX - x_half_web - s(WH), y_top_slab_bot); ctx.lineTo(centerX - x_half_top_flange, y_top_slab_bot);
+        ctx.closePath();
+        ctx.stroke();
+        
+        const drawDim = (x1, y1, x2, y2, label, pos, color = '#64748b') => {
+            ctx.beginPath(); ctx.strokeStyle = color; ctx.fillStyle = color;
+            ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+            const tickSize = 3;
+            ctx.moveTo(x1 - (pos==='v'?tickSize:0), y1 - (pos==='h'?tickSize:0)); ctx.lineTo(x1 + (pos==='v'?tickSize:0), y1 + (pos==='h'?tickSize:0));
+            ctx.moveTo(x2 - (pos==='v'?tickSize:0), y2 - (pos==='h'?tickSize:0)); ctx.lineTo(x2 + (pos==='v'?tickSize:0), y2 + (pos==='h'?tickSize:0));
+            ctx.stroke();
+            ctx.save(); ctx.textAlign = 'center';
+            if (pos === 'v') {
+                ctx.translate(x1 - 6, (y1 + y2) / 2); ctx.rotate(-Math.PI / 2);
+                ctx.textBaseline = 'bottom'; ctx.fillText(label, 0, 0);
+            } else {
+                ctx.textBaseline = 'bottom'; ctx.fillText(label, (x1 + x2) / 2, y1 - 6);
+            }
+            ctx.restore();
+        };
+
+        const leftEdge = centerX - x_half_top_flange;
+        const rightEdge = centerX + x_half_top_flange;
+        ctx.font = '11px "Noto Sans TC"';
+        drawDim(leftEdge - 20, y_top, leftEdge - 20, y_bot, H, 'v');
+        drawDim(rightEdge + 15, y_top, rightEdge + 15, y_top_slab_bot, T_top, 'v');
+        drawDim(rightEdge + 15, y_bot_slab_top, rightEdge + 15, y_bot, T_bot, 'v');
+        drawDim(leftEdge, y_top_slab_bot + 15, centerX - x_half_web - s(WH), y_top_slab_bot + 15, O_top, 'h');
+        drawDim(centerX + x_half_web + s(WH), y_top_slab_bot + 15, rightEdge, y_top_slab_bot + 15, O_top, 'h');
+        drawDim(centerX - x_half_web, centerY, centerX + x_half_web, centerY, W_web, 'h');
+        drawDim(centerX - x_half_bot_flange, y_bot + 20, centerX + x_half_bot_flange, y_bot + 20, W_web + 2 * O_bot, 'h');
+        
+        const lambda_top_s = s(lambda_top);
+        const lambda_bot_s = s(lambda_bot);
+        drawDim(centerX + x_half_web, y_top - 20, centerX + x_half_web + lambda_top_s, y_top - 20, `λ_top=${lambda_top.toFixed(0)}`, 'h', '#0284c7');
+        drawDim(centerX + x_half_web, y_bot + 40, centerX + x_half_web + lambda_bot_s, y_bot + 40, `λ_bot=${lambda_bot.toFixed(0)}`, 'h', '#0284c7');
+    }
+    
+    // --- Initial Load ---
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            renderMathInElement(document.body, {
+                delimiters: [{left: "$$", right: "$$", display: true}, {left: "\\(", right: "\\)", display: false}, {left: "\\[", right: "\\]", display: true}],
+                throwOnError: false
+            });
+        } catch (e) { console.error("KaTeX rendering failed", e); }
+        
+        renderAll();
+    });
+
+</script>
+</body>
+</html>
