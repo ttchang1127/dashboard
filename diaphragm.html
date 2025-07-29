@@ -446,6 +446,10 @@
         return `<div class="bg-white p-6 rounded-xl shadow-md h-full">
             <h2 class="text-xl font-bold mb-4 text-sky-800">輸入區</h2>
             <div class="space-y-4 text-slate-700">
+                 <div class="p-4 bg-slate-50 rounded-lg">
+                    <h3 class="font-medium text-base mb-2 text-center text-slate-700">橫梁斷面示意圖</h3>
+                    <canvas id="crossbeam-canvas"></canvas>
+                </div>
                 <div class="p-3 bg-slate-100 rounded-lg">
                     <label class="block text-sm font-medium text-slate-700 mb-1">斷面尺寸 (mm)</label>
                     <div class="grid grid-cols-2 gap-3 mt-2">
@@ -489,10 +493,6 @@
                     </div>
                  </div>
                  ${tendonLayoutHTML}
-                 <div class="p-4 bg-slate-50 rounded-lg">
-                    <h3 class="font-medium text-base mb-2 text-center text-slate-700">橫梁斷面示意圖</h3>
-                    <canvas id="crossbeam-canvas"></canvas>
-                </div>
             </div>
         </div>`;
     }
