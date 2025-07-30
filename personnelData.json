@@ -539,22 +539,6 @@
     "certificates": []
   },
   {
-    "name": "黃忠成",
-    "group": "柏勛組",
-    "role": "組員",
-    "education": "逢甲大學 \n土木工程學系 \n學士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      },
-      {
-        "name": "2.職安(職業安全管理師)",
-        "number": ""
-      }
-    ]
-  },
-  {
     "name": "楊元舜",
     "group": "北分局",
     "role": "",
@@ -651,7 +635,7 @@
   },
   {
     "name": "謝宜庭",
-    "group": "囿��組",
+    "group": "囿任組",
     "role": "組員",
     "education": "國立聯合大學 \n土木與防災工程學系 \n學士",
     "certificates": [
@@ -767,6 +751,18 @@
       },
       {
         "name": "2.管挖",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "陳偉仁",
+    "group": "北分局",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
         "number": ""
       }
     ]
