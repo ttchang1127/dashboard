@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>柱基鈑與基礎錨栓設計 (LRFD & ASD)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .input-group label {
+            color: #4a5568;
+        }
+        .input-group .unit {
+            color: #718096;
+            font-weight: 400;
+        }
+        .input-group input, .input-group select {
+            background-color: #ffffff;
+            border-color: #cbd5e0;
+        }
+        .result-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .btn-primary {
+            background-color: #4299e1;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #2b6cb0;
+        }
+        h1, h2, h3, h4 {
+            color: #2d3748;
+        }
+        .result-value {
+            font-weight: 700;
+            color: #2b6cb0;
+        }
+        .result-unit {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+        .status-ok {
+            color: #38a169;
+            font-weight: 700;
+        }
+        .status-ng {
+            color: #e53e3e;
+            font-weight: 700;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr;
+            gap: 0.5rem 1rem;
+            align-items: center;
+        }
+        .result-grid-header {
+            font-weight: 700;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .error-cell {
+            grid-column: span 2;
+            padding: 0.5rem;
+            background-color: #fed7d7;
+            border-left: 4px solid #e53e3e;
+        }
+        /* Tab styles */
+        .tab-button {
+            padding: 0.75rem 1.25rem;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            background-color: #e2e8f0;
+            color: #4a5568;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab-button.active {
+            background-color: #ffffff;
+            color: #2b6cb0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        .tab-content {
+            display: none;
+            padding-top: 1rem;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .result-section-header {
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            grid-column: span 3; /* Span across all three columns in result-grid */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">互動式柱基鈑及基礎錨栓設計工具</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-10 gap-8"> <!-- Using grid-cols-10 for 30/70 split (3/10 and 7/10) -->
+            <!-- Input Section (Left Panel) -->
+            <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 border-b pb-3">輸入參數</h2>
+                
+                <!-- 1. 鋼柱 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">1. 鋼柱斷面</h3>
+                    <div class="input-group mb-2">
+                        <label for="columnType" class="block text-sm font-medium mb-1">選擇柱類型:</label>
+                        <select id="columnType" class="w-full p-2 border rounded-md">
+                            <option value="h_beam" selected>H型鋼</option>
+                            <option value="hss_rect">HSS方管</option>
+                            <option value="hss_round">HSS圓管</option>
+                        </select>
+                    </div>
+                    <div class="input-group" id="columnSectionGroup">
+                        <label for="columnSection" class="block text-sm font-medium mb-1">選擇常用斷面:</label>
+                        <select id="columnSection" class="w-full p-2 border rounded-md">
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-2">
+                        <div class="input-group">
+                            <label for="col_d" id="col_d_label" class="block text-sm font-medium mb-1">柱深 (d) <span class="unit">(mm)</span></label>
+                            <input type="number" id="col_d" class="w-full p-2 border rounded-md" placeholder="mm">
+                        </div>
+                        <div class="input-group" id="col_bf_group">
+                            <label for="col_bf" id="col_bf_label" class="block text-sm font-medium mb-1">翼板寬 (b<sub>f</sub>) <span class="unit">(mm)</span></label>
+                            <input type="number" id="col_bf" class="w-full p-2 border rounded-md" placeholder="mm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 柱基鈑 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">2. 柱基鈑</h3>
+                     <div class="input-group mb-2">
+                        <label for="mat_fy_select" class="block text-sm font-medium mb-1">基鈑材料強度 (F<sub>y</sub>) <span class="unit">(MPa)</span></label>
+                        <select id="mat_fy_select" class="w-full p-2 border rounded-md">
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="input-group">
+                            <label for="bp_N" class="block text-sm font-medium mb-1">基鈑長度 (N) <span class="unit">(mm)</span></label>
+                            <input type="number" id="bp_N" class="w-full p-2 border rounded-md" value="500">
+                        </div>
+                        <div class="input-group">
+                            <label for="bp_B" class="block text-sm font-medium mb-1">基鈑寬度 (B) <span class="unit">(mm)</span></label>
+                            <input type="number" id="bp_B" class="w-full p-2 border rounded-md" value="500">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 3. 混凝土 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">3. 混凝土</h3>
+                    <div class="input-group mb-2">
+                        <label for="mat_fc" class="block text-sm font-medium mb-1">混凝土抗壓強度 (f'c) <span class="unit">(MPa)</span></label>
+                        <input type="number" id="mat_fc" class="w-full p-2 border rounded-md" value="28">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="input-group">
+                            <label for="pier_N2" class="block text-sm font-medium mb-1">混凝土柱長 (N₂) <span class="unit">(mm)</span></label>
+                            <input type="number" id="pier_N2" class="w-full p-2 border rounded-md" value="1000">
+                        </div>
+                        <div class="input-group">
+                            <label for="pier_B2" class="block text-sm font-medium mb-1">混凝土柱寬 (B₂) <span class="unit">(mm)</span></label>
+                            <input type="number" id="pier_B2" class="w-full p-2 border rounded-md" value="1000">
+                        </div>
+                    </div>
+                     <div class="input-group mt-2">
+                        <label for="grout_thickness" class="block text-sm font-medium mb-1">Grout 厚度 <span class="unit">(mm)</span></label>
+                        <input type="number" id="grout_thickness" class="w-full p-2 border rounded-md" value="50">
+                    </div>
+                </div>
+
+                <!-- 4. 基礎錨栓 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">4. 基礎錨栓</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="input-group">
+                            <label for="anchor_rod_material" class="block text-sm font-medium mb-1">錨栓材料 (F<sub>u</sub>) <span class="unit">(MPa)</span></label>
+                            <select id="anchor_rod_material" class="w-full p-2 border rounded-md">
+                                <!-- Options will be populated by JS -->
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="anchor_rod_diameter_select" class="block text-sm font-medium mb-1">錨栓直徑 <span class="unit">(mm)</span></label>
+                            <select id="anchor_rod_diameter_select" class="w-full p-2 border rounded-md">
+                                <!-- Options will be populated by JS -->
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="anchor_rod_embedment" class="block text-sm font-medium mb-1">錨栓埋深 (h<sub>ef</sub>) <span class="unit">(mm)</span></label>
+                            <input type="number" id="anchor_rod_embedment" class="w-full p-2 border rounded-md" value="300">
+                        </div>
+                         <div class="input-group">
+                            <label for="anchor_num_per_side" class="block text-sm font-medium mb-1">單側錨栓數量</label>
+                            <input type="number" id="anchor_num_per_side" class="w-full p-2 border rounded-md" value="2">
+                        </div>
+                        <div class="input-group">
+                            <label for="anchor_f_y" class="block text-sm font-medium mb-1">錨栓至柱心距 (Y向) <span class="unit">(mm)</span></label>
+                            <input type="number" id="anchor_f_y" class="w-full p-2 border rounded-md" value="200">
+                        </div>
+                        <div class="input-group">
+                            <label for="anchor_f_x" class="block text-sm font-medium mb-1">錨栓至柱心距 (X向) <span class="unit">(mm)</span></label>
+                            <input type="number" id="anchor_f_x" class="w-full p-2 border rounded-md" value="100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 剪力鈑 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">5. 剪力鈑</h3>
+                    <div class="input-group">
+                        <label for="shear_lug_enable" class="block text-sm font-medium mb-1">是否設置?</label>
+                        <select id="shear_lug_enable" class="w-full p-2 border rounded-md">
+                            <option value="no" selected>否</option>
+                            <option value="yes">是</option>
+                        </select>
+                    </div>
+                    <div id="shear_lug_inputs" class="space-y-2 mt-2" style="display: none;">
+                         <div class="input-group">
+                            <label for="shear_lug_confinement_enable" class="block text-sm font-medium mb-1">考量錨栓圍束效應?</label>
+                            <select id="shear_lug_confinement_enable" class="w-full p-2 border rounded-md">
+                                <option value="no" selected>否 (保守設計)</option>
+                                <option value="yes">是 (經濟設計)</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="input-group col-span-2">
+                                <label for="shear_lug_width" class="block text-sm font-medium mb-1">剪力鈑寬度 <span class="unit">(mm)</span></label>
+                                <input type="number" id="shear_lug_width" class="w-full p-2 border rounded-md" value="40">
+                            </div>
+                            <div class="input-group">
+                                <label for="shear_lug_thickness" class="block text-sm font-medium mb-1">剪力鈑厚度 <span class="unit">(mm)</span></label>
+                                <input type="number" id="shear_lug_thickness" class="w-full p-2 border rounded-md" value="25">
+                            </div>
+                            <div class="input-group">
+                                <label for="shear_lug_depth" class="block text-sm font-medium mb-1">剪力鈑埋深 <span class="unit">(mm)</span></label>
+                                <input type="number" id="shear_lug_depth" class="w-full p-2 border rounded-md" value="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. 設計載重 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">6. 設計載重</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-medium text-center mb-2">LRFD</h4>
+                            <div class="input-group mb-2">
+                                <label for="load_p_u" class="block text-sm font-medium mb-1">軸力 (P<sub>u</sub>) <span class="unit">(kN)</span></label>
+                                <input type="number" id="load_p_u" class="w-full p-2 border rounded-md" value="1000">
+                            </div>
+                            <div class="input-group mb-2">
+                                <label for="load_m_ux" class="block text-sm font-medium mb-1">彎矩 M<sub>x</sub> (繞X軸) <span class="unit">(kN-m)</span></label>
+                                <input type="number" id="load_m_ux" class="w-full p-2 border rounded-md" value="500">
+                            </div>
+                            <div class="input-group mb-2">
+                                <label for="load_v_u" class="block text-sm font-medium mb-1">剪力 (V<sub>u</sub>) <span class="unit">(kN)</span></label>
+                                <input type="number" id="load_v_u" class="w-full p-2 border rounded-md" value="100">
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-center mb-2">ASD</h4>
+                            <div class="input-group mb-2">
+                                <label for="load_p_a" class="block text-sm font-medium mb-1">軸力 (P<sub>a</sub>) <span class="unit">(kN)</span></label>
+                                <input type="number" id="load_p_a" class="w-full p-2 border rounded-md" value="700">
+                            </div>
+                            <div class="input-group mb-2">
+                                <label for="load_m_ax" class="block text-sm font-medium mb-1">彎矩 M<sub>x</sub> (繞X軸) <span class="unit">(kN-m)</span></label>
+                                <input type="number" id="load_m_ax" class="w-full p-2 border rounded-md" value="350">
+                            </div>
+                            <div class="input-group mb-2">
+                                <label for="load_v_a" class="block text-sm font-medium mb-1">剪力 (V<sub>a</sub>) <span class="unit">(kN)</span></label>
+                                <input type="number" id="load_v_a" class="w-full p-2 border rounded-md" value="70">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="calculateBtn" class="w-full btn-primary font-bold py-3 px-4 rounded-lg">
+                    計算
+                </button>
+            </div>
+
+            <!-- Output Section (Right Panel) -->
+            <div class="lg:col-span-7 flex flex-col gap-8">
+                <!-- Tab Navigation -->
+                <div class="flex border-b border-gray-300">
+                    <button class="tab-button active" data-tab="basePlateDesign">柱基鈑設計</button>
+                    <button class="tab-button" data-tab="anchorRodDesign">基礎錨栓設計</button>
+                    <button class="tab-button" data-tab="shearLugDesign">剪力版設計</button>
+                </div>
+
+                <!-- Tab Content: Base Plate Design -->
+                <div id="basePlateDesign" class="tab-content active result-card p-6">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-3">柱基鈑設計結果</h2>
+                    <div id="basePlateResults" class="space-y-3">
+                        <p class="text-gray-600">請輸入參數並點擊計算按鈕。</p>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Anchor Rod Design -->
+                <div id="anchorRodDesign" class="tab-content result-card p-6">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-3">基礎錨栓設計結果</h2>
+                    <div id="anchorRodResults" class="space-y-3">
+                        <p class="text-gray-600">請輸入參數並點擊計算按鈕。</p>
+                    </div>
+                    <!-- ACI Checks Summary Section -->
+                    <div class="mt-8 pt-6 border-t">
+                        <h3 class="text-xl font-bold mb-4">ACI 規範檢核摘要</h3>
+                        <p class="text-gray-700 mb-4">根據 ACI 318 規範，為確保錨栓與混凝土柱穩固連接，需檢核以下關鍵項目以防止不同的破壞模式。最終設計強度將取決於所有檢核項目中的最低值。</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800">I. 拉力強度檢核 (Tension)</h4>
+                                <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1 text-sm">
+                                    <li><b>錨栓鋼材拉力破壞：</b>確保錨栓本身的鋼材強度足以承受設計拉力，不會被拉斷。</li>
+                                    <li><b>混凝土錐狀拉出破壞：</b>防止錨栓將錐狀的混凝土塊從基座拉出。此為最常見的破壞模式，與埋深、邊距、間距密切相關。</li>
+                                    <li><b>混凝土拔出破壞：</b>防止錨栓頭/螺帽下方的混凝土局部壓碎，導致錨栓被直接拔出。</li>
+                                    <li><b>混凝土側向面破壞 (Side-Face Blowout)：</b>針對靠近邊緣的深埋錨栓，防止混凝土從側面爆裂。</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800">II. 剪力強度檢核 (Shear)</h4>
+                                <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1 text-sm">
+                                    <li><b>剪力摩擦傳遞：</b>優先考慮基鈑與混凝土間的摩擦力來抵抗剪力，此為最經濟的方式。</li>
+                                    <li><b>錨栓鋼材剪力破壞：</b>若摩擦力不足，檢核錨栓桿身不會被剩餘的剪力剪斷。</li>
+                                    <li><b>混凝土剪力破壞：</b>防止錨栓將前方的混凝土推出造成破壞，與錨栓到受力方向的邊距關係最大。</li>
+                                    <li><b>混凝土撬動破壞 (Pryout)：</b>針對埋深較淺的錨栓，防止因受剪後傾斜而將混凝土撬開。</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800">III. 拉剪交互作用檢核 (Interaction)</h4>
+                                <p class="text-gray-600 mt-2 text-sm">當錨栓同時承受拉力與剪力時，其強度會降低。必須依據規範公式檢核，確保兩種力量的組合效應在安全範圍內。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Shear Lug Design -->
+                <div id="shearLugDesign" class="tab-content result-card p-6">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-3">剪力版設計結果</h2>
+                    <div id="shearLugResults" class="space-y-3">
+                        <p class="text-gray-600">請選擇設置剪力版並點擊計算按鈕。</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA: Common H-Beam Sections (mm) ---
+        const hBeamSections = {
+            "H400x200x8x13": { d: 400, bf: 200 },
+            "H450x200x9x14": { d: 450, bf: 200 },
+            "H500x200x10x16": { d: 500, bf: 200 },
+            "H600x200x11x17": { d: 600, bf: 200 },
+            "H300x300x10x15": { d: 300, bf: 300 },
+            "H350x350x12x19": { d: 350, bf: 350 },
+            "H400x400x13x21": { d: 400, bf: 400 },
+        };
+
+        // --- DATA: Common Steel Plate Materials (Taiwan/ASTM) ---
+        const steelMaterials = {
+            "CNS SS400 (Fy=245MPa)": 245,
+            "CNS SN400 (Fy=235MPa)": 235,
+            "ASTM A36 (Fy=250MPa)": 250,
+            "ASTM A572 Gr.50 (Fy=345MPa)": 345
+        };
+
+        // --- DATA: Common Anchor Rod Materials (Fu in MPa) ---
+        // Converted from ksi to MPa (1 ksi = 6.89476 MPa)
+        const anchorRodMaterials = {
+            "ASTM F1554 Grade 36 (Fu=400MPa)": 400, // 58 ksi
+            "ASTM F1554 Grade 55 (Fu=517MPa)": 517, // 75 ksi
+            "ASTM F1554 Grade 105 (Fu=862MPa)": 862 // 125 ksi
+        };
+
+        // --- DATA: Common Anchor Rod Diameters (mm) ---
+        const anchorRodDiameters = {
+            "M16 (16mm)": 16,
+            "M20 (20mm)": 20,
+            "M22 (22mm)": 22,
+            "M24 (24mm)": 24,
+            "M27 (27mm)": 27,
+            "M30 (30mm)": 30,
+            "M36 (36mm)": 36,
+            "M42 (42mm)": 42,
+            "M48 (48mm)": 48,
+            "M56 (56mm)": 56,
+            "M64 (64mm)": 64,
+        };
+
+
+        // --- Design Constants (Global Scope) ---
+        // LRFD resistance factors
+        const phi_c = 0.65; // Concrete bearing (AISC 360-16 J8)
+        const phi_b = 0.90; // Steel flexure (AISC 360-16 F1)
+        const phi_t_steel = 0.75; // Anchor steel tension (AISC 360-16 J3.7)
+        const phi_v_steel = 0.75; // Anchor steel shear (AISC 360-16 J3.7)
+        const phi_v_concrete = 0.75; // Concrete shear breakout & pryout (ACI 318-19)
+        const phi_c_bearing_lug = 0.60; // Concrete bearing for shear lug (ACI 349-01)
+        const phi_sideface = 0.75; // Side-face blowout (ACI 318-19)
+        const phi_friction = 0.75; // Shear friction (ACI 318-19)
+
+        // ACI 318-14/19 factors for cast-in anchors in tension
+        const phi_pullout = 0.75; // Concrete pullout (ACI 318-19 Table 17.3.3) - for tension controlled
+        const phi_breakout = 0.75; // Concrete breakout (ACI 318-19 Table 17.3.3) - for tension controlled
+
+        // ASD safety factors
+        const Omega_c = 2.5; // Concrete bearing (AISC DG1)
+        const Omega_b = 1.67; // Steel flexure (AISC 360-16 F1)
+        const Omega_t_steel = 2.00; // Anchor steel tension (AISC 360-16 J3.7)
+        const Omega_v_steel = 2.00; // Anchor steel shear (AISC 360-16 J3.7)
+        const Omega_v_concrete = 1.67; // Derived from phi_v_concrete
+        const Omega_c_bearing_lug = 1 / phi_c_bearing_lug;
+        const Omega_sideface = 1.67; // Derived from phi_sideface
+        const Omega_friction = 2.22; // Derived from phi_friction
+        
+        // ACI 318-19 ASD factors are derived from LRFD phi factors. Omega = 1/phi
+        const Omega_pullout = 1.67; // Derived from phi_pullout
+        const Omega_breakout = 1.67; // Derived from phi_breakout
+
+
+        // --- DOM Elements ---
+        const columnSectionSelect = document.getElementById('columnSection');
+        const colDInput = document.getElementById('col_d');
+        const colBfInput = document.getElementById('col_bf');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const basePlateResultsDiv = document.getElementById('basePlateResults'); 
+        const anchorRodResultsDiv = document.getElementById('anchorRodResults'); 
+        const shearLugResultsDiv = document.getElementById('shearLugResults');
+        const matFySelect = document.getElementById('mat_fy_select');
+        const anchorRodMaterialSelect = document.getElementById('anchor_rod_material'); 
+        const anchorRodDiameterSelect = document.getElementById('anchor_rod_diameter_select'); 
+        const shearLugEnableSelect = document.getElementById('shear_lug_enable');
+        const shearLugInputsDiv = document.getElementById('shear_lug_inputs');
+        const columnTypeSelect = document.getElementById('columnType');
+        const colDLabel = document.getElementById('col_d_label');
+        const colBfLabel = document.getElementById('col_bf_label');
+        const colBfGroup = document.getElementById('col_bf_group');
+        const columnSectionGroup = document.getElementById('columnSectionGroup');
+
+
+        // --- Tab Elements ---
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+
+        // --- Initial Setup ---
+        function populateColumnSections() {
+            columnSectionSelect.innerHTML = '<option value="">手動輸入</option>';
+            for (const name in hBeamSections) {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                columnSectionSelect.appendChild(option);
+            }
+            // Set default to a common H-beam section
+            columnSectionSelect.value = "H400x200x8x13";
+            updateColumnInputs(); // Update input fields based on default selection
+        }
+
+        function populateMaterialSelects() {
+            // Populate Base Plate Material
+            matFySelect.innerHTML = ''; 
+            for (const name in steelMaterials) {
+                const option = document.createElement('option');
+                option.value = steelMaterials[name]; 
+                option.textContent = name; 
+                matFySelect.appendChild(option);
+            }
+            matFySelect.value = steelMaterials["CNS SS400 (Fy=245MPa)"]; 
+
+            // Populate Anchor Rod Material
+            anchorRodMaterialSelect.innerHTML = '';
+            for (const name in anchorRodMaterials) {
+                const option = document.createElement('option');
+                option.value = anchorRodMaterials[name];
+                option.textContent = name;
+                anchorRodMaterialSelect.appendChild(option);
+            }
+            anchorRodMaterialSelect.value = anchorRodMaterials["ASTM F1554 Grade 36 (Fu=400MPa)"];
+
+            // Populate Anchor Rod Diameters
+            anchorRodDiameterSelect.innerHTML = '';
+            for (const name in anchorRodDiameters) {
+                const option = document.createElement('option');
+                option.value = anchorRodDiameters[name];
+                option.textContent = name;
+                anchorRodDiameterSelect.appendChild(option);
+            }
+            anchorRodDiameterSelect.value = anchorRodDiameters["M24 (24mm)"]; // Default to M24
+        }
+
+        function updateColumnInputs() {
+            const selectedSection = columnSectionSelect.value;
+            if (selectedSection && hBeamSections[selectedSection]) {
+                colDInput.value = hBeamSections[selectedSection].d;
+                colBfInput.value = hBeamSections[selectedSection].bf;
+            } else {
+                // Clear inputs if "手動輸入" is selected
+                colDInput.value = '';
+                colBfInput.value = '';
+            }
+        }
+        
+        function handleColumnTypeChange() {
+            const type = columnTypeSelect.value;
+            if (type === 'hss_round') {
+                colDLabel.innerHTML = '圓管外徑 (D) <span class="unit">(mm)</span>';
+                colBfGroup.style.display = 'none';
+                columnSectionGroup.style.display = 'none'; // Hide H-beam presets
+                colBfInput.value = colDInput.value; // Internally, bf will equal d for calculation
+            } else if (type === 'hss_rect') {
+                colDLabel.innerHTML = '方管深度 (H) <span class="unit">(mm)</span>';
+                colBfLabel.innerHTML = '方管寬度 (B) <span class="unit">(mm)</span>';
+                colBfGroup.style.display = 'block';
+                columnSectionGroup.style.display = 'none'; // Hide H-beam presets
+            } else { // h_beam
+                colDLabel.innerHTML = '柱深 (d) <span class="unit">(mm)</span>';
+                colBfLabel.innerHTML = '翼板寬 (b<sub>f</sub>) <span class="unit">(mm)</span>';
+                colBfGroup.style.display = 'block';
+                columnSectionGroup.style.display = 'block'; // Show H-beam presets
+            }
+        }
+        
+        // --- Tab Functionality ---
+        function activateTab(tabId) {
+            tabButtons.forEach(button => {
+                button.classList.toggle('active', button.dataset.tab === tabId);
+            });
+            tabContents.forEach(content => {
+                content.classList.toggle('active', content.id === tabId);
+            });
+        }
+
+
+        // --- Event Listeners ---
+        window.addEventListener('load', () => {
+            populateColumnSections();
+            populateMaterialSelects();
+            handleColumnTypeChange(); // Set initial UI state for column type
+            activateTab('basePlateDesign'); // Activate default tab on load
+            performCalculations(); // Perform initial calculation on load
+        });
+        columnSectionSelect.addEventListener('change', updateColumnInputs);
+        columnTypeSelect.addEventListener('change', handleColumnTypeChange);
+        calculateBtn.addEventListener('click', performCalculations);
+
+        shearLugEnableSelect.addEventListener('change', () => {
+            shearLugInputsDiv.style.display = shearLugEnableSelect.value === 'yes' ? 'block' : 'none';
+        });
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                activateTab(button.dataset.tab);
+            });
+        });
+        
+        function performCalculations() {
+            // Get shared input values
+            const d = parseFloat(colDInput.value); // 柱深 (d)
+            let bf = parseFloat(colBfInput.value); // 翼板寬 (bf)
+            if (document.getElementById('columnType').value === 'hss_round') {
+                bf = d; // For round HSS, bf is the same as d
+            }
+            const N = parseFloat(document.getElementById('bp_N').value); // 基鈑長度 (N)
+            const B = parseFloat(document.getElementById('bp_B').value); // 基鈑寬度 (B)
+            const pier_N2 = parseFloat(document.getElementById('pier_N2').value); // 混凝土柱長度 (N2)
+            const pier_B2 = parseFloat(document.getElementById('pier_B2').value); // 混凝土柱寬度 (B2)
+            const grout_thickness = parseFloat(document.getElementById('grout_thickness').value); // Grout 厚度
+            const f_anchor_y = parseFloat(document.getElementById('anchor_f_y').value); // 錨栓至柱心Y向距 (fy)
+            const f_anchor_x = parseFloat(document.getElementById('anchor_f_x').value); // 錨栓至柱心X向距 (fx)
+            const anchor_rod_diameter = parseFloat(anchorRodDiameterSelect.value); // Get diameter from selected dropdown
+            const anchor_rod_embedment = parseFloat(document.getElementById('anchor_rod_embedment').value); // 錨栓埋深
+            const anchor_num_per_side = parseFloat(document.getElementById('anchor_num_per_side').value) || 1; // 單側錨栓數量
+            const total_anchor_num = anchor_num_per_side * 2;
+
+            const Fy = parseFloat(matFySelect.value); // Get Fy from selected dropdown value
+            const fc = parseFloat(document.getElementById('mat_fc').value); // 混凝土抗壓強度 (f'c)
+            const Fu_anchor = parseFloat(anchorRodMaterialSelect.value); // Get Fu for anchor rod from selected dropdown
+
+            // Get LRFD loads
+            const Pu_input = parseFloat(document.getElementById('load_p_u').value); // kN (signed value)
+            const Mu_x = parseFloat(document.getElementById('load_m_ux').value) * 1e6; // kNm to Nmm
+            const Vu_input = parseFloat(document.getElementById('load_v_u').value); // kN
+            
+            // Get ASD loads
+            const Pa_input = parseFloat(document.getElementById('load_p_a').value); // kN (signed value)
+            const Ma_x = parseFloat(document.getElementById('load_m_ax').value) * 1e6; // kNm to Nmm
+            const Va_input = parseFloat(document.getElementById('load_v_a').value); // kN
+
+            // Convert kN to N for calculations
+            const Pu_calc = Pu_input * 1000;
+            const Pa_calc = Pa_input * 1000;
+            const Vu_calc = Vu_input * 1000;
+            const Va_calc = Va_input * 1000;
+
+            // --- Input Validation ---
+            const allInputs = [d, bf, N, B, pier_N2, pier_B2, grout_thickness, f_anchor_y, f_anchor_x, anchor_rod_diameter, anchor_rod_embedment, anchor_num_per_side, Fy, fc, Fu_anchor, Pu_input, Mu_x, Vu_input, Pa_input, Ma_x, Va_input];
+            if (allInputs.some(isNaN)) {
+                const errorMsg = '<p class="status-ng">錯誤：所有輸入欄位都必須是數字。</p>';
+                basePlateResultsDiv.innerHTML = errorMsg;
+                anchorRodResultsDiv.innerHTML = errorMsg;
+                shearLugResultsDiv.innerHTML = errorMsg;
+                return;
+            }
+
+            // --- LRFD & ASD Calculations ---
+            const lrf_results = calculateBasePlate('LRFD', Pu_calc, Mu_x, Vu_calc, N, B, d, bf, f_anchor_y, f_anchor_x, Fy, fc, pier_N2, pier_B2, anchor_rod_diameter, anchor_num_per_side, anchor_rod_embedment, Fu_anchor);
+            const asd_results = calculateBasePlate('ASD', Pa_calc, Ma_x, Va_calc, N, B, d, bf, f_anchor_y, f_anchor_x, Fy, fc, pier_N2, pier_B2, anchor_rod_diameter, anchor_num_per_side, anchor_rod_embedment, Fu_anchor);
+            
+            // --- Shear Lug Recommendation Logic ---
+            const V_anchor_capacity_lrf = lrf_results.overall_anchor_shear_avail * total_anchor_num;
+            const V_anchor_capacity_asd = asd_results.overall_anchor_shear_avail * total_anchor_num;
+            const isLugNeeded_lrf = lrf_results.V_remaining > V_anchor_capacity_lrf;
+            const isLugNeeded_asd = asd_results.V_remaining > V_anchor_capacity_asd;
+            
+            // --- Shear Lug Calculations & Visualization Data ---
+            const shearLugEnabled = shearLugEnableSelect.value === 'yes';
+            
+            if (shearLugEnabled) {
+                const lug_width = parseFloat(document.getElementById('shear_lug_width').value);
+                const lug_depth = parseFloat(document.getElementById('shear_lug_depth').value);
+                const lug_thickness = parseFloat(document.getElementById('shear_lug_thickness').value);
+                const considerConfinement = document.getElementById('shear_lug_confinement_enable').value === 'yes';
+
+                const lrf_shear_lug_results = calculateShearLugDesign('LRFD', lrf_results.V_remaining, lug_depth, lug_thickness, lug_width, fc, Fy, grout_thickness, B, considerConfinement, Pu_calc, lrf_results.Rn_steel_nominal_total, anchor_num_per_side);
+                const asd_shear_lug_results = calculateShearLugDesign('ASD', asd_results.V_remaining, lug_depth, lug_thickness, lug_width, fc, Fy, grout_thickness, B, considerConfinement, Pa_calc, asd_results.Rn_steel_nominal_total, anchor_num_per_side);
+                displayShearLugResults(lrf_shear_lug_results, asd_shear_lug_results, isLugNeeded_lrf, isLugNeeded_asd);
+            } else {
+                 displayShearLugResults(null, null, isLugNeeded_lrf, isLugNeeded_asd);
+            }
+
+            // --- Anchor Bolt Layout Checks ---
+            const anchorChecks = performAnchorLayoutChecks(N, B, d, bf, f_anchor_x, f_anchor_y, anchor_rod_diameter, total_anchor_num);
+
+
+            displayBasePlateResults(lrf_results, asd_results, anchor_num_per_side);
+            displayAnchorRodResults(lrf_results, asd_results, anchorChecks);
+            
+        }
+
+        /**
+         * Main calculation function for both base plate and anchor rods.
+         */
+        function calculateBasePlate(method, P_signed, M, V_calc, N_plate, B_plate, d_col, bf_col, f_anchor_dist_y, f_anchor_dist_x, Fy, fc, pier_N2, pier_B2, anchor_rod_diameter, anchor_num_per_side, anchor_embedment, Fu_anchor) {
+            const results = { method };
+            const columnType = document.getElementById('columnType').value;
+
+            // --- 1. Bearing Stress Calculation ---
+            const A1 = N_plate * B_plate;
+            const A2 = pier_N2 * pier_B2;
+            const confinement_factor = Math.min(Math.sqrt(A2 / A1), 2.0);
+            results.confinement_factor = confinement_factor;
+
+            const fp_max_allowed = (method === 'LRFD') 
+                ? (phi_c * 0.85 * fc * confinement_factor) 
+                : ((0.85 * fc * confinement_factor) / Omega_c);
+            results.fp_max = fp_max_allowed;
+
+            const q_max = fp_max_allowed * B_plate; // Max bearing force per unit length
+
+            // --- 2. Eccentricity and Case Determination ---
+            const e = (P_signed !== 0) ? Math.abs(M / P_signed) : Infinity;
+            results.e = e;
+            let Y = 0, T = 0, fp = 0, designCase = '', e_crit = NaN;
+
+            if (P_signed >= 0) { // Compression or zero axial load
+                e_crit = (N_plate / 2) - (P_signed / (2 * q_max));
+                results.e_crit = e_crit;
+
+                if (e <= e_crit) {
+                    designCase = "小彎矩 (全壓)";
+                    Y = N_plate; // Effective bearing length is the full plate
+                    fp = P_signed / (B_plate * N_plate) + M * 6 / (B_plate * N_plate * N_plate);
+                    T = 0; // No tension
+                } else {
+                    designCase = "大彎矩 (部分受拉)";
+                    fp = fp_max_allowed;
+                    // Solve quadratic equation for Y from AISC DG1 Eq. 3.4.3 rearranged
+                    const f = N_plate / 2 - e;
+                    Y = 3 * f + Math.sqrt(9 * f * f + (6 * P_signed * (e + f_anchor_dist_y)) / (B_plate * fp));
+                    T = fp * B_plate * Y - P_signed;
+                }
+            } else { // Net Tension
+                designCase = "拉力/純彎矩";
+                fp = 0;
+                Y = 0;
+                T = Math.abs(P_signed) + M / (2 * f_anchor_dist_y);
+            }
+            results.designCase = designCase;
+            results.Y = Y;
+            results.fp = fp;
+            results.T = T;
+
+            if (fp > fp_max_allowed) {
+                results.error = `混凝土支承應力 (${fp.toFixed(2)} MPa) 超過容許值 (${fp_max_allowed.toFixed(2)} MPa)。`;
+            }
+
+            // --- 3. Plate Thickness Calculation ---
+            let tp_req = 0;
+            if (Y > 0) { // If there is bearing
+                let m = 0, n = 0, lambda_n_prime = 0;
+                
+                switch (columnType) {
+                    case 'hss_rect':
+                        m = (N_plate - 0.95 * d_col) / 2;
+                        n = (B_plate - 0.95 * bf_col) / 2;
+                        lambda_n_prime = 0; // Not applicable for HSS
+                        break;
+                    case 'hss_round':
+                        m = (N_plate - 0.8 * d_col) / 2;
+                        n = (B_plate - 0.8 * d_col) / 2;
+                        lambda_n_prime = 0; // Not applicable for HSS
+                        break;
+                    case 'h_beam':
+                    default:
+                        m = (N_plate - 0.95 * d_col) / 2;
+                        n = (B_plate - 0.80 * bf_col) / 2;
+                        
+                        const Pp_nominal = (0.85 * fc * confinement_factor) * A1;
+                        let X = 0;
+                        if (method === 'LRFD') {
+                            const P_avail_bearing = phi_c * Pp_nominal;
+                            if (P_avail_bearing > 0 && P_signed >= 0) {
+                                X = (4 * d_col * bf_col / Math.pow(d_col + bf_col, 2)) * (P_signed / P_avail_bearing);
+                            }
+                        } else { // ASD
+                            const P_avail_bearing = Pp_nominal / Omega_c;
+                             if (P_avail_bearing > 0 && P_signed >= 0) {
+                                X = (4 * d_col * bf_col / Math.pow(d_col + bf_col, 2)) * (P_signed / P_avail_bearing);
+                            }
+                        }
+                        
+                        let lambda = 1.0;
+                        if (X > 0 && X < 1) { 
+                            lambda = (2 * Math.sqrt(X)) / (1 + Math.sqrt(1 - X));
+                        }
+                        lambda = Math.min(lambda, 1.0); 
+
+                        lambda_n_prime = lambda * (Math.sqrt(d_col * bf_col) / 4);
+                        break;
+                }
+                
+                results.lambda_n_prime = lambda_n_prime;
+                results.m_dist = m;
+                results.n_dist = n;
+
+                const l = Math.max(m, n, lambda_n_prime);
+                results.l_crit = l;
+                
+                const phi_b_local = (method === 'LRFD') ? phi_b : 1;
+                const Omega_b_local = (method === 'ASD') ? Omega_b : 1;
+                
+                if (fp > 0 && Fy > 0) {
+                    tp_req = l * Math.sqrt(2 * fp / ((phi_b_local / Omega_b_local) * Fy));
+                } else {
+                    tp_req = 0;
+                }
+            }
+            results.tp_req = tp_req;
+
+            // --- 4. Anchor Rod Tension Design ---
+            const T_rod_req = (T > 0) ? T / anchor_num_per_side : 0;
+            results.T_rod_req = T_rod_req;
+            const A_b = Math.PI * Math.pow(anchor_rod_diameter / 2, 2);
+
+            // --- 4a. Steel Tensile Strength ---
+            const Rn_steel_nominal = 0.75 * Fu_anchor * A_b;
+            results.Rn_steel_nominal_total = Rn_steel_nominal * anchor_num_per_side; // For shear lug calc
+            const Rn_steel_avail = (method === 'LRFD') ? phi_t_steel * Rn_steel_nominal : Rn_steel_nominal / Omega_t_steel;
+            results.steel_tensile_avail = Rn_steel_avail;
+            results.steel_tensile_status = T_rod_req <= Rn_steel_avail ? 'OK' : 'NG';
+
+            // --- 4b. Concrete Breakout Strength (with group and edge effects) ---
+            const hef = anchor_embedment;
+            const k_c_metric = 10.0; // Metric equivalent for k_c=24 for cast-in
+            const Nb_nominal_base = k_c_metric * Math.sqrt(fc) * Math.pow(hef, 1.5);
+            
+            const c_a1_y = pier_N2 / 2 - f_anchor_dist_y;
+            const c_a1_x = pier_B2 / 2 - f_anchor_dist_x;
+            const c_a_min = Math.min(c_a1_x, c_a1_y);
+            const s_x = 2 * f_anchor_dist_x;
+            
+            const psi_ed_N = (c_a_min < 1.5 * hef) ? (0.7 + 0.3 * c_a_min / (1.5 * hef)) : 1.0;
+            const A_Nc = (2 * c_a_min + s_x) * (c_a1_y + 1.5 * hef);
+            const A_Nco = (3*hef + s_x) * (3*hef);
+            const psi_g_N = (anchor_num_per_side > 1) ? A_Nc / A_Nco : 1.0;
+            
+            const psi_c_N = 1.25; // Assume uncracked concrete
+            
+            const Ncb_nominal_group = Nb_nominal_base * (A_Nc / (anchor_num_per_side * 9 * hef * hef)) * psi_ed_N * psi_c_N;
+            
+            const phi_breakout_local = (method === 'LRFD') ? phi_breakout : 1;
+            const Omega_breakout_local = (method === 'ASD') ? 1 / phi_breakout : 1;
+            const Ncb_avail = (phi_breakout_local / Omega_breakout_local) * Ncb_nominal_group;
+            
+            results.breakout_avail = Ncb_avail / anchor_num_per_side; // Per-rod capacity
+            results.breakout_status = T_rod_req <= results.breakout_avail ? 'OK' : 'NG';
+            results.psi_ed_N = psi_ed_N;
+            results.psi_g_N = psi_g_N;
+
+
+            // --- 4c. Concrete Pullout Strength ---
+            const Abrg = Math.PI/4 * (Math.pow(anchor_rod_diameter + 6, 2) - Math.pow(anchor_rod_diameter, 2)); 
+            const Np_nominal = 8 * Abrg * fc;
+            const phi_pullout_local = (method === 'LRFD') ? phi_pullout : 1;
+            const Omega_pullout_local = (method === 'ASD') ? 1 / phi_pullout : 1;
+            const Np_avail = (phi_pullout_local / Omega_pullout_local) * Np_nominal;
+            results.pullout_avail = Np_avail;
+            results.pullout_status = T_rod_req <= Np_avail ? 'OK' : 'NG';
+
+            // --- 4d. Concrete Side-Face Blowout Strength ---
+            let Nsb_avail = Infinity; 
+            if (c_a_min > 0 && hef > 2.5 * c_a_min) { 
+                const Nsb_nominal = 13 * c_a_min * Math.sqrt(Abrg) * Math.sqrt(fc);
+                const phi_sideface_local = (method === 'LRFD') ? phi_sideface : 1;
+                const Omega_sideface_local = (method === 'ASD') ? 1 / phi_sideface : 1;
+                Nsb_avail = (phi_sideface_local / Omega_sideface_local) * Nsb_nominal;
+            }
+            results.side_face_avail = Nsb_avail;
+            results.side_face_status = T_rod_req <= Nsb_avail ? 'OK' : 'NG';
+
+            // --- 4e. Overall Anchor Tension Capacity ---
+            results.overall_anchor_avail = Math.min(Rn_steel_avail, results.breakout_avail, Np_avail, Nsb_avail);
+            results.overall_anchor_status = T_rod_req <= results.overall_anchor_avail ? 'OK' : 'NG';
+
+            // --- 5. Shear Transfer Mechanism ---
+            const mu = 0.55; 
+            const P_compressive = Math.max(0, P_signed);
+            results.V_total_req = V_calc;
+
+            const V_friction_avail = (method === 'LRFD') 
+                ? phi_friction * mu * P_compressive
+                : (mu * P_compressive) / Omega_friction;
+            results.friction_avail = V_friction_avail;
+
+            const V_remaining = Math.max(0, V_calc - V_friction_avail);
+            results.V_remaining = V_remaining;
+
+            // --- 6. Anchor Rod Shear Design (Based on Remaining Shear) ---
+            const total_anchor_num = anchor_num_per_side * 2;
+            const V_rod_req = (V_remaining > 0) ? V_remaining / total_anchor_num : 0;
+            results.V_rod_req = V_rod_req;
+
+            // --- 6a. Steel Shear Strength ---
+            const phi_v_steel_local = (method === 'LRFD') ? phi_v_steel : 1;
+            const Omega_v_steel_local = (method === 'ASD') ? Omega_v_steel : 1;
+            const Vn_steel_nominal = 0.4 * Fu_anchor * A_b; 
+            const Vn_steel_avail = (phi_v_steel_local / Omega_v_steel_local) * Vn_steel_nominal;
+            results.steel_shear_avail = Vn_steel_avail;
+            results.steel_shear_status = V_rod_req <= Vn_steel_avail ? 'OK' : 'NG';
+
+            // --- 6b. Concrete Shear Breakout Strength (with group and edge effects) ---
+            const c_a1_shear = pier_B2 / 2 - f_anchor_dist_x; 
+            let Vcb_avail = Infinity;
+            let psi_ed_V = 1.0;
+            let psi_g_V = 1.0;
+            if (c_a1_shear > 0) {
+                const lambda_a = 1.0; 
+                const le_da_ratio = Math.min(hef / anchor_rod_diameter, 8.0);
+                const Vb_nominal_base = 0.6 * Math.pow(le_da_ratio, 0.2) * Math.sqrt(anchor_rod_diameter) * lambda_a * Math.sqrt(fc) * Math.pow(c_a1_shear, 1.5);
+                
+                const c_a2_shear = pier_N2 / 2 - f_anchor_dist_y; 
+                const s_y_shear = 2 * f_anchor_dist_y; 
+                
+                psi_ed_V = (c_a2_shear < 1.5 * c_a1_shear) ? (0.7 + 0.3 * c_a2_shear / (1.5 * c_a1_shear)) : 1.0;
+                const A_Vc = (1.5 * c_a1_shear + 1.5 * c_a1_shear + s_y_shear) * Math.min(1.5 * c_a1_shear, hef);
+                const A_Vco = 2 * (1.5 * c_a1_shear) * Math.min(1.5 * c_a1_shear, hef);
+                psi_g_V = (total_anchor_num > 2) ? A_Vc / A_Vco : 1.0;
+
+                const psi_c_V = 1.4; 
+                const h_a = 1.5 * c_a1_shear;
+                const psi_h_V = (h_a < 1.5*c_a1_shear) ? Math.sqrt(1.5 * c_a1_shear / h_a) : 1.0;
+                
+                const Vcb_nominal_modified = Vb_nominal_base * psi_ed_V * psi_g_V * psi_c_V * Math.max(psi_h_V, 1.0);
+                const Vcb_nominal_group = (total_anchor_num / 2) * Vcb_nominal_modified; 
+
+                const phi_v_breakout_local = (method === 'LRFD') ? phi_v_concrete : 1;
+                const Omega_v_breakout_local = (method === 'ASD') ? 1/phi_v_concrete : 1;
+                Vcb_avail = (phi_v_breakout_local / Omega_v_breakout_local) * Vcb_nominal_group / (total_anchor_num / 2); // Per rod
+            }
+            results.concrete_shear_breakout_avail = Vcb_avail;
+            results.concrete_shear_breakout_status = V_rod_req <= Vcb_avail ? 'OK' : 'NG';
+            results.psi_ed_V = psi_ed_V;
+            results.psi_g_V = psi_g_V;
+
+            // --- 6c. Concrete Pryout Strength ---
+            const kcp = (hef < 65) ? 1.0 : 2.0;
+            const Vcp_nominal = kcp * Ncb_nominal_group;
+            const phi_pryout_local = (method === 'LRFD') ? phi_v_concrete : 1;
+            const Omega_pryout_local = (method === 'ASD') ? 1/phi_v_concrete : 1;
+            const Vcp_avail = (phi_pryout_local / Omega_pryout_local) * Vcp_nominal / (total_anchor_num / 2); // Per rod
+            results.concrete_pryout_avail = Vcp_avail;
+            results.concrete_pryout_status = V_rod_req <= Vcp_avail ? 'OK' : 'NG';
+
+            // --- 6d. Overall Anchor Shear Capacity ---
+            results.overall_anchor_shear_avail = Math.min(Vn_steel_avail, Vcb_avail, Vcp_avail);
+            results.overall_anchor_shear_status = V_rod_req <= results.overall_anchor_shear_avail ? 'OK' : 'NG';
+
+            // --- 7. Tension and Shear Interaction ---
+            const tension_ratio_val = (results.overall_anchor_avail > 0 && T_rod_req > 0) ? T_rod_req / results.overall_anchor_avail : 0;
+            const shear_ratio_val = (results.overall_anchor_shear_avail > 0 && V_rod_req > 0) ? V_rod_req / results.overall_anchor_shear_avail : 0;
+            
+            let interaction_value = 0;
+            if (tension_ratio_val > 0 || shear_ratio_val > 0) {
+                interaction_value = tension_ratio_val + shear_ratio_val;
+            }
+            
+            results.interaction_value = interaction_value;
+            results.interaction_status = interaction_value <= 1.2 ? 'OK' : 'NG';
+
+            return results;
+        }
+
+        /**
+         * Calculates shear lug design checks.
+         */
+        function calculateShearLugDesign(method, V_req, lug_depth, lug_thickness, lug_width, fc, Fy, grout_thickness, pier_width, considerConfinement, P_signed, Rn_steel_nominal_total, anchor_num_per_side) {
+            const results = { V_req };
+
+            // 1. Concrete Bearing Check
+            const A_lug = lug_width * lug_depth;
+            const V_bearing_nominal = 1.3 * fc * A_lug; // Per ACI 349-01 B.4.5.2
+            const phi_brg_local = (method === 'LRFD') ? phi_c_bearing_lug : 1;
+            const Omega_brg_local = (method === 'ASD') ? Omega_c_bearing_lug : 1;
+            results.V_bearing_avail = (phi_brg_local / Omega_brg_local) * V_bearing_nominal;
+            results.V_bearing_status = V_req <= results.V_bearing_avail ? 'OK' : 'NG';
+
+            // 2. Concrete Breakout Check
+            const projected_depth = lug_depth + (pier_width - lug_width) / 2;
+            const projected_area = pier_width * projected_depth;
+            const effective_area = projected_area - A_lug;
+            const V_breakout_nominal = 4 * Math.sqrt(fc) * effective_area; // Per DG1 3.5.2
+            const phi_v_local = (method === 'LRFD') ? phi_v_concrete : 1;
+            const Omega_v_local = (method === 'ASD') ? 1/phi_v_concrete : 1;
+            results.V_breakout_avail = (phi_v_local / Omega_v_local) * V_breakout_nominal;
+            results.V_breakout_status = V_req <= results.V_breakout_avail ? 'OK' : 'NG';
+            
+            // 3. Anchor Confinement Contribution
+            results.V_confinement_avail = 0;
+            if (considerConfinement) {
+                const K_r = 1.6; // Per ACI 349-01 Commentary
+                const N_y_group = Rn_steel_nominal_total; // Use nominal steel strength of tension anchors
+                const P_a_aci = -P_signed; // Convert P_signed (comp>0) to ACI convention (tens>0)
+                const V_conf_nominal = K_r * Math.max(0, N_y_group - P_a_aci);
+                
+                const phi_conf_local = (method === 'LRFD') ? phi_friction : 1;
+                const Omega_conf_local = (method === 'ASD') ? Omega_friction : 1;
+                results.V_confinement_avail = (phi_conf_local / Omega_conf_local) * V_conf_nominal;
+            }
+
+            // 4. Total Shear Capacity
+            results.V_total_avail = results.V_bearing_avail + results.V_confinement_avail;
+            results.V_total_status = V_req <= results.V_total_avail ? 'OK' : 'NG';
+
+
+            // 5. Lug Plate Bending Check
+            results.M_req = V_req * (grout_thickness + lug_depth / 2);
+            const Z_lug = (lug_width * Math.pow(lug_thickness, 2)) / 4;
+            const Mn_lug = Fy * Z_lug;
+            const phi_b_local = (method === 'LRFD') ? phi_b : 1;
+            const Omega_b_local = (method === 'ASD') ? Omega_b : 1;
+            results.M_avail = (phi_b_local / Omega_b_local) * Mn_lug;
+            results.M_status = results.M_req <= results.M_avail ? 'OK' : 'NG';
+
+            return results;
+        }
+
+
+        /**
+         * Checks anchor layout geometry.
+         */
+        function performAnchorLayoutChecks(N, B, d_col, bf_col, f_anchor_x, f_anchor_y, anchor_rod_diameter, anchor_num) {
+            const results = {};
+            const hole_diameter = anchor_rod_diameter <= 22 ? anchor_rod_diameter + 2 : (anchor_rod_diameter <= 36 ? anchor_rod_diameter + 3 : anchor_rod_diameter + 5);
+            const min_edge_dist_from_center = 1.75 * anchor_rod_diameter;
+            const min_spacing_from_center = 3 * anchor_rod_diameter;
+            const min_clearance_to_steel = 1.5 * anchor_rod_diameter;
+            results.hole_diameter = hole_diameter;
+            results.min_edge_dist_from_center = min_edge_dist_from_center;
+            results.min_spacing_from_center = min_spacing_from_center;
+            const actual_edge_x = B / 2 - f_anchor_x;
+            const actual_edge_y = N / 2 - f_anchor_y;
+            results.actual_edge_x = actual_edge_x;
+            results.actual_edge_y = actual_edge_y;
+            results.edge_x_status = actual_edge_x >= min_edge_dist_from_center ? 'OK' : 'NG';
+            results.edge_y_status = actual_edge_y >= min_edge_dist_from_center ? 'OK' : 'NG';
+            const actual_spacing_x = 2 * f_anchor_x;
+            const actual_spacing_y = 2 * f_anchor_y;
+            results.actual_spacing_x = actual_spacing_x;
+            results.actual_spacing_y = actual_spacing_y;
+            results.spacing_x_status = actual_spacing_x >= min_spacing_from_center ? 'OK' : 'NG';
+            results.spacing_y_status = actual_spacing_y >= min_spacing_from_center ? 'OK' : 'NG';
+            const clear_to_flange = Math.abs(f_anchor_x) - (bf_col / 2);
+            results.clear_to_flange = clear_to_flange;
+            results.clear_to_flange_status = clear_to_flange >= min_clearance_to_steel ? 'OK' : 'NG';
+            const clear_to_web = Math.abs(f_anchor_y) - (d_col / 2);
+            results.clear_to_web = clear_to_web;
+            results.clear_to_web_status = clear_to_web >= min_clearance_to_steel ? 'OK' : 'NG';
+            results.osha_status = anchor_num >= 4 ? 'OK' : 'NG (OSHA要求至少4個錨栓)';
+            results.anchor_num = anchor_num;
+            return results;
+        }
+
+
+        function displayBasePlateResults(lrf_data, asd_data, anchor_num_per_side) {
+            const renderCell = (data, key, unit, decimals = 1) => {
+                if (data.error || data[key] === undefined || isNaN(data[key])) return `<span class="text-gray-400">---</span>`;
+                return `<span><span class="result-value">${data[key].toFixed(decimals)}</span><span class="result-unit"> ${unit}</span></span>`;
+            };
+            const renderStatusCell = (data, valueKey, maxKey, unit, decimals = 2) => {
+                if (data.error || data[valueKey] === undefined || isNaN(data[valueKey])) return `<span class="text-gray-400">---</span>`;
+                const status = data[valueKey] <= data[maxKey] ? 'OK' : 'NG';
+                return `<span><span class="result-value">${data[valueKey].toFixed(decimals)}</span><span class="result-unit"> ${unit}</span> <span class="${status === 'OK' ? 'status-ok' : 'status-ng'}">(${status})</span></span>`;
+            };
+            const renderErrorRow = (lrf_err, asd_err) => {
+                let errorHtml = '';
+                if (lrf_err) errorHtml += `<div><span class="font-bold">LRFD 錯誤:</span> <span class="status-ng text-xs p-1">${lrf_err}</span></div>`;
+                if (asd_err) errorHtml += `<div><span class="font-bold">ASD 錯誤:</span> <span class="status-ng text-xs p-1">${asd_err}</span></div>`;
+                return errorHtml ? `<div class="col-span-3 p-2 bg-red-50 border-l-4 border-red-400">${errorHtml}</div>` : '';
+            };
+            basePlateResultsDiv.innerHTML = `
+                <div class="result-grid">
+                    <div class="result-grid-header">參數</div>
+                    <div class="result-grid-header">LRFD</div>
+                    <div class="result-grid-header">ASD</div>
+                    ${renderErrorRow(lrf_data.error, asd_data.error)}
+                    <span>圍束效應係數 √A₂/A₁</span>
+                    ${renderCell(lrf_data, 'confinement_factor', '', 2)}
+                    ${renderCell(asd_data, 'confinement_factor', '', 2)}
+                    <span>設計情況</span>
+                    <span class="result-value">${lrf_data.designCase || '---'}</span>
+                    <span class="result-value">${asd_data.designCase || '---'}</span>
+                    <span>偏心距 (e)</span>
+                    ${renderCell(lrf_data, 'e', 'mm', 1)}
+                    ${renderCell(asd_data, 'e', 'mm', 1)}
+                    <span>臨界偏心距 (e<sub>crit</sub>)</span>
+                    ${renderCell(lrf_data, 'e_crit', 'mm', 1)}
+                    ${renderCell(asd_data, 'e_crit', 'mm', 1)}
+                    <span>支承長度 (Y)</span>
+                    ${renderCell(lrf_data, 'Y', 'mm', 1)}
+                    ${renderCell(asd_data, 'Y', 'mm', 1)}
+                    <span>支承應力 (f<sub>p</sub>)</span>
+                    ${renderStatusCell(lrf_data, 'fp', 'fp_max', 'MPa', 2)}
+                    ${renderStatusCell(asd_data, 'fp', 'fp_max', 'MPa', 2)}
+                    <span>容許支承應力 (f<sub>p,max</sub>)</span>
+                    ${renderCell(lrf_data, 'fp_max', 'MPa', 2)}
+                    ${renderCell(asd_data, 'fp_max', 'MPa', 2)}
+                    
+                    <div class="result-section-header mt-6">基鈑厚度檢核</div>
+                    <span>懸臂長度 m</span>
+                    ${renderCell(lrf_data, 'm_dist', 'mm', 1)}
+                    ${renderCell(asd_data, 'm_dist', 'mm', 1)}
+                    <span>懸臂長度 n</span>
+                    ${renderCell(lrf_data, 'n_dist', 'mm', 1)}
+                    ${renderCell(asd_data, 'n_dist', 'mm', 1)}
+                    <span>懸臂長度 λn'</span>
+                    ${renderCell(lrf_data, 'lambda_n_prime', 'mm', 1)}
+                    ${renderCell(asd_data, 'lambda_n_prime', 'mm', 1)}
+                    <span class="font-bold">控制性懸臂長度 (l)</span>
+                    <span class="text-lg">${renderCell(lrf_data, 'l_crit', 'mm', 1)}</span>
+                    <span class="text-lg">${renderCell(asd_data, 'l_crit', 'mm', 1)}</span>
+                    <span class="font-bold">所需基鈑厚度 (t<sub>p</sub>)</span>
+                    <span class="text-xl">${renderCell(lrf_data, 'tp_req', 'mm', 1)}</span>
+                    <span class="text-xl">${renderCell(asd_data, 'tp_req', 'mm', 1)}</span>
+                </div>
+                <div class="mt-8 pt-6 border-t">
+                    <h3 class="text-xl font-bold mb-4">示意圖參考</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2 text-center">柱基鈑</h4>
+                            <img src="https://ttchang1127.github.io/dashboard/images/baseplt.png" alt="柱基鈑示意圖" class="w-full h-auto rounded-lg shadow-md border" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e2e8f0/2d3748?text=Image+Not+Found';">
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2 text-center">錨栓與剪力版</h4>
+                            <img src="https://ttchang1127.github.io/dashboard/images/shearlug.png" alt="錨栓與剪力版示意圖" class="w-full h-auto rounded-lg shadow-md border" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e2e8f0/2d3748?text=Image+Not+Found';">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayAnchorRodResults(lrf_data, asd_data, anchorChecks) {
+            const renderCapacityCell = (data, reqKey, availKey, unit, statusKey) => {
+                 if (data.error || data[reqKey] === undefined || isNaN(data[reqKey]) || !isFinite(data[availKey])) {
+                    if ((reqKey.startsWith('V_') || reqKey.startsWith('T_')) && data[reqKey] === 0) return `<span>---</span>`;
+                    return `<span>計算中...</span>`;
+                 }
+                const req = data[reqKey] / 1000;
+                const avail = data[availKey] / 1000;
+                const status = data[statusKey];
+                return `<span>Req: <span class="result-value">${req.toFixed(1)}</span><br>Cap: <span class="result-value">${avail.toFixed(1)}</span> <span class="result-unit">${unit}</span> <span class="${status === 'OK' ? 'status-ok' : 'status-ng'}">(${status})</span></span>`;
+            };
+             const renderCheckCell = (label, value, unit, checkValue, statusKey) => {
+                const status = anchorChecks[statusKey];
+                return `<span>${label}</span><span colspan="2"><span class="result-value">${value.toFixed(1)}</span><span class="result-unit"> ${unit}</span> (Min: ${checkValue.toFixed(1)} ${unit}) <span class="${status === 'OK' ? 'status-ok' : 'status-ng'}">(${status})</span></span>`;
+            };
+            const renderInteractionCell = (data) => {
+                if (data.error || data.interaction_value === undefined || isNaN(data.interaction_value)) return `<span colspan="2">---</span>`;
+                const value = data.interaction_value;
+                const status = data.interaction_status;
+                const limit = 1.2;
+                return `<span colspan="2"><span class="result-value">${value.toFixed(2)}</span> &le; ${limit} <span class="${status === 'OK' ? 'status-ok' : 'status-ng'}">(${status})</span></span>`;
+            };
+             const renderValueCell = (data, key, unit, decimals = 1) => {
+                if (data.error || data[key] === undefined || isNaN(data[key])) return `<span>---</span>`;
+                const value = data[key] / 1000; // to kN
+                return `<span><span class="result-value">${value.toFixed(decimals)}</span><span class="result-unit"> ${unit}</span></span>`;
+            };
+             const renderFactorCell = (data, key, decimals = 2) => {
+                if (data.error || data[key] === undefined || isNaN(data[key])) return `<span class="text-gray-400">---</span>`;
+                return `<span class="result-value">${data[key].toFixed(decimals)}</span>`;
+            };
+            
+            const resultsContainer = document.getElementById('anchorRodResults');
+            const aciSummaryContainer = resultsContainer.nextElementSibling; 
+            
+            resultsContainer.innerHTML = `
+                <div class="result-grid">
+                    <div class="result-grid-header">檢核項目</div>
+                    <div class="result-grid-header">LRFD</div>
+                    <div class="result-grid-header">ASD</div>
+
+                    <!-- Tension Checks -->
+                    <div class="result-section-header">錨栓強度檢核 (拉力)</div>
+                    <span>錨栓鋼材抗拉強度</span>
+                    ${renderCapacityCell(lrf_data, 'T_rod_req', 'steel_tensile_avail', 'kN', 'steel_tensile_status')}
+                    ${renderCapacityCell(asd_data, 'T_rod_req', 'steel_tensile_avail', 'kN', 'steel_tensile_status')}
+                    <span>混凝土錐狀拉出強度</span>
+                    ${renderCapacityCell(lrf_data, 'T_rod_req', 'breakout_avail', 'kN', 'breakout_status')}
+                    ${renderCapacityCell(asd_data, 'T_rod_req', 'breakout_avail', 'kN', 'breakout_status')}
+                    <span>混凝土拔出強度</span>
+                    ${renderCapacityCell(lrf_data, 'T_rod_req', 'pullout_avail', 'kN', 'pullout_status')}
+                    ${renderCapacityCell(asd_data, 'T_rod_req', 'pullout_avail', 'kN', 'pullout_status')}
+                    <span>混凝土側向面破壞強度</span>
+                    ${renderCapacityCell(lrf_data, 'T_rod_req', 'side_face_avail', 'kN', 'side_face_status')}
+                    ${renderCapacityCell(asd_data, 'T_rod_req', 'side_face_avail', 'kN', 'side_face_status')}
+                    <span class="font-bold">總錨栓容許拉力</span>
+                    ${renderCapacityCell(lrf_data, 'T_rod_req', 'overall_anchor_avail', 'kN', 'overall_anchor_status')}
+                    ${renderCapacityCell(asd_data, 'T_rod_req', 'overall_anchor_avail', 'kN', 'overall_anchor_status')}
+
+                    <!-- ACI Tension Factors -->
+                    <div class="result-section-header mt-6">ACI 修正係數 (拉力)</div>
+                    <span>邊距效應係數 (ψ<sub>ed,N</sub>)</span>
+                    ${renderFactorCell(lrf_data, 'psi_ed_N')}
+                    ${renderFactorCell(asd_data, 'psi_ed_N')}
+                    <span>群組效應係數 (ψ<sub>g,N</sub>)</span>
+                    ${renderFactorCell(lrf_data, 'psi_g_N')}
+                    ${renderFactorCell(asd_data, 'psi_g_N')}
+
+                    <!-- Shear Transfer Mechanism -->
+                    <div class="result-section-header mt-6">剪力傳遞機制檢核</div>
+                    <span>總設計剪力 (V<sub>req</sub>)</span>
+                    ${renderValueCell(lrf_data, 'V_total_req', 'kN')}
+                    ${renderValueCell(asd_data, 'V_total_req', 'kN')}
+                    <span>摩擦提供之剪力容量</span>
+                    ${renderValueCell(lrf_data, 'friction_avail', 'kN')}
+                    ${renderValueCell(asd_data, 'friction_avail', 'kN')}
+                    <span>錨栓需承擔之剩餘剪力</span>
+                    ${renderValueCell(lrf_data, 'V_remaining', 'kN')}
+                    ${renderValueCell(asd_data, 'V_remaining', 'kN')}
+
+                    <!-- Shear Checks -->
+                    <div class="result-section-header mt-6">錨栓剪力強度檢核 (每根錨栓)</div>
+                    <span>錨栓鋼材剪力強度</span>
+                    ${renderCapacityCell(lrf_data, 'V_rod_req', 'steel_shear_avail', 'kN', 'steel_shear_status')}
+                    ${renderCapacityCell(asd_data, 'V_rod_req', 'steel_shear_avail', 'kN', 'steel_shear_status')}
+                    <span>混凝土剪力破壞強度</span>
+                    ${renderCapacityCell(lrf_data, 'V_rod_req', 'concrete_shear_breakout_avail', 'kN', 'concrete_shear_breakout_status')}
+                    ${renderCapacityCell(asd_data, 'V_rod_req', 'concrete_shear_breakout_avail', 'kN', 'concrete_shear_breakout_status')}
+                    <span>混凝土撬動強度</span>
+                    ${renderCapacityCell(lrf_data, 'V_rod_req', 'concrete_pryout_avail', 'kN', 'concrete_pryout_status')}
+                    ${renderCapacityCell(asd_data, 'V_rod_req', 'concrete_pryout_avail', 'kN', 'concrete_pryout_status')}
+                    <span class="font-bold">總錨栓容許剪力</span>
+                    ${renderCapacityCell(lrf_data, 'V_rod_req', 'overall_anchor_shear_avail', 'kN', 'overall_anchor_shear_status')}
+                    ${renderCapacityCell(asd_data, 'V_rod_req', 'overall_anchor_shear_avail', 'kN', 'overall_anchor_shear_status')}
+
+                    <!-- ACI Shear Factors -->
+                    <div class="result-section-header mt-6">ACI 修正係數 (剪力)</div>
+                    <span>邊距效應係數 (ψ<sub>ed,V</sub>)</span>
+                    ${renderFactorCell(lrf_data, 'psi_ed_V')}
+                    ${renderFactorCell(asd_data, 'psi_ed_V')}
+                    <span>群組效應係數 (ψ<sub>g,V</sub>)</span>
+                    ${renderFactorCell(lrf_data, 'psi_g_V')}
+                    ${renderFactorCell(asd_data, 'psi_g_V')}
+
+                    <!-- Interaction Check -->
+                    <div class="result-section-header mt-6">拉剪交互作用檢核</div>
+                    <span>(T<sub>req</sub>/T<sub>cap</sub>) + (V<sub>req</sub>/V<sub>cap</sub>) &le; 1.2</span>
+                    ${renderInteractionCell(lrf_data)}
+                    ${renderInteractionCell(asd_data)}
+
+                    <!-- Layout Checks -->
+                    <div class="result-section-header mt-6">錨栓佈局檢核</div>
+                    <span>錨栓孔徑</span>
+                    <span colspan="2" class="result-value">${anchorChecks.hole_diameter.toFixed(1)} <span class="result-unit">mm</span></span>
+                    ${renderCheckCell('實際X向邊距', anchorChecks.actual_edge_x, 'mm', anchorChecks.min_edge_dist_from_center, 'edge_x_status')}
+                    ${renderCheckCell('實際Y向邊距', anchorChecks.actual_edge_y, 'mm', anchorChecks.min_edge_dist_from_center, 'edge_y_status')}
+                    ${renderCheckCell('實際X向螺栓間距', anchorChecks.actual_spacing_x, 'mm', anchorChecks.min_spacing_from_center, 'spacing_x_status')}
+                    ${renderCheckCell('實際Y向螺栓間距', anchorChecks.actual_spacing_y, 'mm', anchorChecks.min_spacing_from_center, 'spacing_y_status')}
+                    <div class="col-span-3 mt-4 p-2 bg-blue-50 border-l-4 border-blue-500 text-blue-800">
+                        <p class="font-bold">施工可行性與錨栓設計提示:</p>
+                        <ul class="list-disc list-inside text-sm">
+                            <li>OSHA 要求基鈑連接處至少有 4 個錨栓。目前數量: <span class="${anchorChecks.osha_status.startsWith('OK') ? 'status-ok' : 'status-ng'}">${anchorChecks.anchor_num}</span> (${anchorChecks.osha_status})</li>
+                            <li>螺栓到鋼柱的最小淨間距建議大於 1.5 倍錨栓直徑，以利於施工和焊接。</li>
+                            <li>混凝土強度計算已考量邊距與群組效應，但詳細設計仍請參考 ACI 318 附錄 D 的完整規定。</li>
+                            <li>剪力計算假設由所有錨栓平均分攤，且剪力方向平行於基鈑寬度(B)方向。詳細設計應考慮實際受力情況。</li>
+                        </ul>
+                    </div>
+                </div>`;
+             resultsContainer.parentElement.appendChild(aciSummaryContainer);
+        }
+
+        function displayShearLugResults(lrf_data, asd_data, isLugNeeded_lrf, isLugNeeded_asd) {
+            const renderCapacityCell = (data, reqKey, availKey, unit, statusKey) => {
+                 if (!data || data.error || data[reqKey] === undefined || isNaN(data[reqKey]) || !isFinite(data[availKey])) {
+                     if (reqKey === 'V_req' && data && data[reqKey] === 0) return `<span>---</span>`;
+                     return `<span>計算中...</span>`;
+                 }
+                const req = data[reqKey] / 1000;
+                const avail = data[availKey] / 1000;
+                const status = data[statusKey];
+                return `<span>Req: <span class="result-value">${req.toFixed(1)}</span><br>Cap: <span class="result-value">${avail.toFixed(1)}</span> <span class="result-unit">${unit}</span> <span class="${status === 'OK' ? 'status-ok' : 'status-ng'}">(${status})</span></span>`;
+            };
+            const renderValueCell = (data, key, unit, decimals = 1) => {
+                if (!data || data.error || data[key] === undefined || isNaN(data[key])) return `<span>---</span>`;
+                const value = data[key] / 1000; // to kN
+                return `<span><span class="result-value">${value.toFixed(decimals)}</span><span class="result-unit"> ${unit}</span></span>`;
+            };
+
+            const isLugNeeded = isLugNeeded_lrf || isLugNeeded_asd;
+            const recommendationText = isLugNeeded ? "建議設置剪力版" : "不用設置剪力版";
+            const recommendationClass = isLugNeeded ? "bg-red-100 border-red-500 text-red-700" : "bg-green-100 border-green-500 text-green-700";
+            
+            let recommendationHTML = `
+                <div class="p-4 mb-4 text-lg font-bold text-center rounded-lg border-l-4 ${recommendationClass}" role="alert">
+                    ${recommendationText}
+                </div>
+            `;
+
+            const shearLugEnabled = document.getElementById('shear_lug_enable').value === 'yes';
+
+            if (shearLugEnabled && lrf_data && asd_data) {
+                const confinementEnabled = (lrf_data.V_confinement_avail > 0 || asd_data.V_confinement_avail > 0);
+                recommendationHTML += `
+                     <div class="result-grid">
+                        <div class="result-grid-header">檢核項目</div>
+                        <div class="result-grid-header">LRFD</div>
+                        <div class="result-grid-header">ASD</div>
+                        
+                        <span>混凝土承壓強度</span>
+                        ${renderValueCell(lrf_data, 'V_bearing_avail', 'kN')}
+                        ${renderValueCell(asd_data, 'V_bearing_avail', 'kN')}
+
+                        ${confinementEnabled ? `
+                        <span>錨栓圍束效應貢獻</span>
+                        ${renderValueCell(lrf_data, 'V_confinement_avail', 'kN')}
+                        ${renderValueCell(asd_data, 'V_confinement_avail', 'kN')}
+                        ` : ''}
+
+                        <span class="font-bold">總剪力容量</span>
+                        ${renderCapacityCell(lrf_data, 'V_req', 'V_total_avail', 'kN', 'V_total_status')}
+                        ${renderCapacityCell(asd_data, 'V_req', 'V_total_avail', 'kN', 'V_total_status')}
+
+                        <div class="result-section-header mt-6"></div>
+
+                        <span>混凝土剪力破壞強度</span>
+                        ${renderCapacityCell(lrf_data, 'V_req', 'V_breakout_avail', 'kN', 'V_breakout_status')}
+                        ${renderCapacityCell(asd_data, 'V_req', 'V_breakout_avail', 'kN', 'V_breakout_status')}
+                        
+                        <span>剪力版彎矩強度</span>
+                        ${renderCapacityCell(lrf_data, 'M_req', 'M_avail', 'kN-m', 'M_status')}
+                        ${renderCapacityCell(asd_data, 'M_req', 'M_avail', 'kN-m', 'M_status')}
+                    </div>
+                    <div class="col-span-3 mt-4 p-2 bg-blue-50 border-l-4 border-blue-500 text-blue-800 text-sm">
+                         <p class="font-bold">設計說明:</p>
+                         <ul class="list-disc list-inside">
+                            <li>剪力版設計剪力 (Req) 為扣除摩擦力後之剩餘剪力。</li>
+                            <li>總剪力容量為混凝土承壓強度與錨栓圍束效應貢獻之和。</li>
+                            <li>考量錨栓圍束效應是根據 ACI 349 規範，將錨栓群的拉力強度轉換為對混凝土的圍束力，此圍束力能提供額外的剪力摩擦抗力。這是一種較精確的計算方式，通常能得到更經濟的剪力版設計。</li>
+                         </ul>
+                    </div>
+                `;
+            } else if (!shearLugEnabled) {
+                 recommendationHTML += `<p class="text-gray-600 text-center">使用者未啟用剪力版設計。以上建議是基於錨栓剪力強度檢核結果。</p>`;
+            } else {
+                 recommendationHTML += `<p class="text-gray-600 text-center">請點擊「計算」以更新剪力版設計結果。</p>`;
+            }
+
+
+            shearLugResultsDiv.innerHTML = recommendationHTML;
+        }
+    </script>
+</body>
+</html>
