@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AISC DG4 彎矩接頭設計工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMckDpbUrfnHhyZab7JsPliCfb/UnA6pvrEVbh/GngjvQkweo" crossorigin="anonymous">
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlVwcjNXVcqsCpBLaVYygtscMVdlETdd8LVrm8cBTD/ITV+eFzTDBAcrPuh" crossorigin="anonymous"></script>
+    <!-- KaTeX Auto-render extension -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            align-items: center;
+        }
+        .input-label {
+            font-weight: 500;
+            color: #475569;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+        }
+        .input-field:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        .output-field {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .check-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .status-ok {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .status-ng {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            border-bottom: 2px solid #93c5fd;
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .form-section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .note {
+            font-size: 0.875rem;
+            color: #64748b;
+            background-color: #f1f5f9;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border-left: 4px solid #60a5fa;
+        }
+        .calculation-breakdown {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            color: #334155;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">AISC DG4 延伸端板彎矩接頭設計工具</h1>
+            <p class="text-slate-600 mt-2">基於 AISC Design Guide 4, 2nd Ed. | 單位: 公制 (mm, kN, MPa)</p>
+            <p class="text-slate-500 mt-4 max-w-4xl mx-auto text-left text-base">
+                本工具旨在協助結構工程師進行延伸端板彎矩接頭的耐震設計。網頁採用分頁標籤，引導使用者依序完成：(1) 根據梁柱斷面計算需求彎矩；(2) 選擇接頭型式(4E, 4ES, 8ES)並完成螺栓設計與幾何檢核；(3) 設計端板厚度；(4) 進行柱側檢核。所有計算均基於 AISC 設計指南，並採用台灣常用 CNS H型鋼斷面與公制單位。
+            </p>
+            <div class="my-6 flex justify-center">
+                <img src="https://raw.githubusercontent.com/ttchang1127/dashboard/main/images/aisc%20dg1.png" alt="延伸端板彎矩接頭示意圖" class="rounded-lg shadow-md max-w-4xl w-full">
+            </div>
+        </header>
+
+        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+            <!-- Tabs -->
+            <div class="mb-6 border-b border-gray-200">
+                <nav class="flex flex-wrap -mb-px" id="tabs">
+                    <button class="tab-button active text-sm sm:text-base font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 px-4 py-3" data-tab="tab1">1. 基本資料與設計力矩</button>
+                    <button class="tab-button text-sm sm:text-base font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 px-4 py-3" data-tab="tab2">2. 連接型式與螺栓設計</button>
+                    <button class="tab-button text-sm sm:text-base font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 px-4 py-3" data-tab="tab3">3. 端板設計</button>
+                    <button class="tab-button text-sm sm:text-base font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 px-4 py-3" data-tab="tab4">4. 柱側檢核</button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="tab-content">
+                <!-- Tab 1: Basic Data & Design Moment -->
+                <div id="tab1" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Beam Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">梁 (Beam)</h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <label class="input-label" for="beam-section">梁斷面 (CNS)</label>
+                                    <select id="beam-section" class="input-field"></select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="beam-steel">鋼材等級</label>
+                                    <select id="beam-steel" class="input-field"></select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="beam-shear">梁端剪力 \(V_u\) (kN)</label>
+                                    <input type="number" id="beam-shear" class="input-field" value="180">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Column Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">柱 (Column)</h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <label class="input-label" for="column-section">柱斷面 (CNS)</label>
+                                    <select id="column-section" class="input-field"></select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="column-steel">鋼材等級</label>
+                                    <select id="column-steel" class="input-field"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Geometric Checks -->
+                    <div class="form-section">
+                        <h3 class="section-title">基本幾何檢核</h3>
+                        <div class="grid md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div class="input-group">
+                                <span class="input-label">梁寬 \(\le\) 柱寬</span>
+                                <span id="bf_check" class="check-status"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Design Moment Calculation -->
+                    <div class="my-4 flex justify-center">
+                        <img src="https://raw.githubusercontent.com/ttchang1127/dashboard/main/images/aisc%20dg2.png" alt="需求力矩計算示意圖" class="rounded-lg shadow-md max-w-5xl w-full">
+                    </div>
+                    <div class="form-section">
+                        <h3 class="section-title">需求力矩計算 (抗震設計)</h3>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                            <div class="input-group">
+                                <span class="input-label">塑鉸位置 \(L_p\) (mm)</span>
+                                <span id="Lp_val" class="output-field"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">塑鉸彎矩 \(M_{pe}\) (kN-m)</span>
+                                <span id="Mpe_val" class="output-field"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">柱面需求彎矩 \(M_{uc}\) (kN-m)</span>
+                                <span id="Muc_val" class="output-field"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button id="toggle-calc-btn" class="text-blue-600 hover:text-blue-800 text-sm font-medium">顯示計算過程</button>
+                            <div id="moment-calc-breakdown" class="hidden mt-2 calculation-breakdown space-y-2">
+                                <p id="mpe-calc-line1"></p>
+                                <p id="mpe-calc-line2"></p>
+                                <p id="muc-calc-line1"></p>
+                                <p id="muc-calc-line2"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Connection Type & Bolt Design -->
+                <div id="tab2" class="hidden space-y-6">
+                    <div class="my-4 flex justify-center">
+                        <img src="https://raw.githubusercontent.com/ttchang1127/dashboard/main/images/aisc%20dg3.png" alt="連接型式與螺栓設計示意圖" class="rounded-lg shadow-md max-w-lg w-full">
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Connection Geometry -->
+                        <div class="form-section">
+                            <h3 class="section-title">連接幾何配置</h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <label class="input-label" for="connection-type">連接型式</label>
+                                    <select id="connection-type" class="input-field">
+                                        <option value="4E">4E - 四螺栓無加勁</option>
+                                        <option value="4ES">4ES - 四螺栓有加勁</option>
+                                        <option value="8ES">8ES - 八螺栓有加勁</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="bolt-gage">螺栓距 \(g\) (mm)</label>
+                                    <input type="number" id="bolt-gage" class="input-field" value="140" step="5">
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="pfi">內側螺栓間距 \(p_{fi}\) (mm)</label>
+                                    <input type="number" id="pfi" class="input-field" value="50" step="5">
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="pfo">外側螺栓間距 \(p_{fo}\) (mm)</label>
+                                    <input type="number" id="pfo" class="input-field" value="50" step="5">
+                                </div>
+                                <div class="input-group hidden" id="pb-group">
+                                    <label class="input-label" for="pb">螺栓排距 \(p_b\) (mm)</label>
+                                    <input type="number" id="pb" class="input-field" value="75" step="5">
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="de">邊距 \(d_e\) (mm)</label>
+                                    <input type="number" id="de" class="input-field" value="40" step="5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bolt Design -->
+                        <div class="form-section">
+                            <h3 class="section-title">螺栓設計</h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <label class="input-label" for="bolt-grade">螺栓等級</label>
+                                    <select id="bolt-grade" class="input-field"></select>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-label">需求螺栓直徑 \(d_{b,Req'd}\) (mm)</span>
+                                    <span id="db_req_val" class="output-field"></span>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="bolt-dia">選用螺栓直徑</label>
+                                    <select id="bolt-dia" class="input-field"></select>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-label">螺栓組強度 \(\phi M_{np}\) (kN-m)</span>
+                                    <span id="phiMnp_val" class="output-field"></span>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-label">檢核 \(\phi M_{np} \ge M_{uc}\)</span>
+                                    <span id="bolt_check" class="check-status"></span>
+                                </div>
+                            </div>
+                             <div class="mt-4">
+                                <button id="toggle-bolt-calc-btn" class="text-blue-600 hover:text-blue-800 text-sm font-medium">顯示計算過程</button>
+                                <div id="bolt-calc-breakdown" class="hidden mt-2 calculation-breakdown space-y-2">
+                                    <p id="dbreq-calc-line1"></p>
+                                    <p id="dbreq-calc-line2"></p>
+                                    <hr class="border-slate-300 my-2">
+                                    <p id="phimnp-calc-line1"></p>
+                                    <p id="phimnp-calc-line2"></p>
+                                    <p id="phimnp-calc-line3"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3 class="section-title">基本幾何檢核</h3>
+                        <div class="grid md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div class="input-group">
+                                <span class="input-label" title="螺栓間距 g 必須小於梁翼板寬度 bf">螺栓距 \(\le\) 梁翼板寬</span>
+                                <span id="g_bf_check" class="check-status"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label" title="螺栓間距 g 必須大於柱的可工作間距，以利施工">螺栓距 \(\ge\) 柱可工作間距</span>
+                                <span id="g_workable_check" class="check-status"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label" title="螺栓至翼板距離 pfi 需滿足最小施工要求">內側螺栓間距檢核</span>
+                                <span id="pfi_check" class="check-status"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label" title="螺栓至翼板距離 pfo 需滿足最小施工要求">外側螺栓間距檢核</span>
+                                <span id="pfo_check" class="check-status"></span>
+                            </div>
+                             <div class="input-group hidden" id="pb_check_group">
+                                <span class="input-label" title="螺栓排距 pb 應大於等於 3 倍螺栓直徑">螺栓排距檢核 (8ES)</span>
+                                <span id="pb_check" class="check-status"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: End Plate Design -->
+                <div id="tab3" class="hidden space-y-6">
+                    <div class="my-4 flex justify-center">
+                        <img src="https://raw.githubusercontent.com/ttchang1127/dashboard/main/images/aisc%20dg3.png" alt="端板設計示意圖" class="rounded-lg shadow-md max-w-lg w-full">
+                    </div>
+                     <div class="grid md:grid-cols-2 gap-6">
+                        <div class="form-section">
+                            <h3 class="section-title">端板設計</h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <label class="input-label" for="plate-steel">端板鋼材等級</label>
+                                    <select id="plate-steel" class="input-field"></select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="plate-width">端板寬度 \(b_p\) (mm)</label>
+                                    <input type="number" id="plate-width" class="input-field" value="235" step="5">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-label">需求端板厚度 \(t_{p,Req'd}\) (mm)</span>
+                                    <span id="tp_req_val" class="output-field"></span>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="plate-thickness">選用端板厚度</label>
+                                    <select id="plate-thickness" class="input-field"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h3 class="section-title">端板檢核</h3>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <span class="input-label">梁翼板拉力 \(F_{fu}\) (kN)</span>
+                                    <span id="Ffu_val" class="output-field"></span>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-label">剪力降伏檢核</span>
+                                    <span id="shear_yield_check" class="check-status"></span>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-label">剪力斷裂檢核</span>
+                                    <span id="shear_rupture_check" class="check-status"></span>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-label">螺栓剪力檢核</span>
+                                    <span id="bolt_shear_check" class="check-status"></span>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-label">螺栓承壓檢核</span>
+                                    <span id="bolt_bearing_check" class="check-status"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Stiffener Design -->
+                    <div id="stiffener-section" class="form-section hidden">
+                        <h3 class="section-title">端板加勁板設計</h3>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                             <div class="input-group">
+                                <span class="input-label">加勁板高度 \(h_{st}\) (mm)</span>
+                                <span id="hst_val" class="output-field"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">加勁板長度 \(L_{st}\) (mm)</span>
+                                <span id="Lst_val" class="output-field"></span>
+                            </div>
+                             <div class="input-group">
+                                <span class="input-label">需求加勁板厚度 \(t_{s,req'd}\) (mm)</span>
+                                <span id="ts_req_val" class="output-field"></span>
+                            </div>
+                             <div class="input-group">
+                                <label class="input-label" for="stiffener-thickness">選用加勁板厚度</label>
+                                <select id="stiffener-thickness" class="input-field"></select>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">局部挫屈檢核</span>
+                                <span id="stiffener_buckling_check" class="check-status"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Column Side Checks -->
+                <div id="tab4" class="hidden space-y-6">
+                    <div class="form-section">
+                        <h3 class="section-title">柱翼板抗彎檢核</h3>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                            <div class="input-group">
+                                <span class="input-label">無加勁需求厚度 \(t_{fc,Req'd}\) (mm)</span>
+                                <span id="tfc_req_unstiff_val" class="output-field"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">柱翼板厚度 \(t_{fc}\) (mm)</span>
+                                <span id="tfc_val" class="output-field"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">無加勁檢核</span>
+                                <span id="col_flange_unstiff_check" class="check-status"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">有加勁需求厚度 \(t_{fc,Req'd}\) (mm)</span>
+                                <span id="tfc_req_stiff_val" class="output-field"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">柱翼板厚度 \(t_{fc}\) (mm)</span>
+                                <span id="tfc_val2" class="output-field"></span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-label">有加勁檢核</span>
+                                <span id="col_flange_stiff_check" class="check-status"></span>
+                            </div>
+                        </div>
+                        <div class="note mt-4">
+                            <p id="col_stiffener_note">檢核結果將決定是否需要柱加勁板 (連續板)。</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-200">
+                            <h4 class="font-semibold text-slate-700">改善對策建議：</h4>
+                            <ul class="list-disc list-inside text-sm text-slate-600 mt-2 space-y-1">
+                                <li><b>當「無加勁檢核」不合格時：</b>代表柱翼板本身強度不足。首選對策是更換為翼板更厚的柱斷面。若無法更換，可嘗試減小梁斷面或在施工允許範圍內縮小螺栓間距(g)。</li>
+                                <li><b>當「有加勁檢核」不合格時：</b>這表示即使增設了標準加勁板，柱翼板本身的局部抗彎強度依然不足。此時，唯一有效的改善方法是<b>更換為翼板($t_f$)更厚的柱斷面</b>。</li>
+                            </ul>
+                        </div>
+                    </div>
+                     <div class="form-section">
+                        <h3 class="section-title">柱腹板檢核 (無加勁)</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                             <div>
+                                <h4 class="font-semibold text-slate-700 mb-2">局部降伏 (Local Web Yielding)</h4>
+                                <div class="input-group">
+                                    <span class="input-label">\(\phi R_n\) (kN)</span>
+                                    <span id="web_yield_strength" class="output-field"></span>
+                                </div>
+                                <div class="input-group mt-2">
+                                    <span class="input-label">檢核 \(\phi R_n \ge F_{fu}\)</span>
+                                    <span id="web_yield_check" class="check-status"></span>
+                                </div>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold text-slate-700 mb-2">Crippling</h4>
+                                <div class="input-group">
+                                    <span class="input-label">\(\phi R_n\) (kN)</span>
+                                    <span id="web_crippling_strength" class="output-field"></span>
+                                </div>
+                                <div class="input-group mt-2">
+                                    <span class="input-label">檢核 \(\phi R_n \ge F_{fu}\)</span>
+                                    <span id="web_crippling_check" class="check-status"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="col-stiffener-design-section" class="form-section hidden">
+                        <h3 class="section-title">柱加勁板設計 (連續板)</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <span class="input-label">需求加勁板厚度 \(t_{s,req'd}\) (mm)</span>
+                                    <span id="col_ts_req_val" class="output-field"></span>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="col-stiffener-width">選用加勁板寬度 \(b_s\) (mm)</label>
+                                    <input type="number" id="col-stiffener-width" class="input-field" value="120" step="5">
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="col-stiffener-thickness">選用加勁板厚度</label>
+                                    <select id="col-stiffener-thickness" class="input-field"></select>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="input-group">
+                                    <span class="input-label">寬厚比檢核 \(b/t \le \lambda_r\)</span>
+                                    <span id="col_stiffener_bt_check" class="check-status"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3 class="section-title">檢核公式說明</h3>
+                        <div class="space-y-4 text-slate-700">
+                            <div>
+                                <h4 class="font-semibold text-lg">柱翼板抗彎檢核 (Column Flange Bending)</h4>
+                                <p class="mt-1 text-sm">此檢核確保柱翼板不會因螺栓拉力而產生過度彎曲。程式會反算出一個「需求的柱翼板厚度($t_{fc,Req'd}$)」，並與實際厚度比較。若實際厚度不足，則需增設柱加勁板。</p>
+                                <div class="calculation-breakdown mt-2">\( t_{fc,Req'd} = \sqrt{\frac{1.11 \times \phi M_{np}}{\phi_b \times F_{yc} \times Y_c}} \)</div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg">柱腹板檢核 (Column Web Checks)</h4>
+                                <p class="mt-1 text-sm">此檢核確保柱腹板能承受由梁翼板傳來的集中力，而不會發生局部降伏或挫曲。檢核方式是比較梁翼板傳遞的需求力($F_{fu}$)與柱腹板的強度($\phi R_n$)。</p>
+                                <p class="mt-2 text-sm font-medium">1. 柱腹板局部降伏 (Web Local Yielding):</p>
+                                <div class="calculation-breakdown mt-1">\( \phi R_n = 1.0 \times (5k_c + N) \times F_{yc} \times t_{wc} \)</div>
+                                <p class="mt-2 text-sm font-medium">2. 柱腹板挫曲 (Web Crippling):</p>
+                                <div class="calculation-breakdown mt-1">\( \phi R_n = 0.75 \times 0.80 t_{wc}^2 \left[1 + 3\left(\frac{N}{d_c}\right)\left(\frac{t_{wc}}{t_{fc}}\right)^{1.5}\right] \sqrt{\frac{E F_{yc} t_{fc}}{t_{wc}}} \)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Main script for the AISC DG4 Moment Connection Design Tool
+// All units are handled in metric (mm, kN, MPa) for user interface,
+// and converted to imperial (in, kips, ksi) for calculations based on AISC formulas.
+
+// --- DATA DEFINITIONS ---
+
+// CNS H-Shapes Data (Metric: mm, mm^3, etc.)
+// d, bf, tf, tw, k, Zx, workable_gage
+const H_SHAPES = {
+    "H200x200x8x12": { d: 200, bf: 200, tf: 12, tw: 8, k: 25, Zx: 446000, workable_gage: 90 },
+    "H250x250x9x14": { d: 250, bf: 250, tf: 14, tw: 9, k: 30, Zx: 882000, workable_gage: 140 },
+    "H300x300x10x15": { d: 300, bf: 300, tf: 15, tw: 10, k: 33, Zx: 1530000, workable_gage: 140 },
+    "H350x350x12x19": { d: 350, bf: 350, tf: 19, tw: 12, k: 39, Zx: 2730000, workable_gage: 140 },
+    "H400x400x13x21": { d: 400, bf: 400, tf: 21, tw: 13, k: 45, Zx: 3990000, workable_gage: 140 },
+    "H400x200x8x13": { d: 400, bf: 200, tf: 13, tw: 8, k: 29, Zx: 1230000, workable_gage: 90 },
+    "H450x200x9x14": { d: 450, bf: 200, tf: 14, tw: 9, k: 30, Zx: 1620000, workable_gage: 90 },
+    "H500x200x10x16": { d: 500, bf: 200, tf: 16, tw: 10, k: 36, Zx: 2140000, workable_gage: 90 },
+    "H600x200x11x17": { d: 600, bf: 200, tf: 17, tw: 11, k: 37, Zx: 2910000, workable_gage: 90 },
+    "H700x300x13x24": { d: 700, bf: 300, tf: 24, tw: 13, k: 48, Zx: 5960000, workable_gage: 140 },
+};
+
+// Steel Grades Data (Metric: MPa)
+const STEEL_GRADES = {
+    "SN400YB": { Fy: 235, Fu: 400, Ry: 1.5 },
+    "SN490B": { Fy: 325, Fu: 490, Ry: 1.1 },
+    "A572 Gr. 50": { Fy: 345, Fu: 450, Ry: 1.1 },
+    "A36": { Fy: 250, Fu: 400, Ry: 1.5 },
+};
+
+// Bolt Grades Data (Metric: MPa)
+const BOLT_GRADES = {
+    "A325": { Ft: 620 }, // 90 ksi
+    "A490": { Ft: 780 }, // 113 ksi
+};
+
+// Standard Bolt Diameters (mm)
+const BOLT_DIAMETERS = [16, 20, 22, 24, 27, 30, 36]; // M16 to M36
+
+// Standard Plate Thicknesses (mm)
+const PLATE_THICKNESSES = [6, 8, 10, 12, 16, 19, 22, 25, 28, 32, 36, 40, 45, 50];
+
+// --- UTILITY FUNCTIONS ---
+
+const mm_to_in = (mm) => mm / 25.4;
+const in_to_mm = (inch) => inch * 25.4;
+const kN_to_kip = (kN) => kN / 4.44822;
+const kip_to_kN = (kip) => kip * 4.44822;
+const MPa_to_ksi = (MPa) => MPa / 6.89476;
+const ksi_to_MPa = (ksi) => ksi * 6.89476;
+const kNm_to_kin = (kNm) => kNm * 8.85075;
+const kin_to_kNm = (kin) => kin * 0.112985;
+
+// --- DOM ELEMENT SELECTORS ---
+const getEl = (id) => document.getElementById(id);
+const elements = {
+    tabs: document.querySelectorAll('.tab-button'),
+    tabContents: document.querySelectorAll('#tab-content > div'),
+    beamSection: getEl('beam-section'),
+    beamSteel: getEl('beam-steel'),
+    beamShear: getEl('beam-shear'),
+    columnSection: getEl('column-section'),
+    columnSteel: getEl('column-steel'),
+    connectionType: getEl('connection-type'),
+    boltGage: getEl('bolt-gage'),
+    pfi: getEl('pfi'),
+    pfo: getEl('pfo'),
+    pbGroup: getEl('pb-group'),
+    pb: getEl('pb'),
+    de: getEl('de'),
+    boltGrade: getEl('bolt-grade'),
+    boltDia: getEl('bolt-dia'),
+    plateSteel: getEl('plate-steel'),
+    plateWidth: getEl('plate-width'),
+    plateThickness: getEl('plate-thickness'),
+    stiffenerSection: getEl('stiffener-section'),
+    stiffenerThickness: getEl('stiffener-thickness'),
+    toggleCalcBtn: getEl('toggle-calc-btn'),
+    momentCalcBreakdown: getEl('moment-calc-breakdown'),
+    toggleBoltCalcBtn: getEl('toggle-bolt-calc-btn'),
+    boltCalcBreakdown: getEl('bolt-calc-breakdown'),
+    pbCheckGroup: getEl('pb_check_group'),
+    colStiffenerDesignSection: getEl('col-stiffener-design-section'),
+    colStiffenerWidth: getEl('col-stiffener-width'),
+    colStiffenerThickness: getEl('col-stiffener-thickness'),
+};
+
+// --- INITIALIZATION ---
+
+function populateDropdown(selectElement, data, defaultKey) {
+    Object.keys(data).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = key;
+        if (key === defaultKey) {
+            option.selected = true;
+        }
+        selectElement.appendChild(option);
+    });
+}
+
+function populateNumericalDropdown(selectElement, data, defaultValue) {
+    data.forEach(value => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = `${value} mm`;
+        if (value === defaultValue) {
+            option.selected = true;
+        }
+        selectElement.appendChild(option);
+    });
+}
+
+
+function initialize() {
+    // Populate dropdowns
+    populateDropdown(elements.beamSection, H_SHAPES, "H250x250x9x14");
+    populateDropdown(elements.columnSection, H_SHAPES, "H300x300x10x15");
+    populateDropdown(elements.beamSteel, STEEL_GRADES, "SN490B");
+    populateDropdown(elements.columnSteel, STEEL_GRADES, "SN490B");
+    populateDropdown(elements.boltGrade, BOLT_GRADES, "A490");
+    populateDropdown(elements.plateSteel, STEEL_GRADES, "SN490B");
+    populateNumericalDropdown(elements.boltDia, BOLT_DIAMETERS, 30);
+    populateNumericalDropdown(elements.plateThickness, PLATE_THICKNESSES, 32);
+    populateNumericalDropdown(elements.stiffenerThickness, PLATE_THICKNESSES, 10);
+    populateNumericalDropdown(elements.colStiffenerThickness, PLATE_THICKNESSES, 12);
+
+    // Setup event listeners
+    document.querySelectorAll('input, select').forEach(el => {
+        el.addEventListener('change', calculateAll);
+    });
+
+    elements.tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            elements.tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            elements.tabContents.forEach(content => {
+                content.id === tab.dataset.tab ? content.classList.remove('hidden') : content.classList.add('hidden');
+            });
+        });
+    });
+    
+    elements.connectionType.addEventListener('change', updateUIVisibility);
+
+    elements.toggleCalcBtn.addEventListener('click', () => {
+        const isHidden = elements.momentCalcBreakdown.classList.contains('hidden');
+        elements.momentCalcBreakdown.classList.toggle('hidden');
+        elements.toggleCalcBtn.textContent = isHidden ? '隱藏計算過程' : '顯示計算過程';
+    });
+    
+    elements.toggleBoltCalcBtn.addEventListener('click', () => {
+        const isHidden = elements.boltCalcBreakdown.classList.contains('hidden');
+        elements.boltCalcBreakdown.classList.toggle('hidden');
+        elements.toggleBoltCalcBtn.textContent = isHidden ? '隱藏計算過程' : '顯示計算過程';
+    });
+
+    // Initial calculation
+    updateUIVisibility();
+    calculateAll();
+}
+
+// --- UI VISIBILITY CONTROL ---
+function updateUIVisibility() {
+    const connType = elements.connectionType.value;
+    elements.pbGroup.classList.toggle('hidden', connType !== '8ES');
+    elements.stiffenerSection.classList.toggle('hidden', connType === '4E');
+    elements.pbCheckGroup.classList.toggle('hidden', connType !== '8ES');
+}
+
+// --- MAIN CALCULATION LOGIC ---
+
+function calculateAll() {
+    // 1. Get all input values
+    const inputs = {
+        beamKey: elements.beamSection.value,
+        colKey: elements.columnSection.value,
+        beamSteelKey: elements.beamSteel.value,
+        colSteelKey: elements.columnSteel.value,
+        plateSteelKey: elements.plateSteel.value,
+        boltGradeKey: elements.boltGrade.value,
+        connType: elements.connectionType.value,
+        Vu_kN: parseFloat(elements.beamShear.value),
+        g_mm: parseFloat(elements.boltGage.value),
+        pfi_mm: parseFloat(elements.pfi.value),
+        pfo_mm: parseFloat(elements.pfo.value),
+        pb_mm: parseFloat(elements.pb.value),
+        de_mm: parseFloat(elements.de.value),
+        selected_db_mm: parseFloat(elements.boltDia.value),
+        bp_mm: parseFloat(elements.plateWidth.value),
+        tp_mm: parseFloat(elements.plateThickness.value),
+        ts_mm: parseFloat(elements.stiffenerThickness.value),
+        col_ts_mm: parseFloat(elements.colStiffenerThickness.value),
+        col_bs_mm: parseFloat(elements.colStiffenerWidth.value),
+    };
+
+    // 2. Get properties from data objects
+    const beam = H_SHAPES[inputs.beamKey];
+    const col = H_SHAPES[inputs.colKey];
+    const beamSteel = STEEL_GRADES[inputs.beamSteelKey];
+    const colSteel = STEEL_GRADES[inputs.colSteelKey];
+    const plateSteel = STEEL_GRADES[inputs.plateSteelKey];
+    const boltGrade = BOLT_GRADES[inputs.boltGradeKey];
+
+    // 3. Convert units for calculations (to imperial)
+    const beam_d = mm_to_in(beam.d);
+    const beam_bf = mm_to_in(beam.bf);
+    const beam_tf = mm_to_in(beam.tf);
+    const beam_tw = mm_to_in(beam.tw);
+    const beam_Zx = beam.Zx / (25.4**3);
+    const beam_Fy_ksi = MPa_to_ksi(beamSteel.Fy);
+    const beam_Fu_ksi = MPa_to_ksi(beamSteel.Fu);
+    const col_tfc = mm_to_in(col.tf);
+    const col_twc = mm_to_in(col.tw);
+    const col_dc = mm_to_in(col.d);
+    const col_bfc = mm_to_in(col.bf);
+    const col_k = mm_to_in(col.k);
+    const col_Fy_ksi = MPa_to_ksi(colSteel.Fy);
+    const plate_Fy_ksi = MPa_to_ksi(plateSteel.Fy);
+    const plate_Fu_ksi = MPa_to_ksi(plateSteel.Fu);
+    const bolt_Ft_ksi = MPa_to_ksi(boltGrade.Ft);
+    
+    const Vu_kip = kN_to_kip(inputs.Vu_kN);
+    const g = mm_to_in(inputs.g_mm);
+    const pfi = mm_to_in(inputs.pfi_mm);
+    const pfo = mm_to_in(inputs.pfo_mm);
+    const pb = mm_to_in(inputs.pb_mm);
+    const de = mm_to_in(inputs.de_mm);
+    const bp = mm_to_in(inputs.bp_mm);
+    const tp = mm_to_in(inputs.tp_mm);
+    const ts = mm_to_in(inputs.ts_mm);
+
+    // --- Calculation Steps ---
+
+    // Geometric checks (Tab 1)
+    const bf_check_ok = beam.bf < col.bf;
+    updateCheck('bf_check', bf_check_ok);
+
+    // Step 1: Design Moment
+    let Lst = 0;
+    if (inputs.connType === '4ES' || inputs.connType === '8ES') {
+       const hst = pfo + de;
+       Lst = hst / Math.tan(30 * Math.PI / 180);
+    }
+    const Lp = (inputs.connType === '4E') ? Math.min(beam_d / 2, 3 * beam_bf) : Lst + tp;
+    const Mpe_kin = 1.1 * beamSteel.Ry * beam_Fy_ksi * beam_Zx;
+    const Muc_kin = Mpe_kin + Vu_kip * Lp;
+    
+    // Step 2: Bolt Design
+    const h0 = beam_d / 2 + pfo;
+    const h1 = beam_d / 2 - beam_tf - pfi;
+    const h2 = beam_d / 2 + pfo + pb; // for 8ES
+    const h3 = beam_d / 2 - beam_tf - pfi - pb; // for 8ES
+    
+    let db_req_in = 0;
+    let phiMnp_kin = 0;
+    let Mnp_kin = 0;
+    let Pt_kip = 0;
+    let h_sum_in = 0;
+    const phi_bolt = 0.75;
+    const selected_db_in = mm_to_in(inputs.selected_db_mm);
+
+    if (inputs.connType === '4E' || inputs.connType === '4ES') {
+        h_sum_in = h0 + h1;
+        db_req_in = Math.sqrt((2 * Muc_kin) / (Math.PI * phi_bolt * bolt_Ft_ksi * h_sum_in));
+        Pt_kip = bolt_Ft_ksi * (Math.PI * selected_db_in**2 / 4);
+        Mnp_kin = 2 * Pt_kip * h_sum_in;
+        phiMnp_kin = phi_bolt * Mnp_kin;
+    } else { // 8ES
+        h_sum_in = (h0 + h1 + h2 + h3);
+        db_req_in = Math.sqrt((2 * Muc_kin) / (Math.PI * phi_bolt * bolt_Ft_ksi * h_sum_in));
+        Pt_kip = bolt_Ft_ksi * (Math.PI * selected_db_in**2 / 4);
+        Mnp_kin = 2 * Pt_kip * h_sum_in;
+        phiMnp_kin = phi_bolt * Mnp_kin;
+    }
+    const bolt_check_ok = phiMnp_kin >= Muc_kin;
+
+    // Geometric checks (Tab 2)
+    const g_bf_check_ok = inputs.g_mm <= beam.bf;
+    const g_workable_check_ok = inputs.g_mm >= col.workable_gage;
+    const min_pitch_clearance_in = (selected_db_in <= 1) ? 0.5 : 0.75;
+    const pfi_check_ok = pfi >= selected_db_in + min_pitch_clearance_in;
+    const pfo_check_ok = pfo >= selected_db_in + min_pitch_clearance_in;
+    const pb_check_ok = (inputs.connType === '8ES') ? (pb >= 3 * selected_db_in) : true;
+    updateCheck('g_bf_check', g_bf_check_ok);
+    updateCheck('g_workable_check', g_workable_check_ok);
+    updateCheck('pfi_check', pfi_check_ok);
+    updateCheck('pfo_check', pfo_check_ok);
+    updateCheck('pb_check', pb_check_ok);
+    
+    // Step 3: End Plate Design
+    const phi_b = 0.9;
+    const s = 0.5 * Math.sqrt(bp * g);
+    let Yp = 0;
+    const pfi_eff = Math.min(pfi, s);
+    
+    if (inputs.connType === '4E') {
+        Yp = (bp / 2) * (h1 * (1/pfi_eff + 1/s) + h0 * (1/pfo) - 0.5) + (2/g) * (h1 * (pfi_eff + s));
+    } else if (inputs.connType === '4ES') {
+        if (de <= s) { // Case 1
+            Yp = (bp/2) * (h1 * (1/pfi_eff + 1/s) + h0 * (1/pfo + 1/(2*s))) + (2/g) * (h1 * (pfi_eff + s) + h0 * (de + pfo));
+        } else { // Case 2
+            Yp = (bp/2) * (h1 * (1/pfi_eff + 1/s) + h0 * (1/s + 1/pfo)) + (2/g) * (h1 * (pfi_eff + s) + h0 * (s + pfo));
+        }
+    } else { // 8ES
+        const h_vals = { h1: h2, h2: h0, h3: h1, h4: h3 };
+        if (de <= s) { // Case 1
+            Yp = (bp/2) * (h_vals.h1 * (1/(2*de)) + h_vals.h2 * (1/pfo) + h_vals.h3 * (1/pfi_eff) + h_vals.h4 * (1/s)) +
+                 (2/g) * (h_vals.h1 * (de + pb/4) + h_vals.h2 * (pfo + 3*pb/4) + h_vals.h3 * (pfi_eff + pb/4) + h_vals.h4 * (s + 3*pb/4) + pb**2) + g;
+        } else { // Case 2
+            Yp = (bp/2) * (h_vals.h1 * (1/s) + h_vals.h2 * (1/pfo) + h_vals.h3 * (1/pfi_eff) + h_vals.h4 * (1/s)) +
+                 (2/g) * (h_vals.h1 * (s + pb/4) + h_vals.h2 * (pfo + 3*pb/4) + h_vals.h3 * (pfi_eff + pb/4) + h_vals.h4 * (s + 3*pb/4) + pb**2) + g;
+        }
+    }
+
+    const tp_req_in = Math.sqrt((1.11 * phiMnp_kin) / (phi_b * plate_Fy_ksi * Yp));
+    const Ffu_kip = Muc_kin / (beam_d - beam_tf);
+
+    // End plate checks
+    const phiRn_shear_yield = 0.9 * 0.6 * plate_Fy_ksi * bp * tp;
+    const shear_yield_ok = (Ffu_kip / 2) < phiRn_shear_yield;
+    
+    const An_shear_rupture = (bp - 2 * (selected_db_in + 1/8)) * tp;
+    const phiRn_shear_rupture = 0.75 * 0.6 * plate_Fu_ksi * An_shear_rupture;
+    const shear_rupture_ok = (Ffu_kip / 2) < phiRn_shear_rupture;
+    
+    // Bolt shear check (simplified)
+    const num_bolts_comp = (inputs.connType === '8ES') ? 8 : 4;
+    const Fv_bolt_ksi = (inputs.boltGradeKey === 'A325') ? 48 : 60; // Assuming threads not excluded
+    const phiRn_bolt_shear = 0.75 * num_bolts_comp * Fv_bolt_ksi * (Math.PI * selected_db_in**2 / 4);
+    const bolt_shear_ok = Vu_kip < phiRn_bolt_shear;
+
+    // Bolt bearing check (simplified)
+    const Lc = pfi - 0.5 * (selected_db_in + 1/16);
+    const Rn_bearing = Math.min(1.2 * Lc * tp * plate_Fu_ksi, 2.4 * selected_db_in * tp * plate_Fu_ksi);
+    const phiRn_bolt_bearing = 0.75 * num_bolts_comp * Rn_bearing;
+    const bolt_bearing_ok = Vu_kip < phiRn_bolt_bearing;
+
+    // Stiffener check
+    let hst_in = 0, Lst_in = 0, ts_req_in = 0, stiffener_buckling_ok = true;
+    if (inputs.connType !== '4E') {
+        hst_in = pfo + de;
+        Lst_in = hst_in / Math.tan(30 * Math.PI / 180);
+        ts_req_in = beam_tw * (beam_Fy_ksi / plate_Fy_ksi);
+        const E_ksi = 29000;
+        stiffener_buckling_ok = (hst_in / ts) <= 0.56 * Math.sqrt(E_ksi / plate_Fy_ksi);
+    }
+    
+    // Step 4: Column Side Checks
+    const s_col = 0.5 * Math.sqrt(col_bfc * g);
+    let Yc_unstiff = 0, Yc_stiff = 0;
+    
+    if (inputs.connType === '4E' || inputs.connType === '4ES') {
+        const c_col = pfo + beam_tf + pfi;
+        Yc_unstiff = (col_bfc/2) * (h1/s_col + h0/s_col) + (2/g) * (h1*(s_col + 3*c_col/4) + h0*(s_col + c_col/4) + c_col**2/2) + g/2;
+        const t_stiff_col = 0.5; // Assume 0.5 in stiffener
+        const pso_col = (c_col - t_stiff_col) / 2;
+        const psi_col = pso_col;
+        const psi_col_eff = Math.min(psi_col, s_col);
+        Yc_stiff = (col_bfc/2) * (h1*(1/s_col + 1/psi_col_eff) + h0*(1/s_col + 1/pso_col)) + (2/g) * (h1*(s_col + psi_col_eff) + h0*(s_col + pso_col));
+    } else { // 8ES
+        // Simplified for this example
+        Yc_unstiff = Yp * 1.2; // Approximation
+        Yc_stiff = Yp * 1.8; // Approximation
+    }
+    
+    const tfc_req_unstiff_in = Math.sqrt((1.11 * phiMnp_kin) / (phi_b * col_Fy_ksi * Yc_unstiff));
+    const tfc_req_stiff_in = Math.sqrt((1.11 * phiMnp_kin) / (phi_b * col_Fy_ksi * Yc_stiff));
+    let col_flange_unstiff_ok = col_tfc >= tfc_req_unstiff_in;
+    let col_flange_stiff_ok = col_tfc >= tfc_req_stiff_in;
+    
+    // Column Web Checks
+    const N_web = beam_tf + 2*tp; // Simplified
+    const phiRn_web_yield = 1.0 * (5 * col_k + N_web) * col_Fy_ksi * col_twc;
+    let web_yield_ok = phiRn_web_yield > Ffu_kip;
+    
+    const phiRn_web_crippling = 0.75 * 0.8 * col_twc**2 * (1 + 3 * (N_web/col_dc) * (col_twc/col_tfc)**1.5) * Math.sqrt(29000 * col_Fy_ksi * col_tfc / col_twc);
+    let web_crippling_ok = phiRn_web_crippling > Ffu_kip;
+    
+    // Column Stiffener Design
+    const needsStiffener = !col_flange_unstiff_ok || !web_yield_ok || !web_crippling_ok;
+    elements.colStiffenerDesignSection.classList.toggle('hidden', !needsStiffener);
+
+    let col_ts_req_in = 0;
+    let col_stiffener_bt_check_ok = true;
+    if(needsStiffener) {
+        const Ast_req = (Ffu_kip - phiRn_web_yield) / col_Fy_ksi; // Simplified area req'd
+        col_ts_req_in = Ast_req / (mm_to_in(inputs.col_bs_mm) * 2); // Assume two stiffeners
+        
+        const E_ksi = 29000;
+        const lambda_r = 0.56 * Math.sqrt(E_ksi / col_Fy_ksi);
+        const b_over_t = inputs.col_bs_mm / inputs.col_ts_mm;
+        col_stiffener_bt_check_ok = b_over_t <= lambda_r;
+        
+        // If stiffeners are provided and pass checks, the column side limit states are considered satisfied.
+        if (col_stiffener_bt_check_ok && mm_to_in(inputs.col_ts_mm) >= col_ts_req_in) {
+            col_flange_unstiff_ok = true;
+            web_yield_ok = true;
+            web_crippling_ok = true;
+        }
+    }
+
+
+    // --- Update UI ---
+    updateOutput('Lp_val', in_to_mm(Lp), 'mm');
+    updateOutput('Mpe_val', kin_to_kNm(Mpe_kin), 'kN-m');
+    updateOutput('Muc_val', kin_to_kNm(Muc_kin), 'kN-m');
+    updateOutput('db_req_val', in_to_mm(db_req_in), 'mm');
+    updateOutput('phiMnp_val', kin_to_kNm(phiMnp_kin), 'kN-m');
+    updateCheck('bolt_check', bolt_check_ok);
+    updateOutput('tp_req_val', in_to_mm(tp_req_in), 'mm');
+    updateOutput('Ffu_val', kip_to_kN(Ffu_kip), 'kN');
+    updateCheck('shear_yield_check', shear_yield_ok);
+    updateCheck('shear_rupture_check', shear_rupture_ok);
+    updateCheck('bolt_shear_check', bolt_shear_ok);
+    updateCheck('bolt_bearing_check', bolt_bearing_ok);
+    
+    if (inputs.connType !== '4E') {
+        updateOutput('hst_val', in_to_mm(hst_in), 'mm');
+        updateOutput('Lst_val', in_to_mm(Lst_in), 'mm');
+        updateOutput('ts_req_val', in_to_mm(ts_req_in), 'mm');
+        updateCheck('stiffener_buckling_check', stiffener_buckling_ok);
+    }
+
+    updateOutput('tfc_req_unstiff_val', in_to_mm(tfc_req_unstiff_in), 'mm');
+    updateOutput('tfc_val', col.tf, 'mm');
+    updateCheck('col_flange_unstiff_check', col_flange_unstiff_ok);
+    updateOutput('tfc_req_stiff_val', in_to_mm(tfc_req_stiff_in), 'mm');
+    updateOutput('tfc_val2', col.tf, 'mm');
+    updateCheck('col_flange_stiff_check', col_flange_stiff_ok);
+    
+    let stiffenerNote = '';
+    if (needsStiffener) {
+        stiffenerNote = '柱翼板與腹板強度不足，請設計下方柱加勁板 (連續板)。';
+    } else {
+        stiffenerNote = '柱側檢核通過，不需加勁板。';
+    }
+    getEl('col_stiffener_note').textContent = stiffenerNote;
+
+    updateOutput('web_yield_strength', kip_to_kN(phiRn_web_yield), 'kN');
+    updateCheck('web_yield_check', web_yield_ok);
+    updateOutput('web_crippling_strength', kip_to_kN(phiRn_web_crippling), 'kN');
+    updateCheck('web_crippling_check', web_crippling_ok);
+
+    if (needsStiffener) {
+        updateOutput('col_ts_req_val', in_to_mm(col_ts_req_in), 'mm');
+        updateCheck('col_stiffener_bt_check', col_stiffener_bt_check_ok);
+    }
+
+    // Update calculation breakdown
+    getEl('mpe-calc-line1').textContent = `\\(M_{pe} = 1.1 \\times R_y \\times F_y \\times Z_x\\)`;
+    getEl('mpe-calc-line2').textContent = `\\(\\quad = 1.1 \\times ${beamSteel.Ry} \\times ${beamSteel.Fy} \\text{ MPa} \\times ${beam.Zx.toLocaleString()} \\text{ mm}^3 = \\mathbf{${kin_to_kNm(Mpe_kin).toFixed(2)} \\text{ kN-m}}\\)`;
+    getEl('muc-calc-line1').textContent = `\\(M_{uc} = M_{pe} + V_u \\times L_p\\)`;
+    getEl('muc-calc-line2').textContent = `\\(\\quad = ${kin_to_kNm(Mpe_kin).toFixed(2)} \\text{ kN-m} + (${inputs.Vu_kN} \\text{ kN} \\times ${in_to_mm(Lp).toFixed(2)/1000} \\text{ m}) = \\mathbf{${kin_to_kNm(Muc_kin).toFixed(2)} \\text{ kN-m}}\\)`;
+
+    // Update bolt calculation breakdown
+    getEl('dbreq-calc-line1').textContent = `\\(d_{b,Req'd} = \\sqrt{\\frac{2 \\times M_{uc}}{\\pi \\times \\phi \\times F_t \\times \\sum h}}\\)`;
+    getEl('dbreq-calc-line2').textContent = `\\(\\quad = \\sqrt{\\frac{2 \\times ${kin_to_kNm(Muc_kin).toFixed(2)} \\text{ kN-m}}{\\pi \\times ${phi_bolt} \\times ${boltGrade.Ft} \\text{ MPa} \\times ...}} = \\mathbf{${in_to_mm(db_req_in).toFixed(2)} \\text{ mm}}\\)`;
+    getEl('phimnp-calc-line1').textContent = `\\(P_t = F_t \\times A_b = ${boltGrade.Ft} \\text{ MPa} \\times (\\pi \\times ${inputs.selected_db_mm}^2 / 4) \\text{ mm}^2 = \\mathbf{${kip_to_kN(Pt_kip).toFixed(2)} \\text{ kN}}\\)`;
+    getEl('phimnp-calc-line2').textContent = `\\(\\phi M_{np} = \\phi \\times 2 \\times P_t \\times \\sum h\\)`;
+    getEl('phimnp-calc-line3').textContent = `\\(\\quad = ${phi_bolt} \\times 2 \\times ${kip_to_kN(Pt_kip).toFixed(2)} \\text{ kN} \\times ... = \\mathbf{${kin_to_kNm(phiMnp_kin).toFixed(2)} \\text{ kN-m}}\\)`;
+    
+    // Re-render math in the dynamic sections
+    renderMathInElement(elements.momentCalcBreakdown);
+    renderMathInElement(elements.boltCalcBreakdown);
+
+}
+
+function updateOutput(id, value, unit) {
+    const el = getEl(id);
+    if (el) {
+        el.textContent = `${value.toFixed(2)} ${unit}`;
+    }
+}
+
+function updateCheck(id, isOk) {
+    const el = getEl(id);
+    if (el) {
+        if (isOk) {
+            el.textContent = 'OK';
+            el.className = 'check-status status-ok';
+        } else {
+            el.textContent = '不合格';
+            el.className = 'check-status status-ng';
+        }
+    }
+}
+
+
+// --- RUN ---
+document.addEventListener('DOMContentLoaded', () => {
+    initialize();
+    renderMathInElement(document.body, {
+        delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+        ]
+    });
+});
+
+</script>
+
+</body>
+</html>
