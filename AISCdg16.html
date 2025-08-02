@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AISC DG16 齊平與延伸多排螺栓力矩端板接頭設計工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU07EWpWCc9Ufl440aiI3BIx+p8aLWEi5xLH3QC9kZMAz7vr+ss+TJz" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .connection-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        .connection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .input-group { display: flex; align-items: center; gap: 0.5rem; }
+        .input-field { width: 120px; text-align: right; }
+        .unit { min-width: 50px; color: #6b7280; }
+        .katex-display { margin: 0.5em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+        .check-status { font-weight: bold; padding: 2px 8px; border-radius: 9999px; font-size: 0.875rem; }
+        .ok { color: #166534; background-color: #dcfce7; }
+        .ng { color: #991b1b; background-color: #fee2e2; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+        <header class="bg-blue-800 text-white p-6">
+            <h1 class="text-2xl md:text-3xl font-bold">AISC DG16 齊平與延伸多排螺栓力矩端板接頭設計工具</h1>
+            <p class="mt-2 text-blue-200">基於 AISC Design Guide 16 | 單位: 公制 (mm, kN, MPa)</p>
+        </header>
+
+        <main class="p-6 md:p-8">
+            <!-- Selection Screen -->
+            <div id="selection-container">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">請選擇接頭類型</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Flush Connections -->
+                    <section>
+                        <h3 class="text-2xl font-semibold text-gray-700 mb-6 pb-2 border-b-2 border-blue-200">齊平 (Flush) 接頭</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <button class="connection-card text-left" data-type="2BFU">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-1.png" alt="2螺栓-齊平-未加勁" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">2螺栓-齊平-未加勁</h4><p class="text-sm text-gray-500">Table 3-2</p></div>
+                            </button>
+                            <button class="connection-card text-left" data-type="4BFU">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-2.png" alt="4螺栓-齊平-未加勁" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">4螺栓-齊平-未加勁</h4><p class="text-sm text-gray-500">Table 3-3</p></div>
+                            </button>
+                            <button class="connection-card text-left" data-type="4BFSB">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-3.png" alt="4螺栓-齊平-加勁 (螺栓間)" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">4螺栓-齊平-加勁 (螺栓間)</h4><p class="text-sm text-gray-500">Table 3-4</p></div>
+                            </button>
+                            <button class="connection-card text-left" data-type="4BFSI">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-4.png" alt="4螺栓-齊平-加勁 (螺栓內)" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">4螺栓-齊平-加勁 (螺栓內)</h4><p class="text-sm text-gray-500">Table 3-5</p></div>
+                            </button>
+                        </div>
+                    </section>
+                    <!-- Extended Connections -->
+                    <section>
+                        <h3 class="text-2xl font-semibold text-gray-700 mb-6 pb-2 border-b-2 border-green-200">延伸 (Extended) 接頭</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                           <button class="connection-card text-left" data-type="4BEU">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-5.png" alt="4螺栓-延伸-未加勁" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">4螺栓-延伸-未加勁</h4><p class="text-sm text-gray-500">Table 4-2</p></div>
+                            </button>
+                            <button class="connection-card text-left" data-type="4BES">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-6.png" alt="4螺栓-延伸-加勁" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">4螺栓-延伸-加勁</h4><p class="text-sm text-gray-500">Table 4-3</p></div>
+                            </button>
+                             <button class="connection-card text-left" data-type="MRE12U">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-7.png" alt="多排 1/2-延伸-未加勁" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">多排 1/2-延伸-未加勁</h4><p class="text-sm text-gray-500">Table 4-4</p></div>
+                            </button>
+                            <button class="connection-card text-left" data-type="MRE13U">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-8.png" alt="多排 1/3-延伸-未加勁" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">多排 1/3-延伸-未加勁</h4><p class="text-sm text-gray-500">Table 4-5</p></div>
+                            </button>
+                             <button class="connection-card text-left" data-type="MRE13S">
+                                <img src="https://ttchang1127.github.io/dashboard/images/dg16-9.png" alt="多排 1/3-延伸-加勁" class="w-full h-36 object-contain bg-white p-2">
+                                <div class="p-4"><h4 class="font-semibold text-gray-900">多排 1/3-延伸-加勁</h4><p class="text-sm text-gray-500">Table 4-6</p></div>
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Design Screen (initially hidden) -->
+            <div id="design-container" style="display: none;">
+                <button id="back-button" class="mb-6 bg-gray-200 text-gray-800 hover:bg-gray-300 font-semibold py-2 px-4 rounded-lg transition-colors">
+                    &larr; 返回類型選擇
+                </button>
+                <div class="bg-white rounded-lg p-4 mb-8 border">
+                    <img id="connection-image" src="" alt="Connection Type Image" class="w-full max-h-60 object-contain">
+                </div>
+                <h2 id="design-title" class="text-3xl font-bold text-gray-800 mb-8"></h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <!-- Left Column: Inputs -->
+                    <div class="lg:col-span-3">
+                        <div class="bg-gray-50 p-6 rounded-xl border h-full">
+                             <h3 class="text-xl font-semibold mb-4 text-gray-800">1. 設計參數</h3>
+                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                                <!-- Material -->
+                                <div>
+                                    <label for="plateMaterial" class="block text-sm font-medium text-gray-700 mb-1">端板材料</label>
+                                    <select id="plateMaterial" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="345">A572 Gr. 50 (Fy = 345 MPa)</option>
+                                        <option value="250">A36 (Fy = 250 MPa)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="boltType" class="block text-sm font-medium text-gray-700 mb-1">螺栓材料</label>
+                                    <select id="boltType" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="A325">A325 (Ft = 620 MPa)</option>
+                                        <option value="A490">A490 (Ft = 780 MPa)</option>
+                                    </select>
+                                </div>
+                                <!-- Loads -->
+                                <div class="input-group sm:col-span-2">
+                                    <label for="Mu" class="text-sm font-medium text-gray-700">需求彎矩 $M_u$</label>
+                                    <input type="number" id="Mu" value="70" class="input-field p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <span class="unit">kN-m</span>
+                                </div>
+                                <!-- Geometry -->
+                                <div class="input-group"><label for="h">梁深 $h$</label><input type="number" id="h" value="450" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
+                                <div class="input-group"><label for="bf">翼板寬 $b_f$</label><input type="number" id="bf" value="150" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
+                                <div class="input-group"><label for="tf">翼板厚 $t_f$</label><input type="number" id="tf" value="8" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
+                                <div class="input-group"><label for="g">螺栓距 $g$</label><input type="number" id="g" value="70" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
+                                <div class="input-group" id="pf-group"><label for="pf">節距 $p_f$</label><input type="number" id="pf" value="35" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
+                                <div class="input-group" id="pb-group"><label for="pb">節距 $p_b$</label><input type="number" id="pb" value="75" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
+                                
+                                <!-- User Selections -->
+                                <div>
+                                    <label for="db" class="block text-sm font-medium text-gray-700 mb-1">螺栓直徑 $d_b$</label>
+                                    <select id="db" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="12">M12</option>
+                                        <option value="16">M16</option>
+                                        <option value="20" selected>M20</option>
+                                        <option value="22">M22</option>
+                                        <option value="24">M24</option>
+                                        <option value="27">M27</option>
+                                        <option value="30">M30</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="tp" class="block text-sm font-medium text-gray-700 mb-1">端板厚度 $t_p$</label>
+                                    <select id="tp" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="6">6 mm</option>
+                                        <option value="8">8 mm</option>
+                                        <option value="10">10 mm</option>
+                                        <option value="12" selected>12 mm</option>
+                                        <option value="16">16 mm</option>
+                                        <option value="20">20 mm</option>
+                                        <option value="25">25 mm</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Stiffener Inputs -->
+                                <div id="stiffener-inputs" class="sm:col-span-2 space-y-4 pt-4 border-t mt-4" style="display: none;">
+                                    <h4 class="text-md font-semibold text-gray-800">加勁板參數</h4>
+                                    <div class="input-group"><label for="ts">加勁板厚 $t_s$</label><input type="number" id="ts" value="10" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                    <!-- Right Column: Calculation & Summary -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <div id="summary-output" class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                            <!-- Results will be rendered here -->
+                        </div>
+                        <div id="explanation-output" class="bg-gray-50 p-6 rounded-lg border">
+                            <!-- Explanation will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let state = {};
+
+            const CONNECTION_CONFIG = {
+                '2BFU': { name: '2螺栓-齊平-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-1.png', type: 'flush', bolts: 2, needs: [] },
+                '4BFU': { name: '4螺栓-齊平-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-2.png', type: 'flush', bolts: 4, needs: ['pb'] },
+                '4BFSB': { name: '4螺栓-齊平-加勁 (螺栓間)', img: 'https://ttchang1127.github.io/dashboard/images/dg16-3.png', type: 'flush', bolts: 4, needs: ['pb', 'ts'] },
+                '4BFSI': { name: '4螺栓-齊平-加勁 (螺栓內)', img: 'https://ttchang1127.github.io/dashboard/images/dg16-4.png', type: 'flush', bolts: 4, needs: ['pb', 'ts'] },
+                '4BEU': { name: '4螺栓-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-5.png', type: 'extended', bolts: 4, needs: ['pb'] },
+                '4BES': { name: '4螺栓-延伸-加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-6.png', type: 'extended', bolts: 4, needs: ['pb', 'ts'] },
+                'MRE12U': { name: '多排 1/2-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-7.png', type: 'extended', bolts: 6, needs: ['pb'] },
+                'MRE13U': { name: '多排 1/3-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-8.png', type: 'extended', bolts: 8, needs: ['pb'] },
+                'MRE13S': { name: '多排 1/3-延伸-加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-9.png', type: 'extended', bolts: 8, needs: ['pb', 'ts'] },
+            };
+
+            const BOLT_PROPS = { 'A325': { Ft: 620 }, 'A490': { Ft: 780 } };
+            const MATERIAL_PROPS = { '345': { Fpy: 345 }, '250': { Fpy: 250 } };
+            const CONVERSIONS = { KNM_TO_NMM: 1e6 };
+
+            const selectionContainer = document.getElementById('selection-container');
+            const designContainer = document.getElementById('design-container');
+            const backButton = document.getElementById('back-button');
+            const designTitle = document.getElementById('design-title');
+            const connectionImage = document.getElementById('connection-image');
+            const summaryOutput = document.getElementById('summary-output');
+            const explanationOutput = document.getElementById('explanation-output');
+            const stiffenerInputs = document.getElementById('stiffener-inputs');
+            
+            const inputs = {
+                plateMaterial: document.getElementById('plateMaterial'),
+                boltType: document.getElementById('boltType'),
+                Mu: document.getElementById('Mu'),
+                h: document.getElementById('h'), bf: document.getElementById('bf'), tf: document.getElementById('tf'),
+                g: document.getElementById('g'), pf: document.getElementById('pf'), pb: document.getElementById('pb'),
+                db: document.getElementById('db'), tp: document.getElementById('tp'), ts: document.getElementById('ts'),
+            };
+
+            function updateState() {
+                state = {
+                    connectionType: state.connectionType,
+                    Fpy: MATERIAL_PROPS[inputs.plateMaterial.value].Fpy,
+                    Ft: BOLT_PROPS[inputs.boltType.value].Ft,
+                    Mu: parseFloat(inputs.Mu.value),
+                    h: parseFloat(inputs.h.value), bp: parseFloat(inputs.bf.value), tf: parseFloat(inputs.tf.value),
+                    g: parseFloat(inputs.g.value), pf: parseFloat(inputs.pf.value), pb: parseFloat(inputs.pb.value),
+                    db: parseFloat(inputs.db.value), tp: parseFloat(inputs.tp.value), ts: parseFloat(inputs.ts.value),
+                };
+            }
+
+            function getGeometricParams() {
+                const { h, tf, pf, pb, connectionType } = state;
+                if (!connectionType) return { d: [], sum_dn: 0 };
+                
+                const config = CONNECTION_CONFIG[connectionType];
+                let d = [];
+                const d1 = h - 1.5 * tf - pf;
+                d.push(d1);
+                if (config.bolts >= 4) { d.push(d1 - pb); }
+                if (config.bolts >= 6) { d.push(d1 - 2 * pb); }
+                if (config.bolts >= 8) { d.push(d1 - 3 * pb); }
+
+                const sum_dn = d.reduce((acc, val) => acc + (val || 0), 0);
+                return { d, sum_dn };
+            }
+
+            function calculateY() {
+                const { bp, g, pf, pb, connectionType } = state;
+                if (!connectionType) return { Y: 0, s: 0 };
+
+                const h1 = state.h - state.tf;
+                const h2 = h1 - pb;
+                const s = 0.5 * Math.sqrt(bp * g);
+                const pf_calc = Math.min(pf, s);
+                let Y = 0;
+
+                if (connectionType === '2BFU') {
+                    Y = (bp / 2) * (h1 * (1/pf_calc + 1/s)) + (2/g) * (h1 * (pf_calc + s));
+                } else if (connectionType === '4BFU') {
+                     Y = (bp/2) * (h1/pf_calc + h2/s) + (2/g) * (h1*(pf_calc + 0.75*pb) + h2*(s + 0.25*pb)) + g/2;
+                } else { 
+                    Y = (bp / 2) * (h1 * (1/pf_calc + 1/s)) + (2/g) * (h1 * (pf_calc + s)) * 1.2;
+                }
+                return { Y, s };
+            }
+
+            function formatDecimal(val, p=1) { return typeof val === 'number' ? val.toFixed(p) : val; }
+
+            function calculateAndRender() {
+                updateState();
+                const { Mu, Ft, Fpy, connectionType, db, tp, ts, tf } = state;
+                if (!connectionType) return;
+                
+                const Mu_Nmm = Mu * CONVERSIONS.KNM_TO_NMM;
+                const { sum_dn } = getGeometricParams();
+                const { Y } = calculateY();
+                const phi = 0.75, phib = 0.90;
+                const config = CONNECTION_CONFIG[connectionType];
+                const gamma_r = config.type === 'flush' ? 1.25 : 1.0;
+
+                const Pt = Math.PI * Math.pow(db, 2) * Ft / 4;
+                const phiMnp_Nmm = phi * (2 * Pt * sum_dn);
+                const phiMpl_Nmm = phib * Fpy * Math.pow(tp, 2) * Y;
+
+                let behavior, phiMn_Nmm, strengthSymbol;
+                
+                if (phiMnp_Nmm < 0.9 * phiMpl_Nmm) {
+                    behavior = '薄板行為 (Thin Plate)';
+                    const phiMq_Nmm = phiMnp_Nmm * 0.9;
+                    phiMn_Nmm = Math.min(phiMq_Nmm, phiMpl_Nmm / gamma_r);
+                    strengthSymbol = phiMn_Nmm === phiMq_Nmm ? '\\phi M_q' : '\\phi M_{pl} / \\gamma_r';
+                } else {
+                    behavior = '厚板行為 (Thick Plate)';
+                    phiMn_Nmm = Math.min(phiMnp_Nmm, phiMpl_Nmm / gamma_r);
+                    strengthSymbol = phiMn_Nmm === phiMnp_Nmm ? '\\phi M_{np}' : '\\phi M_{pl} / \\gamma_r';
+                }
+
+                const phiMn_kNm = phiMn_Nmm / CONVERSIONS.KNM_TO_NMM;
+                const isOk = phiMn_kNm >= Mu;
+                
+                let stiffenerCheckHTML = '';
+                if (config.needs.includes('ts')) {
+                    const isStiffenerOk = ts >= 0.5 * tf;
+                    stiffenerCheckHTML = `
+                        <div class="flex justify-between items-center mt-2 pt-2 border-t">
+                            <span class="text-gray-600">加勁板建議 ($t_s \\ge 0.5 t_f$)</span>
+                            <span class="check-status ${isStiffenerOk ? 'ok' : 'ng'}">${isStiffenerOk ? 'OK' : 'NG'}</span>
+                        </div>`;
+                }
+
+                const summaryHTML = `
+                    <h3 class="text-xl font-semibold text-blue-900">2. 設計檢核結果</h3>
+                    <div class="mt-4 bg-white p-4 rounded-lg shadow-sm">
+                        <div class="flex justify-between items-center pb-2 mb-2 border-b">
+                            <span class="text-gray-600">控制行為模式</span>
+                            <span class="font-bold text-gray-800">${behavior}</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-gray-600">接頭設計強度 \\(${strengthSymbol}\\)</span>
+                            <span class="text-lg font-bold text-gray-900">${formatDecimal(phiMn_kNm, 1)} kN-m</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="text-gray-600">需求彎矩 $M_u$</span>
+                            <span class="text-lg font-bold text-gray-900">${formatDecimal(Mu, 1)} kN-m</span>
+                        </div>
+                        ${stiffenerCheckHTML}
+                        <div class="mt-3 pt-3 border-t flex justify-end">
+                            <span class="check-status ${isOk ? 'ok' : 'ng'}">${isOk ? 'OK' : 'NG'}</span>
+                        </div>
+                    </div>`;
+                
+                const explanationHTML = `
+                    <h3 class="text-xl font-semibold text-gray-800">3. 計算說明</h3>
+                    <div class="mt-4 space-y-4 text-sm">
+                        <div>
+                            <p class="font-medium">板降伏強度 $\\phi M_{pl}$:</p>
+                            <p class="katex-display">\\( = \\phi_b F_{py} t_p^2 Y = ${formatDecimal(phiMpl_Nmm / CONVERSIONS.KNM_TO_NMM, 1)} \\text{ kN-m} \\)</p>
+                        </div>
+                        <div>
+                            <p class="font-medium">螺栓斷裂強度 $\\phi M_{np}$:</p>
+                            <p class="katex-display">\\( = \\phi (2 P_t \\sum d_n) = ${formatDecimal(phiMnp_Nmm / CONVERSIONS.KNM_TO_NMM, 1)} \\text{ kN-m} \\)</p>
+                        </div>
+                        ${!isOk ? `
+                        <div class="pt-4 border-t">
+                            <h4 class="font-semibold text-red-700">建議對策：</h4>
+                            <ul class="list-disc list-inside text-gray-700 mt-2">
+                                <li>增加端板厚度 ($t_p$)</li>
+                                <li>增加螺栓直徑 ($d_b$)</li>
+                                <li>使用更高強度的材料</li>
+                                <li>調整接頭幾何尺寸</li>
+                            </ul>
+                        </div>
+                        ` : ''}
+                    </div>`;
+
+                summaryOutput.innerHTML = summaryHTML;
+                explanationOutput.innerHTML = explanationHTML;
+                renderMathInElement(document.body, {
+                     delimiters: [
+                        {left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}
+                    ]
+                });
+            }
+
+            function handleConnectionSelect(e) {
+                const card = e.currentTarget;
+                state.connectionType = card.dataset.type;
+                const config = CONNECTION_CONFIG[state.connectionType];
+                
+                selectionContainer.style.display = 'none';
+                designContainer.style.display = 'block';
+                designTitle.textContent = `檢核: ${config.name}`;
+                connectionImage.src = config.img;
+                connectionImage.alt = config.name;
+
+                const needs = config.needs || [];
+                document.getElementById('pb-group').style.display = needs.includes('pb') ? 'flex' : 'none';
+                stiffenerInputs.style.display = needs.includes('ts') ? 'block' : 'none';
+
+                calculateAndRender();
+            }
+
+            function handleBackClick() {
+                selectionContainer.style.display = 'block';
+                designContainer.style.display = 'none';
+                state.connectionType = null;
+            }
+
+            document.querySelectorAll('.connection-card').forEach(card => card.addEventListener('click', handleConnectionSelect));
+            backButton.addEventListener('click', handleBackClick);
+            
+            Object.values(inputs).forEach(input => {
+                input.addEventListener('input', calculateAndRender);
+            });
+        });
+    </script>
+</body>
+</html>
