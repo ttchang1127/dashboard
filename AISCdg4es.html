@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AISC DG4 彎矩接頭設計工具</title>
+    <title>AISC DG4 & DG13 延伸端板彎矩接頭設計工具</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- KaTeX CSS -->
@@ -103,8 +103,8 @@
 
     <div class="max-w-7xl mx-auto">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">AISC DG4 延伸端板彎矩接頭設計工具</h1>
-            <p class="text-slate-600 mt-2">基於 AISC Design Guide 4, 2nd Ed. | 單位: 公制 (mm, kN, MPa)</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">AISC DG4 & DG13 延伸端板彎矩接頭設計工具</h1>
+            <p class="text-slate-600 mt-2">基於 AISC Design Guide 4 & 13 | 單位: 公制 (mm, kN, MPa)</p>
             <p class="text-slate-500 mt-4 max-w-4xl mx-auto text-left text-base">
                 本工具旨在協助結構工程師進行延伸端板彎矩接頭的耐震設計。網頁採用分頁標籤，引導使用者依序完成：(1) 根據梁柱斷面計算需求彎矩；(2) 選擇接頭型式(4E, 4ES, 8ES)並完成螺栓設計與幾何檢核；(3) 設計端板厚度；(4) 進行柱側檢核。所有計算均基於 AISC 設計指南，並採用台灣常用 CNS H型鋼斷面與公制單位。
             </p>
@@ -460,9 +460,13 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="note mt-4">
+                            <p><b>目的：</b>這個區塊是為了解決柱腹板 (Web) 的強度不足問題（例如局部降伏、挫曲）。</p>
+                            <p class="mt-1"><b>原理：</b>透過焊接加勁板，我們建立了一條堅固的傳力路徑，將梁翼板傳來的巨大集中力直接傳遞掉，保護了原本脆弱的柱腹板。所以當您設計了合格的加勁板，柱腹板的檢核就會通過。</p>
+                        </div>
                     </div>
                     <div id="col-stiffener-design-section" class="form-section hidden">
-                        <h3 class="section-title">柱加勁板設計 (連續板)</h3>
+                        <h3 class="section-title">柱加勁板設計 (依據 AISC DG13)</h3>
                         <div class="grid md:grid-cols-2 gap-6">
                             <div class="space-y-4">
                                 <div class="input-group">
