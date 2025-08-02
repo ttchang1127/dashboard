@@ -83,6 +83,8 @@
                         <!-- 子選單 (預設隱藏) -->
                         <div id="concrete-bridge-submenu" class="hidden mt-1 pl-6 space-y-1">
                             <a href="#" data-target="content-bridge" class="nav-link block py-2 text-base font-medium rounded-lg pl-4">三跨預力箱型梁檢核</a>
+                            <!-- === 新增的項目 === -->
+                            <a href="#" data-target="content-pci-bridge" class="nav-link block py-2 text-base font-medium rounded-lg pl-4">預力I型橋梁設計檢核</a>
                         </div>
                     </div>
                     
@@ -123,6 +125,13 @@
                     </ul>
                 </div>
                 
+                <!-- === 新增的內容面板 === -->
+                <div id="content-pci-bridge" class="nav-content hidden">
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <li><a href="./PCIbrg_tw.html" target="_blank" class="calc-item bg-violet-50 hover:bg-violet-100 border-violet-200"><h3 class="text-violet-800">PCI橋梁設計檢核(台灣規範)</h3><p class="text-violet-700">檢核預力I型梁橋的應力與剪力，符合台灣規範。</p></a></li>
+                    </ul>
+                </div>
+
                 <!-- 鋼橋的內容面板 -->
                 <div id="content-steel-bridge" class="nav-content hidden">
                      <p class="text-gray-500">此類別尚無計算工具。</p>
@@ -138,7 +147,6 @@
                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <li><a href="./Baseplt.html" target="_blank" class="calc-item bg-lime-50 hover:bg-lime-100 border-lime-200"><h3 class="text-lime-800">柱基鈑與基礎錨栓設計</h3><p class="text-lime-700">依據AISC Design Guide 1，設計鋼結構柱的基鈑厚度與基礎錨栓尺寸，確保結構穩定性。</p></a></li>
                         <li><a href="./AISCdg4es.html" target="_blank" class="calc-item bg-fuchsia-50 hover:bg-fuchsia-100 border-fuchsia-200"><h3 class="text-fuchsia-800">延伸端板彎矩接頭設計</h3><p class="text-fuchsia-700">依據 AISC Design Guide 4&amp;13 設計延伸端板彎矩接頭。</p></a></li>
-                        <!-- === 新增的項目 === -->
                         <li><a href="./AISCdg16.html" target="_blank" class="calc-item bg-sky-50 hover:bg-sky-100 border-sky-200"><h3 class="text-sky-800">齊平與延伸力矩端板接頭設計</h3><p class="text-sky-700">依據AISC Design Guide 16進行。</p></a></li>
                     </ul>
                 </div>
@@ -186,9 +194,8 @@
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
 
-                    if (this.classList.contains('active-link')) {
-                        return; // 如果點擊的已是啟用中的連結，則不動作
-                    }
+                    const targetId = this.getAttribute('data-target');
+                    if (!targetId) return; // 如果連結沒有 data-target，則不進行切換
 
                     // 移除所有連結的啟用樣式
                     navLinks.forEach(l => l.classList.remove('active-link'));
@@ -196,7 +203,15 @@
                     // 為當前點擊的連結加上啟用樣式
                     this.classList.add('active-link');
 
-                    const targetId = this.getAttribute('data-target');
+                    // 檢查被點擊的連結是否在下拉選單中
+                    const parentSubmenu = this.closest('#concrete-bridge-submenu');
+                    if (parentSubmenu) {
+                        // 如果是，則同時將父層的下拉選單按鈕也設為啟用
+                        dropdownToggle.classList.add('active-link');
+                    } else {
+                        // 如果不是，則移除下拉選單按鈕的啟用狀態
+                        dropdownToggle.classList.remove('active-link');
+                    }
 
                     // 隱藏所有內容面板
                     contentPanels.forEach(panel => {
