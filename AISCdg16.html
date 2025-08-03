@@ -44,11 +44,9 @@
         </header>
 
         <main class="p-6 md:p-8">
-            <!-- Selection Screen -->
             <div id="selection-container">
                 <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">請選擇接頭類型</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <!-- Flush Connections -->
                     <section>
                         <h3 class="text-2xl font-semibold text-gray-700 mb-6 pb-2 border-b-2 border-blue-200">齊平 (Flush) 接頭</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -70,7 +68,6 @@
                             </button>
                         </div>
                     </section>
-                    <!-- Extended Connections -->
                     <section>
                         <h3 class="text-2xl font-semibold text-gray-700 mb-6 pb-2 border-b-2 border-green-200">延伸 (Extended) 接頭</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -99,7 +96,6 @@
                 </div>
             </div>
 
-            <!-- Design Screen (initially hidden) -->
             <div id="design-container" style="display: none;">
                 <button id="back-button" class="mb-6 bg-gray-200 text-gray-800 hover:bg-gray-300 font-semibold py-2 px-4 rounded-lg transition-colors">
                     &larr; 返回類型選擇
@@ -110,12 +106,10 @@
                 <h2 id="design-title" class="text-3xl font-bold text-gray-800 mb-8"></h2>
                 
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                    <!-- Left Column: Inputs -->
                     <div class="lg:col-span-3">
                         <div class="bg-gray-50 p-6 rounded-xl border h-full">
                              <h3 class="text-xl font-semibold mb-4 text-gray-800">1. 設計參數</h3>
                              <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                                <!-- Material -->
                                 <div>
                                     <label for="plateMaterial" class="block text-sm font-medium text-gray-700 mb-1">端板材料</label>
                                     <select id="plateMaterial" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
@@ -130,13 +124,11 @@
                                         <option value="A490">A490 (Ft = 780 MPa)</option>
                                     </select>
                                 </div>
-                                <!-- Loads -->
                                 <div class="input-group sm:col-span-2">
                                     <label for="Mu" class="text-sm font-medium text-gray-700">需求彎矩 $M_u$</label>
                                     <input type="number" id="Mu" value="70" class="input-field p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                     <span class="unit">kN-m</span>
                                 </div>
-                                <!-- Geometry -->
                                 <div class="input-group"><label for="h">梁深 $h$</label><input type="number" id="h" value="450" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
                                 <div class="input-group"><label for="bf">翼板寬 $b_f$</label><input type="number" id="bf" value="150" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
                                 <div class="input-group"><label for="tf">翼板厚 $t_f$</label><input type="number" id="tf" value="8" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
@@ -144,7 +136,6 @@
                                 <div class="input-group" id="pf-group"><label for="pf">節距 $p_f$</label><input type="number" id="pf" value="35" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
                                 <div class="input-group" id="pb-group"><label for="pb">節距 $p_b$</label><input type="number" id="pb" value="75" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
                                 
-                                <!-- User Selections -->
                                 <div>
                                     <label for="db" class="block text-sm font-medium text-gray-700 mb-1">螺栓直徑 $d_b$</label>
                                     <select id="db" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
@@ -170,22 +161,43 @@
                                     </select>
                                 </div>
                                 
-                                <!-- Stiffener Inputs -->
                                 <div id="stiffener-inputs" class="sm:col-span-2 space-y-4 pt-4 border-t mt-4" style="display: none;">
                                     <h4 class="text-md font-semibold text-gray-800">加勁板參數</h4>
                                     <div class="input-group"><label for="ts">加勁板厚 $t_s$</label><input type="number" id="ts" value="10" step="1" class="input-field p-2 border"><span class="unit">mm</span></div>
                                 </div>
+                                
+                                <div class="sm:col-span-2 space-y-4 pt-4 border-t mt-4">
+                                    <h4 class="text-md font-semibold text-gray-800">剪力檢核參數</h4>
+                                    <div class="input-group"><label for="Vu">設計剪力 $V_u$</label><input type="number" id="Vu" value="100" class="input-field p-2 border"><span class="unit">kN</span></div>
+                                    <div>
+                                        <label for="shearType" class="block text-sm font-medium text-gray-700 mb-1">檢核類型</label>
+                                        <select id="shearType" class="w-full p-2 border rounded-md">
+                                            <option value="bearing">承壓型 (Bearing-Type)</option>
+                                            <option value="slip-critical">滑動臨界型 (Slip-Critical)</option>
+                                        </select>
+                                    </div>
+                                    <div id="bearing-options">
+                                        <label for="threadCondition" class="block text-sm font-medium text-gray-700 mb-1">螺紋條件</label>
+                                        <select id="threadCondition" class="w-full p-2 border rounded-md">
+                                            <option value="N">螺紋在剪力面 (Threads Included)</option>
+                                            <option value="X">螺紋不在剪力面 (Threads Excluded)</option>
+                                        </select>
+                                    </div>
+                                    <div id="slip-critical-options" style="display:none;">
+                                        <label for="surfaceClass" class="block text-sm font-medium text-gray-700 mb-1">接觸面條件</label>
+                                        <select id="surfaceClass" class="w-full p-2 border rounded-md">
+                                            <option value="A">Class A (μ=0.30)</option>
+                                            <option value="B">Class B (μ=0.50)</option>
+                                        </select>
+                                    </div>
+                                </div>
                              </div>
                         </div>
                     </div>
-                    <!-- Right Column: Calculation & Summary -->
                     <div class="lg:col-span-2 space-y-8">
-                        <div id="summary-output" class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-                            <!-- Results will be rendered here -->
-                        </div>
-                        <div id="explanation-output" class="bg-gray-50 p-6 rounded-lg border">
-                            <!-- Explanation will be rendered here -->
-                        </div>
+                        <div id="summary-output" class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg"></div>
+                        <div id="explanation-output" class="bg-gray-50 p-6 rounded-lg border"></div>
+                        <div id="shear-explanation-output" class="bg-gray-50 p-6 rounded-lg border"></div>
                     </div>
                 </div>
             </div>
@@ -197,20 +209,23 @@
             let state = {};
 
             const CONNECTION_CONFIG = {
-                '2BFU': { name: '2螺栓-齊平-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-1.png', type: 'flush', bolts: 2, needs: [] },
-                '4BFU': { name: '4螺栓-齊平-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-2.png', type: 'flush', bolts: 4, needs: ['pb'] },
-                '4BFSB': { name: '4螺栓-齊平-加勁 (螺栓間)', img: 'https://ttchang1127.github.io/dashboard/images/dg16-3.png', type: 'flush', bolts: 4, needs: ['pb', 'ts'] },
-                '4BFSI': { name: '4螺栓-齊平-加勁 (螺栓內)', img: 'https://ttchang1127.github.io/dashboard/images/dg16-4.png', type: 'flush', bolts: 4, needs: ['pb', 'ts'] },
-                '4BEU': { name: '4螺栓-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-5.png', type: 'extended', bolts: 4, needs: ['pb'] },
-                '4BES': { name: '4螺栓-延伸-加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-6.png', type: 'extended', bolts: 4, needs: ['pb', 'ts'] },
-                'MRE12U': { name: '多排 1/2-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-7.png', type: 'extended', bolts: 6, needs: ['pb'] },
-                'MRE13U': { name: '多排 1/3-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-8.png', type: 'extended', bolts: 8, needs: ['pb'] },
-                'MRE13S': { name: '多排 1/3-延伸-加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-9.png', type: 'extended', bolts: 8, needs: ['pb', 'ts'] },
+                '2BFU': { name: '2螺栓-齊平-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-1.png', type: 'flush', bolts: 2, nc: 2, ntotal: 4, needs: [] },
+                '4BFU': { name: '4螺栓-齊平-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-2.png', type: 'flush', bolts: 4, nc: 2, ntotal: 6, needs: ['pb'] },
+                '4BFSB': { name: '4螺栓-齊平-加勁 (螺栓間)', img: 'https://ttchang1127.github.io/dashboard/images/dg16-3.png', type: 'flush', bolts: 4, nc: 2, ntotal: 6, needs: ['pb', 'ts'] },
+                '4BFSI': { name: '4螺栓-齊平-加勁 (螺栓內)', img: 'https://ttchang1127.github.io/dashboard/images/dg16-4.png', type: 'flush', bolts: 4, nc: 2, ntotal: 6, needs: ['pb', 'ts'] },
+                '4BEU': { name: '4螺栓-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-5.png', type: 'extended', bolts: 4, nc: 2, ntotal: 6, needs: ['pb'] },
+                '4BES': { name: '4螺栓-延伸-加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-6.png', type: 'extended', bolts: 4, nc: 2, ntotal: 6, needs: ['pb', 'ts'] },
+                'MRE12U': { name: '多排 1/2-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-7.png', type: 'extended', bolts: 6, nc: 2, ntotal: 8, needs: ['pb'] },
+                'MRE13U': { name: '多排 1/3-延伸-未加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-8.png', type: 'extended', bolts: 8, nc: 2, ntotal: 10, needs: ['pb'] },
+                'MRE13S': { name: '多排 1/3-延伸-加勁', img: 'https://ttchang1127.github.io/dashboard/images/dg16-9.png', type: 'extended', bolts: 8, nc: 2, ntotal: 10, needs: ['pb', 'ts'] },
             };
 
-            const BOLT_PROPS = { 'A325': { Ft: 620 }, 'A490': { Ft: 780 } };
+            const BOLT_PROPS = { 
+                'A325': { Ft: 620, FnvN: 372, FnvX: 469, Tb: {12: 54, 16: 95, 20: 148, 22: 182, 24: 214, 27: 275, 30: 337} }, 
+                'A490': { Ft: 780, FnvN: 469, FnvX: 586, Tb: {12: 67, 16: 119, 20: 185, 22: 228, 24: 267, 27: 344, 30: 422} } 
+            };
             const MATERIAL_PROPS = { '345': { Fpy: 345 }, '250': { Fpy: 250 } };
-            const CONVERSIONS = { KNM_TO_NMM: 1e6 };
+            const CONVERSIONS = { KNM_TO_NMM: 1e6, KN_TO_N: 1e3 };
 
             const selectionContainer = document.getElementById('selection-container');
             const designContainer = document.getElementById('design-container');
@@ -219,33 +234,36 @@
             const connectionImage = document.getElementById('connection-image');
             const summaryOutput = document.getElementById('summary-output');
             const explanationOutput = document.getElementById('explanation-output');
+            const shearExplanationOutput = document.getElementById('shear-explanation-output');
             const stiffenerInputs = document.getElementById('stiffener-inputs');
             
             const inputs = {
-                plateMaterial: document.getElementById('plateMaterial'),
-                boltType: document.getElementById('boltType'),
-                Mu: document.getElementById('Mu'),
+                plateMaterial: document.getElementById('plateMaterial'), boltType: document.getElementById('boltType'),
+                Mu: document.getElementById('Mu'), Vu: document.getElementById('Vu'),
                 h: document.getElementById('h'), bf: document.getElementById('bf'), tf: document.getElementById('tf'),
                 g: document.getElementById('g'), pf: document.getElementById('pf'), pb: document.getElementById('pb'),
                 db: document.getElementById('db'), tp: document.getElementById('tp'), ts: document.getElementById('ts'),
+                shearType: document.getElementById('shearType'),
+                threadCondition: document.getElementById('threadCondition'), surfaceClass: document.getElementById('surfaceClass'),
             };
 
             function updateState() {
                 state = {
                     connectionType: state.connectionType,
                     Fpy: MATERIAL_PROPS[inputs.plateMaterial.value].Fpy,
-                    Ft: BOLT_PROPS[inputs.boltType.value].Ft,
-                    Mu: parseFloat(inputs.Mu.value),
+                    boltProps: BOLT_PROPS[inputs.boltType.value],
+                    Mu: parseFloat(inputs.Mu.value), Vu: parseFloat(inputs.Vu.value),
                     h: parseFloat(inputs.h.value), bp: parseFloat(inputs.bf.value), tf: parseFloat(inputs.tf.value),
                     g: parseFloat(inputs.g.value), pf: parseFloat(inputs.pf.value), pb: parseFloat(inputs.pb.value),
                     db: parseFloat(inputs.db.value), tp: parseFloat(inputs.tp.value), ts: parseFloat(inputs.ts.value),
+                    shearType: inputs.shearType.value,
+                    threadCondition: inputs.threadCondition.value, surfaceClass: inputs.surfaceClass.value,
                 };
             }
 
             function getGeometricParams() {
                 const { h, tf, pf, pb, connectionType } = state;
                 if (!connectionType) return { d: [], sum_dn: 0 };
-                
                 const config = CONNECTION_CONFIG[connectionType];
                 let d = [];
                 const d1 = h - 1.5 * tf - pf;
@@ -253,28 +271,18 @@
                 if (config.bolts >= 4) { d.push(d1 - pb); }
                 if (config.bolts >= 6) { d.push(d1 - 2 * pb); }
                 if (config.bolts >= 8) { d.push(d1 - 3 * pb); }
-
-                const sum_dn = d.reduce((acc, val) => acc + (val || 0), 0);
-                return { d, sum_dn };
+                return { d, sum_dn: d.reduce((acc, val) => acc + (val || 0), 0) };
             }
 
             function calculateY() {
                 const { bp, g, pf, pb, connectionType } = state;
                 if (!connectionType) return { Y: 0, s: 0 };
-
-                const h1 = state.h - state.tf;
-                const h2 = h1 - pb;
-                const s = 0.5 * Math.sqrt(bp * g);
-                const pf_calc = Math.min(pf, s);
+                const h1 = state.h - state.tf; const h2 = h1 - pb;
+                const s = 0.5 * Math.sqrt(bp * g); const pf_calc = Math.min(pf, s);
                 let Y = 0;
-
-                if (connectionType === '2BFU') {
-                    Y = (bp / 2) * (h1 * (1/pf_calc + 1/s)) + (2/g) * (h1 * (pf_calc + s));
-                } else if (connectionType === '4BFU') {
-                     Y = (bp/2) * (h1/pf_calc + h2/s) + (2/g) * (h1*(pf_calc + 0.75*pb) + h2*(s + 0.25*pb)) + g/2;
-                } else { 
-                    Y = (bp / 2) * (h1 * (1/pf_calc + 1/s)) + (2/g) * (h1 * (pf_calc + s)) * 1.2;
-                }
+                if (connectionType === '2BFU') { Y = (bp / 2) * (h1 * (1/pf_calc + 1/s)) + (2/g) * (h1 * (pf_calc + s)); } 
+                else if (connectionType === '4BFU') { Y = (bp/2) * (h1/pf_calc + h2/s) + (2/g) * (h1*(pf_calc + 0.75*pb) + h2*(s + 0.25*pb)) + g/2; } 
+                else { Y = (bp / 2) * (h1 * (1/pf_calc + 1/s)) + (2/g) * (h1 * (pf_calc + s)) * 1.2; }
                 return { Y, s };
             }
 
@@ -282,9 +290,20 @@
 
             function calculateAndRender() {
                 updateState();
-                const { Mu, Ft, Fpy, connectionType, db, tp, ts, tf } = state;
-                if (!connectionType) return;
+                if (!state.connectionType) return;
                 
+                const momentData = performMomentCalculations();
+                const shearData = performShearCalculations();
+                
+                renderMomentReport(momentData);
+                renderShearReport(shearData);
+                
+                renderMathInElement(document.body, { delimiters: [ {left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true} ] });
+            }
+
+            function performMomentCalculations() {
+                const { Mu, boltProps, Fpy, connectionType, db, tp, ts, tf } = state;
+                const Ft = boltProps.Ft;
                 const Mu_Nmm = Mu * CONVERSIONS.KNM_TO_NMM;
                 const { sum_dn } = getGeometricParams();
                 const { Y } = calculateY();
@@ -297,7 +316,6 @@
                 const phiMpl_Nmm = phib * Fpy * Math.pow(tp, 2) * Y;
 
                 let behavior, phiMn_Nmm, strengthSymbol;
-                
                 if (phiMnp_Nmm < 0.9 * phiMpl_Nmm) {
                     behavior = '薄板行為 (Thin Plate)';
                     const phiMq_Nmm = phiMnp_Nmm * 0.9;
@@ -308,73 +326,83 @@
                     phiMn_Nmm = Math.min(phiMnp_Nmm, phiMpl_Nmm / gamma_r);
                     strengthSymbol = phiMn_Nmm === phiMnp_Nmm ? '\\phi M_{np}' : '\\phi M_{pl} / \\gamma_r';
                 }
-
-                const phiMn_kNm = phiMn_Nmm / CONVERSIONS.KNM_TO_NMM;
-                const isOk = phiMn_kNm >= Mu;
                 
+                return {
+                    Mu, config, ts, tf,
+                    intermediate: { phiMnp_Nmm, phiMpl_Nmm },
+                    result: { behavior, phiMn_Nmm, strengthSymbol, isOk: phiMn_Nmm >= Mu_Nmm, isStiffenerOk: ts >= 0.5 * tf }
+                };
+            }
+
+            function performShearCalculations() {
+                const { Vu, boltProps, connectionType, db, shearType, threadCondition, surfaceClass } = state;
+                const config = CONNECTION_CONFIG[connectionType];
+                const Ab = Math.PI * Math.pow(db, 2) / 4;
+                let phiVn_kN, formula, calc_steps;
+
+                if (shearType === 'bearing') {
+                    const phi = 0.75;
+                    const nc = config.nc;
+                    const Fnv = threadCondition === 'N' ? boltProps.FnvN : boltProps.FnvX;
+                    const phiRn_N = phi * Fnv * Ab;
+                    const phiVn_N = nc * phiRn_N;
+                    phiVn_kN = phiVn_N / 1000;
+                    formula = '\\phi V_n = n_c \\times (\\phi F_{nv} A_b)';
+                    calc_steps = `= ${nc} \\times (${phi} \\times ${Fnv} \\text{ MPa} \\times ${Ab.toFixed(1)} \\text{ mm}^2) = ${phiVn_kN.toFixed(1)} \\text{ kN}`;
+                } else { // slip-critical
+                    const phi = 1.0; // Assuming standard holes
+                    const ntotal = config.ntotal;
+                    const mu = surfaceClass === 'A' ? 0.30 : 0.50;
+                    const Tb_kN = boltProps.Tb[db];
+                    const Du = 1.0, hf = 1.0, ns = 1;
+                    const phiRn_kN = phi * mu * Du * hf * Tb_kN * ns;
+                    phiVn_kN = ntotal * phiRn_kN;
+                    formula = '\\phi V_n = N_{total} \\times (\\phi \\mu D_u h_f T_b n_s)';
+                    calc_steps = `= ${ntotal} \\times (${phi} \\times ${mu} \\times 1.0 \\times 1.0 \\times ${Tb_kN} \\text{ kN} \\times 1) = ${phiVn_kN.toFixed(1)} \\text{ kN}`;
+                }
+                return { Vu, result: { phiVn_kN, isOk: phiVn_kN >= Vu, formula, calc_steps } };
+            }
+            
+            function renderMomentReport(data) {
+                const { Mu, config, ts, tf, intermediate, result } = data;
                 let stiffenerCheckHTML = '';
                 if (config.needs.includes('ts')) {
-                    const isStiffenerOk = ts >= 0.5 * tf;
-                    stiffenerCheckHTML = `
-                        <div class="flex justify-between items-center mt-2 pt-2 border-t">
-                            <span class="text-gray-600">加勁板建議 ($t_s \\ge 0.5 t_f$)</span>
-                            <span class="check-status ${isStiffenerOk ? 'ok' : 'ng'}">${isStiffenerOk ? 'OK' : 'NG'}</span>
-                        </div>`;
+                    stiffenerCheckHTML = `<div class="flex justify-between items-center mt-2 pt-2 border-t"><span class="text-gray-600">加勁板建議 ($t_s \\ge 0.5 t_f$)</span><span class="check-status ${result.isStiffenerOk ? 'ok' : 'ng'}">${result.isStiffenerOk ? 'OK' : 'NG'}</span></div>`;
                 }
-
-                const summaryHTML = `
-                    <h3 class="text-xl font-semibold text-blue-900">2. 設計檢核結果</h3>
+                summaryOutput.innerHTML = `
+                    <h3 class="text-xl font-semibold text-blue-900">2. 彎矩檢核結果</h3>
                     <div class="mt-4 bg-white p-4 rounded-lg shadow-sm">
-                        <div class="flex justify-between items-center pb-2 mb-2 border-b">
-                            <span class="text-gray-600">控制行為模式</span>
-                            <span class="font-bold text-gray-800">${behavior}</span>
-                        </div>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-gray-600">接頭設計強度 \\(${strengthSymbol}\\)</span>
-                            <span class="text-lg font-bold text-gray-900">${formatDecimal(phiMn_kNm, 1)} kN-m</span>
-                        </div>
-                        <div class="flex justify-between items-center mt-1">
-                            <span class="text-gray-600">需求彎矩 $M_u$</span>
-                            <span class="text-lg font-bold text-gray-900">${formatDecimal(Mu, 1)} kN-m</span>
-                        </div>
+                        <div class="flex justify-between items-center pb-2 mb-2 border-b"><span class="text-gray-600">控制行為模式</span><span class="font-bold text-gray-800">${result.behavior}</span></div>
+                        <div class="flex justify-between items-center mt-2"><span class="text-gray-600">接頭設計強度 \\(${result.strengthSymbol}\\)</span><span class="text-lg font-bold text-gray-900">${(result.phiMn_Nmm / CONVERSIONS.KNM_TO_NMM).toFixed(1)} kN-m</span></div>
+                        <div class="flex justify-between items-center mt-1"><span class="text-gray-600">需求彎矩 $M_u$</span><span class="text-lg font-bold text-gray-900">${Mu.toFixed(1)} kN-m</span></div>
                         ${stiffenerCheckHTML}
-                        <div class="mt-3 pt-3 border-t flex justify-end">
-                            <span class="check-status ${isOk ? 'ok' : 'ng'}">${isOk ? 'OK' : 'NG'}</span>
-                        </div>
+                        <div class="mt-3 pt-3 border-t flex justify-end"><span class="check-status ${result.isOk ? 'ok' : 'ng'}">${result.isOk ? 'OK' : 'NG'}</span></div>
                     </div>`;
                 
-                const explanationHTML = `
-                    <h3 class="text-xl font-semibold text-gray-800">3. 計算說明</h3>
+                explanationOutput.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-800">3. 彎矩計算說明</h3>
                     <div class="mt-4 space-y-4 text-sm">
-                        <div>
-                            <p class="font-medium">板降伏強度 $\\phi M_{pl}$:</p>
-                            <p class="katex-display">\\( = \\phi_b F_{py} t_p^2 Y = ${formatDecimal(phiMpl_Nmm / CONVERSIONS.KNM_TO_NMM, 1)} \\text{ kN-m} \\)</p>
-                        </div>
-                        <div>
-                            <p class="font-medium">螺栓斷裂強度 $\\phi M_{np}$:</p>
-                            <p class="katex-display">\\( = \\phi (2 P_t \\sum d_n) = ${formatDecimal(phiMnp_Nmm / CONVERSIONS.KNM_TO_NMM, 1)} \\text{ kN-m} \\)</p>
-                        </div>
-                        ${!isOk ? `
-                        <div class="pt-4 border-t">
-                            <h4 class="font-semibold text-red-700">建議對策：</h4>
-                            <ul class="list-disc list-inside text-gray-700 mt-2">
-                                <li>增加端板厚度 ($t_p$)</li>
-                                <li>增加螺栓直徑 ($d_b$)</li>
-                                <li>使用更高強度的材料</li>
-                                <li>調整接頭幾何尺寸</li>
-                            </ul>
-                        </div>
-                        ` : ''}
+                        <div><p class="font-medium">板降伏強度 $\\phi M_{pl}$:</p><p class="katex-display">\\( = ${formatDecimal(intermediate.phiMpl_Nmm / CONVERSIONS.KNM_TO_NMM, 1)} \\text{ kN-m} \\)</p></div>
+                        <div><p class="font-medium">螺栓斷裂強度 $\\phi M_{np}$:</p><p class="katex-display">\\( = ${formatDecimal(intermediate.phiMnp_Nmm / CONVERSIONS.KNM_TO_NMM, 1)} \\text{ kN-m} \\)</p></div>
+                        ${!result.isOk ? `<div class="pt-4 border-t"><h4 class="font-semibold text-red-700">建議對策：</h4><ul class="list-disc list-inside text-gray-700 mt-2"><li>增加端板厚度 ($t_p$)</li><li>增加螺栓直徑 ($d_b$)</li><li>使用更高強度的材料</li></ul></div>` : ''}
                     </div>`;
+            }
 
-                summaryOutput.innerHTML = summaryHTML;
-                explanationOutput.innerHTML = explanationHTML;
-                renderMathInElement(document.body, {
-                     delimiters: [
-                        {left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false},
-                        {left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}
-                    ]
-                });
+            function renderShearReport(data) {
+                const { Vu, result } = data;
+                shearExplanationOutput.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-800">4. 剪力檢核與說明</h3>
+                    <div class="mt-4 bg-white p-4 rounded-lg shadow-sm">
+                        <div class="flex justify-between items-center mt-2"><span class="text-gray-600">設計剪力強度 $\\phi V_n$</span><span class="text-lg font-bold text-gray-900">${result.phiVn_kN.toFixed(1)} kN</span></div>
+                        <div class="flex justify-between items-center mt-1"><span class="text-gray-600">需求剪力 $V_u$</span><span class="text-lg font-bold text-gray-900">${Vu.toFixed(1)} kN</span></div>
+                        <div class="mt-3 pt-3 border-t flex justify-end"><span class="check-status ${result.isOk ? 'ok' : 'ng'}">${result.isOk ? 'OK' : 'NG'}</span></div>
+                    </div>
+                    <div class="mt-4 space-y-2 text-sm">
+                        <p class="font-medium">計算公式:</p>
+                        <p class="katex-display">\\(${result.formula}\\)</p>
+                        <p class="font-medium">計算過程:</p>
+                        <p class="katex-display">\\(${result.calc_steps}\\)</p>
+                    </div>`;
             }
 
             function handleConnectionSelect(e) {
@@ -384,9 +412,8 @@
                 
                 selectionContainer.style.display = 'none';
                 designContainer.style.display = 'block';
-                designTitle.textContent = `檢核: ${config.name}`;
-                connectionImage.src = config.img;
-                connectionImage.alt = config.name;
+                document.getElementById('design-title').textContent = `檢核: ${config.name}`;
+                document.getElementById('connection-image').src = config.img;
 
                 const needs = config.needs || [];
                 document.getElementById('pb-group').style.display = needs.includes('pb') ? 'flex' : 'none';
@@ -395,18 +422,19 @@
                 calculateAndRender();
             }
 
-            function handleBackClick() {
-                selectionContainer.style.display = 'block';
-                designContainer.style.display = 'none';
-                state.connectionType = null;
+            function handleShearTypeChange() {
+                const isBearing = inputs.shearType.value === 'bearing';
+                document.getElementById('bearing-options').style.display = isBearing ? 'block' : 'none';
+                document.getElementById('slip-critical-options').style.display = isBearing ? 'none' : 'block';
+                calculateAndRender();
             }
 
+            backButton.addEventListener('click', () => { selectionContainer.style.display = 'block'; designContainer.style.display = 'none'; state.connectionType = null; });
             document.querySelectorAll('.connection-card').forEach(card => card.addEventListener('click', handleConnectionSelect));
-            backButton.addEventListener('click', handleBackClick);
+            Object.values(inputs).forEach(input => input.addEventListener('input', calculateAndRender));
+            inputs.shearType.addEventListener('change', handleShearTypeChange);
             
-            Object.values(inputs).forEach(input => {
-                input.addEventListener('input', calculateAndRender);
-            });
+            if(state.connectionType) calculateAndRender();
         });
     </script>
 </body>
