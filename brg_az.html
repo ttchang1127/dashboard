@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式PC錨碇區檢核指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU07EWHEZrWCsZQAAEoAxpHy2xAftGTgWFSgC8BH31ZSFcvlALTMWC_">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .result-box {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .ok-result {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+        }
+        .ng-result {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+        }
+        .stepper-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem; /* 28px */
+            height: 1.1rem; /* 17.6px */
+            font-size: 0.75rem; /* 12px */
+            line-height: 1;
+            color: #475569; /* slate-600 */
+            background-color: #f1f5f9; /* slate-100 */
+            border: 1px solid #cbd5e1; /* slate-300 */
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .stepper-btn:hover {
+            background-color: #e2e8f0; /* slate-200 */
+            z-index: 5;
+        }
+        .stepper-btn:active {
+            background-color: #cbd5e1; /* slate-300 */
+        }
+        .stepper-btn.up {
+            border-bottom: 0.5px solid #cbd5e1;
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+        .stepper-btn.down {
+             border-top: 0.5px solid #e2e8f0;
+             border-radius: 0 0 0.375rem 0.375rem;
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid transparent;
+            border-bottom: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1.125rem;
+            color: #475569; /* slate-600 */
+            background-color: #f1f5f9; /* slate-100 */
+            transition: all 0.2s ease-in-out;
+            margin-bottom: -1px;
+        }
+        .tab-btn.active {
+            color: #0c4a6e; /* sky-900 */
+            background-color: white;
+            border-color: #e2e8f0; /* slate-200 */
+            border-bottom: 1px solid white;
+        }
+        .tab-btn:first-child { border-radius: 0.5rem 0 0 0; }
+        .tab-btn:last-child { border-radius: 0 0.5rem 0 0; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .input-with-stepper {
+            display: flex;
+            align-items: center;
+            border: 1px solid #cbd5e1; /* slate-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            background-color: white;
+            overflow: hidden;
+        }
+        .input-with-stepper input {
+            flex-grow: 1;
+            width: 100%;
+            padding: 0.5rem; /* p-2 */
+            border: 0;
+            text-align: center;
+            font-size: 1rem; /* text-base */
+        }
+        .input-with-stepper input:focus {
+            ring: 0;
+            outline: none;
+        }
+        .input-with-stepper .unit-label {
+            width: 6rem; /* w-24 */
+            text-align: center;
+            color: #475569; /* slate-600 */
+            font-size: 0.875rem; /* text-sm */
+            background-color: #f8fafc; /* slate-50 */
+            padding: 0.5rem 0;
+            border-left: 1px solid #cbd5e1;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">互動式PC錨碇區檢核指南</h1>
+            <h2 class="text-2xl md:text-3xl font-bold text-sky-700 mt-2">突起式錨碇 (Blister Anchorage)</h2>
+            <p class="mt-2 text-lg text-slate-600 max-w-4xl mx-auto">本工具依據日本《道路橋示方書》對PC鋼材之突起式錨碇區進行檢核。所有預設值均基於您提供的三跨連續PC箱型梁橋範例，您可以修改輸入值以觀察檢核結果的變化。</p>
+            <img src="https://raw.githubusercontent.com/ttchang1127/dashboard/main/images/az1.png" alt="錨碇區應力分佈示意圖" class="mt-12 mb-8 mx-auto rounded-lg shadow-md max-w-3xl w-full" style="transform: scale(1.2);">
+        </header>
+
+        <div class="max-w-7xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+            <!-- Tabs -->
+            <div id="tabs-container" class="flex border-b border-slate-200">
+                <button class="tab-btn active" data-tab="params">1. 設計參數設定</button>
+                <button class="tab-btn" data-tab="forces">2. 局部拉力計算</button>
+                <button class="tab-btn" data-tab="check">3. 補強鋼筋檢核</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="pt-6">
+                <div id="tab-content-params" class="tab-content active"></div>
+                <div id="tab-content-forces" class="tab-content"></div>
+                <div id="tab-content-check" class="tab-content"></div>
+            </div>
+        </div>
+        
+        <footer class="mt-8 bg-white p-6 rounded-xl shadow-lg">
+             <h2 class="text-xl font-bold mb-4 text-sky-800">設計理論說明 (依據《道路橋示方書》)</h2>
+             <div class="text-slate-600 space-y-4 text-base">
+                <p>PC鋼材錨碇區是預力混凝土結構中的關鍵區域，預力由此處的錨具集中引入混凝土中。巨大的集中力會在此區域擴散，產生複雜的應力狀態，包含主要的壓應力流，以及伴隨而生的橫向拉應力(劈裂力、剝離力等)。若不加以適當補強，這些局部拉應力可能導致混凝土開裂，嚴重時會造成錨碇失效。</p>
+                <p>本工具採用的計算方法與公式，係依據 <b class="text-slate-700">日本《道路橋示方書》III篇 5.3.2</b> 及您提供的 <b class="text-slate-700">《三跨連續PC箱型梁算例》</b>。其核心概念為「壓拉桿模式」(Strut-and-Tie Model)，將複雜的應力流簡化為一個桁架系統，包含承受壓力的混凝土壓桿(Strut)與承受拉力的補強鋼筋拉桿(Tie)，藉此計算出各部位所需的補強鋼筋量。</p>
+                
+                <div class="mt-6 space-y-6">
+                    <div>
+                        <h3 class="font-semibold text-lg text-slate-800">1. 劈裂拉力 (Splitting Force, $T_1, T_2$)</h3>
+                        <p class="mt-1">當集中的預力 $P$ 從小面積的錨具承壓板($a' \times b'$)擴散至大面積的混凝土錨碇塊($a \times b$)時，會產生橫向的「撐開」效應，此即為劈裂力。此處將錨碇塊體視為一個深梁(Deep Beam)來估算此拉力。</p>
+                        <div class="mt-2 p-3 bg-slate-50 rounded-md">
+                            <p class="font-mono text-center">$T_1 = 0.25 \gamma_q P (b-b')/b$</p>
+                            <p class="font-mono text-center">$T_2 = 0.25 \gamma_q P (a-a')/a$</p>
+                            <ul class="text-sm mt-2 list-disc list-inside">
+                                <li>$P$: PC鋼纜之原始預力 (kN)</li>
+                                <li>$\gamma_q$: 預力之載重係數 (範例中為 1.05)</li>
+                                <li>$a, b$: 錨碇混凝土塊體之等效高度與寬度 (mm)</li>
+                                <li>$a', b'$: 錨具承壓板之高度與寬度 (mm)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-lg text-slate-800">2. 隅角拉力 (Corner Force, $T_3$)</h3>
+                        <p class="mt-1">將突起式錨碇(Blister)視為一個懸臂的牛腿(Corbel)，預力 $P$ 的作用會導致牛腿與主構件相接的內凹隅角處產生拉力。</p>
+                        <div class="mt-2 p-3 bg-slate-50 rounded-md">
+                            <p class="font-mono text-center">$T_3 = 0.10 \gamma_q P$</p>
+                            <ul class="text-sm mt-2 list-disc list-inside">
+                                <li>此為規範提供之經驗公式。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-lg text-slate-800">3. 腹版反力拉力 (Web Reaction Force, $T_4$)</h3>
+                        <p class="mt-1">此拉力是用於平衡由錨碇突起正面直接傳遞至腹版之預力。計算時取設計預力的一半，並扣除已存在於腹版內的壓應力所能提供的抵抗力 $T_c$。</p>
+                        <div class="mt-2 p-3 bg-slate-50 rounded-md">
+                            <p class="font-mono text-center">$T_4 = 0.5 \gamma_q P - T_c \quad (\text{其中 } T_c = \sigma_f \cdot b \cdot t)$</p>
+                            <ul class="text-sm mt-2 list-disc list-inside">
+                                <li>$\sigma_f$: 錨碇區腹版之平均壓應力 (N/mm²)</li>
+                                <li>$t$: 腹版厚度 (mm)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-lg text-slate-800">4. 彎矩拉力 (Bending Force, $T_5$)</h3>
+                        <p class="mt-1">預力 $P$ 的作用線通常會對錨碇塊體的形心產生一個偏心距 $e$，進而產生彎矩 $M=P \cdot e$。此彎矩會使塊體的一側受拉，其總拉力即為 $T_5$。</p>
+                        <div class="mt-2 p-3 bg-slate-50 rounded-md">
+                            <p class="font-mono text-center">$T_5 = \frac{1}{2} \sigma_{ct} h_0 b_1'$</p>
+                             <ul class="text-sm mt-2 list-disc list-inside">
+                                <li>$\sigma_{ct}$: 因偏心產生之最大拉應力 (N/mm²)</li>
+                                <li>$h_0$: 拉應力區之高度 (mm)</li>
+                                <li>$b_1'$: 突起之有效寬度 (mm)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-lg text-slate-800">5. 鋼纜彎曲力 (Tendon Curvature Force, $T_6$)</h3>
+                        <p class="mt-1">當帶有預力 $P$ 的鋼纜以角度 $\theta$ 彎曲時，會在彎曲處對混凝土產生一個徑向力，此力可能造成混凝土剝離(spalling)，需配置鋼筋抵抗。</p>
+                        <div class="mt-2 p-3 bg-slate-50 rounded-md">
+                            <p class="font-mono text-center">$T_6 = \gamma_q P \sin\theta$</p>
+                            <ul class="text-sm mt-2 list-disc list-inside">
+                                <li>$\theta$: 鋼纜之彎曲角度 (degrees)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold text-lg text-slate-800">6. 補強鋼筋之容許應力 (Allowable Stress)</h3>
+                        <p class="mt-1">在「補強鋼筋檢核」頁籤中，所使用的容許應力值為 <b class="text-slate-700">210 N/mm²</b>。此數值並非鋼筋的降伏強度($f_y$)，而是依據 <b class="text-slate-700">日本《道路橋示方書》III篇 5.3.3(2)1)</b> 針對「預力施加期間」此一短暫但最嚴苛的工況所訂定的限制值。</p>
+                        <p class="mt-2">其主要目的是為了在巨大的預力引入混凝土時，藉由限制鋼筋的應力來有效<b class="text-slate-700">控制混凝土的裂縫寬度</b>，以確保結構的長期耐久性，避免因過大裂縫導致水氣侵蝕等問題。這是一個基於使用性與耐久性考量的服務應力限制，而非強度極限。</p>
+                    </div>
+                </div>
+             </div>
+        </footer>
+    </div>
+
+<script>
+    // --- Data Store ---
+    const rebarData = {
+        'D10': { area: 71.3, dia: 10 },
+        'D13': { area: 126.7, dia: 13 },
+        'D16': { area: 198.6, dia: 16 },
+        'D19': { area: 286.5, dia: 19 },
+        'D22': { area: 387.1, dia: 22 },
+        'D25': { area: 506.7, dia: 25 },
+        'D29': { area: 642.4, dia: 29 },
+        'D32': { area: 794.2, dia: 32 },
+    };
+
+    const designData = {
+        // --- Inputs from PDF Example (Tables 5.2.4, 5.3.1, Fig 5.2.5) ---
+        inputs: {
+            P: 2397,      // Prestressing force, kN
+            gamma_q: 1.05,  // Load factor
+            b: 350,       // Anchorage block width, mm
+            b_prime: 270, // Bearing plate width, mm
+            a: 390,       // Anchorage block height, mm
+            a_prime: 270, // Bearing plate height, mm
+            sigma_f: 4.85,  // Avg. compressive stress in web, N/mm^2
+            t: 450,       // Web thickness for Tc calc, mm
+            e: 395,       // Eccentricity for T5 calc, mm
+            theta: 10,      // Tendon angle for T6 calc, degrees
+        },
+        reinforcement: {
+            F1: { rebarType: 'D22', count: 6 },
+            F2: { rebarType: 'D22', count: 8 },
+            F3_front: { rebarType: 'D25', count: 6 },
+            F3_back: { rebarType: 'D25', count: 12 },
+            F4: { rebarType: 'D16', count: 16 },
+            allowableStress: 210, // N/mm^2
+        },
+        // --- Calculated Values ---
+        calculated: {
+            h: 0, // Will be calculated: a + t
+            b1_prime: 0, // Will be calculated: b_prime + 2 * a
+            factored_P: 0,
+            T1: 0, T2: 0, T3: 0, T4: 0, T5: 0, T6: 0,
+            Tc: 0, sigma_ct: 0, sigma_cc: 0, h0: 0,
+            stress_F1: 0, stress_F2: 0, stress_F3_front: 0, stress_F3_back: 0, stress_F4: 0,
+            area_F1: 0, area_F2: 0, area_F3_front: 0, area_F3_back: 0, area_F4: 0,
+        }
+    };
+
+    // --- Core Calculation Logic ---
+    function calculateAll() {
+        const { inputs, calculated } = designData;
+        const { P, gamma_q, b, b_prime, a, a_prime, sigma_f, t, e, theta } = inputs;
+
+        // --- Automatic Calculations for h and b1' ---
+        calculated.h = a + t;
+        // The logic b' + 2*a is based on a 45-degree spread.
+        // Note: The original example PDF uses a fixed value of 570mm for b1', which might be due to other geometric constraints not specified.
+        // For this general tool, we use the theoretical calculation.
+        calculated.b1_prime = b_prime + 2 * a;
+
+        // Factored prestress force
+        calculated.factored_P = P * gamma_q;
+
+        // T1: Splitting force (z-direction)
+        calculated.T1 = 0.25 * calculated.factored_P * (b - b_prime) / b;
+
+        // T2: Splitting force (y-direction)
+        calculated.T2 = 0.25 * calculated.factored_P * (a - a_prime) / a;
+
+        // T3: Corbel action force
+        calculated.T3 = 0.10 * calculated.factored_P;
+
+        // T4: Web reaction force
+        calculated.Tc = sigma_f * b * t / 1000; // in kN
+        calculated.T4 = 0.5 * calculated.factored_P - calculated.Tc;
+        if (calculated.T4 < 0) calculated.T4 = 0;
+
+        // T5: Bending force from eccentricity
+        const P_N = calculated.factored_P * 1000; // in N
+        const e_m = e / 1000; // in m
+        const b1_prime_m = calculated.b1_prime / 1000; // Use calculated value
+        const h_m = calculated.h / 1000;             // Use calculated value
+        const Area = b1_prime_m * h_m;
+        const W = b1_prime_m * Math.pow(h_m, 2) / 6;
+
+        calculated.sigma_ct = -(P_N / Area - (P_N * e_m) / W) / 1e6; // in N/mm^2, tension is positive
+        calculated.sigma_cc = (P_N / Area + (P_N * e_m) / W) / 1e6; // in N/mm^2, compression is positive
+        
+        if (calculated.sigma_ct <= 0) {
+            calculated.h0 = 0;
+            calculated.T5 = 0;
+        } else {
+            calculated.h0 = calculated.h * calculated.sigma_ct / (calculated.sigma_ct + calculated.sigma_cc);
+            calculated.T5 = calculated.sigma_ct * calculated.h0 * calculated.b1_prime / 2 / 1000; // in kN
+        }
+        
+        // T6: Tendon curvature force
+        calculated.T6 = calculated.factored_P * Math.sin(theta * Math.PI / 180);
+
+        // Reinforcement Stress Calculation
+        const { reinforcement } = designData;
+        const { F1, F2, F3_front, F3_back, F4 } = reinforcement;
+        
+        calculated.area_F1 = rebarData[F1.rebarType].area * F1.count;
+        calculated.stress_F1 = calculated.area_F1 > 0 ? (calculated.T1 * 1000) / calculated.area_F1 : 0;
+
+        calculated.area_F2 = rebarData[F2.rebarType].area * F2.count;
+        const force_F2 = calculated.T2 + calculated.T3;
+        calculated.stress_F2 = calculated.area_F2 > 0 ? (force_F2 * 1000) / calculated.area_F2 : 0;
+        
+        calculated.area_F3_front = rebarData[F3_front.rebarType].area * F3_front.count;
+        calculated.stress_F3_front = calculated.area_F3_front > 0 ? (calculated.T4 * 1000) / calculated.area_F3_front : 0;
+
+        calculated.area_F3_back = rebarData[F3_back.rebarType].area * F3_back.count;
+        calculated.stress_F3_back = calculated.area_F3_back > 0 ? (calculated.T5 * 1000) / calculated.area_F3_back : 0;
+
+        calculated.area_F4 = rebarData[F4.rebarType].area * F4.count;
+        calculated.stress_F4 = calculated.area_F4 > 0 ? (calculated.T6 * 1000) / calculated.area_F4 : 0;
+    }
+
+
+    // --- UI Rendering ---
+    function renderAll() {
+        calculateAll();
+        renderParamsTab();
+        renderForcesTab();
+        renderCheckTab();
+        renderMath();
+    }
+
+    function renderMath() {
+        if (window.renderMathInElement) {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+
+    function createInputRow(id, label, value, unit, step = 1, latexLabel = '') {
+        return `
+            <div class="grid grid-cols-2 items-center gap-4">
+                <label for="${id}" class="text-slate-700 font-medium">${label} <span class="text-slate-500 font-normal">${latexLabel}</span></label>
+                <div class="input-with-stepper">
+                    <input type="number" id="${id}" value="${value}" step="${step}" class="data-input">
+                    <div class="flex flex-col">
+                        <button type="button" class="stepper-btn up" data-target="${id}" data-direction="up">▲</button>
+                        <button type="button" class="stepper-btn down" data-target="${id}" data-direction="down">▼</button>
+                    </div>
+                    <div class="unit-label">${unit}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderParamsTab() {
+        const { inputs } = designData;
+        const content = `
+            <h3 class="text-xl font-bold mb-6 text-sky-800 border-b pb-2">1. 設計參數設定</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                <div class="space-y-4 p-4 bg-slate-50 rounded-lg">
+                    <h4 class="text-lg font-semibold text-slate-800 text-center">預力與載重係數</h4>
+                    ${createInputRow('P', 'PC鋼纜預力', inputs.P, 'kN', 10, '$(P)$')}
+                    ${createInputRow('gamma_q', '載重係數', inputs.gamma_q, '', 0.01, '$(\\gamma_q)$')}
+                </div>
+                <div class="space-y-4 p-4 bg-slate-50 rounded-lg">
+                    <h4 class="text-lg font-semibold text-slate-800 text-center">錨碇幾何尺寸</h4>
+                    ${createInputRow('a', '錨碇塊體高度', inputs.a, 'mm', 1, '$(a)$')}
+                    ${createInputRow('a_prime', '承壓板高度', inputs.a_prime, 'mm', 1, "$(a')$")}
+                    ${createInputRow('b', '錨碇塊體寬度', inputs.b, 'mm', 1, '$(b)$')}
+                    ${createInputRow('b_prime', '承壓板寬度', inputs.b_prime, 'mm', 1, "$(b')$")}
+                </div>
+                <div class="space-y-4 p-4 bg-slate-50 rounded-lg">
+                    <h4 class="text-lg font-semibold text-slate-800 text-center">其他幾何尺寸與角度</h4>
+                    ${createInputRow('e', '預力偏心距', inputs.e, 'mm', 1, '$(e)$')}
+                    ${createInputRow('theta', '鋼纜彎曲角度', inputs.theta, 'deg', 0.1, '$(\\theta)$')}
+                </div>
+                 <div class="space-y-4 p-4 bg-slate-50 rounded-lg">
+                    <h4 class="text-lg font-semibold text-slate-800 text-center">腹版性質</h4>
+                    ${createInputRow('sigma_f', '腹版平均壓應力', inputs.sigma_f, 'N/mm²', 0.01, '$(\\sigma_f)$')}
+                    ${createInputRow('t', '腹版厚度', inputs.t, 'mm', 1, '$(t)$')}
+                </div>
+            </div>
+        `;
+        document.getElementById('tab-content-params').innerHTML = content;
+    }
+
+    function createForceRow(label, latexLabel, formula, value) {
+        return `
+            <div class="grid grid-cols-[1fr,2.2fr,1.3fr] items-center gap-4 p-3 border-b">
+                <div class="font-bold text-lg text-sky-700">${label} <span class="text-base text-slate-500">${latexLabel}</span></div>
+                <div class="text-center text-slate-600 bg-slate-100 p-2 rounded-md text-sm md:text-base">${formula}</div>
+                <div class="text-right font-bold text-2xl text-slate-800">${value.toFixed(1)} <span class="text-base font-normal text-slate-500">kN</span></div>
+            </div>
+        `;
+    }
+
+    function renderForcesTab() {
+        const { calculated } = designData;
+        const content = `
+            <h3 class="text-xl font-bold mb-6 text-sky-800 border-b pb-2">2. 局部拉力計算結果</h3>
+            <div class="space-y-2">
+                ${createForceRow('劈裂力 (Z向)', '$(T_1)$', '$T_1 = 0.25 \\gamma_q P (b-b\')/b$', calculated.T1)}
+                ${createForceRow('劈裂力 (Y向)', '$(T_2)$', '$T_2 = 0.25 \\gamma_q P (a-a\')/a$', calculated.T2)}
+                ${createForceRow('隅角拉力', '$(T_3)$', '$T_3 = 0.10 \\gamma_q P$', calculated.T3)}
+                ${createForceRow('腹版反力拉力', '$(T_4)$', '$T_4 = 0.5 \\gamma_q P - T_c$', calculated.T4)}
+                ${createForceRow('彎矩拉力', '$(T_5)$', '$T_5 = \\frac{1}{2} \\sigma_{ct} h_0 b_1\'$', calculated.T5)}
+                ${createForceRow('鋼纜彎曲力', '$(T_6)$', '$T_6 = \\gamma_q P \\sin\\theta$', calculated.T6)}
+            </div>
+            <div class="mt-6 p-4 bg-amber-50 rounded-lg text-sm text-amber-900 grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                <div>
+                    <h4 class="font-semibold mb-2">主要中間計算值:</h4>
+                    <p>設計預力 $\\gamma_q P = ${calculated.factored_P.toFixed(1)}~kN$</p>
+                    <p>腹版反力 $T_c = \\sigma_f b \\cdot t = ${calculated.Tc.toFixed(1)}~kN$</p>
+                    <p>拉力區高度 $h_0 = ${calculated.h0.toFixed(1)}~mm$</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">自動計算尺寸與應力:</h4>
+                    <p>突起總高度 $h = a+t = ${calculated.h.toFixed(1)}~mm$</p>
+                    <p>突起有效寬度 $b_1' = b'+2a = ${calculated.b1_prime.toFixed(1)}~mm$</p>
+                    <p>最大拉應力 $\\sigma_{ct} = ${calculated.sigma_ct.toFixed(2)}~N/mm^2$</p>
+                    <p>最大壓應力 $\\sigma_{cc} = ${calculated.sigma_cc.toFixed(2)}~N/mm^2$</p>
+                </div>
+            </div>
+        `;
+        document.getElementById('tab-content-forces').innerHTML = content;
+    }
+    
+    function createCheckRow(id, title, forceLabel, forceValue, rebarType, rebarCount, providedArea, stress, allowableStress) {
+        const isOk = stress <= allowableStress;
+        const resultClass = isOk ? 'ok-result' : 'ng-result';
+        const rebarOptions = Object.keys(rebarData).map(key => `<option value="${key}" ${rebarType === key ? 'selected' : ''}>${key}</option>`).join('');
+
+        return `
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200">
+                <h4 class="text-lg font-semibold text-slate-800 mb-3">${title}</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+                    <!-- Resisted Force -->
+                    <div class="text-center">
+                        <div class="text-sm text-slate-500">抵抗拉力 ${forceLabel}</div>
+                        <div class="font-bold text-xl text-sky-700">${forceValue.toFixed(1)} <span class="text-sm font-normal">kN</span></div>
+                    </div>
+                    <!-- Rebar Input -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                           <label for="rebar-type-${id}" class="text-xs text-slate-500 block mb-1 text-center">鋼筋號數</label>
+                           <select id="rebar-type-${id}" data-id="${id}" class="rebar-input w-full p-2 border border-slate-300 rounded-md bg-white">${rebarOptions}</select>
+                        </div>
+                        <div>
+                           <label for="rebar-count-${id}" class="text-xs text-slate-500 block mb-1 text-center">鋼筋數量</label>
+                           <input type="number" id="rebar-count-${id}" data-id="${id}" value="${rebarCount}" class="rebar-input w-full p-2 border border-slate-300 rounded-md text-center">
+                        </div>
+                    </div>
+                    <!-- Stress Check -->
+                    <div class="text-center">
+                        <div class="text-sm text-slate-500">鋼筋應力 / 容許應力 (N/mm²)</div>
+                        <div class="font-mono text-xl">
+                            <span class="${isOk ? 'text-green-700' : 'text-red-700'} font-bold">${stress.toFixed(1)}</span>
+                            <span class="text-slate-500"> / ${allowableStress.toFixed(1)}</span>
+                        </div>
+                         <div class="text-xs text-slate-400">($A_s=${providedArea.toFixed(1)}~mm^2$)</div>
+                    </div>
+                    <!-- Result -->
+                    <div class="result-box ${resultClass}">${isOk ? 'OK' : 'NG'}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderCheckTab() {
+        const { reinforcement, calculated } = designData;
+        const content = `
+            <h3 class="text-xl font-bold mb-6 text-sky-800 border-b pb-2">3. 補強鋼筋檢核</h3>
+            <div class="space-y-4">
+                ${createCheckRow('F1', '補強筋 F₁ (抵抗 T₁)', '$(T_1)$', calculated.T1, reinforcement.F1.rebarType, reinforcement.F1.count, calculated.area_F1, calculated.stress_F1, reinforcement.allowableStress)}
+                ${createCheckRow('F2', '補強筋 F₂ (抵抗 T₂ + T₃)', '$(T_2+T_3)$', calculated.T2 + calculated.T3, reinforcement.F2.rebarType, reinforcement.F2.count, calculated.area_F2, calculated.stress_F2, reinforcement.allowableStress)}
+                ${createCheckRow('F3_front', '補強筋 F₃ 前側 (抵抗 T₄)', '$(T_4)$', calculated.T4, reinforcement.F3_front.rebarType, reinforcement.F3_front.count, calculated.area_F3_front, calculated.stress_F3_front, reinforcement.allowableStress)}
+                ${createCheckRow('F3_back', '補強筋 F₃ 背側 (抵抗 T₅)', '$(T_5)$', calculated.T5, reinforcement.F3_back.rebarType, reinforcement.F3_back.count, calculated.area_F3_back, calculated.stress_F3_back, reinforcement.allowableStress)}
+                ${createCheckRow('F4', '補強筋 F₄ (抵抗 T₆)', '$(T_6)$', calculated.T6, reinforcement.F4.rebarType, reinforcement.F4.count, calculated.area_F4, calculated.stress_F4, reinforcement.allowableStress)}
+            </div>
+        `;
+        document.getElementById('tab-content-check').innerHTML = content;
+    }
+
+
+    // --- Event Handling ---
+    function handleTabClick(event) {
+        const clickedButton = event.target.closest('.tab-btn');
+        if (!clickedButton) return; // Exit if the click was not on a tab button
+
+        const clickedTab = clickedButton.dataset.tab;
+
+        // Update button styles: remove 'active' from all, then add to the clicked one.
+        document.querySelectorAll('#tabs-container .tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        clickedButton.classList.add('active');
+
+        // Update content visibility: hide all, then show the active one.
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        const activeContent = document.getElementById(`tab-content-${clickedTab}`);
+        if (activeContent) {
+            activeContent.classList.add('active');
+        }
+        
+        // Re-render math formulas in the newly visible tab
+        renderMath();
+    }
+
+    function handleInputChange(event) {
+        const id = event.target.id;
+        const value = event.target.type === 'number' ? parseFloat(event.target.value) || 0 : event.target.value;
+        if (designData.inputs.hasOwnProperty(id)) {
+            designData.inputs[id] = value;
+        }
+        renderAll();
+    }
+    
+    function handleRebarChange(event) {
+        const target = event.target;
+        const id = target.dataset.id;
+        const prop = target.id.includes('type') ? 'rebarType' : 'count';
+        const value = target.tagName === 'SELECT' ? target.value : parseInt(target.value, 10);
+        
+        if(designData.reinforcement[id]) {
+            designData.reinforcement[id][prop] = value;
+        }
+        renderAll();
+    }
+
+    function handleStepperClick(event) {
+        const btn = event.currentTarget;
+        const targetId = btn.dataset.target;
+        const dir = btn.dataset.direction;
+        const input = document.getElementById(targetId);
+        if (input && input.type === 'number') {
+            const step = parseFloat(input.step) || 1;
+            const val = parseFloat(input.value) || 0;
+            const precision = String(step).includes('.') ? String(step).split('.')[1].length : 0;
+            input.value = (dir === 'up' ? val + step : val - step).toFixed(precision);
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    // --- Initial Load ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderAll();
+
+        // Add event listeners using event delegation
+        document.getElementById('tabs-container').addEventListener('click', handleTabClick);
+
+        const container = document.querySelector('.container');
+        container.addEventListener('input', (e) => {
+            if (e.target.matches('.data-input')) {
+                handleInputChange(e);
+            }
+            if (e.target.matches('.rebar-input')) {
+                handleRebarChange(e);
+            }
+        });
+        
+        container.addEventListener('click', (e) => {
+             if (e.target.matches('.stepper-btn')) {
+                // Since the target is the button, we need its parent's parent to find the input
+                const inputId = e.target.dataset.target;
+                const inputElement = document.getElementById(inputId);
+                if (inputElement) {
+                    // Create a synthetic event to pass to the original handler
+                    const syntheticEvent = { 
+                        currentTarget: e.target, 
+                        target: inputElement 
+                    };
+                     handleStepperClick(syntheticEvent);
+                }
+             }
+        });
+    });
+
+</script>
+</body>
+</html>
