@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCI 梁橋互動設計工具</title>
+    <title>PCI 梁橋互動設計工具 (台灣規範)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,11 +13,11 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
 
     <style>
-        /* 自訂樣式，設定字體 */
+        /* Custom styles for fonts and inputs */
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
         }
-        /* 隱藏原生數字輸入框的箭頭 */
+        /* Hide native number input arrows */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -26,23 +26,23 @@
         input[type=number] {
             -moz-appearance: textfield;
         }
-        /* 按鈕聚焦時の外觀 */
+        /* Focus style for number buttons */
         .number-button:focus {
             outline: none;
             background-color: #e2e8f0; /* slate-200 */
         }
-        /* 主要分頁按鈕的活動狀態樣式 */
+        /* Active state for main tab buttons */
         .main-tab-button.active {
             border-color: #a5b4fc #a5b4fc #ffffff; /* indigo-300 indigo-300 white */
             color: #4338ca; /* indigo-700 */
             background-color: #ffffff; /* white */
         }
-        /* 子分頁按鈕的活動狀態樣式 */
+        /* Active state for sub-tab buttons */
         .sub-tab-button.active {
             border-color: #6366f1; /* indigo-500 */
             color: #4338ca; /* indigo-700 */
         }
-        /* details > summary 的箭頭樣式 */
+        /* Style for details > summary arrow */
         details > summary {
             list-style-type: none;
         }
@@ -60,6 +60,7 @@
 <body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
 
     <div class="w-full max-w-screen-xl flex flex-col h-[90vh]">
+        <!-- Main Tabs -->
         <div class="w-full flex border-b border-slate-300">
             <button id="main-tab-section" class="main-tab-button active px-6 py-3 text-base font-semibold text-slate-600 border-t border-l border-r border-slate-300 rounded-t-lg -mb-px">橋梁斷面尺寸</button>
             <button id="main-tab-table" class="main-tab-button px-6 py-3 text-base font-semibold text-slate-600 border-b border-slate-300">橋梁尺寸表</button>
@@ -73,6 +74,7 @@
 
         <div id="main-content-wrapper" class="w-full flex-grow bg-white rounded-b-lg rounded-tr-lg shadow-lg overflow-hidden">
             
+            <!-- Section View -->
             <div id="section-view" class="flex flex-col md:flex-row w-full h-full">
                 <div id="input-panel" class="w-full md:w-4/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto">
                     <h1 class="text-2xl font-bold text-slate-800 mb-2">斷面尺寸參數</h1>
@@ -235,11 +237,13 @@
                 </div>
             </div>
 
+            <!-- Size Table View -->
             <div id="size-table-view" class="hidden w-full h-full p-6 md:p-8 overflow-y-auto">
                 <h2 class="text-xl font-semibold text-slate-800 mb-4">PCI橋梁尺寸參考表</h2>
                 <img src="https://ttchang1127.github.io/dashboard/images/PCI%E6%A9%8B%E6%A2%81%E6%96%B7%E9%9D%A2%E5%B0%BA%E5%AF%B8.png" alt="PCI橋梁斷面尺寸參考表" class="w-full max-w-4xl mx-auto block rounded-lg shadow-md">
             </div>
 
+            <!-- Tendon View -->
             <div id="tendon-view" class="hidden w-full h-full flex flex-col md:flex-row">
                 <div id="tendon-input-panel" class="w-full md:w-[30%] p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto">
                     <h1 class="text-2xl font-bold text-slate-800 mb-6">預力鋼腱參數</h1>
@@ -261,7 +265,7 @@
                                         <option value="12S12.7B">12S12.7 (SWPR7B)</option>
                                         <option value="12S15.2">12S15.2 (SWPR7B)</option>
                                     </select>
-                                    <p class="text-xs text-slate-400 mt-1">斷面積 ($A_p$): <span id="tendon-area-display">1184.4</span> mm²</p>
+                                    <p class="text-xs text-slate-400 mt-1">斷面積 (Ap): <span id="tendon-area-display">1184.4</span> mm²</p>
                                 </td>
                             </tr>
                             <tr class="border-b border-slate-200">
@@ -321,6 +325,7 @@
                 </div>
             </div>
 
+            <!-- Loss Calculation View -->
             <div id="loss-calc-view" class="hidden w-full h-full flex flex-col md:flex-row">
                 <div class="w-full md:w-5/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto">
                     <h1 class="text-2xl font-bold text-slate-800 mb-6">預力損失計算參數</h1>
@@ -342,7 +347,7 @@
                                     <div class="mt-1 text-xs text-slate-500">
                                         <details>
                                             <summary class="cursor-pointer font-medium">
-                                                建議值: $\le$ <span id="recommended-force-summary"></span> kN
+                                                建議值: ≦ <span id="recommended-force-summary"></span> kN
                                             </summary>
                                             <div id="tendon-force-calculation-details" class="mt-2 p-2 border border-slate-200 rounded-md bg-white font-mono">
                                                 </div>
@@ -590,11 +595,13 @@
                 </div>
             </div>
 
+            <!-- Stress Check View (TW Only) -->
             <div id="stress-check-view" class="hidden w-full h-full flex flex-col p-6 md:p-8">
-                 <div class="w-full flex-grow overflow-y-auto space-y-6">
-                    <div id="stress-content-tw" class="stress-sub-tab-content">
+                <h1 class="text-2xl font-bold text-slate-800 mb-6">應力檢核 (台灣公路橋梁設計規範)</h1>
+                <div class="w-full flex-grow overflow-y-auto space-y-6">
+                    <div>
                         <details class="bg-slate-50 p-4 rounded-lg" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">施工階段應力檢核摘要 (台灣公路橋梁設計規範)</summary>
+                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">施工階段應力檢核摘要</summary>
                             <div class="mt-4 text-slate-700 space-y-4">
                                 <p>採用容許應力設計法，檢核施拉預力後，梁體自重與初始預力共同作用下之暫時性應力。應力限制值以施預力時之混凝土抗壓強度 ($f'_{ci}$) 為基準。（註：本檢核採壓力為正，拉力為負）</p>
                                 <table class="w-full text-sm border-collapse">
@@ -626,7 +633,7 @@
                         </details>
                         <div id="tw-stress-check-results-container" class="mt-6 border-t pt-6"></div>
                         <details class="bg-slate-50 p-4 rounded-lg mt-6" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">完工階段應力檢核摘要 (台灣公路橋梁設計規範)</summary>
+                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">完工階段應力檢核摘要</summary>
                             <div class="mt-4 text-slate-700 space-y-4">
                                 <p>檢核長期載重（含預力損失）及活載重作用下之應力。應力限制值以 28 天混凝土抗壓強度 ($f'_{c}$) 為基準。（註：本檢核採壓力為正，拉力為負）</p>
                                 <table class="w-full text-sm border-collapse">
@@ -657,19 +664,18 @@
                             </div>
                         </details>
                         <div id="tw-stress-check-results-service-container" class="mt-6 border-t pt-6">
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Flexure Check View (TW Only) -->
             <div id="flexure-check-view" class="hidden w-full h-full flex flex-col p-6 md:p-8">
+                <h1 class="text-2xl font-bold text-slate-800 mb-6">撓曲強度檢核 (台灣公路橋梁設計規範)</h1>
                 <div class="w-full flex-grow overflow-y-auto space-y-6">
-                    <div id="flexure-content-tw" class="flexure-sub-tab-content">
+                    <div>
                         <details class="bg-slate-50 p-4 rounded-lg" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">
-                                撓曲強度檢核 (台灣公路橋梁設計規範)
-                                <span id="flexure-result-badge" class="ml-2 font-bold px-2 py-1 rounded-full text-xs"></span>
-                            </summary>
+                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">撓曲強度檢核摘要</summary>
                             <div class="mt-4 text-slate-700 space-y-4">
                                 <p>依據強度設計法，檢核斷面折減後的設計撓曲強度 ($\phi M_n$) 是否大於或等於作用載重組合下之所需撓曲強度 ($M_u$)。</p>
                                 <p>檢核公式: $\phi M_n \ge M_u$</p>
@@ -678,94 +684,92 @@
                             </div>
                         </details>
                         <div id="tw-flexure-check-results-container" class="mt-6 border-t pt-6">
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Deflection Check View (TW Only) -->
             <div id="deflection-check-view" class="hidden w-full h-full flex flex-col p-6 md:p-8">
+                <h1 class="text-2xl font-bold text-slate-800 mb-6">撓度檢核 (台灣公路橋梁設計規範)</h1>
                  <div class="w-full flex-grow overflow-y-auto space-y-6">
-                    <div id="deflection-content-tw" class="deflection-sub-tab-content">
+                    <div>
                         <details class="bg-slate-50 p-4 rounded-lg" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">
-                                活載重撓度檢核 (台灣公路橋梁設計規範)
-                                <span id="deflection-result-badge" class="ml-2 font-bold px-2 py-1 rounded-full text-xs"></span>
-                            </summary>
+                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">活載重撓度檢核摘要</summary>
                             <div class="mt-4 text-slate-700 space-y-4">
                                 <p>為確保橋梁的使用性，需檢核因活載重(含衝擊)所產生的撓度，不得超過規範的容許值。對於預力混凝土橋梁，規範建議之容許撓度為 $\Delta_{allow} = L / 800$。</p>
                                 <p>此處的計算採用簡化公式，將活載重彎矩 $M_{LL}$ 轉換為等效均佈載重，進而估算最大撓度：$\Delta_{LL} \approx \frac{5 M_{LL} L^2}{48 E_c I_g}$。</p>
                             </div>
                         </details>
                         <div id="tw-deflection-check-results-container" class="mt-6 border-t pt-6">
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="shear-check-view" class="hidden w-full h-full flex flex-col md:flex-row p-6 md:p-8">
+            <!-- Shear Check View -->
+            <div id="shear-check-view" class="hidden w-full h-full flex flex-col md:flex-row">
                 <div class="w-full md:w-5/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto">
                     <h1 class="text-2xl font-bold text-slate-800 mb-6">剪力筋檢核參數</h1>
-                    <h2 class="text-lg font-bold text-slate-800 mb-4">
-                        台灣規範 (強度折減係數 $\phi=0.9$)
-                        <span id="shear-result-badge" class="ml-2 font-bold px-2 py-1 rounded-full text-xs"></span>
-                    </h2>
-                    <table class="w-full text-sm mb-8">
+                    <table class="w-full text-sm">
                         <tbody>
                             <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">設計剪力 ($V_u$)</td>
+                                <td class="py-3 w-1/2">斷面設計剪力 ($V_u$)</td>
                                 <td class="py-3 w-1/2">
                                     <div class="relative flex items-center">
-                                        <input type="number" id="shear-vu" value="1000" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-16">
+                                        <input type="number" id="shear-vu" value="1200" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-12">
                                         <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">kN</span>
-                                         <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
+                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
                                             <button data-input="shear-vu" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
                                             <button data-input="shear-vu" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
                                         </div>
                                     </div>
-                                    <p class="text-xs text-slate-400 mt-1">參考值: 梁端部剪力</p>
+                                    <p class="text-xs text-slate-400 mt-1">支承面 d 距離處之設計剪力</p>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <h2 class="text-lg font-bold text-slate-800 mb-4">剪力筋參數</h2>
-                    <table class="w-full text-sm">
-                        <tbody>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">剪力筋號數</td>
+                             <tr class="border-b border-slate-200">
+                                <td class="py-3 w-1/2">剪力筋降伏強度 ($f_{yt}$)</td>
                                 <td class="py-3 w-1/2">
-                                    <select id="stirrup-size" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="D10">D10</option>
-                                        <option value="D13" selected>D13</option>
-                                        <option value="D16">D16</option>
-                                        <option value="D19">D19</option>
-                                        <option value="D22">D22</option>
-                                        <option value="D25">D25</option>
-                                    </select>
-                                    <p class="text-xs text-slate-400 mt-1">單根面積 ($A_b$): <span id="stirrup-area-display">126.7</span> mm²</p>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">剪力筋肢數</td>
-                                <td class="py-3">
-                                     <div class="relative flex items-center">
-                                        <input type="number" id="stirrup-legs" value="2" step="2" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                         <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="stirrup-legs" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="stirrup-legs" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
+                                    <div class="relative flex items-center">
+                                        <input type="number" id="shear-fyt" value="420" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-16">
+                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">MPa</span>
+                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
+                                            <button data-input="shear-fyt" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
+                                            <button data-input="shear-fyt" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
                                         </div>
                                     </div>
-                                    <p class="text-xs text-slate-400 mt-1">需為偶數</p>
+                                </td>
+                            </tr>
+                             <tr class="border-b border-slate-200">
+                                <td class="py-3">剪力筋號數</td>
+                                <td class="py-3">
+                                    <select id="shear-bar-size" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="D10">D10 (10mm)</option>
+                                        <option value="D13" selected>D13 (13mm)</option>
+                                        <option value="D16">D16 (16mm)</option>
+                                        <option value="D19">D19 (19mm)</option>
+                                    </select>
+                                </td>
+                            </tr>
+                             <tr class="border-b border-slate-200">
+                                <td class="py-3">剪力筋肢數</td>
+                                <td class="py-3">
+                                    <select id="shear-legs" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="2">2</option>
+                                        <option value="4" selected>4</option>
+                                        <option value="6">6</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr class="border-b border-slate-200">
-                                <td class="py-3">剪力筋間距 (s)</td>
+                                <td class="py-3">剪力筋間距 ($s$)</td>
                                 <td class="py-3">
-                                     <div class="relative flex items-center">
-                                        <input type="number" id="stirrup-spacing" value="100" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-12">
+                                    <div class="relative flex items-center">
+                                        <input type="number" id="shear-spacing" value="150" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-14">
                                         <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">mm</span>
                                          <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="stirrup-spacing" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="stirrup-spacing" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
+                                            <button data-input="shear-spacing" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
+                                            <button data-input="shear-spacing" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
                                         </div>
                                     </div>
                                 </td>
@@ -773,9 +777,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="w-full md:w-7/12 p-6 md:p-8 overflow-y-auto">
-                    <div id="shear-check-results-container">
-                        </div>
+                <div id="shear-check-results-container" class="w-full md:w-7/12 p-6 md:p-8 overflow-y-auto">
+                    <!-- Results will be rendered here by JavaScript -->
                 </div>
             </div>
 
@@ -784,7 +787,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- 元素選擇 ---
+            // --- Element Selection ---
             const sectionView = document.getElementById('section-view');
             const tendonView = document.getElementById('tendon-view');
             const sizeTableView = document.getElementById('size-table-view');
@@ -811,17 +814,17 @@
             const tendonEndParent = document.getElementById('tendon-content-end');
             const tendonSideParent = document.getElementById('tendon-content-side');
             
-            // 主要分頁
+            // Main tabs
             const mainTabButtons = document.querySelectorAll('.main-tab-button');
             
-            // 斷面尺寸子分頁
+            // Section sub-tabs
             const sectionSubTabButtons = document.querySelectorAll('#section-view .sub-tab-button');
             const sectionSubTabContents = {
                 'sub-tab-mid': document.getElementById('mid-canvas-wrapper'),
                 'sub-tab-end': document.getElementById('end-canvas-wrapper')
             };
 
-            // 預力鋼腱子分頁
+            // Tendon sub-tabs
             const tendonSubTabButtons = document.querySelectorAll('#tendon-view .sub-tab-button');
             const tendonSubTabContents = {
                 'tendon-tab-mid': document.getElementById('tendon-content-mid'),
@@ -829,25 +832,7 @@
                 'tendon-tab-side': document.getElementById('tendon-content-side')
             };
 
-            // 應力檢核子分頁
-            const stressSubTabButtons = document.querySelectorAll('#stress-check-view .stress-sub-tab-button');
-            const stressSubTabContents = {
-                'stress-tab-tw': document.getElementById('stress-content-tw'),
-            };
-
-            // 撓曲強度子分頁
-            const flexureSubTabButtons = document.querySelectorAll('#flexure-check-view .flexure-sub-tab-button');
-            const flexureSubTabContents = {
-                'flexure-tab-tw': document.getElementById('flexure-content-tw'),
-            };
-            
-            // 撓度檢核子分頁
-            const deflectionSubTabButtons = document.querySelectorAll('#deflection-check-view .deflection-sub-tab-button');
-            const deflectionSubTabContents = {
-                'deflection-tab-tw': document.getElementById('deflection-content-tw'),
-            };
-
-            // 斷面尺寸輸入框
+            // Dimension inputs
             const bridgeSpanSelect = document.getElementById('bridge-span');
             const allDimensionInputs = {
                 ght: document.getElementById('ght'),
@@ -860,14 +845,14 @@
                 f2: document.getElementById('f2'),
             };
 
-            // 預力鋼腱參數
+            // Tendon parameters
             const tendonTypeSelect = document.getElementById('tendon-type');
             const tendonMidCountSelect = document.getElementById('tendon-mid-count');
             const tendonEndCountInput = document.getElementById('tendon-end-count');
             const tendonInitialForceInput = document.getElementById('tendon-initial-force');
             const tendonAreaDisplay = document.getElementById('tendon-area-display');
             
-            // 預力損失計算參數
+            // Loss calculation parameters
             const frictionMuInput = document.getElementById('friction-mu');
             const frictionKInput = document.getElementById('friction-k');
             const anchorageSlipInput = document.getElementById('anchorage-slip');
@@ -880,20 +865,21 @@
             const momentSdInput = document.getElementById('moment-sd');
             const momentLlInput = document.getElementById('moment-ll');
 
-            // 剪力筋檢核參數
+            // Shear check inputs
             const shearVuInput = document.getElementById('shear-vu');
-            const stirrupSizeSelect = document.getElementById('stirrup-size');
-            const stirrupLegsInput = document.getElementById('stirrup-legs');
-            const stirrupSpacingInput = document.getElementById('stirrup-spacing');
+            const shearFytInput = document.getElementById('shear-fyt');
+            const shearBarSizeSelect = document.getElementById('shear-bar-size');
+            const shearLegsSelect = document.getElementById('shear-legs');
+            const shearSpacingInput = document.getElementById('shear-spacing');
 
 
-            // 預設資料
+            // Default data
             const spanDefaults = {
-                '25': { ght: 1500, gwb: 200, h1: 120, tft: 150, gtf: 1000, bft: 200, h3: 120, f2: 150, tendons: 3 },
-                '30': { ght: 1700, gwb: 200, h1: 150, tft: 150, gtf: 1000, bft: 240, h3: 210, f2: 175, tendons: 4 },
-                '35': { ght: 2000, gwb: 200, h1: 150, tft: 150, gtf: 1100, bft: 240, h3: 210, f2: 235, tendons: 5 },
-                '40': { ght: 2000, gwb: 200, h1: 150, tft: 150, gtf: 1200, bft: 250, h3: 350, f2: 250, tendons: 6 },
-                '45': { ght: 2200, gwb: 200, h1: 150, tft: 200, gtf: 1400, bft: 350, h3: 250, f2: 250, tendons: 7 }
+                '25': { ght: 1500, gwb: 200, h1: 120, tft: 150, gtf: 1000, bft: 200, h3: 120, f2: 150, tendons: 3, vu: 800 },
+                '30': { ght: 1700, gwb: 200, h1: 150, tft: 150, gtf: 1000, bft: 240, h3: 210, f2: 175, tendons: 4, vu: 1000 },
+                '35': { ght: 2000, gwb: 200, h1: 150, tft: 150, gtf: 1100, bft: 240, h3: 210, f2: 235, tendons: 5, vu: 1200 },
+                '40': { ght: 2000, gwb: 200, h1: 150, tft: 150, gtf: 1200, bft: 250, h3: 350, f2: 250, tendons: 6, vu: 1500 },
+                '45': { ght: 2200, gwb: 200, h1: 150, tft: 200, gtf: 1400, bft: 350, h3: 250, f2: 250, tendons: 7, vu: 1800 }
             };
 
             const momentDefaults = {
@@ -909,18 +895,9 @@
                 '12S12.7B': { force: 1547, area: 1184.4, fpu: 1850, fpy: 1580, Es: 195000 },
                 '12S15.2': { force: 2164, area: 1664.4, fpu: 1850, fpy: 1580, Es: 195000 }
             };
-
-            const rebarData = {
-                'D10': { area: 71.3, fy: 280 },
-                'D13': { area: 126.7, fy: 280 },
-                'D16': { area: 198.6, fy: 280 },
-                'D19': { area: 285.0, fy: 420 },
-                'D22': { area: 387.1, fy: 420 },
-                'D25': { area: 506.7, fy: 420 },
-            };
             
             /**
-             * 根據選擇的跨距更新預設尺寸
+             * Updates default dimensions based on the selected span.
              */
             function updateDefaultsBySpan() {
                 const selectedSpan = bridgeSpanSelect.value;
@@ -936,6 +913,9 @@
                 if (defaults.tendons) {
                     tendonMidCountSelect.value = defaults.tendons;
                 }
+                if (defaults.vu) {
+                    shearVuInput.value = defaults.vu;
+                }
 
                 const momentDefaultsForSpan = momentDefaults[selectedSpan];
                 if (momentDefaultsForSpan) {
@@ -945,20 +925,20 @@
                     document.getElementById('recommended-mll').textContent = momentDefaultsForSpan.mll;
                 }
                 
-                // 手動觸發一次 input 事件以確保所有相關的繪圖和計算都會更新
+                // Manually trigger an input event to ensure all related drawings and calculations update
                 allDimensionInputs.ght.dispatchEvent(new Event('input', { bubbles: true }));
                 tendonMidCountSelect.dispatchEvent(new Event('change', { bubbles: true }));
             }
 
             /**
-             * 同步中央與端部斷面的鋼腱數量
+             * Synchronizes the tendon counts for mid-span and end sections.
              */
             function syncTendonCounts() {
                 tendonEndCountInput.value = tendonMidCountSelect.value;
             }
 
             /**
-             * 更新預設的初始預力與斷面積顯示
+             * Updates the default initial prestressing force and area display.
              */
             function updateTendonProperties() {
                 const selectedType = tendonTypeSelect.value;
@@ -983,80 +963,68 @@
                 
                 if (detailsEl) {
                     detailsEl.innerHTML = `
-                        <p>1. 0.70 &times; $f_{pu}$ = 0.70 &times; ${data.fpu} = ${val1.toFixed(1)} MPa</p>
-                        <p>2. 0.85 &times; $f_{py}$ = 0.85 &times; ${data.fpy} = ${val2.toFixed(1)} MPa</p>
+                        <p>1. 0.70 * fpu = 0.70 * ${data.fpu} = ${val1.toFixed(1)} MPa</p>
+                        <p>2. 0.85 * fpy = 0.85 * ${data.fpy} = ${val2.toFixed(1)} MPa</p>
                         <p class="mt-2 border-t pt-2">取較小值: ${allowableStress.toFixed(1)} MPa</p>
-                        <p>最大預力 = ${allowableStress.toFixed(1)} &times; ${data.area} / 1000 = ${recommendedForce.toFixed(0)} kN</p>
+                        <p>最大預力 = ${allowableStress.toFixed(1)} * ${data.area} / 1000 = ${recommendedForce.toFixed(0)} kN</p>
                     `;
                 }
             }
-            
-            /**
-             * 更新剪力筋斷面積顯示
-             */
-            function updateStirrupProperties() {
-                const selectedSize = stirrupSizeSelect.value;
-                const data = rebarData[selectedSize];
-                if (data) {
-                    document.getElementById('stirrup-area-display').textContent = data.area;
-                }
-            }
-
 
             /**
-             * 繪製 PCI 梁斷面
-             * @param {CanvasRenderingContext2D} ctx - Canvas 的 2D 繪圖環境
-             * @param {HTMLElement} parent - Canvas 的父容器
-             * @param {boolean} isEndSection - 是否為梁端斷面
-             * @param {boolean} skipDimensions - 是否跳過繪製尺寸線
+             * Draws the PCI girder section.
+             * @param {CanvasRenderingContext2D} ctx - The canvas 2D rendering context.
+             * @param {HTMLElement} parent - The parent container of the canvas.
+             * @param {boolean} isEndSection - Whether it's the end section of the girder.
+             * @param {boolean} skipDimensions - Whether to skip drawing dimension lines.
              */
             function drawGirder(ctx, parent, isEndSection, skipDimensions = false) {
-                // 從輸入框讀取所有基礎數值
+                // Read all base values from inputs
                 const ght = parseFloat(allDimensionInputs.ght.value) || 0;
                 const h1 = parseFloat(allDimensionInputs.h1.value) || 0;
                 const tft_net = parseFloat(allDimensionInputs.tft.value) || 0;
                 const gtf = parseFloat(allDimensionInputs.gtf.value) || 0;
                 const bft = parseFloat(allDimensionInputs.bft.value) || 0;
                 
-                // 讀取中央斷面的特定數值
+                // Read values specific to the mid-span section
                 const gwb_mid = parseFloat(allDimensionInputs.gwb.value) || 0;
                 const h3_mid = parseFloat(allDimensionInputs.h3.value) || 0;
                 const f2_mid = parseFloat(allDimensionInputs.f2.value) || 0;
 
-                // 宣告將用於繪圖的變數
+                // Declare variables to be used for drawing
                 let gwb, h3, f2;
 
-                // 根據是否為端部斷面來設定尺寸
+                // Set dimensions based on whether it's an end section
                 if (isEndSection) {
-                    // 計算中央斷面的下翼板總寬
+                    // Calculate the total width of the bottom flange at mid-span
                     const gbf_mid = gwb_mid + 2 * f2_mid;
-                    // 套用端部斷面規則
-                    gwb = gbf_mid; // 端部腹板寬度 = 中央下翼板寬度
-                    h3 = 0;      // 端部無下斜肩
-                    f2 = 0;      // 端部無下斜肩
+                    // Apply end section rules
+                    gwb = gbf_mid; // Web width at the end = bottom flange width at mid-span
+                    h3 = 0;      // No bottom haunch at the end
+                    f2 = 0;      // No bottom haunch at the end
                 } else {
-                    // 中央斷面直接使用輸入值
+                    // Mid-span section uses input values directly
                     gwb = gwb_mid;
                     h3 = h3_mid;
                     f2 = f2_mid;
                 }
 
-                // 計算衍生尺寸
+                // Calculate derived dimensions
                 const tft_total = h1 + tft_net;
-                const gbf = gwb + 2 * f2; // 對於端部斷面, f2=0, 所以 gbf=gwb
+                const gbf = gwb + 2 * f2; // For end section, f2=0, so gbf=gwb
 
-                // 設定 Canvas 尺寸以符合父容器
+                // Set canvas size to fit the parent container
                 const parentWidth = parent.clientWidth;
                 const parentHeight = parent.clientHeight;
                 ctx.canvas.width = parentWidth;
                 ctx.canvas.height = parentHeight;
 
-                // 計算繪圖比例與邊距
+                // Calculate drawing scale and padding
                 const padding = skipDimensions ? 40 : 150;
                 const drawableWidth = ctx.canvas.width - 2 * padding;
                 const drawableHeight = ctx.canvas.height - 2 * padding;
                 
-                // 檢查尺寸是否有效
+                // Check for valid dimensions
                 if (gtf <= 0 || ght <= 0 || drawableWidth <= 0 || drawableHeight <= 0) {
                     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
                     if (gtf <= 0 || ght <= 0) {
@@ -1070,7 +1038,7 @@
                 
                 const scale = Math.min(drawableWidth / Math.max(gtf, gbf), drawableHeight / ght);
 
-                // 將實際尺寸轉換為繪圖尺寸
+                // Convert actual dimensions to drawing dimensions
                 const drawGht = ght * scale;
                 const drawH1 = h1 * scale;
                 const drawH2 = tft_net * scale; // H2 for drawing is net thickness
@@ -1086,7 +1054,7 @@
 
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
                 
-                // 定義斷面所有頂點的座標
+                // Define the coordinates of all vertices of the section
                 const p = {
                     topLeft: [centerX - drawGtf / 2, startY],
                     topRight: [centerX + drawGtf / 2, startY],
@@ -1102,7 +1070,7 @@
                     topHaunch1StartLeft: [centerX - drawGtf / 2, startY + drawH2],
                 };
                 
-                // 開始繪製斷面輪廓
+                // Start drawing the section outline
                 ctx.beginPath();
                 ctx.strokeStyle = '#334155'; // slate-700
                 ctx.lineWidth = 3;
@@ -1127,7 +1095,7 @@
 
                 if (skipDimensions) return;
 
-                // --- 繪製尺寸標註 ---
+                // --- Draw dimension annotations ---
                 const dimColor = '#475569'; // slate-600
                 const dimLineColor = '#94a3b8'; // slate-400
                 const arrowSize = 8;
@@ -1195,18 +1163,18 @@
                     }
                 };
                 
-                // 垂直尺寸
+                // Vertical dimensions
                 drawISODim(p.topLeft[0], p.topLeft[1], p.bottomLeft[0], p.bottomLeft[1], `GHT (${ght})`, 'left', 60);
                 drawISODim(p.topRight[0], p.topRight[1], p.topHaunch1StartRight[0], p.topHaunch1StartRight[1], `TFT (${tft_net.toFixed(0)})`, 'right', 50);
                 drawISODim(p.topHaunch1StartRight[0], p.topHaunch1StartRight[1], p.webTopRight[0], p.webTopRight[1], `H1 (${h1})`, 'right', 80);
 
-                if (!isEndSection) { // 只在中央斷面顯示 H3, F2, BFT 的標註
+                if (!isEndSection) { // Only show H3, F2, BFT annotations for mid-span section
                     drawISODim(p.webBottomLeft[0], p.webBottomLeft[1], p.bottomHaunchStartLeft[0], p.bottomHaunchStartLeft[1], `H3 (${h3})`, 'left', 90);
                     drawISODim(p.webBottomRight[0], p.webBottomRight[1], p.bottomHaunchStartRight[0], p.bottomHaunchStartRight[1], `F2 (${f2})`, 'bottom', 90);
                     drawISODim(p.bottomRight[0], p.bottomRight[1], p.bottomHaunchStartRight[0], p.bottomHaunchStartRight[1], `BFT (${bft})`, 'right', 90);
                 }
 
-                // 水平尺寸
+                // Horizontal dimensions
                 drawISODim(p.topLeft[0], p.topLeft[1], p.topRight[0], p.topRight[1], `GTF (${gtf})`, 'top', 90);
                 const commonTopHorizontalOffset = 60;
                 drawISODim(p.webTopLeft[0], p.webTopLeft[1], p.webTopRight[0], p.webTopRight[1], `GWB (${gwb.toFixed(0)})`, 'top', commonTopHorizontalOffset);
@@ -1214,8 +1182,8 @@
             }
 
             /**
-             * 繪製預力鋼腱 (中央斷面)
-             * @param {CanvasRenderingContext2D} ctx - Canvas 的 2D 繪圖環境
+             * Draws prestressing tendons (mid-span section).
+             * @param {CanvasRenderingContext2D} ctx - The canvas 2D rendering context.
              */
             function drawMidTendons(ctx) {
                 let ght = parseFloat(allDimensionInputs.ght.value) || 0;
@@ -1270,8 +1238,8 @@
             }
 
             /**
-             * 繪製預力鋼腱 (端部斷面)
-             * @param {CanvasRenderingContext2D} ctx - Canvas 的 2D 繪圖環境
+             * Draws prestressing tendons (end section).
+             * @param {CanvasRenderingContext2D} ctx - The canvas 2D rendering context.
              */
             function drawEndTendons(ctx) {
                 let ght = parseFloat(allDimensionInputs.ght.value) || 0;
@@ -1328,19 +1296,19 @@
             }
 
             /**
-             * 繪製 PCI 梁側面視圖的鋼腱
-             * @param {CanvasRenderingContext2D} ctx - Canvas 的 2D 繪圖環境
-             * @param {HTMLElement} parent - Canvas の父容器
+             * Draws the side view of the PCI girder with tendons.
+             * @param {CanvasRenderingContext2D} ctx - The canvas 2D rendering context.
+             * @param {HTMLElement} parent - The parent container of the canvas.
              */
             function drawSideView(ctx, parent) {
-                // 1. 取得尺寸 (單位: mm)
+                // 1. Get dimensions (unit: mm)
                 const span = (parseFloat(bridgeSpanSelect.value) || 0) * 1000; // L
                 const ght = parseFloat(allDimensionInputs.ght.value) || 0;
                 const tendonCount = tendonMidCountSelect.value;
 
                 if (span <= 0 || ght <= 0) return;
 
-                // 2. 設定畫布
+                // 2. Set up the canvas
                 const parentWidth = parent.clientWidth;
                 const parentHeight = parent.clientHeight;
                 ctx.canvas.width = parentWidth;
@@ -1353,26 +1321,26 @@
 
                 if (drawableWidth <= 0 || drawableHeight <= 0) return;
 
-                // 3. 計算統一比例尺 (m -> px)
-                const spanHalfM = span / 2 / 1000; // 半跨距，單位 m
-                const ghtM = ght / 1000;            // 梁高，單位 m
+                // 3. Calculate a uniform scale (m -> px)
+                const spanHalfM = span / 2 / 1000; // Half span, in meters
+                const ghtM = ght / 1000;            // Girder height, in meters
                 
                 const scale = Math.min(drawableWidth / spanHalfM, drawableHeight / ghtM);
 
-                // 使用比例尺計算繪圖尺寸
+                // Use the scale to calculate drawing dimensions
                 const canvasSpanHalf = spanHalfM * scale;
                 const canvasGht = ghtM * scale;
 
-                // 計算繪圖起點以使其在繪圖區置中
+                // Calculate drawing start point to center it in the drawable area
                 const startZ = padding.left + (drawableWidth - canvasSpanHalf) / 2;
                 const startY = padding.top + (drawableHeight - canvasGht) / 2;
 
-                // --- 繪製梁的輪廓與座標軸 ---
+                // --- Draw girder outline and axes ---
                 ctx.strokeStyle = '#cbd5e1'; // slate-300
                 ctx.lineWidth = 2;
                 ctx.strokeRect(startZ, startY, canvasSpanHalf, canvasGht);
 
-                // 繪製頂部位置標示
+                // Draw position labels on top
                 ctx.fillStyle = '#475569'; // slate-600
                 ctx.font = '14px Inter';
                 ctx.textAlign = 'center';
@@ -1381,7 +1349,7 @@
                 ctx.fillText('橋梁中央 (對稱)', startZ + canvasSpanHalf, startY - 10);
 
 
-                // 繪製座標軸標籤
+                // Draw axis labels
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'top';
                 ctx.fillText('橋梁長度 (Z)', startZ + canvasSpanHalf / 2, startY + canvasGht + 25);
@@ -1393,7 +1361,7 @@
                 ctx.fillText('梁身高度 (Y)', 0, 0);
                 ctx.restore();
                 
-                // 繪製座標軸刻度 (單位: m)
+                // Draw axis ticks (unit: m)
                 ctx.font = '12px Inter';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'top';
@@ -1405,7 +1373,7 @@
                 ctx.fillText('0 m', startZ - 10, startY + canvasGht);
                 ctx.fillText(`${ghtM.toFixed(1)} m`, startZ - 10, startY);
 
-                // 4. 取得鋼腱資料
+                // 4. Get tendon data
                 const midTendonLayouts = {
                     '3': [{ id: 1, x: 0, y: 120 }, { id: 2, x: -120, y: 120 }, { id: 3, x: 120, y: 120 }],
                     '4': [{ id: 1, x: 0, y: 240 }, { id: 2, x: 0, y: 120 }, { id: 3, x: -120, y: 120 }, { id: 4, x: 120, y: 120 }],
@@ -1426,24 +1394,24 @@
 
                 if (!endLayout || !midLayout) return;
 
-                // 確保佈局按 ID 排序，以便正確配對
+                // Ensure layouts are sorted by ID for correct pairing
                 endLayout.sort((a, b) => a.id - b.id);
                 midLayout.sort((a, b) => a.id - b.id);
 
                 const tendonRadius = 5;
                 const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#10b981', '#f59e0b', '#6366f1'];
 
-                // 5. 繪製拋物線
+                // 5. Draw the parabolas
                 for (let i = 0; i < tendonCount; i++) {
                     const y_start_m = (endLayout[i]?.y || 0) / 1000;
                     const y_end_m = (midLayout[i]?.y || 0) / 1000;
                     const z_start_m = 0;
                     const z_end_m = spanHalfM;
 
-                    // 避免除以零
+                    // Avoid division by zero
                     if (z_start_m === z_end_m) continue;
 
-                    // y = a(z-h)^2 + k  => (h,k)是頂點 (z_end_m, y_end_m)
+                    // y = a(z-h)^2 + k  => (h,k) is the vertex (z_end_m, y_end_m)
                     const a = (y_start_m - y_end_m) / Math.pow(z_start_m - z_end_m, 2);
 
                     ctx.beginPath();
@@ -1464,10 +1432,10 @@
                     }
                     ctx.stroke();
                 }
-                ctx.setLineDash([]); // 重置虛線樣式
+                ctx.setLineDash([]); // Reset dash style
 
-                // 6. 繪製端點 (覆蓋在拋物線之上)
-                // 繪製梁端點位 (Z=0)
+                // 6. Draw endpoints (over the parabolas)
+                // Draw end points (Z=0)
                 const endTendonColor = '#1e40af'; // blue-800
                 ctx.fillStyle = endTendonColor;
                 endLayout.forEach(pos => {
@@ -1478,7 +1446,7 @@
                     ctx.fill();
                 });
 
-                // 繪製梁中央點位 (Z=L/2)
+                // Draw mid-span points (Z=L/2)
                 const midTendonColor = '#4f46e5'; // indigo-600
                 ctx.fillStyle = midTendonColor;
                 midLayout.forEach(pos => {
@@ -1491,7 +1459,7 @@
             }
 
             /**
-             * 更新預力鋼腱座標表格
+             * Updates the tendon coordinates table.
              */
             function updateTendonCoordinatesTable() {
                 const coordTableBody = document.getElementById('tendon-coord-table-body');
@@ -1553,26 +1521,14 @@
             }
             
             /**
-             * 獲取斷面性質
-             * @returns {object} - 包含斷面性質的物件
+             * Gets the section properties.
+             * @returns {object|null} - An object containing section properties, or null if invalid.
              */
             function getSectionProperties() {
                 const dims = Object.fromEntries(Object.entries(allDimensionInputs).map(([k, v]) => [k, parseFloat(v.value) / 1000]));
                 if (Object.values(dims).some(v => isNaN(v) || v <= 0)) {
                     return null;
                 }
-                const midTendonLayouts = {
-                    '3': [{ y: 120 }, { y: 120 }, { y: 120 }],
-                    '4': [{ y: 240 }, { y: 120 }, { y: 120 }, { y: 120 }],
-                    '5': [{ y: 360 }, { y: 240 }, { y: 120 }, { y: 120 }, { y: 120 }],
-                    '6': [{ y: 240 }, { y: 120 }, { y: 240 }, { y: 240 }, { y: 120 }, { y: 120 }],
-                    '7': [{ y: 360 }, { y: 240 }, { y: 120 }, { y: 240 }, { y: 240 }, { y: 120 }, { y: 120 }]
-                };
-                const N = parseInt(tendonMidCountSelect.value, 10);
-                const midLayout = midTendonLayouts[N] || [];
-                let tendonYSum = 0;
-                if(midLayout) midLayout.forEach(t => tendonYSum += t.y);
-                const y_tendon_group = (tendonYSum / (midLayout?.length || 1)) / 1000;
 
                 const parts = [
                     { name: 'top_flange', w: dims.gtf, h: dims.tft, y_c: dims.ght - dims.h1 - dims.tft / 2 },
@@ -1598,47 +1554,47 @@
                 const y_bottom = y_bar;
                 const s_top = momentOfInertia > 0 ? momentOfInertia / y_top : 0;
                 const s_bottom = momentOfInertia > 0 ? momentOfInertia / y_bottom : 0;
-                const dp = dims.ght - y_tendon_group;
 
-                return { totalArea, y_bar, momentOfInertia, s_top, s_bottom, dp };
+                return { totalArea, y_bar, momentOfInertia, s_top, s_bottom };
             }
 
             /**
-             * 計算並顯示預力損失
-             * @returns {object} - 包含損失計算結果的物件
+             * Calculates and displays prestress losses.
+             * @returns {object} - An object containing loss calculation results.
              */
             function calculateAndDisplayLosses() {
-                // --- 1. 取得所有輸入值 ---
-                const Pj = (parseFloat(tendonInitialForceInput.value) || 0); // 單束鋼腱初始預力 (kN)
-                const N = parseInt(tendonMidCountSelect.value, 10); // 鋼腱總數
+                // --- 1. Get all input values ---
+                const Pj = (parseFloat(tendonInitialForceInput.value) || 0); // Initial prestress per tendon (kN)
+                const N = parseInt(tendonMidCountSelect.value, 10); // Total number of tendons
                 const mu = parseFloat(frictionMuInput.value) || 0;
                 const K = parseFloat(frictionKInput.value) || 0;
                 const anchorageSlip_mm = parseFloat(anchorageSlipInput.value) || 0;
                 const span = parseFloat(bridgeSpanSelect.value) || 0; // m
-                const x_mid = span / 2; // 計算到跨度中央的損失
+                const x_mid = span / 2; // Calculate loss to mid-span
 
                 const selectedTendon = tendonData[tendonTypeSelect.value];
                 const tendonArea_mm2 = selectedTendon.area;
                 const fpu = selectedTendon.fpu;
+                const fpy = selectedTendon.fpy;
                 const Es = selectedTendon.Es;
                 
-                // --- 2. 材料與斷面性質 ---
+                // --- 2. Material and section properties ---
                 const props = getSectionProperties();
                 if (!props) return { finalEffectiveForce: 0 };
                 const { totalArea, y_bar, momentOfInertia } = props;
 
                 const fci = parseFloat(matFciInput.value) || 0;
-                const Eci = fci > 0 ? 4270 * Math.sqrt(fci) : 0; // MPa (依台灣規範)
+                const Eci = fci > 0 ? 4270 * Math.sqrt(fci) : 0; // MPa (per TW code)
                 const modularRatio = Eci > 0 ? Es / Eci : 0;
                 const gamma_c = parseFloat(matGammaCInput.value) || 24; // kN/m^3
                 
-                // --- 3. 預力損失計算 (逐條) ---
+                // --- 3. Prestress loss calculation (per tendon) ---
                 const endTendonLayouts = {
                     '3': [{ id: 1, y: 1050 }, { id: 2, y: 750 }, { id: 3, y: 450 }],
                     '4': [{ id: 1, y: 1300 }, { id: 2, y: 1000 }, { id: 3, y: 700 }, { id: 4, y: 400 }],
                     '5': [{ id: 1, y: 1600 }, { id: 2, y: 1300 }, { id: 3, y: 1000 }, { id: 4, y: 700 }, { id: 5, y: 400 }],
-                    '6': [{ id: 1, y: 1850 }, { id: 2, y: 1550 }, { id: 3, y: 1250 }, { id: 4, y: 950 }, { id: 5, y: 650 }, { id: 6, y: 350 }],
-                    '7': [{ id: 1, y: 2000 }, { id: 2, y: 1700 }, { id: 3, y: 1400 }, { id: 4, y: 1100 }, { id: 5, y: 800 }, { id: 6, y: 500 }, { id: 7, y: 200 }]
+                    '6': [{ id: 1, y: 1850 }, { id: 2, y: 1550 }, { id: 3, y: 1250 }, { id: 4, y: 950 }, { id: 5, y: 650 }, { id: 6, x: 0, y: 350 }],
+                    '7': [{ id: 1, y: 2000 }, { id: 2, y: 1700 }, { id: 3, y: 1400 }, { id: 4, x: 0, y: 1100 }, { id: 5, x: 0, y: 800 }, { id: 6, y: 500 }, { id: 7, y: 200 }]
                 };
                 const midTendonLayouts = {
                     '3': [{ id: 1, y: 120 }, { id: 2, y: 120 }, { id: 3, y: 120 }],
@@ -1686,8 +1642,7 @@
                     const p_force_gradient = x_mid > 0 ? individualFrictionLosses[i] / x_mid : 0; // kN/m
                     let anchorageLoss = 0;
                     if (p_force_gradient > 0) {
-                        const L_set_val = Math.sqrt((anchorageSlip_m * tendonArea_m2 * Es_kPa) / p_force_gradient);
-                        L_set = L_set_val < x_mid ? L_set_val : x_mid;
+                        const L_set = Math.sqrt((anchorageSlip_m * tendonArea_m2 * Es_kPa) / p_force_gradient);
                         if (L_set < x_mid) {
                             anchorageLoss = p_force_gradient * L_set;
                         } else {
@@ -1698,7 +1653,7 @@
                     totalAnchorageLoss += anchorageLoss;
                 }
 
-                // --- 4. 顯示瞬時損失結果 ---
+                // --- 4. Display instantaneous loss results ---
                 const immediateLossTableBody = document.getElementById('immediate-loss-table-body');
                 immediateLossTableBody.innerHTML = '';
                 
@@ -1735,7 +1690,7 @@
                     </tr>`;
                 immediateLossTableBody.innerHTML += immediateFooterRow;
 
-                // --- 5. 長期損失計算 ---
+                // --- 5. Long-term loss calculation ---
                 const creepPhi = parseFloat(creepPhiInput.value) || 0;
                 const shrinkageEps = (parseFloat(shrinkageEpsInput.value) || 0) / 1000000;
                 const relaxationRate = (parseFloat(relaxationRateInput.value) || 0) / 100;
@@ -1753,7 +1708,7 @@
                 const relaxationLossStress_MPa = initialStress_MPa * relaxationRate;
                 const totalRelaxationLoss_kN = (relaxationLossStress_MPa * tendonArea_mm2 * N) / 1000;
 
-                // --- 6. 顯示長期損失結果 ---
+                // --- 6. Display long-term loss results ---
                 const longtermLossTableBody = document.getElementById('longterm-loss-table-body');
                 longtermLossTableBody.innerHTML = '';
                 const creepLossPercent = totalInitialForce > 0 ? (totalCreepLoss_kN / totalInitialForce * 100) : 0;
@@ -1777,7 +1732,7 @@
                         <td class="py-2 text-right font-mono">${relaxationLossPercent.toFixed(1)}%</td>
                     </tr>`;
 
-                // --- 7. 顯示總損失結果 ---
+                // --- 7. Display total loss results ---
                 const totalLossTableBody = document.getElementById('total-loss-table-body');
                 totalLossTableBody.innerHTML = '';
                 const totalLongtermLoss_kN = totalCreepLoss_kN + totalShrinkageLoss_kN + totalRelaxationLoss_kN;
@@ -1802,7 +1757,7 @@
                         <td class="py-3 text-right font-mono">${finalTotalPercent.toFixed(1)}%</td>
                     </tr>`;
                 
-                // --- 8. 鋼腱應力檢核 ---
+                // --- 8. Stress check ---
                 const stressTableBody = document.getElementById('stress-check-results-table-body');
                 stressTableBody.innerHTML = '';
                 const allowableStress = 0.7 * fpu;
@@ -1811,8 +1766,8 @@
                     const p_force_gradient = x_mid > 0 ? individualFrictionLosses[i] / x_mid : 0;
                     let L_set = 0;
                     if (p_force_gradient > 0) {
-                        const L_set_val = Math.sqrt((anchorageSlip_m * tendonArea_m2 * Es_kPa) / p_force_gradient);
-                        L_set = L_set_val < x_mid ? L_set_val : x_mid;
+                        L_set = Math.sqrt((anchorageSlip_m * tendonArea_m2 * Es_kPa) / p_force_gradient);
+                        if (L_set > x_mid) L_set = x_mid;
                     }
 
                     const y_start_m = (endLayout[i]?.y || 0) / 1000;
@@ -1849,29 +1804,18 @@
             }
 
             /**
-             * 執行台灣規範應力檢核
+             * Performs stress checks for all codes.
              */
-            function performStressChecks_TW() {
+            function performStressChecks() {
                 const props = getSectionProperties();
-                const stressCheckResultsContainer = document.getElementById('tw-stress-check-results-container');
-                const serviceCheckResultsContainer = document.getElementById('tw-stress-check-results-service-container');
-
-                if (!props) {
-                    stressCheckResultsContainer.innerHTML = `<p class="text-red-500">無法計算，請確認斷面尺寸皆為正值。</p>`;
-                    serviceCheckResultsContainer.innerHTML = `<p class="text-red-500">無法計算，請確認斷面尺寸、載重與材料參數皆為正值。</p>`;
-                    return;
-                }
+                if (!props) return;
                 const { totalArea, y_bar, momentOfInertia, s_top, s_bottom } = props;
 
                 const fci = parseFloat(matFciInput.value) || 0;
                 const fc = parseFloat(matFcInput.value) || 0;
-                if (fci <= 0 || fc <= 0) {
-                    stressCheckResultsContainer.innerHTML = `<p class="text-red-500">無法計算，請確認混凝土強度為正值。</p>`;
-                    serviceCheckResultsContainer.innerHTML = `<p class="text-red-500">無法計算，請確認混凝土強度為正值。</p>`;
-                    return;
-                }
+                if (fci <= 0 || fc <= 0) return;
 
-                // --- 共同計算 ---
+                // --- Common calculations ---
                 const Pj = (parseFloat(tendonInitialForceInput.value) || 0);
                 const N = parseInt(tendonMidCountSelect.value, 10);
                 const span = parseFloat(bridgeSpanSelect.value) || 0;
@@ -1886,8 +1830,8 @@
                 const mu = parseFloat(frictionMuInput.value) || 0;
                 const K = parseFloat(frictionKInput.value) || 0;
                 const x_mid = span / 2;
-                const endTendonLayouts = { '5': [{ id: 1, y: 1600 }, { id: 2, y: 1300 }, { id: 3, y: 1000 }, { id: 4, y: 700 }, { id: 5, y: 400 }] };
-                const midTendonLayouts = { '5': [{ id: 1, y: 360 }, { id: 2, y: 240 }, { id: 3, y: 120 }, { id: 4, y: 120 }, { id: 5, y: 120 }] };
+                const endTendonLayouts = { '5': [{ id: 1, y: 1600 }, { id: 2, y: 1300 }, { id: 3, y: 1000 }, { id: 4, y: 700 }, { id: 5, y: 400 }] }; // Simplified
+                const midTendonLayouts = { '5': [{ id: 1, y: 360 }, { id: 2, y: 240 }, { id: 3, y: 120 }, { id: 4, y: 120 }, { id: 5, y: 120 }] }; // Simplified
                 const endLayout = endTendonLayouts[N] || [];
                 const midLayout = midTendonLayouts[N] || [];
                 if (endLayout.length === N && midLayout.length === N) {
@@ -1901,25 +1845,29 @@
                 }
                 const Pi_total = (Pj * N) - totalFrictionLoss; // kN
 
+                // Eccentricity of the tendon group at mid-span
                 let tendonYSum = 0;
                 if(midLayout) midLayout.forEach(t => tendonYSum += t.y);
                 const y_tendon_group = (tendonYSum / (midLayout?.length || 1)) / 1000;
                 const eccentricity = y_bar - y_tendon_group;
 
+                // Girder self-weight moment (mid-span)
                 const selfWeightMoment = (totalArea * gamma_c * span**2) / 8; // kNm
 
-                // --- 施工階段應力計算 (壓正拉負) ---
+                // --- Construction stage stress calculation (compression positive, tension negative) ---
                 const stress_top_const = ((Pi_total / totalArea) - (Pi_total * eccentricity / s_top) + (selfWeightMoment / s_top)) / 1000;
                 const stress_bottom_const = ((Pi_total / totalArea) + (Pi_total * eccentricity / s_bottom) - (selfWeightMoment / s_bottom)) / 1000;
 
+                // --- Taiwan Code Check (Construction Stage) ---
                 const tw_ca_limit = 0.6 * fci;
                 const tw_ta_limit1 = -0.25 * Math.sqrt(fci);
+                const tw_ta_limit2 = -0.5 * Math.sqrt(fci);
                 const tw_check_c = stress_bottom_const <= tw_ca_limit;
                 const tw_check_t = stress_top_const >= tw_ta_limit1;
                 document.getElementById('tw-ca-limit').textContent = `$\\sigma_c \\le ${tw_ca_limit.toFixed(2)} \\text{ MPa}$`;
                 document.getElementById('tw-ta-limit1').textContent = `$\\sigma_t \\ge ${tw_ta_limit1.toFixed(2)} \\text{ MPa}$`;
-                document.getElementById('tw-ta-limit2').textContent = `$\\sigma_t \\ge ${(-0.5 * Math.sqrt(fci)).toFixed(2)} \\text{ MPa}$`;
-                stressCheckResultsContainer.innerHTML = `
+                document.getElementById('tw-ta-limit2').textContent = `$\\sigma_t \\ge ${tw_ta_limit2.toFixed(2)} \\text{ MPa}$`;
+                document.getElementById('tw-stress-check-results-container').innerHTML = `
                     <h3 class="text-lg font-semibold text-slate-800 mb-4">施工階段應力檢核計算 (中央斷面)</h3>
                     <table class="w-full text-sm">
                         <thead class="text-left text-slate-500 bg-slate-100"><tr><th class="p-2 border">檢核項目</th><th class="p-2 border">限制值 (MPa)</th><th class="p-2 border">計算值 (MPa)</th><th class="p-2 border">結果</th></tr></thead>
@@ -1929,18 +1877,20 @@
                         </tbody>
                     </table>`;
 
-                // --- 完工階段應力計算 ---
+                // --- Taiwan Code Check (Service Stage) ---
                 const stress_base_top = ((Pe_total / totalArea) - (Pe_total * eccentricity / s_top) + ((selfWeightMoment + M_sd) / s_top)) / 1000;
                 const stress_base_bot = ((Pe_total / totalArea) + (Pe_total * eccentricity / s_bottom) - ((selfWeightMoment + M_sd) / s_bottom)) / 1000;
                 const stress_ll_top = M_ll / s_top / 1000;
                 const stress_ll_bot = -M_ll / s_bottom / 1000;
+
+                const stress_service1_top = stress_base_top;
                 const stress_service1_bot = stress_base_bot;
-                const stress_service2_bot = stress_base_bot + stress_ll_bot;
                 const stress_service2_top = stress_base_top + stress_ll_top;
+                const stress_service2_bot = stress_base_bot + stress_ll_bot;
 
                 const tw_ca_limit_s1 = 0.45 * fc;
                 const tw_ca_limit_s2 = 0.60 * fc;
-                const tw_ta_limit_s = -0.8 * Math.sqrt(fc); // 假設中度腐蝕
+                const tw_ta_limit_s = -0.8 * Math.sqrt(fc); // Assuming moderate corrosion
 
                 const tw_check_c_s1 = stress_service1_bot <= tw_ca_limit_s1;
                 const tw_check_c_s2 = stress_service2_bot <= tw_ca_limit_s2;
@@ -1950,14 +1900,15 @@
                 document.getElementById('tw-ca-limit-service2').textContent = `$\\sigma_c \\le ${tw_ca_limit_s2.toFixed(2)} \\text{ MPa}$`;
                 document.getElementById('tw-ta-limit-service').textContent = `$\\sigma_t \\ge ${tw_ta_limit_s.toFixed(2)} \\text{ MPa}$`;
                 
-                serviceCheckResultsContainer.innerHTML = `
+                const serviceContainer = document.getElementById('tw-stress-check-results-service-container');
+                serviceContainer.innerHTML = `
                     <h3 class="text-lg font-semibold text-slate-800 mb-4">完工階段應力檢核計算 (中央斷面)</h3>
                     <table class="w-full text-sm">
                         <thead class="text-left text-slate-500 bg-slate-100"><tr><th class="p-2 border">檢核項目</th><th class="p-2 border">載重組合</th><th class="p-2 border">限制值 (MPa)</th><th class="p-2 border">計算值 (MPa)</th><th class="p-2 border">結果</th></tr></thead>
                         <tbody>
-                            <tr><td class="p-2 border" rowspan="2">下緣壓應力</td><td class="p-2 border">靜載重+有效預力</td><td class="p-2 border font-mono">${stress_service1_bot.toFixed(2)}</td><td class="p-2 border font-mono">${stress_service1_bot.toFixed(2)}</td><td class="p-2 border font-semibold ${tw_check_c_s1 ? 'text-green-600' : 'text-red-600'}">${tw_check_c_s1 ? 'OK' : 'NG'}</td></tr>
+                            <tr><td class="p-2 border" rowspan="2">下緣壓應力</td><td class="p-2 border">靜載重+有效預力</td><td class="p-2 border font-mono">${tw_ca_limit_s1.toFixed(2)}</td><td class="p-2 border font-mono">${stress_service1_bot.toFixed(2)}</td><td class="p-2 border font-semibold ${tw_check_c_s1 ? 'text-green-600' : 'text-red-600'}">${tw_check_c_s1 ? 'OK' : 'NG'}</td></tr>
                             <tr><td class="p-2 border">靜載重+有效預力+活載重</td><td class="p-2 border font-mono">${tw_ca_limit_s2.toFixed(2)}</td><td class="p-2 border font-mono">${stress_service2_bot.toFixed(2)}</td><td class="p-2 border font-semibold ${tw_check_c_s2 ? 'text-green-600' : 'text-red-600'}">${tw_check_c_s2 ? 'OK' : 'NG'}</td></tr>
-                            <tr><td class="p-2 border">上緣拉應力</td><td class="p-2 border">靜載重+有效預力+活載重</td><td class="p-2 border font-mono">${tw_ta_limit_s.toFixed(2)}</td><td class="p-2 border font-mono">${stress_service2_top.toFixed(2)}</td><td class="p-2 border font-semibold ${tw_check_t_s ? 'text-green-600' : 'text-red-600'}">${tw_check_t_s ? 'OK' : 'NG'}</td></tr>
+                            <tr><td class="p-2 border">上緣拉應力</td><td class="p-2 border">静載重+有效預力+活載重</td><td class="p-2 border font-mono">${tw_ta_limit_s.toFixed(2)}</td><td class="p-2 border font-mono">${stress_service2_top.toFixed(2)}</td><td class="p-2 border font-semibold ${tw_check_t_s ? 'text-green-600' : 'text-red-600'}">${tw_check_t_s ? 'OK' : 'NG'}</td></tr>
                         </tbody>
                     </table>
                     <div class="mt-4 text-sm text-slate-600 space-y-2">
@@ -1973,22 +1924,22 @@
             }
             
             /**
-             * 執行撓曲強度檢核 (台灣規範)
+             * Performs flexural strength checks.
              */
-            function performFlexureChecks_TW() {
+            function performFlexureChecks() {
                 const twResultsContainer = document.getElementById('tw-flexure-check-results-container');
-                const flexureResultBadge = document.getElementById('flexure-result-badge');
+                twResultsContainer.innerHTML = ''; 
+
                 const props = getSectionProperties();
-                
                 if (!props) {
                     twResultsContainer.innerHTML = `<p class="text-red-500">無法計算，請確認斷面尺寸皆為正值。</p>`;
                     return;
                 }
-                const { totalArea, dp } = props;
+                const { totalArea } = props;
 
                 const fc_MPa = parseFloat(matFcInput.value) || 0;
                 if (fc_MPa <= 0) {
-                    twResultsContainer.innerHTML = `<p class="text-red-500">無法計算，請確認 $f'_c$ 為正值。</p>`;
+                    twResultsContainer.innerHTML = `<p class="text-red-500">無法計算，請確認 $f'_{c}$ 為正值。</p>`;
                     return;
                 }
                 const fc = fc_MPa * 1e6;
@@ -2010,6 +1961,19 @@
 
                 const M_sw = (totalArea * gamma_c * span**2) / 8;
                 
+                const midTendonLayouts = {
+                    '3': [{ y: 120 }, { y: 120 }, { y: 120 }],
+                    '4': [{ y: 240 }, { y: 120 }, { y: 120 }, { y: 120 }],
+                    '5': [{ y: 360 }, { y: 240 }, { y: 120 }, { y: 120 }, { y: 120 }],
+                    '6': [{ y: 240 }, { y: 120 }, { y: 240 }, { y: 240 }, { y: 120 }, { y: 120 }],
+                    '7': [{ y: 360 }, { y: 240 }, { y: 120 }, { y: 240 }, { y: 240 }, { y: 120 }, { y: 120 }]
+                };
+                const midLayout = midTendonLayouts[N] || [];
+                let tendonYSum = 0;
+                if(midLayout) midLayout.forEach(t => tendonYSum += t.y);
+                const y_tendon_group = (tendonYSum / (midLayout?.length || 1)) / 1000;
+                const dp = ght - y_tendon_group;
+
                 let beta1;
                 if (fc_MPa <= 28) {
                     beta1 = 0.85;
@@ -2053,28 +2017,33 @@
                 const check_tw = phiMn_tw >= Mu_tw;
                 
                 twResultsContainer.innerHTML = `
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4">計算詳情</h3>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">撓曲強度檢核計算 (中央斷面)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-slate-100 p-4 rounded-md">
                             <h4 class="font-semibold text-slate-700 mb-2">輸入與中間參數</h4>
                             <ul class="text-sm space-y-1 font-mono">
-                                <li>$f'_c = ${fc_MPa.toFixed(1)} \\text{ MPa}$</li>
-                                <li>$\\beta_1 = ${beta1.toFixed(3)}$</li>
-                                <li>$A_{ps} = ${(Aps * 1e6).toFixed(1)} \\text{ mm²}$</li>
-                                <li>$d_p = ${(dp * 1000).toFixed(1)} \\text{ mm}$</li>
-                                <li>$c = ${(c * 1000).toFixed(1)} \\text{ mm}$</li>
-                                <li>$f_{ps} = ${(T / Aps / 1e6).toFixed(1)} \\text{ MPa}$</li>
+                                <li>$f'_{c}$ = ${fc_MPa.toFixed(1)} MPa</li>
+                                <li>$\\beta_1$ = ${beta1.toFixed(3)}</li>
+                                <li>$A_{ps}$ = ${(Aps * 1e6).toFixed(1)} mm²</li>
+                                <li>$d_p$ = ${(dp * 1000).toFixed(1)} mm</li>
+                                <li>$c$ = ${(c * 1000).toFixed(1)} mm</li>
+                                <li>$f_{ps}$ = ${(T / Aps / 1e6).toFixed(1)} MPa</li>
                             </ul>
                         </div>
                         <div class="bg-slate-100 p-4 rounded-md">
                              <h4 class="font-semibold text-slate-700 mb-2">彎矩計算結果</h4>
                              <ul class="text-sm space-y-1 font-mono">
-                                <li>$M_{SW} = ${(M_sw / 1000).toFixed(1)} \\text{ kN-m}$</li>
-                                <li>$M_{SD} = ${(M_sd / 1000).toFixed(1)} \\text{ kN-m}$</li>
-                                <li>$M_{LL} = ${(M_ll / 1000).toFixed(1)} \\text{ kN-m}$</li>
-                                <li class="font-semibold border-t pt-1 mt-1">$M_u = ${(Mu_tw / 1000).toFixed(1)} \\text{ kN-m}$</li>
-                                <li class="font-semibold">$\\phi M_n = ${(phiMn_tw / 1000).toFixed(1)} \\text{ kN-m}$</li>
-                                <li class="font-bold ${check_tw ? 'text-green-600' : 'text-red-600'} mt-2">檢核結果: ${check_tw ? 'OK' : 'NG'}</li>
+                                <li>$M_{sw}$ = ${(M_sw / 1000).toFixed(1)} kN-m</li>
+                                <li>$M_{sd}$ = ${(M_sd / 1000).toFixed(1)} kN-m</li>
+                                <li>$M_{ll}$ = ${(M_ll / 1000).toFixed(1)} kN-m</li>
+                                <li class="border-t pt-1 mt-1">$M_u$ = ${(Mu_tw / 1000).toFixed(1)} kN-m</li>
+                                <li class="">$\\phi M_n$ = ${(phiMn_tw / 1000).toFixed(1)} kN-m</li>
+                                <li class="font-semibold border-t pt-2 mt-2">
+                                    檢核: $\\phi M_n \\ge M_u$,
+                                    <span class="ml-2 font-bold ${check_tw ? 'text-green-600' : 'text-red-600'}">
+                                        ${check_tw ? 'OK' : 'NG'}
+                                    </span>
+                                </li>
                              </ul>
                         </div>
                     </div>
@@ -2082,11 +2051,10 @@
             }
 
             /**
-             * 執行撓度檢核 (台灣規範)
+             * Performs deflection checks.
              */
-            function performDeflectionChecks_TW() {
-                const resultsContainer = document.getElementById('tw-deflection-check-results-container');
-                const deflectionResultBadge = document.getElementById('deflection-result-badge');
+            function performDeflectionChecks() {
+                const twContainer = document.getElementById('tw-deflection-check-results-container');
                 
                 const props = getSectionProperties();
                 const span_m = parseFloat(bridgeSpanSelect.value) || 0;
@@ -2094,9 +2062,8 @@
                 const fc_MPa = parseFloat(matFcInput.value) || 0;
 
                 if (!props || span_m <= 0 || M_ll_kNm <= 0 || fc_MPa <= 0) {
-                    const errorMsg = `<p class="text-red-500">無法計算，請確認斷面尺寸、活載重彎矩及 $f'_c$ 皆為正值。</p>`;
-                    resultsContainer.innerHTML = errorMsg;
-                    deflectionResultBadge.className = 'hidden';
+                    const errorMsg = `<p class="text-red-500">無法計算，請確認斷面尺寸、活載重彎矩及 $f'_{c}$ 皆為正值。</p>`;
+                    twContainer.innerHTML = errorMsg;
                     return;
                 }
                 
@@ -2105,126 +2072,162 @@
                 const Ig_m4 = props.momentOfInertia;
                 const Ec_Pa = (4700 * Math.sqrt(fc_MPa)) * 1e6; // AASHTO formula, in Pascals
 
+                // Calculated live load deflection (simplified model)
                 const delta_ll_m = (5 * M_ll_Nm * L**2) / (48 * Ec_Pa * Ig_m4);
                 const delta_ll_mm = delta_ll_m * 1000;
-                const deflection_to_span_ratio = L / delta_ll_m;
 
+                const renderResult = (container, allowable_mm, check) => {
+                     container.innerHTML = `
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">活載重撓度檢核計算</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-slate-100 p-4 rounded-md">
+                                <h4 class="font-semibold text-slate-700 mb-2">計算參數</h4>
+                                <ul class="text-sm space-y-1 font-mono">
+                                    <li>跨距 ($L$) = ${L.toFixed(1)} m</li>
+                                    <li>活載重彎矩 ($M_{LL}$) = ${M_ll_kNm.toFixed(1)} kN-m</li>
+                                    <li>混凝土彈性模數 ($E_c$) = ${(Ec_Pa / 1e9).toFixed(1)} GPa</li>
+                                    <li>斷面慣性矩 ($I_g$) = ${Ig_m4.toFixed(4)} m⁴</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-100 p-4 rounded-md">
+                                <h4 class="font-semibold text-slate-700 mb-2">檢核結果</h4>
+                                <ul class="text-sm space-y-1 font-mono">
+                                    <li>計算撓度 ($\\Delta_{LL}$) = ${delta_ll_mm.toFixed(2)} mm</li>
+                                    <li class="border-t pt-1 mt-1">容許撓度 ($\\Delta_{allow}$) = ${allowable_mm.toFixed(2)} mm</li>
+                                     <li class="font-semibold border-t pt-2 mt-2">
+                                        檢核: $\\Delta_{LL} \\le \\Delta_{allow}$,
+                                        <span class="ml-2 font-bold ${check ? 'text-green-600' : 'text-red-600'}">
+                                            ${check ? 'OK' : 'NG'}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // TW Check (L/800)
                 const allowable_tw_mm = (L * 1000) / 800;
                 const check_tw = delta_ll_mm <= allowable_tw_mm;
-                
-                resultsContainer.innerHTML = `
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4">計算詳情</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-slate-100 p-4 rounded-md">
-                            <h4 class="font-semibold text-slate-700 mb-2">計算參數</h4>
-                            <ul class="text-sm space-y-1 font-mono">
-                                <li>跨距 ($L$) = ${L.toFixed(1)} m</li>
-                                <li>活載重彎矩 ($M_{LL}$) = ${M_ll_kNm.toFixed(1)} kN-m</li>
-                                <li>混凝土彈性模數 ($E_c$) = ${(Ec_Pa / 1e9).toFixed(1)} GPa</li>
-                                <li>斷面慣性矩 ($I_g$) = ${Ig_m4.toFixed(4)} m⁴</li>
-                            </ul>
-                        </div>
-                        <div class="bg-slate-100 p-4 rounded-md">
-                            <h4 class="font-semibold text-slate-700 mb-2">檢核結果</h4>
-                            <ul class="text-sm space-y-1 font-mono">
-                                <li>計算撓度 ($\Delta_{LL}$) = ${delta_ll_mm.toFixed(2)} mm</li>
-                                <li class="font-semibold border-t pt-1 mt-1">容許撓度 ($\Delta_{allow}$) = ${allowable_tw_mm.toFixed(2)} mm</li>
-                                <li class="font-semibold border-t pt-1 mt-1">撓度跨度比 ($L / \Delta_{LL}$) = ${deflection_to_span_ratio.toFixed(0)}</li>
-                                <li class="font-semibold">容許撓度比 ($L / \Delta_{allow}$) = 800</li>
-                                <li class="font-bold ${check_tw ? 'text-green-600' : 'text-red-600'} mt-2">檢核結果: ${check_tw ? 'OK' : 'NG'}</li>
-                            </ul>
-                        </div>
-                    </div>
-                `;
+                renderResult(twContainer, allowable_tw_mm, check_tw);
             }
 
             /**
-             * 執行剪力檢核 (台灣規範)
+             * Performs shear reinforcement checks.
              */
-            function performShearCheck() {
+            function performShearChecks() {
                 const resultsContainer = document.getElementById('shear-check-results-container');
-                const shearResultBadge = document.getElementById('shear-result-badge');
-                const props = getSectionProperties();
-                
-                const Vu_kN = parseFloat(shearVuInput.value) || 0;
-                const fc_MPa = parseFloat(matFcInput.value) || 0;
-                const stirrupSize = stirrupSizeSelect.value;
-                const stirrupLegs = parseFloat(stirrupLegsInput.value) || 0;
-                const stirrupSpacing_mm = parseFloat(stirrupSpacingInput.value) || 0;
-                const gwb_mm = parseFloat(allDimensionInputs.gwb.value) || 0;
-                const ght_mm = parseFloat(allDimensionInputs.ght.value) || 0;
+                resultsContainer.innerHTML = ''; // Clear previous results
 
-                if (!props || Vu_kN <= 0 || fc_MPa <= 0 || stirrupLegs <= 0 || stirrupSpacing_mm <= 0) {
-                    resultsContainer.innerHTML = `<p class="text-red-500">無法計算，請確認所有參數皆為正值。</p>`;
-                    shearResultBadge.className = 'hidden';
+                // --- 1. Get Inputs & Properties ---
+                const fc_MPa = parseFloat(matFcInput.value) || 0;
+                const ght_mm = parseFloat(allDimensionInputs.ght.value) || 0;
+                const gwb_mm = parseFloat(allDimensionInputs.gwb.value) || 0;
+                const Vu_kN = parseFloat(shearVuInput.value) || 0;
+                const fyt_MPa = parseFloat(shearFytInput.value) || 0;
+                const barSize = shearBarSizeSelect.value;
+                const legs = parseInt(shearLegsSelect.value, 10);
+                const s_mm = parseFloat(shearSpacingInput.value) || 0;
+
+                if (fc_MPa <= 0 || gwb_mm <= 0 || Vu_kN <= 0 || fyt_MPa <= 0 || s_mm <= 0) {
+                    resultsContainer.innerHTML = `<p class="text-red-500 p-4">無法計算，請確認所有剪力參數皆為正值。</p>`;
                     return;
                 }
-
-                const selectedRebar = rebarData[stirrupSize];
-                const Asv_mm2 = selectedRebar.area * stirrupLegs;
-                const fy_MPa = selectedRebar.fy;
-
-                const fc_sqrt = Math.sqrt(fc_MPa);
                 
-                // Use effective depth (d) which is approximated by ght
-                const dv_mm = ght_mm;
+                // --- 2. Calculations ---
+                const phi_v = 0.85;
+                const bw_m = gwb_mm / 1000;
+                const h_m = ght_mm / 1000;
+                const d_m = 0.9 * h_m; // Effective depth approximation
+                
+                // Concrete contribution (in kN)
+                const Vc_kN = (0.53 * Math.sqrt(fc_MPa) * (bw_m * 1000) * (d_m * 1000)) / 1000;
+                const phiVc_kN = phi_v * Vc_kN;
 
-                // Vc in N, with inputs in MPa and mm
-                const Vc_N = 0.17 * fc_sqrt * gwb_mm * dv_mm;
-                const Vc_kN = Vc_N / 1000;
+                // Required shear strength from steel
+                const requiredVs_kN = Vu_kN > phiVc_kN ? (Vu_kN - phiVc_kN) / phi_v : 0;
                 
-                // Vs in N, with inputs in mm and MPa
-                const Vs_N = (Asv_mm2 * fy_MPa * dv_mm) / stirrupSpacing_mm;
-                const Vs_kN = Vs_N / 1000;
-                
-                const phi = 0.9;
-                const phi_Vn_kN = phi * (Vc_kN + Vs_kN);
-                
-                const check = phi_Vn_kN >= Vu_kN;
+                // Provided shear strength from steel
+                const barAreas = { 'D10': 71.33, 'D13': 126.7, 'D16': 198.6, 'D19': 286.5 };
+                const Av_mm2 = (barAreas[barSize] || 0) * legs;
+                const providedVs_kN = (Av_mm2 * fyt_MPa * (d_m * 1000)) / (s_mm * 1000);
+                const phiVs_kN = phi_v * providedVs_kN;
 
+                // --- 3. Checks ---
+                const strengthCheck = (phiVc_kN + phiVs_kN) >= Vu_kN;
+                
+                // Max spacing check
+                const s_max1_mm = 0.75 * h_m * 1000;
+                const s_max2_mm = 600;
+                const s_max_limit_mm = Math.min(s_max1_mm, s_max2_mm);
+                const spacingCheck = s_mm <= s_max_limit_mm;
+
+                // Min reinforcement check
+                const Av_min_mm2 = 0.2 * Math.sqrt(fc_MPa) * (bw_m * 1000) * s_mm / fyt_MPa;
+                const minReinfCheck = Av_mm2 >= Av_min_mm2;
+
+                // --- 4. Render Results ---
                 resultsContainer.innerHTML = `
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4">檢核結果</h3>
-                    <div class="space-y-6">
-                        <details class="bg-slate-100 p-4 rounded-lg" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">檢核公式與參數</summary>
-                            <div class="mt-4 text-sm text-slate-700 space-y-2">
-                                <p>設計剪力強度: $\\phi V_n \\ge V_u$</p>
-                                <p>$\\phi V_n = \\phi (V_c + V_s)$</p>
-                                <p>混凝土提供剪力強度 ($V_c$): <br> $V_c = 0.17 \\sqrt{f'_c} \\cdot b_w \\cdot d_v$</p>
-                                <p>剪力筋提供剪力強度 ($V_s$): <br> $V_s = \\frac{A_v \\cdot f_y \\cdot d_v}{s}$</p>
-                                <ul class="list-disc list-inside mt-4">
-                                    <li>$V_u = ${Vu_kN} \\text{ kN}$</li>
-                                    <li>$f'_c = ${fc_MPa} \\text{ MPa}$</li>
-                                    <li>$b_w$ (腹板寬) = ${gwb_mm} mm</li>
-                                    <li>$d_v$ (有效剪力深度) $\\approx$ $GHT$ = ${ght_mm} mm</li>
-                                    <li>$A_v$ (剪力筋斷面積) = ${Asv_mm2} mm²</li>
-                                    <li>$f_y$ (剪力筋降伏強度) = ${fy_MPa} MPa</li>
-                                    <li>$s$ (剪力筋間距) = ${stirrupSpacing_mm} mm</li>
-                                    <li>$\\phi = 0.9$</li>
-                                </ul>
-                            </div>
-                        </details>
-                        <details class="bg-slate-100 p-4 rounded-lg" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">計算過程</summary>
-                            <div class="mt-4 text-sm text-slate-700 space-y-2 font-mono">
-                                <p>1. 混凝土剪力強度 ($V_c$):</p>
-                                <p>$V_c = 0.17 \\sqrt{${fc_MPa.toFixed(1)}} \\cdot ${gwb_mm.toFixed(0)} \\cdot ${dv_mm.toFixed(1)} = ${Vc_N.toFixed(0)} \\text{ N}$</p>
-                                <p>$V_c = ${Vc_kN.toFixed(1)} \\text{ kN}$</p>
-                                <p>2. 剪力筋剪力強度 ($V_s$):</p>
-                                <p>$V_s = \\frac{${Asv_mm2.toFixed(1)} \\cdot ${fy_MPa.toFixed(0)}}{${stirrupSpacing_mm.toFixed(0)}} \\cdot ${dv_mm.toFixed(1)} = ${Vs_N.toFixed(0)} \\text{ N}$</p>
-                                <p>$V_s = ${Vs_kN.toFixed(1)} \\text{ kN}$</p>
-                                <p>3. 設計剪力強度 ($\\phi V_n$):</p>
-                                <p>$\\phi V_n = ${phi} \\cdot (${Vc_kN.toFixed(1)} + ${Vs_kN.toFixed(1)})$</p>
-                                <p>$\\phi V_n = ${phi_Vn_kN.toFixed(1)} \\text{ kN}$</p>
-                                <p class="font-bold ${check ? 'text-green-600' : 'text-red-600'} mt-2">檢核結果: ${check ? 'OK' : 'NG'}</p>
-                            </div>
-                        </details>
+                    <h1 class="text-2xl font-bold text-slate-800 mb-6">剪力筋檢核結果</h1>
+                    <details class="bg-slate-50 p-4 rounded-lg mb-6" open>
+                        <summary class="font-semibold text-lg text-slate-800 cursor-pointer">檢核摘要 (台灣公路橋梁設計規範)</summary>
+                        <div class="mt-4 text-slate-700 space-y-2 text-sm">
+                            <p>檢核斷面之設計剪力強度 $\\phi V_n$ 是否大於所需剪力強度 $V_u$。其中 $\\phi=0.85$。</p>
+                            <p>設計剪力強度由混凝土與剪力筋共同貢獻：$\\phi V_n = \\phi (V_c + V_s)$</p>
+                            <p>$V_c = 0.53 \\sqrt{f'_{c}} b_w d$</p>
+                            <p>$V_s = \\frac{A_v f_{yt} d}{s}$</p>
+                        </div>
+                    </details>
+                    <div id="tw-shear-check-results-table">
+                        <table class="w-full text-sm border-collapse">
+                             <thead class="text-left text-slate-500 bg-slate-100">
+                                <tr><th class="p-2 border" colspan="2">計算項目</th><th class="p-2 border text-right">數值</th><th class="p-2 border">單位</th></tr>
+                             </thead>
+                             <tbody>
+                                <tr><td class="p-2 border" colspan="2">有效深度 ($d$)</td><td class="p-2 border text-right font-mono">${(d_m * 1000).toFixed(1)}</td><td class="p-2 border">mm</td></tr>
+                                <tr><td class="p-2 border" rowspan="2">混凝土剪力強度</td><td class="p-2 border">$V_c$</td><td class="p-2 border text-right font-mono">${Vc_kN.toFixed(1)}</td><td class="p-2 border">kN</td></tr>
+                                <tr><td class="p-2 border">$\\phi V_c$</td><td class="p-2 border text-right font-mono">${phiVc_kN.toFixed(1)}</td><td class="p-2 border">kN</td></tr>
+                                <tr><td class="p-2 border" rowspan="2">剪力筋剪力強度</td><td class="p-2 border">所需 $V_s$</td><td class="p-2 border text-right font-mono">${requiredVs_kN.toFixed(1)}</td><td class="p-2 border">kN</td></tr>
+                                <tr><td class="p-2 border">提供 $\\phi V_s$</td><td class="p-2 border text-right font-mono">${phiVs_kN.toFixed(1)}</td><td class="p-2 border">kN</td></tr>
+                                <tr class="bg-slate-50"><td class="p-2 border font-semibold" colspan="2">總設計剪力強度 ($\\phi V_n$)</td><td class="p-2 border text-right font-mono font-semibold">${(phiVc_kN + phiVs_kN).toFixed(1)}</td><td class="p-2 border">kN</td></tr>
+                             </tbody>
+                        </table>
+                        <table class="w-full text-sm border-collapse mt-4">
+                             <thead class="text-left text-slate-500 bg-slate-200">
+                                <tr>
+                                    <th class="p-2 border text-left">檢核項目</th>
+                                    <th class="p-2 border text-center">計算值</th>
+                                    <th class="p-2 border text-center">限制值</th>
+                                    <th class="p-2 border text-center">結果</th>
+                                </tr>
+                             </thead>
+                             <tbody>
+                                <tr>
+                                    <td class="p-2 border">1. 強度檢核 ($\\phi V_n \\ge V_u$)</td>
+                                    <td class="p-2 border text-center font-mono">${(phiVc_kN + phiVs_kN).toFixed(1)} kN</td>
+                                    <td class="p-2 border text-center font-mono">${Vu_kN.toFixed(1)} kN</td>
+                                    <td class="p-2 border text-center font-semibold ${strengthCheck ? 'text-green-600' : 'text-red-600'}">${strengthCheck ? 'OK' : 'NG'}</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border">2. 最小筋量檢核 ($A_v \\ge A_{v,min}$)</td>
+                                    <td class="p-2 border text-center font-mono">${Av_mm2.toFixed(1)} mm²</td>
+                                    <td class="p-2 border text-center font-mono">${Av_min_mm2.toFixed(1)} mm²</td>
+                                    <td class="p-2 border text-center font-semibold ${minReinfCheck ? 'text-green-600' : 'text-red-600'}">${minReinfCheck ? 'OK' : 'NG'}</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border">3. 最大間距檢核 ($s \\le s_{max}$)</td>
+                                    <td class="p-2 border text-center font-mono">${s_mm.toFixed(0)} mm</td>
+                                    <td class="p-2 border text-center font-mono">${s_max_limit_mm.toFixed(0)} mm</td>
+                                    <td class="p-2 border text-center font-semibold ${spacingCheck ? 'text-green-600' : 'text-red-600'}">${spacingCheck ? 'OK' : 'NG'}</td>
+                                </tr>
+                             </tbody>
+                        </table>
                     </div>
                 `;
             }
             
             /**
-             * 更新所有 UI 元素 (繪圖與計算)
+             * Updates all UI elements (drawings and calculations).
              */
             function updateUI() {
                 if (!sectionView.classList.contains('hidden')) {
@@ -2246,22 +2249,22 @@
                     updateTendonCoordinatesTable();
                 }
                 
-                calculateAndDisplayLosses();
+                const lossResults = calculateAndDisplayLosses();
 
                 if (!stressCheckView.classList.contains('hidden')) {
-                    performStressChecks_TW();
+                    performStressChecks(lossResults);
                 }
 
                 if (!flexureCheckView.classList.contains('hidden')) {
-                    performFlexureChecks_TW();
+                    performFlexureChecks();
                 }
 
                 if (!deflectionCheckView.classList.contains('hidden')) {
-                    performDeflectionChecks_TW();
+                    performDeflectionChecks();
                 }
 
                 if (!shearCheckView.classList.contains('hidden')) {
-                    performShearCheck();
+                    performShearChecks();
                 }
 
                 // Render KaTeX after all UI updates
@@ -2277,15 +2280,15 @@
                 }
             }
 
-            // --- 事件監聽 ---
+            // --- Event Listeners ---
 
-            // 監聽所有輸入框的變動
+            // Listen for changes on all inputs and selects
             document.querySelectorAll('input, select').forEach(input => {
                 input.addEventListener('input', updateUI);
                 input.addEventListener('change', updateUI);
             });
             
-            // 監聽數字輸入框的按鈕
+            // Listen for clicks on number input buttons
             document.querySelectorAll('.number-button').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const inputId = e.currentTarget.dataset.input;
@@ -2312,7 +2315,7 @@
                 });
             });
             
-            // 主要分頁切換邏輯
+            // Main tab switching logic
             mainTabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     mainTabButtons.forEach(btn => {
@@ -2349,7 +2352,7 @@
                 });
             });
 
-            // 斷面尺寸子分頁切換邏輯
+            // Section sub-tab switching logic
             sectionSubTabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     sectionSubTabButtons.forEach(btn => btn.classList.remove('active'));
@@ -2361,7 +2364,7 @@
                 });
             });
 
-             // 預力鋼腱子分頁切換邏輯
+             // Tendon sub-tab switching logic
             tendonSubTabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     tendonSubTabButtons.forEach(btn => btn.classList.remove('active'));
@@ -2379,72 +2382,31 @@
                 });
             });
             
-            // 應力檢核子分頁切換邏輯
-            stressSubTabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    stressSubTabButtons.forEach(btn => btn.classList.remove('active'));
-                    Object.values(stressSubTabContents).forEach(content => content.classList.add('hidden'));
-                    button.classList.add('active');
-                    const activeContent = stressSubTabContents[button.id];
-                     if (activeContent) activeContent.classList.remove('hidden');
-                });
-            });
-
-            // 撓曲強度子分頁切換邏輯
-            flexureSubTabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    flexureSubTabButtons.forEach(btn => btn.classList.remove('active'));
-                    Object.values(flexureSubTabContents).forEach(content => content.classList.add('hidden'));
-                    button.classList.add('active');
-                    const activeContent = flexureSubTabContents[button.id];
-                     if (activeContent) activeContent.classList.remove('hidden');
-                });
-            });
-
-            // 撓度檢核子分頁切換邏輯
-            deflectionSubTabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    deflectionSubTabButtons.forEach(btn => btn.classList.remove('active'));
-                    Object.values(deflectionSubTabContents).forEach(content => content.classList.add('hidden'));
-                    button.classList.add('active');
-                    const activeContent = deflectionSubTabContents[button.id];
-                     if (activeContent) activeContent.classList.remove('hidden');
-                });
-            });
-
-            // 監聽中央斷面鋼腱數量變化
+            // Listen for changes in mid-span tendon count
             tendonMidCountSelect.addEventListener('change', () => {
                 syncTendonCounts();
                 updateUI();
             });
 
-            // 監聽鋼腱種類變化
+            // Listen for changes in tendon type
             tendonTypeSelect.addEventListener('change', () => {
                 updateTendonProperties();
                 updateUI();
             });
-            
-            // 監聽剪力筋號數變化
-            stirrupSizeSelect.addEventListener('change', () => {
-                updateStirrupProperties();
-                updateUI();
-            });
 
-
-            // 監聽橋梁跨距變化
+            // Listen for changes in bridge span
             bridgeSpanSelect.addEventListener('change', updateDefaultsBySpan);
 
-            // 使用 ResizeObserver 監聽容器尺寸變化並重繪
+            // Use ResizeObserver to redraw on container size changes
             const resizeObserver = new ResizeObserver(() => {
                 requestAnimationFrame(updateUI);
             });
             resizeObserver.observe(document.getElementById('main-content-wrapper'));
 
-            // 初始執行
+            // Initial execution
             updateDefaultsBySpan();
             syncTendonCounts();
             updateTendonProperties();
-            updateStirrupProperties();
             requestAnimationFrame(updateUI);
         });
     </script>
