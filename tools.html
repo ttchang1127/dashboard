@@ -66,21 +66,17 @@
 
         <div class="flex flex-col md:flex-row gap-8">
             <aside class="w-full md:w-1/4">
-                <!-- === 導覽列 (含下拉選單) === -->
                 <nav id="calculator-nav" class="space-y-1">
                     <a href="#" data-target="content-hydro" class="nav-link active-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">水文計算</a>
                     <a href="#" data-target="content-road-geometry" class="nav-link flex items-center px-4 py-3 text-lg font-semibold rounded-lg">道路幾何</a>
                     
-                    <!-- 混凝土橋下拉選單 -->
                     <div>
                         <button type="button" id="concrete-bridge-toggle" class="nav-link w-full flex items-center justify-between px-4 py-3 text-lg font-semibold rounded-lg text-left">
                             <span>混凝土橋</span>
-                            <!-- 下拉箭頭圖示 -->
                             <svg class="w-5 h-5 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
                         </button>
-                        <!-- 子選單 (預設隱藏) -->
                         <div id="concrete-bridge-submenu" class="hidden mt-1 pl-6 space-y-1">
                             <a href="#" data-target="content-bridge" class="nav-link block py-2 text-base font-medium rounded-lg pl-4">三跨預力箱型梁檢核</a>
                             <a href="#" data-target="content-pci-bridge" class="nav-link block py-2 text-base font-medium rounded-lg pl-4">預力I型橋梁設計檢核</a>
@@ -114,28 +110,24 @@
                     </ul>
                 </div>
                 
-                <!-- 這是 "三跨預力箱型梁檢核" 的內容 -->
                 <div id="content-bridge" class="nav-content hidden">
                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <li><a href="./brg_deck.html" target="_blank" class="calc-item bg-slate-50 hover:bg-slate-100 border-slate-200"><h3 class="text-slate-800">橋面板檢核</h3><p class="text-slate-700">基於日本《道路橋示方書》進行，採用以性能為基礎的設計方法。</p></a></li>
                         <li><a href="./brg_web.html" target="_blank" class="calc-item bg-teal-50 hover:bg-teal-100 border-teal-200"><h3 class="text-teal-800">腹版及下翼版檢核</h3><p class="text-teal-700">檢核預力箱型梁的腹版與下翼版在各種載重組合下的應力與剪力。</p></a></li>
                         <li><a href="./brg_girder.html" target="_blank" class="calc-item bg-orange-50 hover:bg-orange-100 border-orange-200"><h3 class="text-orange-800">主梁檢核</h3><p class="text-orange-700">檢核預力箱型梁的主梁在各種載重下的應力與剪力。</p></a></li>
                         <li><a href="./diaphragm.html" target="_blank" class="calc-item bg-pink-50 hover:bg-pink-100 border-pink-200"><h3 class="text-pink-800">橫梁(Diaphragm)檢核</h3><p class="text-pink-700">檢核橫梁在各種載重組合下的應力與剪力。</p></a></li>
-                        <!-- === 新增的項目 === -->
                         <li><a href="./brg_az.html" target="_blank" class="calc-item bg-amber-50 hover:bg-amber-100 border-amber-200"><h3 class="text-amber-800">錨碇區檢核</h3><p class="text-amber-700">檢核預力箱型梁的錨碇區，確保其符合設計要求。</p></a></li>
                     </ul>
                 </div>
                 
-                <!-- "預力I型橋梁設計檢核" 的內容面板 -->
                 <div id="content-pci-bridge" class="nav-content hidden">
                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <li><a href="./PCIbrg_tw.html" target="_blank" class="calc-item bg-violet-50 hover:bg-violet-100 border-violet-200"><h3 class="text-violet-800">PCI橋梁設計檢核(台灣規範)</h3><p class="text-violet-700">檢核預力I型梁橋的應力與剪力，符合台灣規範。</p></a></li>
+                        <li><a href="https://ttchang1127.github.io/dashboard/bridge-designer/index.html" target="_blank" class="calc-item bg-violet-50 hover:bg-violet-100 border-violet-200"><h3 class="text-violet-800">PCI橋梁設計檢核(台灣規範)</h3><p class="text-violet-700">檢核預力I型梁橋的應力與剪力，符合台灣規範。</p></a></li>
                     </ul>
                 </div>
 
-                <!-- 鋼橋的內容面板 -->
                 <div id="content-steel-bridge" class="nav-content hidden">
-                     <p class="text-gray-500">此類別尚無計算工具。</p>
+                         <p class="text-gray-500">此類別尚無計算工具。</p>
                 </div>
 
                 <div id="content-structure" class="nav-content hidden">
@@ -170,7 +162,6 @@
         </footer>
     </div>
 
-    <!-- === JavaScript (無變更) === -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- 下拉選單邏輯 ---
