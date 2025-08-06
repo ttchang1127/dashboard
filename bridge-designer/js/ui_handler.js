@@ -60,7 +60,7 @@ function renderStressCheckResults(results, container){
         container.innerHTML = '<h1 class="text-2xl font-bold text-slate-800 p-6">應力檢核結果</h1><p class="px-6 text-red-500">無法計算應力檢核，請檢查輸入參數。</p>';
         return;
     }
-    const { limits, construction, service_dl, service_total } = results;
+    const { limits, construction, service_dl, service_total, report_values } = results;
     const check_t = construction.top.stress >= limits.ta_limit1;
     const check_c = construction.bottom.stress <= limits.ca_limit;
     const check_c_s1 = service_dl.bottom.stress <= limits.ca_limit_serv1;
@@ -69,12 +69,14 @@ function renderStressCheckResults(results, container){
     container.innerHTML = `
         <h1 class="text-2xl font-bold text-slate-800 mb-4">應力檢核結果</h1>
         <details class="bg-slate-50 p-4 rounded-lg mb-6" open>
-            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">應力限制值 (台灣公路橋梁設計規範)</summary>
+            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">應力限制值 (參考來源: 台灣公路橋梁設計規範)</summary>
             <div class="mt-4 text-slate-700 space-y-2 text-sm">
+                <p><strong>施工階段</strong>之限制值係以施預力時之混凝土強度 $f'_{ci}$ 為基準。</p>
+                <p><strong>完工階段</strong>之限制值係以28天混凝土強度 $f'_{c}$ 為基準。</p>
+                <hr class="my-3">
                 <p><strong>施工階段 (受壓)：</strong>$\\sigma_c \\le ${limits.ca_limit.toFixed(2)} \\text{ MPa}$</p>
-                <p><strong>施工階段 (受拉, 一般)：</strong>$\\sigma_t \\ge ${limits.ta_limit1.toFixed(2)} \\text{ MPa}$</p>
-                <p><strong>施工階段 (受拉, 兩端簡支)：</strong>$\\sigma_t \\ge ${limits.ta_limit2.toFixed(2)} \\text{ MPa}$</p>
-                <hr class="my-2"><p><strong>完工階段 (受壓, P+DL)：</strong>$\\sigma_c \\le ${limits.ca_limit_serv1.toFixed(2)} \\text{ MPa}$</p>
+                <p><strong>施工階段 (受拉)：</strong>$\\sigma_t \\ge ${limits.ta_limit1.toFixed(2)} \\text{ MPa}$</p>
+                <p><strong>完工階段 (受壓, P+DL)：</strong>$\\sigma_c \\le ${limits.ca_limit_serv1.toFixed(2)} \\text{ MPa}$</p>
                 <p><strong>完工階段 (受壓, P+DL+LL)：</strong>$\\sigma_c \\le ${limits.ca_limit_serv2.toFixed(2)} \\text{ MPa}$</p>
                 <p><strong>完工階段 (受拉)：</strong>$\\sigma_t \\ge ${limits.ta_limit_serv.toFixed(2)} \\text{ MPa}$</p>
             </div>
@@ -99,6 +101,14 @@ function renderStressCheckResults(results, container){
                      <tr><td class="p-2 border">上緣拉應力</td><td class="p-2 border">靜載重+有效預力+活載重</td><td class="p-2 border font-mono">${limits.ta_limit_serv.toFixed(2)}</td><td class="p-2 border font-mono">${service_total.top.stress.toFixed(2)}</td><td class="p-2 border font-semibold ${check_t_s ? 'text-green-600' : 'text-red-600'}">${check_t_s ? 'OK' : 'NG'}</td></tr>
                  </tbody>
             </table>
+            <div class="mt-4 p-4 border border-slate-200 rounded-md text-sm text-slate-700 bg-slate-50">
+                <p class="font-semibold mb-2">檢核說明:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><strong>有效預力 (Pe):</strong> 採用扣除所有瞬時與長期損失後的預力值 (<strong>${report_values.Pe_kN.toFixed(1)}</strong> kN)。</li>
+                    <li><strong>靜載重彎矩:</strong> 包含梁自重彎矩 (<strong>${report_values.M_sw.toFixed(1)}</strong> kN-m) 與疊加靜載重彎矩 (<strong>${report_values.M_sd.toFixed(1)}</strong> kN-m)。</li>
+                    <li><strong>活載重彎矩:</strong> 採用輸入值 (<strong>${report_values.M_ll.toFixed(1)}</strong> kN-m)。</li>
+                </ul>
+            </div>
         </div>`;
 }
 
