@@ -4,21 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PCI 梁橋互動設計工具 (台灣規範)</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0KOVEMVIhbCwHMAq2BpbGfU2JAFsV0IhOKyIWoUpl7p7wJ2d8rEFQ" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmImMNM_hX" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
-    
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
-
     <div class="w-full max-w-screen-xl flex flex-col h-[90vh]">
         <div class="w-full flex border-b border-slate-300">
             <button id="main-tab-section" class="main-tab-button active">橋梁斷面尺寸</button>
@@ -26,18 +21,15 @@
             <button id="main-tab-tendon" class="main-tab-button">預力鋼腱配置</button>
             <button id="main-tab-loss-calc" class="main-tab-button">計算預力損失</button>
             <button id="main-tab-stress-check" class="main-tab-button">應力檢核</button>
-            <button id="main-tab-flexure" class="main-tab-button">撓曲強度檢核</button>
-            <button id="main-tab-deflection" class="main-tab-button">撓度檢核</button>
-            <button id="main-tab-shear" class="main-tab-button">剪力筋檢核</button>
+            <button id="main-tab-flexure-check" class="main-tab-button">撓曲強度檢核</button>
+            <button id="main-tab-deflection-check" class="main-tab-button">撓度檢核</button>
+            <button id="main-tab-shear-check" class="main-tab-button">剪力筋檢核</button>
         </div>
-
         <div id="main-content-wrapper" class="w-full flex-grow bg-white rounded-b-lg rounded-tr-lg shadow-lg overflow-hidden">
-            
             <div id="section-view" class="flex flex-col md:flex-row w-full h-full">
                 <div id="input-panel" class="w-full md:w-4/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto">
                     <h1 class="text-2xl font-bold text-slate-800 mb-2">斷面尺寸參數</h1>
                     <p class="text-slate-500 mb-6">請選擇跨度以載入建議尺寸，或手動輸入。</p>
-
                     <div class="mb-6">
                         <label for="bridge-span" class="block text-sm font-medium text-slate-700 mb-1">橋梁跨度 (m)</label>
                         <select id="bridge-span" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
@@ -48,688 +40,44 @@
                             <option value="45">45</option>
                         </select>
                     </div>
-
                     <table class="w-full text-sm">
-                        <thead class="text-left text-slate-500">
-                            <tr>
-                                <th class="py-2 font-medium">參數名稱</th>
-                                <th class="py-2 font-medium">代號</th>
-                                <th class="py-2 font-medium">數值 (mm)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="bg-slate-200">
-                                <td colspan="3" class="px-2 py-1 font-semibold text-slate-700">主要尺寸</td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-2">總梁高</td>
-                                <td class="py-2 font-mono">GHT</td>
-                                <td class="py-2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="ght" value="2000" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="ght" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="ght" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-2">腹板厚度</td>
-                                <td class="py-2 font-mono">GWB</td>
-                                <td class="py-2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="gwb" value="200" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="gwb" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="gwb" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="bg-slate-200">
-                                <td colspan="3" class="px-2 py-1 font-semibold text-slate-700">上翼板尺寸</td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-2 pl-4">斜肩高</td>
-                                <td class="py-2 font-mono">H1</td>
-                                <td class="py-2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="h1" value="150" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="h1" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="h1" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-2 pl-4">上翼版淨厚</td>
-                                <td class="py-2 font-mono">TFT</td>
-                                <td class="py-2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="tft" value="150" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="tft" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="tft" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-2 pl-4">上翼板總寬</td>
-                                <td class="py-2 font-mono">GTF</td>
-                                <td class="py-2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="gtf" value="1100" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="gtf" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="gtf" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="bg-slate-200">
-                                <td colspan="3" class="px-2 py-1 font-semibold text-slate-700">下翼板尺寸</td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-2 pl-4">厚度</td>
-                                <td class="py-2 font-mono">BFT</td>
-                                <td class="py-2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="bft" value="240" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="bft" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="bft" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-2 pl-4">斜肩高</td>
-                                <td class="py-2 font-mono">H3</td>
-                                <td class="py-2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="h3" value="210" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="h3" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="h3" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-2 pl-4">斜肩寬</td>
-                                <td class="py-2 font-mono">F2</td>
-                                <td class="py-2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="f2" value="235" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="f2" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="f2" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody class="divide-y divide-slate-200">
+                            <script>
+                                const createInputRow = (id, label, value, step, unit) => {
+                                    document.write(`<tr class="divide-x divide-slate-200"><td class="py-3 pr-4 w-1/2 font-medium text-slate-700">${label}</td><td class="py-2 pl-4 w-1/2"><div class="relative flex items-center"><input type="number" id="${id}" value="${value}" step="${step}" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-right pr-12"><span class="absolute right-12 top-1/2 -translate-y-1/2 text-slate-400 text-xs">${unit}</span><div class="absolute right-0 flex flex-col"><button data-input="${id}" data-action="increment" class="number-button h-5 w-6 text-xs leading-none flex items-center justify-center border-l border-b border-slate-300 rounded-tr-md hover:bg-slate-200">+</button><button data-input="${id}" data-action="decrement" class="number-button h-5 w-6 text-xs leading-none flex items-center justify-center border-l border-t border-slate-300 rounded-br-md hover:bg-slate-200">-</button></div></div></td></tr>`);
+                                };
+                                createInputRow('ght', '大梁總高 (GHT)', 2000, 10, 'mm'); createInputRow('gwb', '腹板寬度 (GWB)', 200, 10, 'mm'); createInputRow('tft', '頂版厚度 (TFT)', 150, 10, 'mm'); createInputRow('h1', '頂版懸臂厚度 (H1)', 150, 10, 'mm'); createInputRow('gtf', '頂版寬度 (GTF)', 1100, 10, 'mm'); createInputRow('bft', '底版厚度 (BFT)', 240, 10, 'mm'); createInputRow('h3', '底版懸臂厚度 (H3)', 210, 10, 'mm'); createInputRow('f2', '底版懸臂寬度 (F2)', 235, 10, 'mm');
+                            </script>
                         </tbody>
                     </table>
-                    <div class="mt-8 text-xs text-slate-400">
-                        <p>參數名稱參考自您提供的 Type II-VII 斷面圖並加以擴充。</p>
-                    </div>
                 </div>
-                <div id="right-panel-container" class="w-full md:w-8/12 flex flex-col p-6 md:p-8">
-                    <div class="w-full flex border-b border-slate-200 mb-4">
-                        <button id="sub-tab-mid" class="sub-tab-button active px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁中央斷面</button>
-                        <button id="sub-tab-end" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁端部斷面</button>
-                    </div>
-                    <div class="w-full flex-grow relative">
-                        <div id="mid-canvas-wrapper" class="sub-tab-content w-full h-full">
-                            <canvas id="midSpanCanvas"></canvas>
-                        </div>
-                        <div id="end-canvas-wrapper" class="sub-tab-content w-full h-full hidden">
-                            <canvas id="endSpanCanvas"></canvas>
-                        </div>
-                    </div>
-                </div>
+                <div id="right-panel-container" class="w-full md:w-8/12 flex flex-col p-6 md:p-8"><div class="w-full flex border-b border-slate-200 mb-4"><button id="sub-tab-mid" class="sub-tab-button active px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁中央斷面</button><button id="sub-tab-end" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁端部斷面</button></div><div class="w-full flex-grow relative"><div id="mid-canvas-wrapper" class="sub-tab-content w-full h-full"><canvas id="midSpanCanvas"></canvas></div><div id="end-canvas-wrapper" class="sub-tab-content w-full h-full hidden"><canvas id="endSpanCanvas"></canvas></div></div></div>
             </div>
-
-            <div id="size-table-view" class="hidden w-full h-full p-6 md:p-8 overflow-y-auto">
-                <h2 class="text-xl font-semibold text-slate-800 mb-4">PCI橋梁尺寸參考表</h2>
-                <img src="https://ttchang1127.github.io/dashboard/images/PCI%E6%A9%8B%E6%A2%81%E6%96%B7%E9%9D%A2%E5%B0%BA%E5%AF%B8.png" alt="PCI橋梁斷面尺寸參考表" class="w-full max-w-4xl mx-auto block rounded-lg shadow-md">
-            </div>
-
+            <div id="size-table-view" class="hidden w-full h-full p-6 md:p-8 overflow-y-auto"><h2 class="text-xl font-semibold text-slate-800 mb-4">PCI橋梁尺寸參考表</h2><img src="https://ttchang1127.github.io/dashboard/images/PCI%E6%A9%8B%E6%A2%81%E6%96%B7%E9%9D%A2%E5%B0%BA%E5%AF%B8.png" alt="PCI橋梁斷面尺寸參考表" class="w-full max-w-4xl mx-auto block rounded-lg shadow-md"></div>
             <div id="tendon-view" class="hidden w-full h-full flex flex-col md:flex-row">
-                <div id="tendon-input-panel" class="w-full md:w-[30%] p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto">
-                    <h1 class="text-2xl font-bold text-slate-800 mb-6">預力鋼腱參數</h1>
-                    <table class="w-full text-sm">
-                        <thead class="text-left text-slate-500">
-                            <tr>
-                                <th class="py-2 font-medium">參數名稱</th>
-                                <th class="py-2 font-medium">代號</th>
-                                <th class="py-2 font-medium">數值</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">鋼腱種類</td>
-                                <td class="py-3 font-mono">Type</td>
-                                <td class="py-3">
-                                    <select id="tendon-type" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="12S12.7A">12S12.7 (SWPR7A)</option>
-                                        <option value="12S12.7B">12S12.7 (SWPR7B)</option>
-                                        <option value="12S15.2">12S15.2 (SWPR7B)</option>
-                                    </select>
-                                    <p class="text-xs text-slate-400 mt-1">斷面積 (Ap): <span id="tendon-area-display">1184.4</span> mm²</p>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">中央斷面鋼腱數</td>
-                                <td class="py-3 font-mono">N_mid</td>
-                                <td class="py-3">
-                                    <select id="tendon-mid-count" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5" selected>5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">端部斷面鋼腱數</td>
-                                <td class="py-3 font-mono">N_end</td>
-                                <td class="py-3">
-                                    <input type="number" id="tendon-end-count" value="5" class="w-full p-2 border border-slate-300 rounded-md shadow-sm bg-slate-200 text-slate-500 cursor-not-allowed" readonly>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div id="tendon-coord-container" class="mt-8">
-                        <h2 class="text-lg font-bold text-slate-800 mb-4">預力鋼腱坐標</h2>
-                        <table class="w-full text-sm">
-                            <thead class="text-left text-slate-500">
-                                <tr>
-                                    <th class="py-2 font-medium">鋼腱編號</th>
-                                    <th class="py-2 font-medium text-right">X (mm)</th>
-                                    <th class="py-2 font-medium text-right">Y (mm)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tendon-coord-table-body">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div id="tendon-display-panel" class="w-full md:w-[70%] p-6 md:p-8 flex flex-col">
-                    <div class="w-full flex border-b border-slate-200 mb-4">
-                        <button id="tendon-tab-mid" class="tendon-sub-tab-button sub-tab-button active px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁中央斷面</button>
-                        <button id="tendon-tab-end" class="tendon-sub-tab-button sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁端部斷面</button>
-                        <button id="tendon-tab-side" class="tendon-sub-tab-button sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁側面</button>
-                    </div>
-                    <div class="w-full flex-grow relative bg-slate-100/50 rounded-md">
-                        <div id="tendon-content-mid" class="tendon-sub-tab-content w-full h-full flex items-center justify-center">
-                            <canvas id="tendonMidSpanCanvas"></canvas>
-                        </div>
-                        <div id="tendon-content-end" class="tendon-sub-tab-content w-full h-full hidden items-center justify-center">
-                            <canvas id="tendonEndSpanCanvas"></canvas>
-                        </div>
-                        <div id="tendon-content-side" class="tendon-sub-tab-content w-full h-full hidden items-center justify-center">
-                            <canvas id="tendonSideViewCanvas"></canvas>
-                        </div>
-                    </div>
-                </div>
+                 <div id="tendon-input-panel" class="w-full md:w-[30%] p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto"><h1 class="text-2xl font-bold text-slate-800 mb-6">鋼腱配置參數</h1><div class="space-y-4"><div><label for="tendon-type" class="block text-sm font-medium text-slate-700 mb-1">鋼腱型號</label><select id="tendon-type" class="w-full p-2 border border-slate-300 rounded-md shadow-sm"><option value="12S12.7A">12S12.7A</option><option value="12S12.7B">12S12.7B</option><option value="12S15.2" selected>12S15.2</option></select></div><div><label for="tendon-mid-count" class="block text-sm font-medium text-slate-700 mb-1">中央斷面鋼腱數量</label><input type="number" id="tendon-mid-count" value="5" step="1" class="w-full p-2 border border-slate-300 rounded-md"><input type="hidden" id="tendon-end-count" value="5"></div><div><label for="tendon-initial-force" class="block text-sm font-medium text-slate-700 mb-1">每束鋼腱施拉力 (kN)</label><input type="number" id="tendon-initial-force" value="2164" step="10" class="w-full p-2 border border-slate-300 rounded-md"><details class="text-xs text-slate-500 mt-1"><summary class="cursor-pointer">建議值: <span id="recommended-force-summary">2164</span> kN (點此展開計算)</summary><div id="tendon-force-calculation-details" class="p-2 bg-slate-200 rounded-md mt-1 font-mono text-xs"></div></details></div><div><label for="tendon-area-display" class="block text-sm font-medium text-slate-700 mb-1">每束鋼腱面積 (mm²)</label><p id="tendon-area-display" class="p-2 bg-slate-200 rounded-md text-sm">1664.4</p></div><div id="tendon-coord-container" class="hidden"><h3 class="text-base font-semibold text-slate-800 mt-6 mb-2">鋼腱座標 (mm)</h3><table class="w-full text-sm"><thead class="text-left text-slate-500 bg-slate-100"><tr><th class="p-2">ID</th><th class="p-2 text-right">X</th><th class="p-2 text-right">Y</th></tr></thead><tbody id="tendon-coord-table-body"></tbody></table></div></div></div>
+                 <div id="tendon-display-panel" class="w-full md:w-[70%] p-6 md:p-8 flex flex-col"><div class="w-full flex border-b border-slate-200 mb-4"><button id="tendon-tab-mid" class="sub-tab-button active px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁中央斷面</button><button id="tendon-tab-end" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁端部斷面</button><button id="tendon-tab-side" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent -mb-px">PCI梁側面</button></div><div class="w-full flex-grow relative bg-slate-100/50 rounded-md"><div id="tendon-content-mid" class="w-full h-full flex items-center justify-center"><canvas id="tendonMidSpanCanvas"></canvas></div><div id="tendon-content-end" class="w-full h-full hidden items-center justify-center"><canvas id="tendonEndSpanCanvas"></canvas></div><div id="tendon-content-side" class="w-full h-full hidden items-center justify-center"><canvas id="tendonSideViewCanvas"></canvas></div></div></div>
             </div>
-
             <div id="loss-calc-view" class="hidden w-full h-full flex flex-col md:flex-row">
-                <div class="w-full md:w-5/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto">
-                    <h1 class="text-2xl font-bold text-slate-800 mb-6">預力損失計算參數</h1>
-                    <h2 class="text-lg font-bold text-slate-800 mb-4">施力參數</h2>
-                    <table class="w-full text-sm mb-8">
-                        <tbody>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">每束鋼腱初始預力 ($P_j$)</td>
-                                <td class="py-3 w-1/2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="tendon-initial-force" value="1429" step="1" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-12">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">kN</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="tendon-initial-force" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="tendon-initial-force" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <div class="mt-1 text-xs text-slate-500">
-                                        <details>
-                                            <summary class="cursor-pointer font-medium">
-                                                建議值: ≦ <span id="recommended-force-summary"></span> kN
-                                            </summary>
-                                            <div id="tendon-force-calculation-details" class="mt-2 p-2 border border-slate-200 rounded-md bg-white font-mono">
-                                            </div>
-                                        </details>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <h2 class="text-lg font-bold text-slate-800 mb-4">瞬時損失參數</h2>
-                    <table class="w-full text-sm mb-8">
-                        <tbody>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">
-                                    <p>曲率摩擦係數 ($\mu$)</p>
-                                </td>
-                                <td class="py-3 w-1/2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="friction-mu" value="0.25" step="0.01" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="friction-mu" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="friction-mu" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">建議值: 0.15 ~ 0.25 (鍍鋅套管)</p>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">
-                                    <p>波浪摩擦係數 ($K$)</p>
-                                </td>
-                                <td class="py-3">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="friction-k" value="0.0049" step="0.0001" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-12">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">/m</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="friction-k" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="friction-k" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">建議值: 0.0049 (鍍鋅金屬套管)</p>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">錨具滑動量 ($\Delta a$)</td>
-                                <td class="py-3">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="anchorage-slip" value="6.0" step="0.1" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-14">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">mm</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="anchorage-slip" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="anchorage-slip" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">建議值: 台灣(6mm), 日本(5-7mm), 美國(7mm)</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <h2 class="text-lg font-bold text-slate-800 mb-4">材料與長期損失參數</h2>
-                    <table class="w-full text-sm">
-                        <tbody>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">施預力時混凝土抗壓強度 ($f'_{ci}$)</td>
-                                <td class="py-3 w-1/2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="mat-fci" value="28" step="1" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-16">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">MPa</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="mat-fci" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="mat-fci" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">28天混凝土抗壓強度 ($f'_{c}$)</td>
-                                <td class="py-3 w-1/2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="mat-fc" value="35" step="1" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-16">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">MPa</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="mat-fc" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="mat-fc" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">混凝土單位重 ($\gamma_c$)</td>
-                                <td class="py-3">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="mat-gamma-c" value="24" step="1" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-20">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">kN/m³</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="mat-gamma-c" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="mat-gamma-c" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">潛變係數 ($\phi$)</td>
-                                <td class="py-3">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="creep-phi" value="2.0" step="0.1" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-8">
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="creep-phi" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="creep-phi" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">建議值: 台灣/美國(AASHTO) 約 2.0, 日本(JSCE) 依條件計算，約 1.5 ~ 2.5。</p>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">乾縮應變 ($\varepsilon_{sh}$)</td>
-                                <td class="py-3">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="shrinkage-eps" value="200" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-16">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">x10⁻⁶</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="shrinkage-eps" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="shrinkage-eps" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">建議值: 台灣/美國(AASHTO) 約 200~400 x10⁻⁶, 日本(JSCE) 約 200 x10⁻⁶。</p>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">鋼材鬆弛率</td>
-                                <td class="py-3">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="relaxation-rate" value="2.5" step="0.1" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-12">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">%</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="relaxation-rate" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="relaxation-rate" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">建議值: 台灣/美國(AASHTO) 約 2.5% (低鬆弛鋼材), 日本(JSCE) 依鋼材種類而異。</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <h2 class="text-lg font-bold text-slate-800 mb-4 mt-8">完工階段載重 (中央斷面)</h2>
-                    <table class="w-full text-sm">
-                        <tbody>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">疊加靜載重彎矩 ($M_{SD}$)</td>
-                                <td class="py-3 w-1/2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="moment-sd" value="500" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-16">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">kN-m</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="moment-sd" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="moment-sd" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">建議值: <span id="recommended-msd">500</span> kN-m</p>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">活載重彎矩 ($M_{LL}$)</td>
-                                <td class="py-3 w-1/2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="moment-ll" value="1500" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-16">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">kN-m</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="moment-ll" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="moment-ll" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">建議值: <span id="recommended-mll">1500</span> kN-m (HS20-44 載重，含衝擊)</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="w-full md:w-7/12 p-6 md:p-8 overflow-y-auto">
-                    <h1 class="text-2xl font-bold text-slate-800 mb-6">計算結果</h1>
-                    <div id="immediate-loss-container" class="mt-4">
-                        <h2 class="text-lg font-bold text-slate-800 mb-4">瞬時預力損失</h2>
-                        <table class="w-full text-sm">
-                            <thead class="text-left text-slate-500 border-b-2 border-slate-300">
-                                <tr>
-                                    <th class="py-3 font-semibold">鋼腱編號</th>
-                                    <th class="py-3 font-semibold text-right">摩擦損失 (kN)</th>
-                                    <th class="py-3 font-semibold text-right">錨碇滑動損失 (kN)</th>
-                                    <th class="py-3 font-semibold text-right">彈性縮短損失 (kN)</th>
-                                    <th class="py-3 font-semibold text-right">總損失 (kN)</th>
-                                    <th class="py-3 font-semibold text-right">損失比例 (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="immediate-loss-table-body">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="longterm-loss-container" class="mt-8">
-                        <h2 class="text-lg font-bold text-slate-800 mb-4">長期預力損失</h2>
-                        <table class="w-full text-sm">
-                            <thead class="text-left text-slate-500 border-b-2 border-slate-300">
-                                <tr>
-                                    <th class="py-3 font-semibold">損失項目</th>
-                                    <th class="py-3 font-semibold text-right">總損失 (kN)</th>
-                                    <th class="py-3 font-semibold text-right">損失比例 (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="longterm-loss-table-body">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="total-loss-container" class="mt-8">
-                        <h2 class="text-lg font-bold text-slate-800 mb-4">總預力損失</h2>
-                        <table class="w-full text-sm">
-                            <thead class="text-left text-slate-500 border-b-2 border-slate-300">
-                                <tr>
-                                    <th class="py-3 font-semibold">損失項目</th>
-                                    <th class="py-3 font-semibold text-right">總損失 (kN)</th>
-                                    <th class="py-3 font-semibold text-right">損失比例 (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="total-loss-table-body">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="stress-check-container" class="mt-8">
-                        <h2 class="text-lg font-bold text-slate-800 mb-4">鋼腱應力檢核 (錨碇後)</h2>
-                        <table class="w-full text-sm">
-                            <thead class="text-left text-slate-500 border-b-2 border-slate-300">
-                                <tr>
-                                    <th class="py-3 font-semibold">鋼腱編號</th>
-                                    <th class="py-3 font-semibold text-right">端錨處應力 (MPa)</th>
-                                    <th class="py-3 font-semibold text-right">影響範圍末端應力 (MPa)</th>
-                                    <th class="py-3 font-semibold text-right">容許應力 (MPa)</th>
-                                    <th class="py-3 font-semibold text-right">應力/極限強度比</th>
-                                    <th class="py-3 font-semibold text-center">檢核結果</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stress-check-results-table-body">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <div class="w-full md:w-4/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto"><h1 class="text-2xl font-bold text-slate-800 mb-6">預力損失計算參數</h1><h2 class="text-lg font-semibold text-slate-700 border-b pb-2 mb-3">瞬時損失參數</h2><div class="space-y-3"><div><label for="friction-mu" class="block text-sm font-medium text-slate-600">摩擦曲率效應係數 (μ)</label><input id="friction-mu" type="number" value="0.25" step="0.01" class="w-full p-2 border border-slate-300 rounded-md mt-1"></div><div><label for="friction-k" class="block text-sm font-medium text-slate-600">摩擦長度效應係數 (k, /m)</label><input id="friction-k" type="number" value="0.0066" step="0.0001" class="w-full p-2 border border-slate-300 rounded-md mt-1"></div><div><label for="anchorage-slip" class="block text-sm font-medium text-slate-600">端錨滑動損失 (mm)</label><input id="anchorage-slip" type="number" value="6" step="1" class="w-full p-2 border border-slate-300 rounded-md mt-1"></div></div><h2 class="text-lg font-semibold text-slate-700 border-b pb-2 mt-6 mb-3">長期損失參數</h2><div class="space-y-3"><div><label for="mat-gamma-c" class="block text-sm font-medium text-slate-600">混凝土單位重 (γc, kN/m³)</label><input id="mat-gamma-c" type="number" value="24" step="0.5" class="w-full p-2 border border-slate-300 rounded-md mt-1"></div><div><label for="creep-phi" class="block text-sm font-medium text-slate-600">潛變係數 (φ)</label><input id="creep-phi" type="number" value="2.0" step="0.1" class="w-full p-2 border border-slate-300 rounded-md mt-1"></div><div><label for="shrinkage-eps" class="block text-sm font-medium text-slate-600">乾縮應變 (εsh, x10⁻⁶)</label><input id="shrinkage-eps" type="number" value="200" step="10" class="w-full p-2 border border-slate-300 rounded-md mt-1"></div><div><label for="relaxation-rate" class="block text-sm font-medium text-slate-600">鋼材鬆弛率 (%)</label><input id="relaxation-rate" type="number" value="2.5" step="0.1" class="w-full p-2 border border-slate-300 rounded-md mt-1"></div></div></div>
+                <div class="w-full md:w-8/12 p-6 md:p-8 overflow-y-auto"><h1 class="text-2xl font-bold text-slate-800 mb-4">預力損失計算結果</h1><div class="space-y-6"><div><h2 class="text-lg font-semibold text-slate-700 mb-2">瞬時損失 (Immediate Losses)</h2><table class="w-full text-sm"><thead class="text-left text-slate-500 bg-slate-100"><tr><th class="p-2 text-center">鋼腱 ID</th><th class="p-2 text-right">摩擦損失 (kN)</th><th class="p-2 text-right">端錨損失 (kN)</th><th class="p-2 text-right">彈性縮短 (kN)</th><th class="p-2 text-right">小計 (kN)</th><th class="p-2 text-right">%</th></tr></thead><tbody id="immediate-loss-table-body"></tbody></table></div><div><h2 class="text-lg font-semibold text-slate-700 mb-2">長期損失 (Long-term Losses)</h2><table class="w-full text-sm"><thead class="text-left text-slate-500 bg-slate-100"><tr><th class="p-2">損失項目</th><th class="p-2 text-right">損失值 (kN)</th><th class="p-2 text-right">%</th></tr></thead><tbody id="longterm-loss-table-body"></tbody></table></div><div><h2 class="text-lg font-semibold text-slate-700 mb-2">總損失 (Total Losses)</h2><table class="w-full text-sm"><thead class="text-left text-slate-500 bg-slate-100"><tr><th class="p-2">損失項目</th><th class="p-2 text-right">損失值 (kN)</th><th class="p-2 text-right">%</th></tr></thead><tbody id="total-loss-table-body"></tbody></table></div><div><h2 class="text-lg font-semibold text-slate-700 mb-2">鋼腱最大應力檢核 (施拉後)</h2><table class="w-full text-sm"><thead class="text-left text-slate-500 bg-slate-100"><tr><th class="p-2 text-center">ID</th><th class="p-2 text-right">錨定後應力(MPa)</th><th class="p-2 text-right">最大應力(MPa)</th><th class="p-2 text-right">容許應力(MPa)</th><th class="p-2 text-right">應力比</th><th class="p-2 text-center">結果</th></tr></thead><tbody id="stress-check-results-table-body"></tbody></table></div></div></div>
             </div>
-
-            <div id="stress-check-view" class="hidden w-full h-full flex flex-col p-6 md:p-8 overflow-y-auto">
-                <h1 class="text-2xl font-bold text-slate-800 mb-6">應力檢核 (台灣公路橋梁設計規範)</h1>
-                <div class="w-full flex-grow space-y-6">
-                    <div>
-                        <details class="bg-slate-50 p-4 rounded-lg" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">施工階段應力檢核摘要</summary>
-                            <div class="mt-4 text-slate-700 space-y-4">
-                                <p>採用容許應力設計法，檢核施拉預力後，梁體自重與初始預力共同作用下之暫時性應力。應力限制值以施預力時之混凝土抗壓強度 ($f'_{ci}$) 為基準。（註：本檢核採壓力為正，拉力為負）</p>
-                                <table class="w-full text-sm border-collapse">
-                                    <thead class="text-left bg-slate-200">
-                                        <tr>
-                                            <th class="p-2 border border-slate-300">應力類型</th>
-                                            <th class="p-2 border border-slate-300">條件</th>
-                                            <th class="p-2 border border-slate-300">規範限制值</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="border-b">
-                                            <td class="p-2 border border-slate-300 font-medium">壓縮應力 ($\sigma_c$)</td>
-                                            <td class="p-2 border border-slate-300">防止下緣混凝土壓碎</td>
-                                            <td class="p-2 border border-slate-300" id="tw-ca-limit"></td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <td rowspan="2" class="p-2 border border-slate-300 font-medium align-top">拉力應力 ($\sigma_t$)</td>
-                                            <td class="p-2 border border-slate-300">防止上緣開裂 (無額外鋼筋)</td>
-                                            <td class="p-2 border border-slate-300" id="tw-ta-limit1"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="p-2 border border-slate-300">防止上緣開裂 (有配置鋼筋控制裂縫)</td>
-                                            <td class="p-2 border border-slate-300" id="tw-ta-limit2"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </details>
-                        <div id="tw-stress-check-results-container" class="mt-6 border-t pt-6"></div>
-                        <details class="bg-slate-50 p-4 rounded-lg mt-6" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">完工階段應力檢核摘要</summary>
-                            <div class="mt-4 text-slate-700 space-y-4">
-                                <p>檢核長期載重（含預力損失）及活載重作用下之應力。應力限制值以 28 天混凝土抗壓強度 ($f'_{c}$) 為基準。（註：本檢核採壓力為正，拉力為負）</p>
-                                <table class="w-full text-sm border-collapse">
-                                    <thead class="text-left bg-slate-200">
-                                        <tr>
-                                            <th class="p-2 border border-slate-300">應力類型</th>
-                                            <th class="p-2 border border-slate-300">載重組合</th>
-                                            <th class="p-2 border border-slate-300">規範限制值</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="border-b">
-                                            <td rowspan="2" class="p-2 border border-slate-300 font-medium align-top">壓縮應力 ($\sigma_c$)</td>
-                                            <td class="p-2 border border-slate-300">靜載重 + 有效預力</td>
-                                            <td class="p-2 border border-slate-300" id="tw-ca-limit-service1"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="p-2 border border-slate-300">靜載重 + 有效預力 + 活載重</td>
-                                            <td class="p-2 border border-slate-300" id="tw-ca-limit-service2"></td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <td class="p-2 border border-slate-300 font-medium">拉力應力 ($\sigma_t$)</td>
-                                            <td class="p-2 border border-slate-300">靜載重 + 有效預力 + 活載重</td>
-                                            <td class="p-2 border border-slate-300" id="tw-ta-limit-service"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </details>
-                        <div id="tw-stress-check-results-service-container" class="mt-6 border-t pt-6">
-                        </div>
-                    </div>
-                </div>
+            <div id="stress-check-view" class="hidden w-full h-full flex flex-col md:flex-row">
+                 <div class="w-full md:w-4/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto"><h1 class="text-2xl font-bold text-slate-800 mb-6">應力檢核參數</h1><div class="space-y-4"><div><label for="mat-fci" class="block text-sm font-medium text-slate-700 mb-1">施加預力時混凝土強度 ($f'_{ci}$)</label><input type="number" id="mat-fci" value="28" step="1" class="w-full p-2 border border-slate-300 rounded-md"></div><div><label for="mat-fc" class="block text-sm font-medium text-slate-700 mb-1">混凝土28天設計強度 ($f'_{c}$)</label><input type="number" id="mat-fc" value="35" step="1" class="w-full p-2 border border-slate-300 rounded-md"></div><h2 class="text-lg font-semibold text-slate-700 border-b pb-2 !mt-6 mb-3">外加載重彎矩</h2><div><label for="moment-sd" class="block text-sm font-medium text-slate-700 mb-1">靜載重彎矩 ($M_{sd}$)</label><input type="number" id="moment-sd" value="500" step="10" class="w-full p-2 border border-slate-300 rounded-md"><p class="text-xs text-slate-400 mt-1">建議值: <span id="recommended-msd">500</span> kN-m</p></div><div><label for="moment-ll" class="block text-sm font-medium text-slate-700 mb-1">活載重彎矩 ($M_{ll}$)</label><input type="number" id="moment-ll" value="1500" step="10" class="w-full p-2 border border-slate-300 rounded-md"><p class="text-xs text-slate-400 mt-1">建議值: <span id="recommended-mll">1500</span> kN-m</p></div></div></div>
+                <div id="stress-check-results-container" class="w-full md:w-8/12 p-6 md:p-8 overflow-y-auto"></div>
             </div>
-
             <div id="flexure-check-view" class="hidden w-full h-full flex flex-col p-6 md:p-8 overflow-y-auto">
-                <h1 class="text-2xl font-bold text-slate-800 mb-6">撓曲強度檢核 (台灣公路橋梁設計規範)</h1>
-                <div class="w-full flex-grow space-y-6">
-                    <div>
-                        <details class="bg-slate-50 p-4 rounded-lg" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">撓曲強度檢核摘要</summary>
-                            <div class="mt-4 text-slate-700 space-y-4">
-                                <p>依據強度設計法，檢核斷面折減後的設計撓曲強度 ($\phi M_n$) 是否大於或等於作用載重組合下之所需撓曲強度 ($M_u$)。</p>
-                                <p>檢核公式: $\phi M_n \ge M_u$</p>
-                                <p>其中所需強度 $M_u$ 依據「設計載重組合 強度I」計算：$M_u = 1.2(M_{SW} + M_{SD}) + 1.6 M_{LL}$。</p>
-                                <p>設計強度 $\phi M_n$ 則是基於應變協合性與斷面力平衡，透過疊代計算求得中性軸深度後，進而算出標稱強度 $M_n$，再乘上強度折減係數 $\phi$ (此處預設為0.9)。</p>
-                            </div>
-                        </details>
-                        <div id="tw-flexure-check-results-container" class="mt-6 border-t pt-6">
-                        </div>
-                    </div>
-                </div>
+                <div id="flexure-check-results-container"></div>
             </div>
-
             <div id="deflection-check-view" class="hidden w-full h-full flex flex-col p-6 md:p-8 overflow-y-auto">
-                <h1 class="text-2xl font-bold text-slate-800 mb-6">撓度檢核 (台灣公路橋梁設計規範)</h1>
-                <div class="w-full flex-grow space-y-6">
-                    <div>
-                        <details class="bg-slate-50 p-4 rounded-lg" open>
-                            <summary class="font-semibold text-lg text-slate-800 cursor-pointer">活載重撓度檢核摘要</summary>
-                            <div class="mt-4 text-slate-700 space-y-4">
-                                <p>為確保橋梁的使用性，需檢核因活載重(含衝擊)所產生的撓度，不得超過規範的容許值。對於預力混凝土橋梁，規範建議之容許撓度為 $\Delta_{allow} = L / 800$。</p>
-                                <p>此處的計算採用簡化公式，將活載重彎矩 $M_{LL}$ 轉換為等效均佈載重，進而估算最大撓度：$\Delta_{LL} \approx \frac{5 M_{LL} L^2}{48 E_c I_g}$。</p>
-                            </div>
-                        </details>
-                        <div id="tw-deflection-check-results-container" class="mt-6 border-t pt-6">
-                        </div>
-                    </div>
-                </div>
+                <div id="deflection-check-results-container"></div>
             </div>
-
             <div id="shear-check-view" class="hidden w-full h-full flex flex-col md:flex-row">
-                <div class="w-full md:w-5/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto">
-                    <h1 class="text-2xl font-bold text-slate-800 mb-6">剪力筋檢核參數</h1>
-                    <table class="w-full text-sm">
-                        <tbody>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">斷面設計剪力 ($V_u$)</td>
-                                <td class="py-3 w-1/2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="shear-vu" value="1200" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-12">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">kN</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="shear-vu" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="shear-vu" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-slate-400 mt-1">支承面 d 距離處之設計剪力</p>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3 w-1/2">剪力筋降伏強度 ($f_{yt}$)</td>
-                                <td class="py-3 w-1/2">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="shear-fyt" value="280" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-16">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">MPa</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="shear-fyt" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="shear-fyt" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">剪力筋號數</td>
-                                <td class="py-3">
-                                    <select id="shear-bar-size" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="D10">D10 (10mm)</option>
-                                        <option value="D13" selected>D13 (13mm)</option>
-                                        <option value="D16">D16 (16mm)</option>
-                                        <option value="D19">D19 (19mm)</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">剪力筋肢數</td>
-                                <td class="py-3">
-                                    <select id="shear-legs" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="2">2</option>
-                                        <option value="4" selected>4</option>
-                                        <option value="6">6</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-3">剪力筋間距 ($s$)</td>
-                                <td class="py-3">
-                                    <div class="relative flex items-center">
-                                        <input type="number" id="shear-spacing" value="150" step="10" class="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-14">
-                                        <span class="absolute inset-y-0 right-8 flex items-center pr-3 text-slate-500 text-xs pointer-events-none">mm</span>
-                                        <div class="absolute inset-y-0 right-0 flex flex-col border-l border-slate-300 rounded-r-md overflow-hidden">
-                                            <button data-input="shear-spacing" data-action="increment" class="number-button flex-1 px-1.5 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▲</button>
-                                            <button data-input="shear-spacing" data-action="decrement" class="number-button flex-1 px-1.5 border-t border-slate-300 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">▼</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div id="shear-check-results-container" class="w-full md:w-7/12 p-6 md:p-8 overflow-y-auto">
-                </div>
+                 <div class="w-full md:w-5/12 p-6 md:p-8 bg-slate-50 border-r border-slate-200 overflow-y-auto"><h1 class="text-2xl font-bold text-slate-800 mb-6">剪力筋檢核參數</h1><table class="w-full text-sm"><tbody class="divide-y divide-slate-200"><tr class="divide-x divide-slate-200"><td class="py-3 pr-4">斷面設計剪力 ($V_u$)</td><td class="py-2 pl-4"><input type="number" id="shear-vu" value="1200" step="10" class="w-full p-2 border border-slate-300 rounded-md"><p class="text-xs text-slate-400 mt-1">支承面 d 距離處之設計剪力</p></td></tr><tr class="divide-x divide-slate-200"><td class="py-3 pr-4">剪力鋼筋降伏強度 ($f_{yt}$)</td><td class="py-2 pl-4"><input type="number" id="shear-fyt" value="280" step="10" class="w-full p-2 border border-slate-300 rounded-md"></td></tr><tr class="divide-x divide-slate-200"><td class="py-3 pr-4">剪力筋號數</td><td class="py-2 pl-4"><select id="shear-bar-size" class="w-full p-2 border border-slate-300 rounded-md"><option>D10</option><option selected>D13</option><option>D16</option><option>D19</option></select></td></tr><tr class="divide-x divide-slate-200"><td class="py-3 pr-4">剪力筋股數</td><td class="py-2 pl-4"><input type="number" id="shear-legs" value="4" step="1" class="w-full p-2 border border-slate-300 rounded-md"></td></tr><tr class="divide-x divide-slate-200"><td class="py-3 pr-4">剪力筋間距 (s)</td><td class="py-2 pl-4"><input type="number" id="shear-spacing" value="150" step="10" class="w-full p-2 border border-slate-300 rounded-md"></td></tr></tbody></table></div>
+                <div id="shear-check-results-container" class="w-full md:w-7/12 p-6 md:p-8 overflow-y-auto"></div>
             </div>
-
         </div>
     </div>
-
     <script src="js/main.js" type="module"></script>
 </body>
 </html>
