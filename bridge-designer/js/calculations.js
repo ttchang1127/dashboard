@@ -1,4 +1,4 @@
-// js/calculations.js (偵錯版)
+// js/calculations.js (依 PCIbrg_tw.html 標準全面校正)
 
 // --- Helper: Default Data ---
 const tendonData = {
@@ -46,26 +46,18 @@ export function getSectionProperties(inputs) {
 }
 
 export function calculatePrestressLosses(inputs, props) {
-    console.log("--- 執行 calculatePrestressLosses ---");
     const Pj = parseFloat(inputs['tendon-initial-force']) || 0;
     const N = parseInt(inputs['tendon-mid-count'], 10);
     const span = parseFloat(inputs['bridge-span']) || 0;
-    console.log(`  > 主要輸入: Pj=${Pj}, N=${N}, span=${span}`);
-
     const selectedTendon = tendonData[inputs['tendon-type']];
-    if (!selectedTendon || !props) {
-        console.error("[calculatePrestressLosses] 錯誤: 找不到鋼腱資料或斷面性質(props)為空，計算中止。");
+    if (!selectedTendon || !props || N <= 0) {
         return null;
     }
-
     const endLayout = (endTendonLayouts[N] || []);
     const midLayout = (midTendonLayouts[N] || []);
     if (endLayout.length !== N || midLayout.length !== N) {
-        console.error(`[calculatePrestressLosses] 錯誤: 找不到對應鋼腱數量(N=${N})的佈置圖，計算中止。`);
         return null;
     }
-    
-    // (其餘計算邏輯與前一版相同)
     const mu = parseFloat(inputs['friction-mu']) || 0;
     const K = parseFloat(inputs['friction-k']) || 0;
     const anchorageSlip_mm = parseFloat(inputs['anchorage-slip']) || 0;
@@ -81,44 +73,116 @@ export function calculatePrestressLosses(inputs, props) {
     const modularRatio = Eci > 0 ? Es / Eci : 0;
     endLayout.sort((a, b) => a.id - b.id);
     midLayout.sort((a, b) => a.id - b.id);
-    let totalFrictionLoss = 0;
-    const individualFrictionLosses = midLayout.map((pos, i) => { const y_start_m = (endLayout[i].y) / 1000; const y_end_m = (pos.y) / 1000; const alpha = span > 0 ? Math.abs(4 * (y_start_m - y_end_m) / span) : 0; const Px = Pj * Math.exp(-(mu * alpha + K * x_mid)); const frictionLoss = Pj - Px; totalFrictionLoss += frictionLoss; return frictionLoss; });
+
     const selfWeightMoment = (totalArea * gamma_c * span ** 2) / 8;
     const y_tendon_group = (midLayout.reduce((sum, t) => sum + t.y, 0) / N) / 1000;
     const eccentricity = y_bar - y_tendon_group;
+
+    // --- 瞬時損失 (Immediate Losses) ---
+    const totalFrictionLoss = midLayout.reduce((total, pos, i) => {
+        const y_start_m = (endLayout[i].y) / 1000; const y_end_m = (pos.y) / 1000;
+        const alpha = span > 0 ? Math.abs(4 * (y_start_m - y_end_m) / span) : 0;
+        const Px = Pj * Math.exp(-(mu * alpha + K * x_mid));
+        return total + (Pj - Px);
+    }, 0);
+    const individualFrictionLosses = midLayout.map((pos, i) => totalFrictionLoss / N); // Averaged for simplicity in display
+
     const Pi_total_after_friction = (Pj * N) - totalFrictionLoss;
     const fcgp_for_es = (Pi_total_after_friction / totalArea) + (Pi_total_after_friction * eccentricity ** 2 / momentOfInertia) - (selfWeightMoment * eccentricity / momentOfInertia);
     const elasticShorteningLossStress = N > 1 ? ((N - 1) / (2 * N)) * modularRatio * (fcgp_for_es / 1000) : 0;
     const totalElasticShorteningLoss = (elasticShorteningLossStress * tendonArea_mm2 * N) / 1000;
     const avgElasticShorteningLoss = N > 0 ? totalElasticShorteningLoss / N : 0;
-    let totalAnchorageLoss = 0;
+    
     const anchorageSlip_m = anchorageSlip_mm / 1000;
     const tendonArea_m2 = tendonArea_mm2 / 1e6;
     const Es_kPa = Es * 1000;
-    const individualAnchorageLosses = individualFrictionLosses.map(frLoss => { const p_force_gradient = x_mid > 0 ? frLoss / x_mid : 0; let anchorageLoss = 0; if (p_force_gradient > 0) { const L_set = Math.sqrt((anchorageSlip_m * tendonArea_m2 * Es_kPa) / p_force_gradient); anchorageLoss = (L_set < x_mid) ? p_force_gradient * L_set : p_force_gradient * x_mid; } totalAnchorageLoss += anchorageLoss; return anchorageLoss; });
+    const p_force_gradient_avg = x_mid > 0 ? (totalFrictionLoss / N) / x_mid : 0;
+    let totalAnchorageLoss = 0;
+    if (p_force_gradient_avg > 0) {
+        const L_set = Math.sqrt((anchorageSlip_m * tendonArea_m2 * Es_kPa) / p_force_gradient_avg);
+        const anchorageLoss_per_tendon = (L_set < x_mid) ? p_force_gradient_avg * L_set : p_force_gradient_avg * x_mid;
+        totalAnchorageLoss = anchorageLoss_per_tendon * N;
+    }
+    const individualAnchorageLosses = midLayout.map(() => totalAnchorageLoss / N);
+    
     const totalInitialForce = Pj * N;
     const totalImmediateLoss = totalFrictionLoss + totalAnchorageLoss + totalElasticShorteningLoss;
     const Pi_total_after_immediate_loss = totalInitialForce - totalImmediateLoss;
-    const fcgp_for_longterm = (Pi_total_after_immediate_loss / totalArea) + (Pi_total_after_immediate_loss * eccentricity ** 2 / momentOfInertia) - (selfWeightMoment * eccentricity / momentOfInertia);
+
+    // --- 長期損失 (Long-term Losses) ---
+    const fcgp_for_longterm = (Pi_total_after_immediate_loss / totalArea) - (selfWeightMoment * eccentricity / momentOfInertia);
     const creepLossStress_MPa = modularRatio * creepPhi * (fcgp_for_longterm / 1000);
     const totalCreepLoss_kN = (creepLossStress_MPa * tendonArea_mm2 * N) / 1000;
+
     const shrinkageLossStress_MPa = shrinkageEps * Es;
     const totalShrinkageLoss_kN = (shrinkageLossStress_MPa * tendonArea_mm2 * N) / 1000;
+
     const initialStress_MPa = (Pj * 1000) / tendonArea_mm2;
     const relaxationLossStress_MPa = initialStress_MPa * relaxationRate;
     const totalRelaxationLoss_kN = (relaxationLossStress_MPa * tendonArea_mm2 * N) / 1000;
+
     const totalLongtermLoss_kN = totalCreepLoss_kN + totalShrinkageLoss_kN + totalRelaxationLoss_kN;
     const finalTotalLoss_kN = totalImmediateLoss + totalLongtermLoss_kN;
     const finalEffectiveForce = totalInitialForce - finalTotalLoss_kN;
-    const stressCheck = individualFrictionLosses.map((frLoss, i) => { const anLoss = individualAnchorageLosses[i]; const p_force_gradient = x_mid > 0 ? frLoss / x_mid : 0; let L_set = 0; if (p_force_gradient > 0) { L_set = Math.sqrt((anchorageSlip_m * tendonArea_m2 * Es_kPa) / p_force_gradient); if (L_set > x_mid) L_set = x_mid; } const y_start_m = (endLayout[i].y) / 1000; const y_end_m = (midLayout[i].y) / 1000; const alpha_Lset = L_set > 0 ? Math.abs(4 * (y_start_m - y_end_m) / span) * (L_set / x_mid) : 0; const P_at_Lset = Pj * Math.exp(-(mu * alpha_Lset + K * L_set)); const stress_at_Lset = (P_at_Lset * 1000) / tendonArea_mm2; const P_anchor = P_at_Lset - anLoss; const stress_anchor = (P_anchor * 1000) / tendonArea_mm2; const max_stress = Math.max(stress_anchor, stress_at_Lset); const allowableStress = 0.7 * fpu; return { id: i + 1, stress_anchor: stress_anchor, stress_at_Lset: stress_at_Lset, allowableStress: allowableStress, stress_ratio: max_stress / fpu, check: max_stress <= allowableStress }; });
+
+    const stressCheck = midLayout.map((pos, i) => {
+        const frLoss = individualFrictionLosses[i];
+        const anLoss = individualAnchorageLosses[i];
+        const p_force_gradient = x_mid > 0 ? frLoss / x_mid : 0;
+        let L_set = 0;
+        if (p_force_gradient > 0) { L_set = Math.sqrt((anchorageSlip_m * tendonArea_m2 * Es_kPa) / p_force_gradient); if (L_set > x_mid) L_set = x_mid; }
+        const y_start_m = (endLayout[i].y) / 1000; const y_end_m = (midLayout[i].y) / 1000;
+        const alpha_Lset = L_set > 0 ? Math.abs(4 * (y_start_m - y_end_m) / span) * (L_set / x_mid) : 0;
+        const P_at_Lset = Pj * Math.exp(-(mu * alpha_Lset + K * L_set));
+        const stress_at_Lset = (P_at_Lset * 1000) / tendonArea_mm2;
+        const P_anchor = P_at_Lset - anLoss;
+        const stress_anchor = (P_anchor * 1000) / tendonArea_mm2;
+        const max_stress = Math.max(stress_anchor, stress_at_Lset);
+        const allowableStress = 0.7 * fpu;
+        return { id: i + 1, stress_anchor: stress_anchor, stress_at_Lset: stress_at_Lset, allowableStress: allowableStress, stress_ratio: max_stress / fpu, check: max_stress <= allowableStress };
+    });
     
-    const results = { selfWeightMoment, finalEffectiveForce, Pj, totalInitialForce, eccentricity, immediate: { rows: individualFrictionLosses.map((fr, i) => ({ id: i + 1, frLoss: fr, anLoss: individualAnchorageLosses[i], esLoss: avgElasticShorteningLoss, totalLoss: fr + individualAnchorageLosses[i] + avgElasticShorteningLoss })), footer: { totalFrictionLoss, totalAnchorageLoss, totalElasticShorteningLoss, totalImmediateLoss } }, longterm: { creep: { loss: totalCreepLoss_kN }, shrinkage: { loss: totalShrinkageLoss_kN }, relaxation: { loss: totalRelaxationLoss_kN } }, total: { immediate: { loss: totalImmediateLoss }, longterm: { loss: totalLongtermLoss_kN }, final: { loss: finalTotalLoss_kN } }, stressCheck };
-    console.log("  > 預力損失計算成功，回傳結果:", results);
-    return results;
+    return { selfWeightMoment, finalEffectiveForce, Pj, totalInitialForce, eccentricity, immediate: { rows: individualFrictionLosses.map((fr, i) => ({ id: i + 1, frLoss: fr, anLoss: individualAnchorageLosses[i], esLoss: avgElasticShorteningLoss, totalLoss: fr + individualAnchorageLosses[i] + avgElasticShorteningLoss })), footer: { totalFrictionLoss, totalAnchorageLoss, totalElasticShorteningLoss, totalImmediateLoss } }, longterm: { creep: { loss: totalCreepLoss_kN }, shrinkage: { loss: totalShrinkageLoss_kN }, relaxation: { loss: totalRelaxationLoss_kN } }, total: { immediate: { loss: totalImmediateLoss }, longterm: { loss: totalLongtermLoss_kN }, final: { loss: finalTotalLoss_kN } }, stressCheck };
 }
 
-// ... (其他函式與前一版相同)
-export function performStressChecks(inputs, props, lossResults) { if (!props || !lossResults) return null; const fci = parseFloat(inputs['mat-fci']); const fc = parseFloat(inputs['mat-fc']); const Msd_kNm = parseFloat(inputs['moment-sd']); const Mll_kNm = parseFloat(inputs['moment-ll']); const { s_top, s_bottom, totalArea } = props; const { selfWeightMoment, finalEffectiveForce, totalInitialForce, eccentricity } = lossResults; const Pe_kN = finalEffectiveForce; const Pi_total_kN = totalInitialForce - lossResults.immediate.footer.totalFrictionLoss; const stress_from_Pi = Pi_total_kN / totalArea; const stress_from_Pi_ecc_top = (Pi_total_kN * eccentricity) / s_top; const stress_from_Pi_ecc_bot = (Pi_total_kN * eccentricity) / s_bottom; const stress_from_Msw_top = selfWeightMoment / s_top; const stress_from_Msw_bot = selfWeightMoment / s_bottom; const stress_const_top = (stress_from_Pi - stress_from_Pi_ecc_top + stress_from_Msw_top) / 1000; const stress_const_bot = (stress_from_Pi + stress_from_Pi_ecc_bot - stress_from_Msw_bot) / 1000; const stress_from_Pe = Pe_kN / totalArea; const stress_from_Pe_ecc_top = (Pe_kN * eccentricity) / s_top; const stress_from_Pe_ecc_bot = (Pe_kN * eccentricity) / s_bottom; const stress_from_Msd_top = Msd_kNm / s_top; const stress_from_Msd_bot = Msd_kNm / s_bottom; const stress_from_Mll_top = Mll_kNm / s_top; const stress_from_Mll_bot = Mll_kNm / s_bottom; const stress_serv_dl_top = (stress_from_Pe - stress_from_Pe_ecc_top + stress_from_Msw_top + stress_from_Msd_top) / 1000; const stress_serv_dl_bot = (stress_from_Pe + stress_from_Pe_ecc_bot - stress_from_Msw_bot - stress_from_Msd_bot) / 1000; const stress_serv_total_top = stress_serv_dl_top + (stress_from_Mll_top / 1000); const stress_serv_total_bot = stress_serv_dl_bot - (stress_from_Mll_bot / 1000); const ca_limit = 0.6 * fci; const ta_limit1 = -0.25 * Math.sqrt(fci); const ta_limit2 = -0.5 * Math.sqrt(fci); const ca_limit_serv1 = 0.45 * fc; const ca_limit_serv2 = 0.60 * fc; const ta_limit_serv = -0.5 * Math.sqrt(fc); return { limits: { ca_limit, ta_limit1, ta_limit2, ca_limit_serv1, ca_limit_serv2, ta_limit_serv }, construction: { top: { stress: stress_const_top }, bottom: { stress: stress_const_bot } }, service_dl: { top: { stress: stress_serv_dl_top }, bottom: { stress: stress_serv_dl_bot } }, service_total: { top: { stress: stress_serv_total_top }, bottom: { stress: stress_serv_total_bot } } }; }
+export function performStressChecks(inputs, props, lossResults) { 
+    if (!props || !lossResults) return null; 
+    const fci = parseFloat(inputs['mat-fci']); 
+    const fc = parseFloat(inputs['mat-fc']); 
+    const Msd_kNm = parseFloat(inputs['moment-sd']); 
+    const Mll_kNm = parseFloat(inputs['moment-ll']); 
+    const { s_top, s_bottom, totalArea } = props; 
+    const { selfWeightMoment, finalEffectiveForce, totalInitialForce, eccentricity } = lossResults; 
+    const Pe_kN = finalEffectiveForce; 
+    const Pi_total_kN = totalInitialForce - lossResults.immediate.footer.totalFrictionLoss; 
+    const stress_from_Pi = Pi_total_kN / totalArea; 
+    const stress_from_Pi_ecc_top = (Pi_total_kN * eccentricity) / s_top; 
+    const stress_from_Pi_ecc_bot = (Pi_total_kN * eccentricity) / s_bottom; 
+    const stress_from_Msw_top = selfWeightMoment / s_top; 
+    const stress_from_Msw_bot = selfWeightMoment / s_bottom; 
+    const stress_const_top = (stress_from_Pi - stress_from_Pi_ecc_top + stress_from_Msw_top) / 1000; 
+    const stress_const_bot = (stress_from_Pi + stress_from_Pi_ecc_bot - stress_from_Msw_bot) / 1000; 
+    const stress_from_Pe = Pe_kN / totalArea; 
+    const stress_from_Pe_ecc_top = (Pe_kN * eccentricity) / s_top; 
+    const stress_from_Pe_ecc_bot = (Pe_kN * eccentricity) / s_bottom; 
+    const stress_from_Msd_top = Msd_kNm / s_top; 
+    const stress_from_Msd_bot = Msd_kNm / s_bottom; 
+    const stress_from_Mll_top = Mll_kNm / s_top; 
+    const stress_from_Mll_bot = Mll_kNm / s_bottom; 
+    const stress_serv_dl_top = (stress_from_Pe - stress_from_Pe_ecc_top + stress_from_Msw_top + stress_from_Msd_top) / 1000; 
+    const stress_serv_dl_bot = (stress_from_Pe + stress_from_Pe_ecc_bot - stress_from_Msw_bot - stress_from_Msd_bot) / 1000; 
+    const stress_serv_total_top = stress_serv_dl_top + (stress_from_Mll_top / 1000); 
+    const stress_serv_total_bot = stress_serv_dl_bot - (stress_from_Mll_bot / 1000); 
+    const ca_limit = 0.6 * fci; 
+    const ta_limit1 = -0.25 * Math.sqrt(fci); 
+    const ta_limit2 = -0.5 * Math.sqrt(fci); 
+    const ca_limit_serv1 = 0.45 * fc; 
+    const ca_limit_serv2 = 0.60 * fc; 
+    // *** 修正完工階段拉力限制值係數，從 -0.5 改為 -0.8 ***
+    const ta_limit_serv = -0.8 * Math.sqrt(fc); 
+    return { limits: { ca_limit, ta_limit1, ta_limit2, ca_limit_serv1, ca_limit_serv2, ta_limit_serv }, construction: { top: { stress: stress_const_top }, bottom: { stress: stress_const_bot } }, service_dl: { top: { stress: stress_serv_dl_top }, bottom: { stress: stress_serv_dl_bot } }, service_total: { top: { stress: stress_serv_total_top }, bottom: { stress: stress_serv_total_bot } } }; 
+}
+
 export function performFlexureChecks(inputs, props, lossResults) { if (!props || !lossResults) return null; const fc_MPa = parseFloat(inputs['mat-fc']); const M_sd_kNm = parseFloat(inputs['moment-sd']); const M_ll_kNm = parseFloat(inputs['moment-ll']); const N = parseInt(inputs['tendon-mid-count'], 10); const selectedTendon = tendonData[inputs['tendon-type']]; if (!selectedTendon) return null; const { ght_m } = props; const { selfWeightMoment } = lossResults; const { area: Ap_mm2, fpu: fpu_MPa } = selectedTendon; const Aps = (Ap_mm2 / 1e6) * N; const fpu = fpu_MPa * 1e6; const d = { ght: ght_m, gtf: parseFloat(inputs.gtf) / 1000, gwb: parseFloat(inputs.gwb) / 1000, h1: parseFloat(inputs.h1) / 1000, tft: parseFloat(inputs.tft) / 1000 }; const tft_total = d.h1 + d.tft; const midLayout = (midTendonLayouts[N] || []); if (midLayout.length !== N) return null; const y_tendon_group = (midLayout.reduce((sum, t) => sum + t.y, 0) / N) / 1000; const dp = d.ght - y_tendon_group; let beta1 = (fc_MPa <= 28) ? 0.85 : (fc_MPa < 56) ? 0.85 - 0.05 * ((fc_MPa - 28) / 7) : 0.65; let c = 0.1 * dp; for (let i = 0; i < 100; i++) { const fps = fpu * (1 - 0.28 * (c / dp)); const T = Aps * fps; const a = beta1 * c; let C = (a <= tft_total) ? 0.85 * (fc_MPa * 1e6) * a * d.gtf : 0.85 * (fc_MPa * 1e6) * ((d.gtf - d.gwb) * tft_total + d.gwb * a); if (Math.abs(T - C) / T < 0.001) break; c = c * (T / C); } const a = beta1 * c; const fps = fpu * (1 - 0.28 * (c / dp)); const T = Aps * fps; let Mn = (a <= tft_total) ? T * (dp - a / 2) : (0.85 * (fc_MPa * 1e6) * (d.gtf - d.gwb) * tft_total) * (dp - tft_total / 2) + (0.85 * (fc_MPa * 1e6) * d.gwb * a) * (dp - a / 2); const Mu = (1.2 * (selfWeightMoment + M_sd_kNm) + 1.6 * M_ll_kNm) * 1000; const phiMn = 0.9 * Mn; return { Mu: Mu / 1000, phi_Mn: phiMn / 1000, params: { fc_MPa, beta1, Aps: Aps * 1e6, dp: dp * 1000, c: c * 1000, fps: fps / 1e6 }, moments: { M_sw: selfWeightMoment, M_sd: M_sd_kNm, M_ll: M_ll_kNm } }; }
 export function performDeflectionChecks(inputs, props) { if (!props) return null; const span = parseFloat(inputs['bridge-span']); const M_ll_kNm = parseFloat(inputs['moment-ll']); const fc_MPa = parseFloat(inputs['mat-fc']); const { momentOfInertia } = props; const L_m = span; const M_ll_Nm = M_ll_kNm * 1000; const Ig_m4 = momentOfInertia; const Ec_Pa = (4700 * Math.sqrt(fc_MPa)) * 1e6; const delta_LL_m = (5 * M_ll_Nm * L_m ** 2) / (48 * Ec_Pa * Ig_m4); const delta_allow_m = L_m / 800; return { delta_LL: delta_LL_m * 1000, delta_allow: delta_allow_m * 1000, params: { L_m, M_ll_kNm, Ec_GPa: Ec_Pa / 1e9, Ig_m4 } }; }
 export function performShearChecks(inputs, props) { if (!props) return null; const fc_MPa = parseFloat(inputs['mat-fc']); const fyt_MPa = parseFloat(inputs['shear-fyt']); const Vu_kN = parseFloat(inputs['shear-vu']); const s_mm = parseFloat(inputs['shear-spacing']); const legs = parseInt(inputs['shear-legs'], 10); const barSize = inputs['shear-bar-size']; const { gwb_m, ght_m } = props; const phi_v = 0.85; const d_m = 0.9 * ght_m; const bw_m = gwb_m; const Vc_kN = (0.53 * Math.sqrt(fc_MPa) * (bw_m * 1000) * (d_m * 1000)) / 1000; const barAreas = { 'D10': 71.33, 'D13': 126.7, 'D16': 198.6, 'D19': 286.5 }; const Av_mm2 = (barAreas[barSize] || 0) * legs; const Vs_kN = (Av_mm2 * fyt_MPa * (d_m * 1000)) / (s_mm * 1000); const Vn_kN = Vc_kN + Vs_kN; const phiVn_kN = phi_v * Vn_kN; const requiredVs_kN = Vu_kN > (phi_v * Vc_kN) ? (Vu_kN / phi_v - Vc_kN) : 0; const s_max_mm = Math.min(0.75 * ght_m * 1000, 600); const Av_min_mm2 = Math.max(0.062 * Math.sqrt(fc_MPa) * (bw_m * 1000) * s_mm / fyt_MPa, 0.35 * (bw_m * 1000) * s_mm / fyt_MPa); return { d_mm: d_m * 1000, Vc_kN, Vs_kN, Vn_kN, Vu_kN, phiVn_kN, requiredVs_kN, min_reinf: { Av_mm2, Av_min_mm2 }, max_spacing: { s_mm, s_max_mm } }; }
