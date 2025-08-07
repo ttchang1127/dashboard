@@ -38,9 +38,10 @@ jobs:
             const SPREADSHEET_ID = '1GjhgGAUuI5g6rtOGiUceMLgeGy12sp93fNQlWKM-UGc';
             const API_KEY = process.env.GOOGLE_API_KEY;
 
-            // 人員資料工作表設定
-            const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:I100', file: 'personnelData.json' };
-            // 績效資料工作表設定
+            // --- ✨✨✨ 關鍵修正 ✨✨✨ ---
+            // 人員資料工作表設定 (範圍擴大到 200 列)
+            const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:I200', file: 'personnelData.json' };
+            // --- ✨✨✨ 關鍵修正結束 ✨✨✨ ---
             const PERFORMANCE_SHEET = { name: '工作表2', range: 'B1:F2', file: 'performanceData.json' };
 
             // 檢查 API 金鑰是否存在
@@ -51,7 +52,6 @@ jobs:
 
             // --- 核心函式 ---
 
-            // 從 Google Sheet API 抓取資料的通用函式
             function fetchSheetData(sheetName, range) {
               return new Promise((resolve, reject) => {
                 const url = \`https://sheets.googleapis.com/v4/spreadsheets/\${SPREADSHEET_ID}/values/\${encodeURIComponent(sheetName)}!\${range}?key=\${API_KEY}\`;
@@ -74,7 +74,6 @@ jobs:
               });
             }
 
-            // 處理人員資料：將陣列轉換為物件陣列，並處理證照欄位
             function processPersonnelData(values) {
               const headerMapping = { '姓名': 'name', '組別': 'group', '職稱': 'role', '學歷': 'education', '證照': 'certificates' };
               const headers = values[0];
@@ -94,19 +93,17 @@ jobs:
                   }
                 });
                 return person;
-              }).filter(p => p.name); // 過濾掉姓名為空的無效資料列
+              }).filter(p => p.name);
 
               fs.writeFileSync(PERSONNEL_SHEET.file, JSON.stringify(personnel, null, 2), 'utf8');
               console.log(\`✅ 成功擷取資料並寫入 \${PERSONNEL_SHEET.file}\`);
             }
 
-            // 處理績效資料
             function processPerformanceData(values) {
               fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify(values, null, 2), 'utf8');
               console.log(\`✅ 成功擷取資料並寫入 \${PERFORMANCE_SHEET.file}\`);
             }
 
-            // --- 主執行函式 ---
             async function main() {
               console.log('🚀 開始從 Google Sheets 更新資料...');
               try {
@@ -128,7 +125,6 @@ jobs:
             main();
           "
         env:
-          # 將我們設定的 secret 注入到執行環境中
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
       # 步驟 4: 如果檔案有變動，就自動 commit 並 push 回儲存庫
@@ -137,26 +133,20 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # 1. 檢查是否有變更，若無則直接結束
-          # 我們使用 git status --porcelain 來檢查是否有任何未追蹤或已修改的檔案
           if [ -z "$(git status --porcelain)" ]; then
             echo "資料無變動，無需推送。"
             exit 0
           fi
 
-          # 2. 將所有本地變更 (新產生的 JSON 檔案) 暫存起來
           echo "偵測到資料變動，暫存本地變更..."
           git stash
           
-          # 3. 現在工作區是乾淨的，從遠端拉取最新變更
           echo "與遠端同步..."
           git pull --rebase
           
-          # 4. 將剛才暫存的變更套用回來
           echo "重新套用本地變更..."
           git stash pop
           
-          # 5. 現在可以安全地加入、提交並推送
           echo "提交並推送變更..."
           git add personnelData.json performanceData.json
           git commit -m "chore: 自動更新儀表板資料"
