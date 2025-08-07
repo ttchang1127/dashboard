@@ -40,51 +40,54 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
-            <!-- Personnel Section -->
+            <!-- Left Column: Personnel Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
                 </div>
-                <div id="accordion-container" class="space-y-3 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
+                <div id="accordion-container" class="space-y-3 max-h-[80vh] overflow-y-auto custom-scrollbar pr-2">
                     <div class="text-center p-8 text-gray-500">讀取資料中...</div>
                 </div>
             </div>
 
-            <!-- Performance Section -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                 <div class="flex justify-between items-center mb-4">
-                      <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
-                      <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
-                 </div>
-                 <div class="relative" style="height: 400px;">
-                      <canvas id="performanceChart"></canvas>
-                 </div>
-                 <!-- Total Amount Display -->
-                 <div class="text-right mt-4 pr-2">
-                     <p id="total-amount" class="text-xl font-bold text-gray-800">總金額: 計算中...</p>
-                 </div>
-            </div>
+            <!-- Right Column: Stacks Performance and Stats -->
+            <div class="space-y-8">
+                <!-- Performance Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                     <div class="flex justify-between items-center mb-4">
+                          <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
+                          <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
+                     </div>
+                     <div class="relative" style="height: 400px;">
+                          <canvas id="performanceChart"></canvas>
+                     </div>
+                     <!-- Total Amount Display -->
+                     <div class="text-right mt-4 pr-2">
+                         <p id="total-amount" class="text-xl font-bold text-gray-800">總金額: 計算中...</p>
+                     </div>
+                </div>
 
-            <!-- Statistics Section -->
-            <div class="bg-white rounded-2xl shadow-lg p-6 lg:col-span-2">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">組別/證照統計</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200">統計項目</th>
-                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">孝智組</th>
-                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">囿任組</th>
-                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">鎧峻組</th>
-                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">巍耀組</th>
-                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">柏勛組</th>
-                            </tr>
-                        </thead>
-                        <tbody id="stats-table-body">
-                            <!-- JavaScript will populate this section -->
-                             <tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>
-                        </tbody>
-                    </table>
+                <!-- Statistics Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">組別/證照統計</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200">統計項目</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">孝智組</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">囿任組</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">鎧峻組</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">巍耀組</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">柏勛組</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stats-table-body">
+                                <!-- JavaScript will populate this section -->
+                                 <tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
