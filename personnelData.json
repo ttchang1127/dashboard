@@ -357,7 +357,7 @@
   },
   {
     "name": "許英麗",
-    "group": "囿任組",
+    "group": "囿任���",
     "role": "組員",
     "education": "中華大學 \n景觀建築學系 \n學士",
     "certificates": [
@@ -757,6 +757,30 @@
   },
   {
     "name": "陳偉仁",
+    "group": "北分局",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "江曜宏",
+    "group": "北分局",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ]
+  },
+  {
+    "name": "張語珊",
     "group": "北分局",
     "role": "",
     "education": "#N/A",
