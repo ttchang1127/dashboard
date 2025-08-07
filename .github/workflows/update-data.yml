@@ -131,20 +131,23 @@ jobs:
           # 將我們設定的 secret 注入到執行環境中
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
-      # 步驟 4: 強制 commit 並 push
-      - name: Force commit and push
+      # 步驟 4: 如果檔案有變動，就自動 commit 並 push 回儲存庫
+      - name: Commit and push if there are changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
+          # 在 commit 之前，先拉取遠端的最新變更
           git pull --rebase
           
+          # 將兩個 JSON 檔案都加入到暫存區
           git add personnelData.json performanceData.json
           
-          # 使用 --allow-empty 參數來建立一個 commit，即使暫存區沒有任何變動
-          # 我們在 commit 訊息中加入一個時間戳來確保每次的 commit hash 都不同
-          COMMIT_MSG="chore: 自動更新儀表板資料 (Timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ'))"
-          git commit --allow-empty -m "$COMMIT_MSG"
-          
-          git push
-          echo "資料已強制更新並推送至儲存庫。"
+          # 如果暫存區有變動，才執行 commit 和 push
+          if ! git diff --staged --quiet; then
+            git commit -m 'chore: 自動更新儀表板資料'
+            git push
+            echo "資料已更新並推送至儲存庫。"
+          else
+            echo "資料無變動，無需推送。"
+          fi
