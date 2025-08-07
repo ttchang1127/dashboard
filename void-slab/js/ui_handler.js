@@ -1,5 +1,5 @@
 /**
- * Initializes the tab switching functionality for the main navigation.
+ * Initializes the main tab switching functionality.
  */
 export function initializeTabs() {
     const tabContainer = document.querySelector('#main-tabs');
@@ -21,7 +21,7 @@ export function initializeTabs() {
 }
 
 /**
- * Initializes the sub-tab switching functionality within a tab panel.
+ * Initializes the sub-tab switching functionality and handles plot resizing.
  */
 export function initializeSubTabs() {
     const subTabContainer = document.querySelector('#sub-tabs');
@@ -35,22 +35,31 @@ export function initializeSubTabs() {
         document.querySelectorAll('#sub-tab-content .sub-tab-panel').forEach(panel => panel.classList.add('hidden'));
 
         clickedSubTab.classList.add('active');
-        const targetPanel = document.querySelector(clickedSubTab.dataset.subtabTarget);
+        const targetPanelId = clickedSubTab.dataset.subtabTarget;
+        const targetPanel = document.querySelector(targetPanelId);
         if (targetPanel) {
             targetPanel.classList.remove('hidden');
+            
+            const plotDiv = targetPanel.querySelector('[id$="-plot"]'); 
+            if (plotDiv) {
+                Plotly.Plots.resize(plotDiv);
+            }
         }
     });
 }
 
 /**
- * NEW: Initializes +/- buttons for number inputs.
+ * Initializes +/- buttons for number inputs.
  */
 export function initializeNumberInputs() {
-    const form = document.getElementById('dimensions-form');
-    if (!form) return;
+    const formContainer = document.getElementById('tab-dimensions');
+    if (!formContainer) return;
 
-    form.addEventListener('click', (e) => {
+    formContainer.addEventListener('click', (e) => {
+        // *** 關鍵修正：修正了拼寫錯誤 e.targe -> e.target ***
         const target = e.target;
+        if (!target) return;
+        
         const isPlus = target.classList.contains('number-button-plus');
         const isMinus = target.classList.contains('number-button-minus');
 
@@ -63,13 +72,11 @@ export function initializeNumberInputs() {
                 
                 if (isPlus) {
                     currentValue += step;
-                } else {
+                } else if (currentValue > 0) {
                     currentValue -= step;
                 }
                 
                 inputElement.value = currentValue;
-
-                // Manually trigger an 'input' event to notify other listeners (e.g., plot updater)
                 inputElement.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }
