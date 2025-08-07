@@ -135,8 +135,14 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # 在 commit 之前，先拉取遠端的最新變更
+          # 使用 --rebase 可以讓歷史紀錄更線性、更乾淨
+          git pull --rebase
+          
           # 將兩個 JSON 檔案都加入到暫存區
           git add personnelData.json performanceData.json
+          
           # 如果暫存區有變動，才執行 commit 和 push
           if ! git diff --staged --quiet; then
             git commit -m 'chore: 自動更新儀表板資料'
