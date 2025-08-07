@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>預力混凝土中空版橋梁設計</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@12.4.2/lib/browser/math.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-slate-900">預力混凝土中空版橋梁設計</h1>
+            <p class="text-slate-600 mt-2">一個整合 Math.js, KaTeX.js, 和 Plotly.js 的互動式工程應用程式。</p>
+        </header>
+
+        <main>
+            <div class="border-b border-slate-300">
+                <nav id="main-tabs" class="-mb-px flex space-x-2" aria-label="Tabs">
+                    <button class="main-tab-button active" data-tab-target="#tab-dimensions">橋梁尺寸</button>
+                    <button class="main-tab-button" data-tab-target="#tab-materials">基本材料參數</button>
+                    <button class="main-tab-button" data-tab-target="#tab-loads">設計載重</button>
+                    <button class="main-tab-button" data-tab-target="#tab-tendons">預力鋼腱</button>
+                    <button class="main-tab-button" data-tab-target="#tab-analysis">斷面力計算</button>
+                </nav>
+            </div>
+
+            <div id="tab-content" class="mt-4">
+                <div id="tab-dimensions" class="tab-panel p-4 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <div class="grid grid-cols-10 gap-6">
+                        <div class="col-span-10 md:col-span-3">
+                            <h2 class="text-2xl font-semibold mb-4 text-indigo-700">1. 橋梁尺寸</h2>
+                            <form id="dimensions-form" class="space-y-3">
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="L" class="text-sm font-medium text-slate-700">橋梁跨度 ($L$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="L" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="L" step="1" value="2500" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="L" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="Ct" class="text-sm font-medium text-slate-700">懸臂版長度 ($C_t$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="Ct" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="Ct" step="1" value="100" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="Ct" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="Ht" class="text-sm font-medium text-slate-700">懸臂版外懸厚度 ($H_t$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="Ht" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="Ht" step="1" value="20" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="Ht" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="Hb" class="text-sm font-medium text-slate-700">懸臂版漸變厚度 ($H_b$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="Hb" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="Hb" step="1" value="15" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="Hb" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="Dr" class="text-sm font-medium text-slate-700">璇楞管直徑 ($D_r$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="Dr" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="Dr" step="1" value="80" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="Dr" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="N" class="text-sm font-medium text-slate-700">璇楞管數量 ($N$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="N" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="N" step="1" value="11" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="N" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1"></span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="Sr" class="text-sm font-medium text-slate-700">璇楞管間距 ($S_r$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="Sr" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="Sr" step="1" value="115" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="Sr" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="Et" class="text-sm font-medium text-slate-700">璇楞管與橋側邊緣 ($E_t$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="Et" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="Et" step="1" value="35" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="Et" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                               <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="Dt" class="text-sm font-medium text-slate-700">璇楞管與橋頂邊緣 ($D_t$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="Dt" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="Dt" step="1" value="20" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="Dt" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 items-center gap-2">
+                                    <label for="Db" class="text-sm font-medium text-slate-700">璇楞管與橋底邊緣 ($D_b$)</label>
+                                    <div class="flex items-center border border-slate-300 rounded-md">
+                                        <button type="button" data-target="Db" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                        <input type="number" id="Db" step="1" value="40" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <button type="button" data-target="Db" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                        <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                    </div>
+                                </div>
+                            </form>
+                            <div id="derived-values" class="mt-6 pt-4 border-t border-slate-200 space-y-2">
+                                <h3 class="text-lg font-semibold text-slate-800">計算結果</h3>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">橋梁全寬 $W = W_b + 2C_t$</span>
+                                    <span id="display-W" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">橋梁梁深 $H = D_t + D_r + D_b$</span>
+                                    <span id="display-H" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                 <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">璇楞管淨間距 $E_b = S_r - D_r$</span>
+                                    <span id="display-Eb" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-10 md:col-span-7">
+                             <div class="border-b border-gray-200">
+                                <nav id="sub-tabs" class="flex -mb-px">
+                                    <button class="sub-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm active" data-subtab-target="#subtab-cross-section">橋梁中央斷面</button>
+                                    <button class="sub-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-subtab-target="#subtab-end-section">橋梁端部斷面</button>
+                                    <button class="sub-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-subtab-target="#subtab-side-view">橋梁側視圖</button>
+                                </nav>
+                            </div>
+                            <div id="sub-tab-content" class="mt-2">
+                                <div id="subtab-cross-section" class="sub-tab-panel">
+                                    <div id="cross-section-plot" style="width:100%; height:550px;"></div>
+                                </div>
+                                <div id="subtab-end-section" class="hidden sub-tab-panel p-4">
+                                    <p>橋梁端部斷面圖表將顯示於此。</p>
+                                </div>
+                                <div id="subtab-side-view" class="hidden sub-tab-panel p-4">
+                                    <p>橋梁側視圖圖表將顯示於此。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-materials" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">2. 基本材料參數</h2>
+                    <p>此處將放置材料性質的輸入欄位，例如：混凝土設計強度 $f'_{ck}$、鋼筋降伏強度 $f_y$、預力鋼材種類與性質等。</p>
+                </div>
+
+                <div id="tab-loads" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">3. 設計載重</h2>
+                    <p>此處將放置設計載重的輸入欄位，包含靜載重 (DL) 如構材自重、鋪面重，以及活載重 (LL) 如車道載重、衝擊係數等。</p>
+                </div>
+
+                <div id="tab-tendons" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">4. 預力鋼腱</h2>
+                    <p>此處將放置預力鋼腱的相關設定，例如：鋼腱配置（線形、偏心距）、鋼腱數量、初始預力、以及摩擦與錨定損失等參數。</p>
+                </div>
+
+                <div id="tab-analysis" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">5. 斷面力計算</h2>
+                    <p>此處將顯示根據前述頁籤輸入的參數，透過 `math.js` 計算出的斷面力結果（彎矩、剪力），並使用 `plotly.js` 繪製相關的圖表。</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
