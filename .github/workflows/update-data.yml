@@ -40,7 +40,7 @@ jobs:
 
             // 人員資料工作表設定
             const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:I100', file: 'personnelData.json' };
-            // 績效資料工作表設定 (修正了範圍以正確讀取資料)
+            // 績效資料工作表設定
             const PERFORMANCE_SHEET = { name: '工作表2', range: 'B1:F2', file: 'performanceData.json' };
 
             // 檢查 API 金鑰是否存在
@@ -56,6 +56,11 @@ jobs:
               return new Promise((resolve, reject) => {
                 const url = \`https://sheets.googleapis.com/v4/spreadsheets/\${SPREADSHEET_ID}/values/\${encodeURIComponent(sheetName)}!\${range}?key=\${API_KEY}\`;
                 https.get(url, (res) => {
+                  // --- ✨✨✨ 關鍵修正 ✨✨✨ ---
+                  // 強制將接收到的資料流以 UTF-8 編碼來處理
+                  res.setEncoding('utf8');
+                  // --- ✨✨✨ 關鍵修正結束 ✨✨✨ ---
+
                   let rawData = '';
                   res.on('data', (chunk) => { rawData += chunk; });
                   res.on('end', () => {
@@ -95,13 +100,13 @@ jobs:
                 return person;
               }).filter(p => p.name); // 過濾掉姓名為空的無效資料列
 
-              fs.writeFileSync(PERSONNEL_SHEET.file, JSON.stringify(personnel, null, 2));
+              fs.writeFileSync(PERSONNEL_SHEET.file, JSON.stringify(personnel, null, 2), 'utf8');
               console.log(\`✅ 成功擷取資料並寫入 \${PERSONNEL_SHEET.file}\`);
             }
 
             // 處理績效資料
             function processPerformanceData(values) {
-              fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify(values, null, 2));
+              fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify(values, null, 2), 'utf8');
               console.log(\`✅ 成功擷取資料並寫入 \${PERFORMANCE_SHEET.file}\`);
             }
 
@@ -137,7 +142,6 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
           # 在 commit 之前，先拉取遠端的最新變更
-          # 使用 --rebase 可以讓歷史紀錄更線性、更乾淨
           git pull --rebase
           
           # 將兩個 JSON 檔案都加入到暫存區
