@@ -133,6 +133,7 @@
                                     </div>
                                 </div>
                             </form>
+
                             <div id="derived-values" class="mt-6 pt-4 border-t border-slate-200 space-y-2">
                                 <h3 class="text-lg font-semibold text-slate-800">計算結果</h3>
                                 <div class="flex justify-between items-center text-sm">
@@ -146,6 +147,18 @@
                                  <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-600">璇楞管淨間距 $E_b = S_r - D_r$</span>
                                     <span id="display-Eb" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm mt-2 pt-2 border-t">
+                                    <span class="text-slate-600">端隔梁厚度 ($H_e$)</span>
+                                    <span id="display-He" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">橋梁支承數 ($N_b$)</span>
+                                    <span id="display-Nb" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">支承間距 ($N_{bs}$)</span>
+                                    <span id="display-Nbs" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +176,35 @@
                                     <div id="cross-section-plot" style="width:100%; height:550px;"></div>
                                 </div>
                                 <div id="subtab-end-section" class="hidden sub-tab-panel p-4">
-                                    <p>橋梁端部斷面圖表將顯示於此。</p>
+                                    <div id="end-section-controls" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 p-4 bg-slate-50 rounded-lg">
+                                        <div class="flex items-center gap-2">
+                                            <label for="He" class="text-sm font-medium text-slate-700">端隔梁厚度 ($H_e$)</label>
+                                            <div class="flex items-center border border-slate-300 rounded-md">
+                                                <button type="button" data-target="He" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                                <input type="number" id="He" step="1" value="90" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <button type="button" data-target="He" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                                <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label for="Nb" class="text-sm font-medium text-slate-700">支承數量 ($N_b$)</label>
+                                            <div class="flex items-center border border-slate-300 rounded-md">
+                                                <button type="button" data-target="Nb" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                                <input type="number" id="Nb" step="1" value="3" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <button type="button" data-target="Nb" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label for="Nbs" class="text-sm font-medium text-slate-700">支承間距 ($N_{bs}$)</label>
+                                            <div class="flex items-center border border-slate-300 rounded-md">
+                                                <button type="button" data-target="Nbs" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                                <input type="number" id="Nbs" step="1" value="500" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <button type="button" data-target="Nbs" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                                <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="end-section-plot" style="width:100%; height:550px;"></div>
                                 </div>
                                 <div id="subtab-side-view" class="hidden sub-tab-panel p-4">
                                     <p>橋梁側視圖圖表將顯示於此。</p>
