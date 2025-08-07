@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>桃辦/新北辦儀表板 </title>
+    <title>桃辦/新北辦儀表板</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -53,16 +53,39 @@
             <!-- Performance Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                  <div class="flex justify-between items-center mb-4">
-                     <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
-                     <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
+                      <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
+                      <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
                  </div>
                  <div class="relative" style="height: 400px;">
-                     <canvas id="performanceChart"></canvas>
+                      <canvas id="performanceChart"></canvas>
                  </div>
                  <!-- Total Amount Display -->
                  <div class="text-right mt-4 pr-2">
-                    <p id="total-amount" class="text-xl font-bold text-gray-800">總金額: 計算中...</p>
+                     <p id="total-amount" class="text-xl font-bold text-gray-800">總金額: 計算中...</p>
                  </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 lg:col-span-2">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">組別/證照統計</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200">統計項目</th>
+                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">孝智組</th>
+                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">囿任組</th>
+                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">鎧峻組</th>
+                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">巍耀組</th>
+                                <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">柏勛組</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stats-table-body">
+                            <!-- JavaScript will populate this section -->
+                             <tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -94,7 +117,8 @@
         const accordionContainer = document.getElementById('accordion-container');
         const chartCanvas = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
-        const totalAmountEl = document.getElementById('total-amount'); // Reference for total amount
+        const totalAmountEl = document.getElementById('total-amount');
+        const statsTableBody = document.getElementById('stats-table-body'); // Reference for stats table
         // Modal elements
         const personModal = document.getElementById('person-modal');
         const modalContent = document.getElementById('modal-content');
@@ -143,7 +167,7 @@
             modalDetails.innerHTML = `
                 <div>
                     <p class="text-sm font-medium text-gray-500">學歷</p>
-                    <p class="mt-1 text-gray-800">${person.education || '未提供'}</p>
+                    <p class="mt-1 text-gray-800 whitespace-pre-line">${person.education || '未提供'}</p>
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-500">專業證照</p>
@@ -177,8 +201,8 @@
          * @param {Array<object>} personnelData - Array of person objects.
          */
         function buildAccordionUI(personnelData) {
-            // 1. Filter out personnel from '北分局'
-            const filteredData = personnelData.filter(person => person.office !== '北分局');
+            // 1. Filter out personnel from '北分局' or with no group
+            const filteredData = personnelData.filter(person => person.group && person.group !== '北分局');
 
             if (!filteredData || filteredData.length === 0) {
                 accordionContainer.innerHTML = `<div class="text-center p-8 text-gray-500">目前沒有人員資料。</div>`;
@@ -187,7 +211,7 @@
             
             // 2. Group the filtered data
             const groupedData = filteredData.reduce((acc, person) => {
-                const group = person.group || "無組別"; // Use "無組別" for undefined groups
+                const group = person.group || "無組別";
                 acc[group] = acc[group] || [];
                 acc[group].push(person);
                 return acc;
@@ -246,6 +270,65 @@
                 accordionContainer.appendChild(details);
             });
         }
+
+        /**
+         * Renders the statistics table for groups and their certificates.
+         * @param {Array<object>} personnelData - Array of person objects.
+         */
+        function renderStatsTable(personnelData) {
+            const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
+            // Define keywords for certificates to count. This allows for flexible matching.
+            const certTypes = [
+                { name: '品管', keywords: ['品管'] },
+                { name: '職安', keywords: ['職安', '職業安全', '業務主管'] },
+                { name: '管挖', keywords: ['管挖'] },
+                { name: '無人機', keywords: ['無人機'] },
+                { name: '技師', keywords: ['技師'] },
+                { name: '工地主任', keywords: ['工地主任'] }
+            ];
+
+            // Helper function to check if a person's certificates contain any of the keywords.
+            const hasCert = (person, certKeywords) => {
+                if (!person.certificates || person.certificates.length === 0) return false;
+                // Check if any of the person's certificates match any of the keywords.
+                return person.certificates.some(cert => 
+                    certKeywords.some(keyword => cert.name.includes(keyword))
+                );
+            };
+
+            // Calculate statistics for each group.
+            const stats = {};
+            groups.forEach(group => {
+                const members = personnelData.filter(p => p.group === group);
+                stats[group] = {
+                    memberCount: members.length,
+                    certs: {}
+                };
+                certTypes.forEach(certType => {
+                    stats[group].certs[certType.name] = members.filter(m => hasCert(m, certType.keywords)).length;
+                });
+            });
+
+            // Build the HTML for the table body.
+            let html = '';
+
+            // First row: Member count
+            html += `<tr class="border-b border-gray-200 bg-gray-50">
+                        <td class="p-3 font-medium text-gray-800">組人數</td>
+                        ${groups.map(g => `<td class="p-3 text-center font-bold text-gray-900">${stats[g].memberCount}</td>`).join('')}
+                     </tr>`;
+
+            // Subsequent rows: Certificate counts
+            certTypes.forEach(certType => {
+                html += `<tr class="border-b border-gray-200 hover:bg-blue-50/50">
+                            <td class="p-3 font-medium text-gray-800">${certType.name}</td>
+                            ${groups.map(g => `<td class="p-3 text-center text-gray-700">${stats[g].certs[certType.name]}</td>`).join('')}
+                         </tr>`;
+            });
+
+            statsTableBody.innerHTML = html;
+        }
+
 
         /**
          * Creates a new Chart.js instance or updates an existing one.
@@ -311,6 +394,9 @@
             if (totalAmountEl) {
                 totalAmountEl.textContent = '總金額: 計算中...';
             }
+            if (statsTableBody) {
+                statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>';
+            }
             
             const timestamp = new Date().getTime(); // Prevent browser caching
 
@@ -329,6 +415,7 @@
                 if (personnelRes.ok) {
                     const personnelData = await personnelRes.json();
                     buildAccordionUI(personnelData);
+                    renderStatsTable(personnelData); // Render stats table
                 } else {
                     throw new Error(`找不到人員資料檔案 (personnelData.json): ${personnelRes.statusText}`);
                 }
@@ -364,8 +451,13 @@
                 if (totalAmountEl) {
                     totalAmountEl.textContent = '總金額: 無法計算';
                 }
+                if (statsTableBody) {
+                    statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-red-500">無法載入統計資料</td></tr>';
+                }
                 const ctx = chartCanvas.getContext('2d');
                 if (ctx) {
+                    if (performanceChart) performanceChart.destroy();
+                    performanceChart = null;
                     ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
                     ctx.font = "16px 'Noto Sans TC'";
                     ctx.fillStyle = "red";
