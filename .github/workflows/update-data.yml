@@ -137,22 +137,28 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # 1. 將變更加入暫存區
-          git add personnelData.json performanceData.json
-          
-          # 2. 檢查是否有實際變動，若無則直接結束
-          if git diff --staged --quiet; then
+          # 1. 檢查是否有變更，若無則直接結束
+          # 我們使用 git status --porcelain 來檢查是否有任何未追蹤或已修改的檔案
+          if [ -z "$(git status --porcelain)" ]; then
             echo "資料無變動，無需推送。"
             exit 0
           fi
+
+          # 2. 將所有本地變更 (新產生的 JSON 檔案) 暫存起來
+          echo "偵測到資料變動，暫存本地變更..."
+          git stash
           
-          # 3. 若有變動，先在本地建立一個 commit
-          git commit -m 'chore: 自動更新儀表板資料'
-          
-          # 4. 在本地 commit 後，再從遠端拉取變更並 rebase
-          #    這會將我們剛才的 commit 疊加到遠端最新版本的頂端
+          # 3. 現在工作區是乾淨的，從遠端拉取最新變更
+          echo "與遠端同步..."
           git pull --rebase
           
-          # 5. 最後，將 rebase 後的結果推送到遠端
+          # 4. 將剛才暫存的變更套用回來
+          echo "重新套用本地變更..."
+          git stash pop
+          
+          # 5. 現在可以安全地加入、提交並推送
+          echo "提交並推送變更..."
+          git add personnelData.json performanceData.json
+          git commit -m "chore: 自動更新儀表板資料"
           git push
           echo "資料已更新並推送至儲存庫。"
