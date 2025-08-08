@@ -38,10 +38,9 @@ jobs:
             const SPREADSHEET_ID = '1GjhgGAUuI5g6rtOGiUceMLgeGy12sp93fNQlWKM-UGc';
             const API_KEY = process.env.GOOGLE_API_KEY;
 
-            // --- ✨✨✨ 關鍵修正 ✨✨✨ ---
             // 人員資料工作表設定 (範圍擴大到 200 列)
             const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:I200', file: 'personnelData.json' };
-            // --- ✨✨✨ 關鍵修正結束 ✨✨✨ ---
+            // 績效資料工作表設定
             const PERFORMANCE_SHEET = { name: '工作表2', range: 'B1:F2', file: 'performanceData.json' };
 
             // 檢查 API 金鑰是否存在
@@ -133,21 +132,35 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
+          # 1. 第一次檢查：腳本執行後，本地是否有變更？
           if [ -z "$(git status --porcelain)" ]; then
             echo "資料無變動，無需推送。"
             exit 0
           fi
 
+          # 2. 將本地變更暫存起來
           echo "偵測到資料變動，暫存本地變更..."
           git stash
           
+          # 3. 與遠端同步
           echo "與遠端同步..."
           git pull --rebase
           
-          echo "重新套用本地變更..."
-          git stash pop
+          # 4. 重新套用本地變更
+          #    我們檢查 stash list 是否存在，以避免在沒有 stash 的情況下執行 pop
+          if git stash list | grep -q 'stash@{0}'; then
+            echo "重新套用本地變更..."
+            git stash pop
+          fi
           
-          echo "提交並推送變更..."
+          # 5. 第二次檢查：與遠端同步後，是否還有實際的變更？
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "與遠端同步後，發現資料內容無差異，無需推送。"
+            exit 0
+          fi
+          
+          # 6. 如果確實還有變更，才進行提交與推送
+          echo "提交並推送最終變更..."
           git add personnelData.json performanceData.json
           git commit -m "chore: 自動更新儀表板資料"
           git push
