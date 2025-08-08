@@ -5,16 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>預力混凝土中空版橋梁設計</title>
 
+    <!-- Tailwind CSS for utility classes -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- KaTeX for formula rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 
+    <!-- Plotly.js for plotting (Using a newer, stable version) -->
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
+    <!-- Math.js for calculations -->
     <script src="https://cdn.jsdelivr.net/npm/mathjs@12.4.2/lib/browser/math.min.js"></script>
 
+    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -26,6 +31,7 @@
         </header>
 
         <main>
+            <!-- Main Tab Navigation -->
             <div class="border-b border-slate-300">
                 <nav id="main-tabs" class="-mb-px flex space-x-2" aria-label="Tabs">
                     <button class="main-tab-button active" data-tab-target="#tab-dimensions">橋梁尺寸</button>
@@ -36,9 +42,11 @@
                 </nav>
             </div>
 
+            <!-- Main Tab Content -->
             <div id="tab-content" class="mt-4">
                 <div id="tab-dimensions" class="tab-panel p-4 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
                     <div class="grid grid-cols-10 gap-6">
+                        <!-- Left Panel: Inputs & Derived Values (30%) -->
                         <div class="col-span-10 md:col-span-3">
                             <h2 class="text-2xl font-semibold mb-4 text-indigo-700">1. 橋梁尺寸</h2>
                             <form id="dimensions-form" class="space-y-3">
@@ -137,6 +145,10 @@
                             <div id="derived-values" class="mt-6 pt-4 border-t border-slate-200 space-y-2">
                                 <h3 class="text-lg font-semibold text-slate-800">計算結果</h3>
                                 <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">橋梁跨度 ($L$)</span>
+                                    <span id="display-L-m" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-600">橋梁全寬 $W = W_b + 2C_t$</span>
                                     <span id="display-W" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
@@ -160,9 +172,22 @@
                                     <span class="text-slate-600">支承間距 ($N_{bs}$)</span>
                                     <span id="display-Nbs" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
+                                <div class="flex justify-between items-center text-sm mt-2 pt-2 border-t">
+                                    <span class="text-slate-600">支承到橋端 ($L_1$)</span>
+                                    <span id="display-L1" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">橋梁全長 ($L_T$)</span>
+                                    <span id="display-LT" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">旋楞管長度 ($L_p$)</span>
+                                    <span id="display-Lp" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- Right Panel: Plots (70%) -->
                         <div class="col-span-10 md:col-span-7">
                              <div class="border-b border-gray-200">
                                 <nav id="sub-tabs" class="flex -mb-px">
@@ -207,28 +232,46 @@
                                     <div id="end-section-plot" style="width:100%; height:550px;"></div>
                                 </div>
                                 <div id="subtab-side-view" class="hidden sub-tab-panel p-4">
-                                    <p>橋梁側視圖圖表將顯示於此。</p>
+                                    <div id="side-view-controls" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-4 bg-slate-50 rounded-lg">
+                                        <div class="flex items-center gap-2">
+                                            <label for="L1" class="text-sm font-medium text-slate-700">支承到橋端 ($L_1$)</label>
+                                            <div class="flex items-center border border-slate-300 rounded-md">
+                                                <button type="button" data-target="L1" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                                <input type="number" id="L1" step="1" value="55" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <button type="button" data-target="L1" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                                <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label for="L2" class="text-sm font-medium text-slate-700">支承到旋楞管邊緣 ($L_2$)</label>
+                                            <div class="flex items-center border border-slate-300 rounded-md">
+                                                <button type="button" data-target="L2" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
+                                                <input type="number" id="L2" step="1" value="85" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <button type="button" data-target="L2" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
+                                                <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="side-view-plot" style="width:100%; height:550px;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Other main tabs remain as placeholders -->
                 <div id="tab-materials" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
                     <h2 class="text-2xl font-semibold mb-4 text-indigo-700">2. 基本材料參數</h2>
                     <p>此處將放置材料性質的輸入欄位，例如：混凝土設計強度 $f'_{ck}$、鋼筋降伏強度 $f_y$、預力鋼材種類與性質等。</p>
                 </div>
-
                 <div id="tab-loads" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
                     <h2 class="text-2xl font-semibold mb-4 text-indigo-700">3. 設計載重</h2>
                     <p>此處將放置設計載重的輸入欄位，包含靜載重 (DL) 如構材自重、鋪面重，以及活載重 (LL) 如車道載重、衝擊係數等。</p>
                 </div>
-
                 <div id="tab-tendons" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
                     <h2 class="text-2xl font-semibold mb-4 text-indigo-700">4. 預力鋼腱</h2>
                     <p>此處將放置預力鋼腱的相關設定，例如：鋼腱配置（線形、偏心距）、鋼腱數量、初始預力、以及摩擦與錨定損失等參數。</p>
                 </div>
-
                 <div id="tab-analysis" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
                     <h2 class="text-2xl font-semibold mb-4 text-indigo-700">5. 斷面力計算</h2>
                     <p>此處將顯示根據前述頁籤輸入的參數，透過 `math.js` 計算出的斷面力結果（彎矩、剪力），並使用 `plotly.js` 繪製相關的圖表。</p>
@@ -237,6 +280,7 @@
         </main>
     </div>
 
+    <!-- Main Application Logic -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
