@@ -225,6 +225,14 @@
             
             accordionContainer.innerHTML = '';
             
+            // Helper function to check for specific certificates
+            const hasCert = (person, keywords) => {
+                if (!person.certificates || person.certificates.length === 0) return false;
+                return person.certificates.some(cert => 
+                    keywords.some(keyword => cert.name.includes(keyword))
+                );
+            };
+
             // 4. Render groups based on the defined order
             groupOrder.forEach(groupName => {
                 const members = groupedData[groupName];
@@ -246,9 +254,27 @@
                 
                 members.forEach(person => {
                     const memberDiv = document.createElement('div');
-                    const hasCerts = person.certificates && person.certificates.length > 0 && person.certificates[0].name !== '#N/A';
                     const isManager = person.role === '副理' || person.role === '副總經理';
                     
+                    // Check for specific certificates
+                    const hasPinguan = hasCert(person, ['品管']);
+                    const hasZhian = hasCert(person, ['職安', '職業安全', '業務主管']);
+                    const hasJishi = hasCert(person, ['技師']);
+
+                    // --- ✨✨✨ 關鍵修正 (人員卡片圖示) ✨✨✨ ---
+                    // Build the icons HTML string with brighter colors and smaller size
+                    let iconsHtml = '';
+                    if (hasJishi) {
+                        iconsHtml += `<span class="text-yellow-400 text-sm" title="技師">★</span>`;
+                    }
+                    if (hasPinguan) {
+                        iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-blue-400 ring-2 ring-white" title="品管"></span>`;
+                    }
+                    if (hasZhian) {
+                        iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white" title="職安"></span>`;
+                    }
+                    // --- ✨✨✨ 修正結束 ✨✨✨ ---
+
                     let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 `;
                     if (isManager) {
                         divClasses += 'bg-blue-50 border-blue-200';
@@ -258,9 +284,11 @@
                     memberDiv.className = divClasses;
 
                     memberDiv.innerHTML = `
+                        <div class="absolute top-2 right-2 flex items-center space-x-1.5">
+                           ${iconsHtml}
+                        </div>
                         <p class="font-semibold text-gray-900 truncate">${person.name}</p>
                         <p class="text-sm text-gray-500">${person.role || '組員'}</p>
-                        ${hasCerts ? '<span class="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white" title="持有證照"></span>' : ''}
                     `;
                     
                     memberDiv.addEventListener('click', () => showPersonDetailsModal(person));
@@ -280,15 +308,18 @@
          */
         function renderStatsTable(personnelData) {
             const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
-            // Define keywords for certificates to count. This allows for flexible matching.
+            
+            // --- ✨✨✨ 關鍵修正 (統計表格圖示) ✨✨✨ ---
+            // Define keywords for certificates to count, and add the corresponding icon HTML with brighter colors.
             const certTypes = [
-                { name: '品管', keywords: ['品管'] },
-                { name: '職安', keywords: ['職安', '職業安全', '業務主管'] },
-                { name: '管挖', keywords: ['管挖'] },
-                { name: '無人機', keywords: ['無人機'] },
-                { name: '技師', keywords: ['技師'] },
-                { name: '工地主任', keywords: ['工地主任'] }
+                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-blue-400 ml-2" title="品管"></span>' },
+                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-400 ml-2" title="職安"></span>' },
+                { name: '管挖', keywords: ['管挖'], icon: '' }, // No icon for this one, but keep the structure
+                { name: '無人機', keywords: ['無人機'], icon: '' },
+                { name: '技師', keywords: ['技師'], icon: '<span class="inline-block text-yellow-400 text-sm ml-2" title="技師">★</span>' },
+                { name: '工地主任', keywords: ['工地主任'], icon: '' }
             ];
+            // --- ✨✨✨ 修正結束 ✨✨✨ ---
 
             // Helper function to check if a person's certificates contain any of the keywords.
             const hasCert = (person, certKeywords) => {
@@ -324,7 +355,7 @@
             // Subsequent rows: Certificate counts
             certTypes.forEach(certType => {
                 html += `<tr class="border-b border-gray-200 hover:bg-blue-50/50">
-                            <td class="p-3 font-medium text-gray-800">${certType.name}</td>
+                            <td class="p-3 font-medium text-gray-800 flex items-center">${certType.name} ${certType.icon || ''}</td>
                             ${groups.map(g => `<td class="p-3 text-center text-gray-700">${stats[g].certs[certType.name]}</td>`).join('')}
                          </tr>`;
             });
