@@ -142,29 +142,37 @@
                                 </div>
                             </form>
 
+                            <!-- UPDATED: Reordered and categorized derived values -->
                             <div id="derived-values" class="mt-6 pt-4 border-t border-slate-200 space-y-2">
                                 <h3 class="text-lg font-semibold text-slate-800">計算結果</h3>
+                                <!-- 總體尺寸 -->
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-600">橋梁跨度 ($L$)</span>
                                     <span id="display-L-m" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
                                 <div class="flex justify-between items-center text-sm">
-                                    <span class="text-slate-600">橋梁全寬 $W = W_b + 2C_t$</span>
+                                    <span class="text-slate-600">橋梁寬度 ($W$)</span>
                                     <span id="display-W" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
                                 <div class="flex justify-between items-center text-sm">
-                                    <span class="text-slate-600">橋梁梁深 $H = D_t + D_r + D_b$</span>
+                                    <span class="text-slate-600">橋梁全長 ($L_T$)</span>
+                                    <span id="display-LT" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">橋梁梁深 ($H$)</span>
                                     <span id="display-H" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
-                                 <div class="flex justify-between items-center text-sm">
-                                    <span class="text-slate-600">旋楞管淨間距 $E_b = S_r - D_r$</span>
-                                    <span id="display-Eb" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
-                                </div>
-                                <div class="flex justify-between items-center text-sm mt-2 pt-2 border-t">
+                                <!-- 元件尺寸 -->
+                                <div class="flex justify-between items-center text-sm pt-2 border-t border-slate-100">
                                     <span class="text-slate-600">端隔梁厚度 ($H_e$)</span>
                                     <span id="display-He" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
                                 <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">旋楞管長度 ($L_p$)</span>
+                                    <span id="display-Lp" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <!-- 配置尺寸 -->
+                                <div class="flex justify-between items-center text-sm pt-2 border-t border-slate-100">
                                     <span class="text-slate-600">橋梁支承數 ($N_b$)</span>
                                     <span id="display-Nb" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
@@ -172,17 +180,13 @@
                                     <span class="text-slate-600">支承間距 ($N_{bs}$)</span>
                                     <span id="display-Nbs" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
-                                <div class="flex justify-between items-center text-sm mt-2 pt-2 border-t">
+                                <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-600">支承到橋端 ($L_1$)</span>
                                     <span id="display-L1" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-slate-600">橋梁全長 ($L_T$)</span>
-                                    <span id="display-LT" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
-                                </div>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-slate-600">旋楞管長度 ($L_p$)</span>
-                                    <span id="display-Lp" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                 <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">旋楞管淨間距 ($E_b$)</span>
+                                    <span id="display-Eb" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
                             </div>
                         </div>
