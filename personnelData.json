@@ -550,7 +550,20 @@
     "group": "柏勛組",
     "role": "組員",
     "education": "宏國德霖科技大學 \n土木工程系 \n學士",
-    "certificates": []
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.工地主任",
+        "number": ""
+      }
+    ]
   },
   {
     "name": "潘國揚",
