@@ -40,7 +40,6 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
-            <!-- Left Column: Personnel Section -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
@@ -50,9 +49,7 @@
                 </div>
             </div>
 
-            <!-- Right Column: Stacks Performance and Stats -->
             <div class="space-y-8">
-                <!-- Performance Section -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                      <div class="flex justify-between items-center mb-4">
                           <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
@@ -61,13 +58,11 @@
                      <div class="relative" style="height: 400px;">
                           <canvas id="performanceChart"></canvas>
                      </div>
-                     <!-- Total Amount Display -->
                      <div class="text-right mt-4 pr-2">
                          <p id="total-amount" class="text-xl font-bold text-gray-800">總金額: 計算中...</p>
                      </div>
                 </div>
 
-                <!-- Statistics Section -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">組別/證照統計</h2>
                     <div class="overflow-x-auto">
@@ -83,8 +78,7 @@
                                 </tr>
                             </thead>
                             <tbody id="stats-table-body">
-                                <!-- JavaScript will populate this section -->
-                                 <tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>
+                                <tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -93,10 +87,8 @@
         </div>
     </div>
 
-    <!-- Personnel Details Modal -->
     <div id="person-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
         <div id="modal-content" class="relative mx-auto p-6 border w-full max-w-md shadow-lg rounded-2xl bg-white transform transition-all scale-95 opacity-0">
-            <!-- Modal Header -->
             <div class="flex justify-between items-start pb-3 border-b">
                 <div>
                     <h3 id="modal-name" class="text-2xl leading-6 font-bold text-gray-900"></h3>
@@ -106,10 +98,8 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <!-- Modal Body -->
             <div id="modal-details" class="mt-4 text-left space-y-4">
-                <!-- Details will be populated by JavaScript -->
-            </div>
+                </div>
         </div>
     </div>
 
@@ -168,6 +158,10 @@
             
             // Assemble all details
             modalDetails.innerHTML = `
+                <div>
+                    <p class="text-sm font-medium text-gray-500">年資</p>
+                    <p class="mt-1 text-gray-800">${person.seniority || '未提供'}</p>
+                </div>
                 <div>
                     <p class="text-sm font-medium text-gray-500">學歷</p>
                     <p class="mt-1 text-gray-800 whitespace-pre-line">${person.education || '未提供'}</p>
