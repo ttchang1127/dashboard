@@ -274,14 +274,13 @@
                     }
                     memberDiv.className = divClasses;
 
-                    // --- ✨✨✨ 關鍵修正 (在人員卡片上顯示年資) ✨✨✨ ---
+                    // --- ✨✨✨ 關鍵修正 (移除人員卡片上的年資) ✨✨✨ ---
                     memberDiv.innerHTML = `
                         <div class="absolute top-2 right-2 flex items-center space-x-1.5">
                            ${iconsHtml}
                         </div>
                         <p class="font-semibold text-gray-900 truncate">${person.name}</p>
                         <p class="text-sm text-gray-500">${person.role || '組員'}</p>
-                        <p class="text-xs text-gray-400 mt-1">${person.seniority || '年資未提供'}</p>
                     `;
                     // --- ✨✨✨ 修正結束 ✨✨✨ ---
                     
