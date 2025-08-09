@@ -219,8 +219,8 @@
                     const hasJishi = hasCert(person, ['技師']);
                     let iconsHtml = '';
                     if (hasJishi) iconsHtml += `<span class="text-yellow-400 text-sm" title="技師">★</span>`;
-                    if (hasPinguan) iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-blue-400 ring-2 ring-white" title="品管"></span>`;
-                    if (hasZhian) iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white" title="職安"></span>`;
+                    if (hasPinguan) iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-yellow-400 ring-2 ring-white" title="品管"></span>`;
+                    if (hasZhian) iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white" title="職安"></span>`;
                     let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 `;
                     divClasses += isManager ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200';
                     memberDiv.className = divClasses;
@@ -245,8 +245,8 @@
         function renderStatsTable(personnelData) {
             const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
             const certTypes = [
-                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-blue-400 ml-2" title="品管"></span>' },
-                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-400 ml-2" title="職安"></span>' },
+                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-400 ml-2" title="品管"></span>' },
+                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500 ml-2" title="職安"></span>' },
                 { name: '管挖', keywords: ['管挖'], icon: '' },
                 { name: '無人機', keywords: ['無人機'], icon: '' },
                 { name: '技師', keywords: ['技師'], icon: '<span class="inline-block text-yellow-400 text-sm ml-2" title="技師">★</span>' },
