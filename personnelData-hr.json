@@ -1,0 +1,937 @@
+[
+  {
+    "name": "梅德鍾",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "淡江大學 \n土木工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.無人機普通操作證",
+        "number": ""
+      }
+    ],
+    "salary": "80,000",
+    "seniority": "8年4月13日"
+  },
+  {
+    "name": "張增糴",
+    "group": "副總經理",
+    "role": "副總經理",
+    "education": "國立臺灣大學 \n土木工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      },
+      {
+        "name": "2.大地技師",
+        "number": ""
+      }
+    ],
+    "salary": "155,000",
+    "seniority": "12年3月16日"
+  },
+  {
+    "name": "吳孝智",
+    "group": "孝智組",
+    "role": "副理",
+    "education": "國立中央大學 \n土木工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.管挖",
+        "number": ""
+      }
+    ],
+    "salary": "87,000",
+    "seniority": "12年2月6日"
+  },
+  {
+    "name": "康慶龍",
+    "group": "孝智組",
+    "role": "組員",
+    "education": "逢甲大學 \n水利工程與資源保育學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.無人機普通操作證",
+        "number": ""
+      },
+      {
+        "name": "3.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "81,000",
+    "seniority": "10年5月7日"
+  },
+  {
+    "name": "陳囿任",
+    "group": "囿任組",
+    "role": "副理",
+    "education": "中華大學 \n營建管理研究所 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "85,000",
+    "seniority": "6年5月5日"
+  },
+  {
+    "name": "翁巧晴",
+    "group": "孝智組",
+    "role": "組員",
+    "education": "蘭陽技術學院 \n土木工程科 \n副學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "56,000",
+    "seniority": "11年3月12日"
+  },
+  {
+    "name": "張鎧峻",
+    "group": "鎧峻組",
+    "role": "副理",
+    "education": "國立成功大學\n 土木工程學系\n 碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "85,000",
+    "seniority": "11年1月17日"
+  },
+  {
+    "name": "張巍耀",
+    "group": "巍耀組",
+    "role": "副理",
+    "education": "逢甲大學 \n土木工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.管挖",
+        "number": ""
+      },
+      {
+        "name": "3.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "85,000",
+    "seniority": "10年8月1日"
+  },
+  {
+    "name": "王宥達",
+    "group": "孝智組",
+    "role": "",
+    "education": "國立交通大學 \n土木工程學系研究所\n 碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "57,000",
+    "seniority": "10年6月28日"
+  },
+  {
+    "name": "張友誠",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "國立交通大學 \n土木工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "77,000",
+    "seniority": "10年5月0日"
+  },
+  {
+    "name": "林致毅",
+    "group": "北分局",
+    "role": "",
+    "education": "中華大學 \n土木工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "黃阡維",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "國立嘉義大學 \n土木與水資源工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.管挖",
+        "number": ""
+      },
+      {
+        "name": "3.無人機專業操作證",
+        "number": ""
+      },
+      {
+        "name": "4.營造業甲種業務主管",
+        "number": ""
+      }
+    ],
+    "salary": "76,000",
+    "seniority": "9年3月6日"
+  },
+  {
+    "name": "楊萬璽",
+    "group": "無組別",
+    "role": "",
+    "education": "國立臺北科技大學 \n土木工程系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "43,000",
+    "seniority": "9年0月1日"
+  },
+  {
+    "name": "曾院榮",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "國立交通大學 \n土木工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "107,000",
+    "seniority": "8年4月20日"
+  },
+  {
+    "name": "李佳穎",
+    "group": "無組別",
+    "role": "",
+    "education": "國立屏東科技大學 \n農企業管理系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "43,000",
+    "seniority": "8年4月4日"
+  },
+  {
+    "name": "吳尚東",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "國立臺灣海洋大學 \n河海工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "73,000",
+    "seniority": "7年2月12日"
+  },
+  {
+    "name": "王宜婷",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "中原大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "63,000",
+    "seniority": "7年1月7日"
+  },
+  {
+    "name": "陳珮婷",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "國立金門大學 \n都市計畫與景觀學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "55,000",
+    "seniority": "7年1月0日"
+  },
+  {
+    "name": "宋柏勛",
+    "group": "柏勛組",
+    "role": "副理",
+    "education": "國立中央大學 \n土木工程學系 \n博士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.無人機普通操作證",
+        "number": ""
+      }
+    ],
+    "salary": "103,000",
+    "seniority": "7年0月3日"
+  },
+  {
+    "name": "李俊毅",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "國立高雄第一科技大學 \n環境與安全衛生工程系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.管挖",
+        "number": ""
+      }
+    ],
+    "salary": "76,000",
+    "seniority": "6年2月13日"
+  },
+  {
+    "name": "呂紹吉",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "逢甲大學 \n水利工程與資源保育學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "蕭家璨",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "逢甲大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.無人機普通操作證",
+        "number": ""
+      }
+    ],
+    "salary": "75,000",
+    "seniority": "5年1月25日"
+  },
+  {
+    "name": "林全華",
+    "group": "孝智組",
+    "role": "組員",
+    "education": "致遠管理學院 \n營建管理學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "77,000",
+    "seniority": "5年0月6日"
+  },
+  {
+    "name": "許英麗",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "中華大學 \n景觀建築學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "50,000",
+    "seniority": "4年5月23日"
+  },
+  {
+    "name": "林偉正",
+    "group": "北分局",
+    "role": "",
+    "education": "萬能科技大學 \n土木工程系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "吳諾樸",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "朝陽科技大學 \n景觀及都市設計系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.管挖",
+        "number": ""
+      }
+    ],
+    "salary": "66,000",
+    "seniority": "3年5月30日"
+  },
+  {
+    "name": "詹子瑩",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "逢甲大學 \n水利工程與資源保育學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.無人機普通操作證",
+        "number": ""
+      }
+    ],
+    "salary": "57,000",
+    "seniority": "3年5月8日"
+  },
+  {
+    "name": "林啓聖",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "德霖技術學院 \n土木工程系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "71,000",
+    "seniority": "1年5月8日"
+  },
+  {
+    "name": "陳建榮",
+    "group": "孝智組",
+    "role": "組員",
+    "education": "國立宜蘭大學 \n土木工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.乙級測量技術士",
+        "number": ""
+      },
+      {
+        "name": "4.工地主任",
+        "number": ""
+      }
+    ],
+    "salary": "77,000",
+    "seniority": "3年0月1日"
+  },
+  {
+    "name": "陳品圻",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "朝陽科技大學 \n景觀及都市設計系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.管挖",
+        "number": ""
+      }
+    ],
+    "salary": "50,000",
+    "seniority": "2年11月25日"
+  },
+  {
+    "name": "黃立昕",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "中原大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      },
+      {
+        "name": "2.品管",
+        "number": ""
+      },
+      {
+        "name": "3.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "95,000",
+    "seniority": "2年5月3日"
+  },
+  {
+    "name": "張智淵",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "國立臺灣科技大學 \n營建工程系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "64,000",
+    "seniority": "2年2月8日"
+  },
+  {
+    "name": "簡宏瑋",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "國立中央大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      }
+    ],
+    "salary": "92,000",
+    "seniority": "2年0月23日"
+  },
+  {
+    "name": "蕭輔仁",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "健行科技大學 \n資訊管理系\n 學士",
+    "certificates": [
+      {
+        "name": "1.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "52,000",
+    "seniority": "1年11月5日"
+  },
+  {
+    "name": "莊盛宇",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "國立臺灣科技大學 \n營建工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.土木技師",
+        "number": ""
+      }
+    ],
+    "salary": "58,000",
+    "seniority": "1年10月29日"
+  },
+  {
+    "name": "石婷瑄",
+    "group": "無組別",
+    "role": "",
+    "education": "萬能科技大學 \n行銷與流通管理系\n 學士",
+    "certificates": [],
+    "salary": "37,000",
+    "seniority": "1年2月6日"
+  },
+  {
+    "name": "楊元舜",
+    "group": "北分局",
+    "role": "",
+    "education": "中原大學 \n土木工程學系\n 碩士",
+    "certificates": [],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "李瑞迪",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "宏國德霖科技大學 \n土木工程系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      },
+      {
+        "name": "3.工地主任",
+        "number": ""
+      }
+    ],
+    "salary": "68,000",
+    "seniority": "0年11月25日"
+  },
+  {
+    "name": "潘國揚",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "陸軍軍官學校 \n理組 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(甲級職業安全管理師)",
+        "number": ""
+      }
+    ],
+    "salary": "71,000",
+    "seniority": "0年11月24日"
+  },
+  {
+    "name": "張佳文",
+    "group": "孝智組",
+    "role": "組員",
+    "education": "國立臺北科技大學 \n土木工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "65,000",
+    "seniority": "0年11月7日"
+  },
+  {
+    "name": "林莊健",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "中國文化大學 \n景觀學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(丙種)",
+        "number": ""
+      }
+    ],
+    "salary": "68,000",
+    "seniority": "0年10月8日"
+  },
+  {
+    "name": "江品增",
+    "group": "北分局",
+    "role": "",
+    "education": "國立宜蘭大學 \n土木工程學系 \n學士",
+    "certificates": [],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "許甘棠",
+    "group": "北分局",
+    "role": "",
+    "education": "高雄市私立國際高級商工職業學校",
+    "certificates": [],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "許淑靜",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "德霖科技大學 \n土木工程學系\n 學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(職業衛生管理師)",
+        "number": ""
+      }
+    ],
+    "salary": "52,000",
+    "seniority": "0年5月30日"
+  },
+  {
+    "name": "沈宏昌",
+    "group": "北分局",
+    "role": "",
+    "education": "國立中興大學\n 土木工程學系 \n學士",
+    "certificates": [],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "謝宜庭",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "國立聯合大學 \n土木與防災工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "55,000",
+    "seniority": "0年5月6日"
+  },
+  {
+    "name": "王子銘",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "Oregon State University\n水利工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.無人機專業操作證",
+        "number": ""
+      }
+    ],
+    "salary": "58,000",
+    "seniority": "0年5月6日"
+  },
+  {
+    "name": "王昱杰",
+    "group": "北分局",
+    "role": "",
+    "education": "逢甲大學 \n營建工程與管理學系\n 學士",
+    "certificates": [],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "許聖耘",
+    "group": "北分局",
+    "role": "",
+    "education": "朝陽科技大學 \n營建工程系 \n學士",
+    "certificates": [],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "周建志",
+    "group": "柏勛組",
+    "role": "組員",
+    "education": "國立臺灣科技大學 \n營建工程學系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      }
+    ],
+    "salary": "71,000",
+    "seniority": "0年5月4日"
+  },
+  {
+    "name": "高鴻瑜",
+    "group": "囿任組",
+    "role": "組員",
+    "education": "朝陽科技大學 \n營建工程系 \n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "63,000",
+    "seniority": "0年4月29日"
+  },
+  {
+    "name": "黃國亮",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "中原大學 \n土木工程學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "58,000",
+    "seniority": "0年4月20日"
+  },
+  {
+    "name": "蕭凱馨",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "萬能科技大學\n財務金融系\n學士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
+        "number": ""
+      }
+    ],
+    "salary": "50,000",
+    "seniority": "0年3月23日"
+  },
+  {
+    "name": "陳蒼緯",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "國立中興大學\n水土保持學系 \n碩士",
+    "certificates": [
+      {
+        "name": "1.品管",
+        "number": ""
+      },
+      {
+        "name": "2.管挖",
+        "number": ""
+      }
+    ],
+    "salary": "55,000",
+    "seniority": "0年1月8日"
+  },
+  {
+    "name": "陳偉仁",
+    "group": "北分局",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "江曜宏",
+    "group": "北分局",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "張語珊",
+    "group": "北分局",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  }
+]
