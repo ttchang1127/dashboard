@@ -333,7 +333,7 @@
             const timestamp = new Date().getTime(); // Prevent browser caching
 
             try {
-                const personnelUrl = new URL('personnelData.json', window.location.href);
+                const personnelUrl = new URL('personnelData-hr.json', window.location.href);
                 personnelUrl.searchParams.set('t', timestamp);
 
                 const personnelRes = await fetch(personnelUrl.href);
@@ -344,7 +344,7 @@
                     renderStatsTable(personnelData);
                     renderSalaryBrackets(personnelData);
                 } else {
-                    throw new Error(`找不到人員資料檔案 (personnelData.json): ${personnelRes.statusText}`);
+                    throw new Error(`找不到人員資料檔案 (personnelData-hr.json): ${personnelRes.statusText}`);
                 }
 
             } catch (error) {
