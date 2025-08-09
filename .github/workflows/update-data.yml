@@ -38,8 +38,8 @@ jobs:
             const SPREADSHEET_ID = '1GjhgGAUuI5g6rtOGiUceMLgeGy12sp93fNQlWKM-UGc';
             const API_KEY = process.env.GOOGLE_API_KEY;
 
-            // 人員資料工作表設定 (範圍擴大到 K 欄以包含年資和薪資)
-            const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:K200', file: 'personnelData.json' };
+            // 人員資料工作表設定 (範圍擴大到 200 列)
+            const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:I200', file: 'personnelData.json' };
             // 績效資料工作表設定
             const PERFORMANCE_SHEET = { name: '工作表2', range: 'B1:F2', file: 'performanceData.json' };
 
@@ -74,7 +74,7 @@ jobs:
             }
 
             function processPersonnelData(values) {
-              const headerMapping = { '姓名': 'name', '組別': 'group', '職稱': 'role', '學歷': 'education', '證照': 'certificates', '年資': 'seniority', '薪資': 'salary' };
+              const headerMapping = { '姓名': 'name', '組別': 'group', '職稱': 'role', '學歷': 'education', '證照': 'certificates' };
               const headers = values[0];
               const dataRows = values.slice(1);
 
