@@ -260,10 +260,10 @@
                         iconsHtml += `<span class="text-yellow-400 text-sm" title="技師">★</span>`;
                     }
                     if (hasPinguan) {
-                        iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-blue-400 ring-2 ring-white" title="品管"></span>`;
+                        iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-yellow-400" title="品管"></span>`;
                     }
                     if (hasZhian) {
-                        iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white" title="職安"></span>`;
+                        iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-green-500" title="職安"></span>`;
                     }
 
                     let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 `;
@@ -274,7 +274,6 @@
                     }
                     memberDiv.className = divClasses;
 
-                    // --- ✨✨✨ 關鍵修正 (移除人員卡片上的年資) ✨✨✨ ---
                     memberDiv.innerHTML = `
                         <div class="absolute top-2 right-2 flex items-center space-x-1.5">
                            ${iconsHtml}
@@ -282,7 +281,6 @@
                         <p class="font-semibold text-gray-900 truncate">${person.name}</p>
                         <p class="text-sm text-gray-500">${person.role || '組員'}</p>
                     `;
-                    // --- ✨✨✨ 修正結束 ✨✨✨ ---
                     
                     memberDiv.addEventListener('click', () => showPersonDetailsModal(person));
                     
@@ -303,8 +301,8 @@
             const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
             
             const certTypes = [
-                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-blue-400 ml-2" title="品管"></span>' },
-                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-400 ml-2" title="職安"></span>' },
+                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-400 ml-2" title="品管"></span>' },
+                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500 ml-2" title="職安"></span>' },
                 { name: '管挖', keywords: ['管挖'], icon: '' },
                 { name: '無人機', keywords: ['無人機'], icon: '' },
                 { name: '技師', keywords: ['技師'], icon: '<span class="inline-block text-yellow-400 text-sm ml-2" title="技師">★</span>' },
