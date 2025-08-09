@@ -255,8 +255,6 @@
                     const hasZhian = hasCert(person, ['職安', '職業安全', '業務主管']);
                     const hasJishi = hasCert(person, ['技師']);
 
-                    // --- ✨✨✨ 關鍵修正 (人員卡片圖示) ✨✨✨ ---
-                    // Build the icons HTML string with brighter colors and smaller size
                     let iconsHtml = '';
                     if (hasJishi) {
                         iconsHtml += `<span class="text-yellow-400 text-sm" title="技師">★</span>`;
@@ -267,7 +265,6 @@
                     if (hasZhian) {
                         iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white" title="職安"></span>`;
                     }
-                    // --- ✨✨✨ 修正結束 ✨✨✨ ---
 
                     let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 `;
                     if (isManager) {
@@ -277,13 +274,16 @@
                     }
                     memberDiv.className = divClasses;
 
+                    // --- ✨✨✨ 關鍵修正 (在人員卡片上顯示年資) ✨✨✨ ---
                     memberDiv.innerHTML = `
                         <div class="absolute top-2 right-2 flex items-center space-x-1.5">
                            ${iconsHtml}
                         </div>
                         <p class="font-semibold text-gray-900 truncate">${person.name}</p>
                         <p class="text-sm text-gray-500">${person.role || '組員'}</p>
+                        <p class="text-xs text-gray-400 mt-1">${person.seniority || '年資未提供'}</p>
                     `;
+                    // --- ✨✨✨ 修正結束 ✨✨✨ ---
                     
                     memberDiv.addEventListener('click', () => showPersonDetailsModal(person));
                     
@@ -303,28 +303,22 @@
         function renderStatsTable(personnelData) {
             const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
             
-            // --- ✨✨✨ 關鍵修正 (統計表格圖示) ✨✨✨ ---
-            // Define keywords for certificates to count, and add the corresponding icon HTML with brighter colors.
             const certTypes = [
                 { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-blue-400 ml-2" title="品管"></span>' },
                 { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-400 ml-2" title="職安"></span>' },
-                { name: '管挖', keywords: ['管挖'], icon: '' }, // No icon for this one, but keep the structure
+                { name: '管挖', keywords: ['管挖'], icon: '' },
                 { name: '無人機', keywords: ['無人機'], icon: '' },
                 { name: '技師', keywords: ['技師'], icon: '<span class="inline-block text-yellow-400 text-sm ml-2" title="技師">★</span>' },
                 { name: '工地主任', keywords: ['工地主任'], icon: '' }
             ];
-            // --- ✨✨✨ 修正結束 ✨✨✨ ---
 
-            // Helper function to check if a person's certificates contain any of the keywords.
             const hasCert = (person, certKeywords) => {
                 if (!person.certificates || person.certificates.length === 0) return false;
-                // Check if any of the person's certificates match any of the keywords.
                 return person.certificates.some(cert => 
                     certKeywords.some(keyword => cert.name.includes(keyword))
                 );
             };
 
-            // Calculate statistics for each group.
             const stats = {};
             groups.forEach(group => {
                 const members = personnelData.filter(p => p.group === group);
@@ -337,16 +331,12 @@
                 });
             });
 
-            // Build the HTML for the table body.
             let html = '';
-
-            // First row: Member count
             html += `<tr class="border-b border-gray-200 bg-gray-50">
                         <td class="p-3 font-medium text-gray-800">組人數</td>
                         ${groups.map(g => `<td class="p-3 text-center font-bold text-gray-900">${stats[g].memberCount}</td>`).join('')}
                      </tr>`;
 
-            // Subsequent rows: Certificate counts
             certTypes.forEach(certType => {
                 html += `<tr class="border-b border-gray-200 hover:bg-blue-50/50">
                             <td class="p-3 font-medium text-gray-800 flex items-center">${certType.name} ${certType.icon || ''}</td>
