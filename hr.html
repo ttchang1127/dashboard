@@ -52,13 +52,13 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200">統計項目</th>
-                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">孝智組</th>
-                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">囿任組</th>
-                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">鎧峻組</th>
-                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">巍耀組</th>
-                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">柏勛組</th>
+                                <tr class="bg-slate-200">
+                                    <th class="p-3 font-semibold text-gray-700 border-b-2 border-slate-300">統計項目</th>
+                                    <th class="p-3 font-semibold text-gray-700 border-b-2 border-slate-300 text-center">孝智組</th>
+                                    <th class="p-3 font-semibold text-gray-700 border-b-2 border-slate-300 text-center">囿任組</th>
+                                    <th class="p-3 font-semibold text-gray-700 border-b-2 border-slate-300 text-center">鎧峻組</th>
+                                    <th class="p-3 font-semibold text-gray-700 border-b-2 border-slate-300 text-center">巍耀組</th>
+                                    <th class="p-3 font-semibold text-gray-700 border-b-2 border-slate-300 text-center">柏勛組</th>
                                 </tr>
                             </thead>
                             <tbody id="stats-table-body">
@@ -273,16 +273,16 @@
                     stats[group].certs[certType.name] = members.filter(m => hasCert(m, certType.keywords)).length;
                 });
             });
-            let html = `<tr class="border-b border-gray-200 bg-gray-50">
+            let html = `<tr class="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
                         <td class="p-3 font-medium text-gray-800">組人數</td>
                         ${groups.map(g => `<td class="p-3 text-center font-bold text-gray-900">${stats[g].memberCount}</td>`).join('')}
                      </tr>
-                     <tr class="border-b border-gray-200 bg-gray-50">
+                     <tr class="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
                         <td class="p-3 font-medium text-gray-800">薪資總和</td>
                         ${groups.map(g => `<td class="p-3 text-center font-bold text-gray-900">${stats[g].totalSalary.toLocaleString()}</td>`).join('')}
                      </tr>`;
             certTypes.forEach(certType => {
-                html += `<tr class="border-b border-gray-200 hover:bg-blue-50/50">
+                html += `<tr class="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
                             <td class="p-3 font-medium text-gray-800 flex items-center">${certType.name} ${certType.icon || ''}</td>
                             ${groups.map(g => `<td class="p-3 text-center text-gray-700">${stats[g].certs[certType.name]}</td>`).join('')}
                          </tr>`;
