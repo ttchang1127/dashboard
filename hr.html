@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>桃辦/新北辦儀表板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
+        details > summary { list-style: none; cursor: pointer; }
+        details > summary::-webkit-details-marker { display: none; }
+        details summary .arrow { transition: transform 0.2s; }
+        details[open] summary .arrow { transform: rotate(90deg); }
+        /* Modal styles */
+        #person-modal.hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-4 lg:p-8">
+
+    <div class="w-full max-w-7xl mx-auto">
+        <header class="mb-8 text-center relative">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">桃辦/新北辦儀表板</h1>
+            <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (資料由後端定時更新)</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
+                </div>
+                <div id="accordion-container" class="space-y-3 max-h-[80vh] overflow-y-auto custom-scrollbar pr-2">
+                    <div class="text-center p-8 text-gray-500">讀取資料中...</div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                     <h2 class="text-2xl font-bold text-gray-800 mb-4">薪資級距</h2>
+                     <div id="salary-brackets-container" class="space-y-2">
+                         <div class="text-center p-8 text-gray-500">計算中...</div>
+                     </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">組別/證照統計</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200">統計項目</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">孝智組</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">囿任組</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">鎧峻組</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">巍耀組</th>
+                                    <th class="p-3 font-semibold text-gray-600 border-b-2 border-gray-200 text-center">柏勛組</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stats-table-body">
+                                <tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="person-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
+        <div id="modal-content" class="relative mx-auto p-6 border w-full max-w-md shadow-lg rounded-2xl bg-white transform transition-all scale-95 opacity-0">
+            <div class="flex justify-between items-start pb-3 border-b">
+                <div>
+                    <h3 id="modal-name" class="text-2xl leading-6 font-bold text-gray-900"></h3>
+                    <p id="modal-role-group" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                <button id="modal-close-btn" class="p-1 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="modal-details" class="mt-4 text-left space-y-4">
+                </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- GLOBAL VARIABLES & DOM REFERENCES ---
+        const accordionContainer = document.getElementById('accordion-container');
+        const statsTableBody = document.getElementById('stats-table-body');
+        const salaryBracketsContainer = document.getElementById('salary-brackets-container');
+        // Modal elements
+        const personModal = document.getElementById('person-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalName = document.getElementById('modal-name');
+        const modalRoleGroup = document.getElementById('modal-role-group');
+        const modalDetails = document.getElementById('modal-details');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        // --- MODAL FUNCTIONS ---
+        /**
+         * Displays the personnel detail modal with the given person's information.
+         * @param {object} person - The person object from the JSON data.
+         */
+        function showPersonDetailsModal(person) {
+            // Populate modal header
+            modalName.textContent = person.name || 'N/A';
+            modalRoleGroup.textContent = `${person.role || '組員'} / ${person.group || '無組別'}`;
+
+            // Populate modal details
+            const certs = person.certificates;
+            const hasValidCerts = certs && certs.length > 0 && certs[0].name !== '#N/A';
+            
+            const certsHtml = hasValidCerts
+                ? `<ul class="space-y-2 list-inside">${certs.map(c => `
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <div>
+                            <span class="font-medium text-gray-800">${c.name}</span>
+                            <span class="block text-xs text-gray-500">有效期限: ${c.expiry || '未提供'}</span>
+                        </div>
+                    </li>`).join('')}</ul>`
+                : '<span class="text-gray-500">無相關證照</span>';
+
+            // Format salary for display
+            const salaryValue = parseInt(String(person.salary || '').replace(/,/g, ''), 10);
+            const salaryText = !isNaN(salaryValue) ? `NT$ ${salaryValue.toLocaleString()}` : (person.salary || '未提供');
+            
+            // Assemble all details
+            modalDetails.innerHTML = `
+                <div class="grid grid-cols-2 gap-x-4 gap-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">年資</p>
+                        <p class="mt-1 text-gray-800">${person.seniority || '未提供'}</p>
+                    </div>
+                     <div>
+                        <p class="text-sm font-medium text-gray-500">薪資</p>
+                        <p class="mt-1 text-gray-800 font-semibold">${salaryText}</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">學歷</p>
+                    <p class="mt-1 text-gray-800 whitespace-pre-line">${person.education || '未提供'}</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">專業證照</p>
+                    <div class="mt-1">${certsHtml}</div>
+                </div>
+            `;
+
+            // Show modal with animation
+            personModal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        /**
+         * Hides the personnel detail modal.
+         */
+        function hidePersonDetailsModal() {
+            modalContent.classList.add('scale-95', 'opacity-0');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                personModal.classList.add('hidden');
+            }, 200);
+        }
+
+
+        // --- UI RENDERING ---
+        /**
+         * Builds and renders the personnel accordion UI.
+         * @param {Array<object>} personnelData - Array of person objects.
+         */
+        function buildAccordionUI(personnelData) {
+            const filteredData = personnelData.filter(person => person.group && person.group !== '北分局');
+            if (!filteredData || filteredData.length === 0) {
+                accordionContainer.innerHTML = `<div class="text-center p-8 text-gray-500">目前沒有人員資料。</div>`;
+                return;
+            }
+            const groupedData = filteredData.reduce((acc, person) => {
+                const group = person.group || "無組別";
+                acc[group] = acc[group] || [];
+                acc[group].push(person);
+                return acc;
+            }, {});
+            const groupOrder = [ "副總經理", "鎧峻組", "巍耀組", "囿任組", "孝智組", "柏勛組", "無組別" ];
+            accordionContainer.innerHTML = '';
+            const hasCert = (person, keywords) => {
+                if (!person.certificates || person.certificates.length === 0) return false;
+                return person.certificates.some(cert => 
+                    keywords.some(keyword => cert.name.includes(keyword))
+                );
+            };
+            groupOrder.forEach(groupName => {
+                const members = groupedData[groupName];
+                if (!members) return;
+                const details = document.createElement('details');
+                details.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden';
+                if (groupName === '副總經理' || groupName.includes('組')) details.open = true;
+                const summary = document.createElement('summary');
+                summary.className = 'flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition';
+                summary.innerHTML = `
+                    <span class="font-semibold text-gray-700">${groupName}</span>
+                    <span class="arrow text-gray-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                `;
+                const membersGrid = document.createElement('div');
+                membersGrid.className = 'p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4';
+                members.forEach(person => {
+                    const memberDiv = document.createElement('div');
+                    const isManager = person.role === '副理' || person.role === '副總經理';
+                    const hasPinguan = hasCert(person, ['品管']);
+                    const hasZhian = hasCert(person, ['職安', '職業安全', '業務主管']);
+                    const hasJishi = hasCert(person, ['技師']);
+                    let iconsHtml = '';
+                    if (hasJishi) iconsHtml += `<span class="text-yellow-400 text-sm" title="技師">★</span>`;
+                    if (hasPinguan) iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-blue-400 ring-2 ring-white" title="品管"></span>`;
+                    if (hasZhian) iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white" title="職安"></span>`;
+                    let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 `;
+                    divClasses += isManager ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200';
+                    memberDiv.className = divClasses;
+                    memberDiv.innerHTML = `
+                        <div class="absolute top-2 right-2 flex items-center space-x-1.5">${iconsHtml}</div>
+                        <p class="font-semibold text-gray-900 truncate">${person.name}</p>
+                        <p class="text-sm text-gray-500">${person.role || '組員'}</p>
+                    `;
+                    memberDiv.addEventListener('click', () => showPersonDetailsModal(person));
+                    membersGrid.appendChild(memberDiv);
+                });
+                details.appendChild(summary);
+                details.appendChild(membersGrid);
+                accordionContainer.appendChild(details);
+            });
+        }
+        
+        /**
+         * Renders the statistics table for groups and their certificates.
+         * @param {Array<object>} personnelData - Array of person objects.
+         */
+        function renderStatsTable(personnelData) {
+            const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
+            const certTypes = [
+                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-blue-400 ml-2" title="品管"></span>' },
+                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-400 ml-2" title="職安"></span>' },
+                { name: '管挖', keywords: ['管挖'], icon: '' },
+                { name: '無人機', keywords: ['無人機'], icon: '' },
+                { name: '技師', keywords: ['技師'], icon: '<span class="inline-block text-yellow-400 text-sm ml-2" title="技師">★</span>' },
+                { name: '工地主任', keywords: ['工地主任'], icon: '' }
+            ];
+            const hasCert = (person, certKeywords) => {
+                if (!person.certificates || person.certificates.length === 0) return false;
+                return person.certificates.some(cert => certKeywords.some(keyword => cert.name.includes(keyword)));
+            };
+            const stats = {};
+            groups.forEach(group => {
+                const members = personnelData.filter(p => p.group === group);
+                stats[group] = { memberCount: members.length, certs: {} };
+                certTypes.forEach(certType => {
+                    stats[group].certs[certType.name] = members.filter(m => hasCert(m, certType.keywords)).length;
+                });
+            });
+            let html = `<tr class="border-b border-gray-200 bg-gray-50">
+                        <td class="p-3 font-medium text-gray-800">組人數</td>
+                        ${groups.map(g => `<td class="p-3 text-center font-bold text-gray-900">${stats[g].memberCount}</td>`).join('')}
+                     </tr>`;
+            certTypes.forEach(certType => {
+                html += `<tr class="border-b border-gray-200 hover:bg-blue-50/50">
+                            <td class="p-3 font-medium text-gray-800 flex items-center">${certType.name} ${certType.icon || ''}</td>
+                            ${groups.map(g => `<td class="p-3 text-center text-gray-700">${stats[g].certs[certType.name]}</td>`).join('')}
+                         </tr>`;
+            });
+            statsTableBody.innerHTML = html;
+        }
+
+        /**
+         * Renders the salary bracket distribution list.
+         * @param {Array<object>} personnelData - Array of person objects.
+         */
+        function renderSalaryBrackets(personnelData) {
+            const brackets = [
+                { label: '10萬(含)以上', min: 100000, max: Infinity, members: [] },
+                { label: '9萬(含) - 10萬(不含)', min: 90000, max: 100000, members: [] },
+                { label: '8萬(含) - 9萬(不含)', min: 80000, max: 90000, members: [] },
+                { label: '7萬(含) - 8萬(不含)', min: 70000, max: 80000, members: [] },
+                { label: '6萬(含) - 7萬(不含)', min: 60000, max: 70000, members: [] },
+                { label: '5萬(含) - 6萬(不含)', min: 50000, max: 60000, members: [] },
+                { label: '5萬(不含)以下', min: 0, max: 50000, members: [] }
+            ];
+
+            personnelData.forEach(person => {
+                if (!person.salary) return;
+                const salary = parseInt(String(person.salary).replace(/,/g, ''), 10);
+                if (isNaN(salary)) return;
+
+                const bracket = brackets.find(b => salary >= b.min && salary < b.max);
+                if (bracket) {
+                    bracket.members.push(person.name);
+                }
+            });
+
+            let html = '';
+            brackets.forEach(bracket => {
+                html += `
+                <details class="bg-white border border-gray-200 rounded-lg overflow-hidden" ${bracket.members.length > 0 ? 'open' : ''}>
+                    <summary class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition">
+                        <span class="font-semibold text-gray-700">${bracket.label}</span>
+                        <span class="text-blue-600 font-bold bg-blue-100 rounded-full px-3 py-1 text-sm">${bracket.members.length} 人</span>
+                    </summary>
+                    <div class="p-3 border-t border-gray-200">
+                        ${bracket.members.length > 0 
+                            ? `<div class="flex flex-wrap gap-2">${bracket.members.map(name => `<span class="bg-gray-200 text-gray-800 text-sm font-medium px-2.5 py-1 rounded-full">${name}</span>`).join('')}</div>`
+                            : '<p class="text-gray-500 text-sm">此級距無人員</p>'
+                        }
+                    </div>
+                </details>
+                `;
+            });
+            salaryBracketsContainer.innerHTML = html;
+        }
+
+        // --- MAIN DATA FETCHING LOGIC ---
+        async function loadDashboardData() {
+            // Set loading states
+            salaryBracketsContainer.innerHTML = '<div class="text-center p-8 text-gray-500">計算中...</div>';
+            statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>';
+            accordionContainer.innerHTML = '<div class="text-center p-8 text-gray-500">讀取資料中...</div>';
+
+            const timestamp = new Date().getTime(); // Prevent browser caching
+
+            try {
+                const personnelUrl = new URL('personnelData.json', window.location.href);
+                personnelUrl.searchParams.set('t', timestamp);
+
+                const personnelRes = await fetch(personnelUrl.href);
+
+                if (personnelRes.ok) {
+                    const personnelData = await personnelRes.json();
+                    buildAccordionUI(personnelData);
+                    renderStatsTable(personnelData);
+                    renderSalaryBrackets(personnelData);
+                } else {
+                    throw new Error(`找不到人員資料檔案 (personnelData.json): ${personnelRes.statusText}`);
+                }
+
+            } catch (error) {
+                console.error("讀取儀表板資料失敗:", error);
+                const errorMsg = `<div class="text-center p-8 text-red-500">儀表板資料載入失敗。<br>${error.message}</div>`;
+                accordionContainer.innerHTML = errorMsg;
+                salaryBracketsContainer.innerHTML = errorMsg;
+                statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-red-500">無法載入統計資料</td></tr>';
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
+
+        // Modal close event listeners
+        modalCloseBtn.addEventListener('click', hidePersonDetailsModal);
+        personModal.addEventListener('click', (event) => {
+            if (event.target === personModal) {
+                hidePersonDetailsModal();
+            }
+        });
+
+    </script>
+</body>
+</html>
