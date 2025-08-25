@@ -933,5 +933,19 @@
     ],
     "salary": "#N/A",
     "seniority": "#N/A"
+  },
+  {
+    "name": "李萬財",
+    "group": "",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
   }
 ]
