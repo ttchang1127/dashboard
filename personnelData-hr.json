@@ -151,7 +151,7 @@
     "name": "王宥達",
     "group": "孝智組",
     "role": "",
-    "education": "國立交通大學 \n土木工程學系研究所\n 碩士",
+    "education": "交通大學\n土木工程學系\n碩士",
     "certificates": [
       {
         "name": "1.品管",
@@ -938,10 +938,30 @@
     "name": "李萬財",
     "group": "孝智組",
     "role": "組員",
-    "education": "#N/A",
+    "education": "國立臺灣科技大學 \n營建所",
     "certificates": [
       {
-        "name": "#N/A",
+        "name": "1.",
+        "number": ""
+      },
+      {
+        "name": "品管",
+        "number": ""
+      },
+      {
+        "name": "2.",
+        "number": ""
+      },
+      {
+        "name": "甲級職安管理師",
+        "number": ""
+      },
+      {
+        "name": "3.",
+        "number": ""
+      },
+      {
+        "name": "乙級職安管理員",
         "number": ""
       }
     ],
