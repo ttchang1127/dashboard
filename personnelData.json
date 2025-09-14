@@ -866,8 +866,33 @@
     "name": "李萬財",
     "group": "孝智組",
     "role": "組員",
-    "education": "#N/A",
-    "certificates": [],
+    "education": "國立臺灣科技大學 \n營建所",
+    "certificates": [
+      {
+        "name": "1.",
+        "number": ""
+      },
+      {
+        "name": "品管",
+        "number": ""
+      },
+      {
+        "name": "2.",
+        "number": ""
+      },
+      {
+        "name": "甲級職安管理師",
+        "number": ""
+      },
+      {
+        "name": "3.",
+        "number": ""
+      },
+      {
+        "name": "乙級職安管理員",
+        "number": ""
+      }
+    ],
     "seniority": "#N/A"
   }
 ]
