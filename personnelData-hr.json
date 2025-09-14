@@ -941,27 +941,15 @@
     "education": "國立臺灣科技大學 \n營建所",
     "certificates": [
       {
-        "name": "1.",
+        "name": "1.品管",
         "number": ""
       },
       {
-        "name": "品管",
+        "name": "2.甲級職安管理師",
         "number": ""
       },
       {
-        "name": "2.",
-        "number": ""
-      },
-      {
-        "name": "甲級職安管理師",
-        "number": ""
-      },
-      {
-        "name": "3.",
-        "number": ""
-      },
-      {
-        "name": "乙級職安管理員",
+        "name": "3.乙級職安管理員",
         "number": ""
       }
     ],
