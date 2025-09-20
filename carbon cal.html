@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>土木工程碳排計算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .input-group label {
+            flex-basis: 180px;
+            font-weight: 500;
+            color: #374151;
+            padding-right: 1rem;
+        }
+        .input-group input, .table-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+        }
+        .input-group .unit {
+            margin-left: 0.75rem;
+            color: #6b7280;
+        }
+        .total-card {
+            position: sticky;
+            top: 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+        }
+        .table-input {
+             min-width: 100px;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">土木工程碳排計算器</h1>
+            <p class="text-gray-600 mt-2">依據公共工程常用碳盤查參考係數</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 傳統土木工程項目 -->
+                    <div class="card">
+                        <h2 class="text-xl font-bold mb-4 text-blue-600">傳統土木工程項目 (碳排放)</h2>
+                        
+                        <!-- 鋼筋 -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold border-b pb-2 mb-3 text-gray-700">1. 鋼筋</h3>
+                            <div class="input-group">
+                                <label for="rebar-sd420w">鋼筋 SD420W</label>
+                                <input type="number" id="rebar-sd420w" placeholder="0" oninput="calculateEmissions()">
+                                <span class="unit">噸 (ton)</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="rebar-sd280w">鋼筋 SD280W</label>
+                                <input type="number" id="rebar-sd280w" placeholder="0" oninput="calculateEmissions()">
+                                <span class="unit">噸 (ton)</span>
+                            </div>
+                        </div>
+
+                        <!-- 模板 -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold border-b pb-2 mb-3 text-gray-700">2. 模板</h3>
+                            <div class="input-group">
+                                <label for="formwork-metal">金屬模板</label>
+                                <input type="number" id="formwork-metal" placeholder="0" oninput="calculateEmissions()">
+                                <span class="unit">平方公尺 (m²)</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="formwork-wood">一般木模板</label>
+                                <input type="number" id="formwork-wood" placeholder="0" oninput="calculateEmissions()">
+                                <span class="unit">平方公尺 (m²)</span>
+                            </div>
+                        </div>
+
+                        <!-- 混凝土 -->
+                        <div>
+                            <h3 class="text-lg font-semibold border-b pb-2 mb-3 text-gray-700">3. 混凝土</h3>
+                            <div class="input-group">
+                                <label for="concrete-140">140 kgf/cm²</label>
+                                <input type="number" id="concrete-140" placeholder="0" oninput="calculateEmissions()">
+                                <span class="unit">立方公尺 (m³)</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="concrete-210">210 kgf/cm²</label>
+                                <input type="number" id="concrete-210" placeholder="0" oninput="calculateEmissions()">
+                                <span class="unit">立方公尺 (m³)</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="concrete-280">280 kgf/cm²</label>
+                                <input type="number" id="concrete-280" placeholder="0" oninput="calculateEmissions()">
+                                <span class="unit">立方公尺 (m³)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 減碳項目 -->
+                    <div class="card">
+                        <h2 class="text-xl font-bold mb-4 text-green-600">減碳項目 (碳吸收)</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="border-b">
+                                    <tr>
+                                        <th class="py-2 pr-4 font-semibold text-gray-700">項目</th>
+                                        <th class="py-2 px-2 font-semibold text-gray-700 text-center">數量</th>
+                                        <th class="py-2 px-2 font-semibold text-gray-700 text-center">栽種年限</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 喬木 -->
+                                    <tr class="border-b">
+                                        <td class="py-3 pr-4 font-medium text-gray-600">喬木</td>
+                                        <td class="py-2 px-2">
+                                            <div class="flex items-center">
+                                                <input type="number" id="plant-tree" placeholder="0" oninput="calculateEmissions()" class="table-input">
+                                                <span class="ml-2 text-gray-600">株</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-2 px-2">
+                                            <div class="flex items-center">
+                                                <input type="number" id="plant-tree-time" value="1" min="1" oninput="calculateEmissions()" class="table-input">
+                                                <span class="ml-2 text-gray-600">年</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- 灌木 -->
+                                    <tr class="border-b">
+                                        <td class="py-3 pr-4 font-medium text-gray-600">灌木</td>
+                                        <td class="py-2 px-2">
+                                            <div class="flex items-center">
+                                                <input type="number" id="plant-shrub" placeholder="0" oninput="calculateEmissions()" class="table-input">
+                                                <span class="ml-2 text-gray-600">株</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-2 px-2">
+                                            <div class="flex items-center">
+                                                <input type="number" id="plant-shrub-time" value="1" min="1" oninput="calculateEmissions()" class="table-input">
+                                                <span class="ml-2 text-gray-600">年</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- 草皮 -->
+                                    <tr>
+                                        <td class="py-3 pr-4 font-medium text-gray-600">草皮</td>
+                                        <td class="py-2 px-2">
+                                            <div class="flex items-center">
+                                                <input type="number" id="plant-lawn" placeholder="0" oninput="calculateEmissions()" class="table-input">
+                                                <span class="ml-2 text-gray-600">m²</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-2 px-2">
+                                            <div class="flex items-center">
+                                                <input type="number" id="plant-lawn-time" value="1" min="1" oninput="calculateEmissions()" class="table-input">
+                                                <span class="ml-2 text-gray-600">年</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1">
+                <div class="card total-card">
+                    <h2 class="text-xl font-bold mb-4">計算結果</h2>
+                    <div class="text-center">
+                        <p class="text-lg mb-2">合計碳排量</p>
+                        <p id="total-emissions" class="text-4xl font-extrabold">0.00</p>
+                        <p class="text-lg mt-1">公斤 CO₂e</p>
+                    </div>
+                    <hr class="my-6 border-blue-200">
+                    <div>
+                        <p id="emissions-positive" class="text-lg">總排放量: 0.00 kg CO₂e</p>
+                        <p id="emissions-negative" class="text-lg mt-2">總減碳量: 0.00 kg CO₂e</p>
+                        <p id="reduction-percentage" class="text-lg mt-2 font-semibold text-green-200">減碳比例: 0.00 %</p>
+                    </div>
+                    <div class="mt-6 text-xs text-blue-100">
+                        <p>免責聲明：</p>
+                        <p>本計算器之碳排係數參考自<a href="https://www.wra.gov.tw/News.aspx?n=39882&sms=9071&_Query=a0c28ecc-a263-43fc-8bc9-013dd2efb640&page=3&PageSize=200" target="_blank" rel="noopener noreferrer" class="underline hover:text-white">水利署公布之碳盤查係數</a>，僅供初步估算與參考，不具法律效力。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 碳排放與吸收係數 (單位: kg-CO2e)
+        // 數據來源主要參考台灣公共工程委員會及相關環保署公開資料，為估算值
+        const factors = {
+            // 排放項目
+            'rebar-sd420w': 683,      // 每噸
+            'rebar-sd280w': 683,      // 每噸 (常用鋼筋係數相似)
+            'formwork-metal': 5,      // 每平方公尺 (假設可重複使用)
+            'formwork-wood': 8,       // 每平方公尺
+            'concrete-140': 262,      // 每立方公尺
+            'concrete-210': 306,      // 每立方公尺
+            'concrete-280': 355,      // 每立方公尺
+            // 減碳(吸收)項目 (以負值表示)
+            'plant-tree': -12,         // 每株 (估算年吸收量)
+            'plant-shrub': -3,        // 每株 (估算年吸收量)
+            'plant-lawn': -0.5        // 每平方公尺 (估算年吸收量)
+        };
+
+        function getValue(id) {
+            const value = document.getElementById(id).value;
+            return parseFloat(value) || 0;
+        }
+
+        function calculateEmissions() {
+            let totalPositive = 0;
+            let totalNegative = 0;
+
+            // 計算排放量
+            totalPositive += getValue('rebar-sd420w') * factors['rebar-sd420w'];
+            totalPositive += getValue('rebar-sd280w') * factors['rebar-sd280w'];
+            totalPositive += getValue('formwork-metal') * factors['formwork-metal'];
+            totalPositive += getValue('formwork-wood') * factors['formwork-wood'];
+            totalPositive += getValue('concrete-140') * factors['concrete-140'];
+            totalPositive += getValue('concrete-210') * factors['concrete-210'];
+            totalPositive += getValue('concrete-280') * factors['concrete-280'];
+
+            // 計算減碳量
+            totalNegative += (getValue('plant-tree') * factors['plant-tree']) * (getValue('plant-tree-time') || 1);
+            totalNegative += (getValue('plant-shrub') * factors['plant-shrub']) * (getValue('plant-shrub-time') || 1);
+            totalNegative += (getValue('plant-lawn') * factors['plant-lawn']) * (getValue('plant-lawn-time') || 1);
+
+            const totalEmissions = totalPositive + totalNegative;
+
+            // 計算減碳比例
+            let reductionPercentage = 0;
+            if (totalPositive > 0) {
+                reductionPercentage = ((-totalNegative) / totalPositive) * 100;
+            }
+
+            // 更新顯示結果
+            document.getElementById('total-emissions').textContent = totalEmissions.toFixed(2);
+            document.getElementById('emissions-positive').textContent = `總排放量: ${totalPositive.toFixed(2)} kg CO₂e`;
+            document.getElementById('emissions-negative').textContent = `總減碳量: ${(-totalNegative).toFixed(2)} kg CO₂e`;
+            document.getElementById('reduction-percentage').textContent = `減碳比例: ${reductionPercentage.toFixed(2)} %`;
+        }
+        
+        // 頁面載入時先計算一次，確保初始值為0
+        window.onload = calculateEmissions;
+    </script>
+</body>
+</html>
