@@ -111,15 +111,13 @@
         const chartCanvas = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
         const totalAmountEl = document.getElementById('total-amount');
-        const statsTableBody = document.getElementById('stats-table-body'); // Reference for stats table
-        // Modal elements
+        const statsTableBody = document.getElementById('stats-table-body');
         const personModal = document.getElementById('person-modal');
         const modalContent = document.getElementById('modal-content');
         const modalName = document.getElementById('modal-name');
         const modalRoleGroup = document.getElementById('modal-role-group');
         const modalDetails = document.getElementById('modal-details');
         const modalCloseBtn = document.getElementById('modal-close-btn');
-
 
         // --- 色彩參考 (用於圖表) ---
         const groupColorMapping = [
@@ -131,20 +129,11 @@
         ];
 
         // --- MODAL FUNCTIONS ---
-        /**
-         * Displays the personnel detail modal with the given person's information.
-         * @param {object} person - The person object from the JSON data.
-         */
         function showPersonDetailsModal(person) {
-            // Populate modal header
             modalName.textContent = person.name || 'N/A';
             modalRoleGroup.textContent = `${person.role || '組員'} / ${person.group || '無組別'}`;
-
-            // Populate modal details
             const certs = person.certificates;
             const hasValidCerts = certs && certs.length > 0 && certs[0].name !== '#N/A';
-            
-            // Create HTML for certificates list
             const certsHtml = hasValidCerts
                 ? `<ul class="space-y-2 list-inside">${certs.map(c => `
                     <li class="flex items-start">
@@ -155,200 +144,108 @@
                         </div>
                     </li>`).join('')}</ul>`
                 : '<span class="text-gray-500">無相關證照</span>';
-            
-            // Assemble all details
             modalDetails.innerHTML = `
-                <div>
-                    <p class="text-sm font-medium text-gray-500">年資</p>
-                    <p class="mt-1 text-gray-800">${person.seniority || '未提供'}</p>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">學歷</p>
-                    <p class="mt-1 text-gray-800 whitespace-pre-line">${person.education || '未提供'}</p>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">專業證照</p>
-                    <div class="mt-1">${certsHtml}</div>
-                </div>
-            `;
-
-            // Show modal with animation
+                <div><p class="text-sm font-medium text-gray-500">年資</p><p class="mt-1 text-gray-800">${person.seniority || '未提供'}</p></div>
+                <div><p class="text-sm font-medium text-gray-500">學歷</p><p class="mt-1 text-gray-800 whitespace-pre-line">${person.education || '未提供'}</p></div>
+                <div><p class="text-sm font-medium text-gray-500">專業證照</p><div class="mt-1">${certsHtml}</div></div>`;
             personModal.classList.remove('hidden');
             setTimeout(() => {
                 modalContent.classList.remove('scale-95', 'opacity-0');
                 modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10); // Small delay to ensure transition triggers
+            }, 10);
         }
 
-        /**
-         * Hides the personnel detail modal.
-         */
         function hidePersonDetailsModal() {
             modalContent.classList.add('scale-95', 'opacity-0');
             modalContent.classList.remove('scale-100', 'opacity-100');
-            setTimeout(() => {
-                personModal.classList.add('hidden');
-            }, 200); // Match transition duration
+            setTimeout(() => personModal.classList.add('hidden'), 200);
         }
 
-
         // --- UI RENDERING ---
-        /**
-         * Builds and renders the personnel accordion UI.
-         * @param {Array<object>} personnelData - Array of person objects.
-         */
         function buildAccordionUI(personnelData) {
-            // 1. Filter out personnel from '北分局' or with no group
-            const filteredData = personnelData.filter(person => person.group && person.group !== '北分局');
-
-            if (!filteredData || filteredData.length === 0) {
+            const filteredData = personnelData.filter(p => p.group && p.group !== '北分局');
+            if (!filteredData.length) {
                 accordionContainer.innerHTML = `<div class="text-center p-8 text-gray-500">目前沒有人員資料。</div>`;
                 return;
             }
-            
-            // 2. Group the filtered data
             const groupedData = filteredData.reduce((acc, person) => {
                 const group = person.group || "無組別";
                 acc[group] = acc[group] || [];
                 acc[group].push(person);
                 return acc;
             }, {});
-
-            // 3. Define the specific group order
-            const groupOrder = [ "副總經理", "鎧峻組", "巍耀組", "囿任組", "孝智組", "柏勛組", "無組別" ];
-            
+            const groupOrder = ["副總經理", "鎧峻組", "巍耀組", "囿任組", "孝智組", "柏勛組", "無組別"];
             accordionContainer.innerHTML = '';
-            
-            // Helper function to check for specific certificates
-            const hasCert = (person, keywords) => {
-                if (!person.certificates || person.certificates.length === 0) return false;
-                return person.certificates.some(cert => 
-                    keywords.some(keyword => cert.name.includes(keyword))
-                );
-            };
-
-            // 4. Render groups based on the defined order
+            const hasCert = (person, keywords) => person.certificates?.some(cert => keywords.some(kw => cert.name.includes(kw)));
             groupOrder.forEach(groupName => {
                 const members = groupedData[groupName];
-                if (!members) return; // Skip if group doesn't exist in the data
-
+                if (!members) return;
                 const details = document.createElement('details');
                 details.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden';
                 if (groupName === '副總經理' || groupName.includes('組')) details.open = true;
-
-                const summary = document.createElement('summary');
-                summary.className = 'flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition';
-                summary.innerHTML = `
-                    <span class="font-semibold text-gray-700">${groupName}</span>
-                    <span class="arrow text-gray-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
-                `;
-
-                const membersGrid = document.createElement('div');
-                membersGrid.className = 'p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4';
-                
-                members.forEach(person => {
-                    const memberDiv = document.createElement('div');
-                    const isManager = person.role === '副理' || person.role === '副總經理';
-                    
-                    // Check for specific certificates
-                    const hasPinguan = hasCert(person, ['品管']);
-                    const hasZhian = hasCert(person, ['職安', '職業安全', '業務主管']);
-                    const hasJishi = hasCert(person, ['技師']);
-
-                    let iconsHtml = '';
-                    if (hasJishi) {
-                        iconsHtml += `<span class="text-yellow-400 text-sm" title="技師">★</span>`;
-                    }
-                    if (hasPinguan) {
-                        iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-yellow-400" title="品管"></span>`;
-                    }
-                    if (hasZhian) {
-                        iconsHtml += `<span class="h-2.5 w-2.5 rounded-full bg-green-500" title="職安"></span>`;
-                    }
-
-                    let divClasses = `p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 `;
-                    if (isManager) {
-                        divClasses += 'bg-blue-50 border-blue-200';
-                    } else {
-                        divClasses += 'bg-gray-50 border-gray-200';
-                    }
-                    memberDiv.className = divClasses;
-
-                    memberDiv.innerHTML = `
-                        <div class="absolute top-2 right-2 flex items-center space-x-1.5">
-                           ${iconsHtml}
-                        </div>
-                        <p class="font-semibold text-gray-900 truncate">${person.name}</p>
-                        <p class="text-sm text-gray-500">${person.role || '組員'}</p>
-                    `;
-                    
-                    memberDiv.addEventListener('click', () => showPersonDetailsModal(person));
-                    
-                    membersGrid.appendChild(memberDiv);
+                details.innerHTML = `
+                    <summary class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition">
+                        <span class="font-semibold text-gray-700">${groupName}</span>
+                        <span class="arrow text-gray-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                    </summary>
+                    <div class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        ${members.map(person => {
+                            const isManager = person.role === '副理' || person.role === '副總經理';
+                            const icons = [
+                                hasCert(person, ['技師']) ? `<span class="text-yellow-400 text-sm" title="技師">★</span>` : '',
+                                hasCert(person, ['品管']) ? `<span class="h-2.5 w-2.5 rounded-full bg-yellow-400" title="品管"></span>` : '',
+                                hasCert(person, ['職安', '職業安全', '業務主管']) ? `<span class="h-2.5 w-2.5 rounded-full bg-green-500" title="職安"></span>` : ''
+                            ].join('');
+                            return `
+                                <div class="member-card p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 ${isManager ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}" data-person-id="${person.id}">
+                                    <div class="absolute top-2 right-2 flex items-center space-x-1.5">${icons}</div>
+                                    <p class="font-semibold text-gray-900 truncate">${person.name}</p>
+                                    <p class="text-sm text-gray-500">${person.role || '組員'}</p>
+                                </div>`;
+                        }).join('')}
+                    </div>`;
+                details.querySelectorAll('.member-card').forEach(card => {
+                    card.addEventListener('click', () => showPersonDetailsModal(members.find(m => m.id == card.dataset.personId)));
                 });
-
-                details.appendChild(summary);
-                details.appendChild(membersGrid);
                 accordionContainer.appendChild(details);
             });
         }
 
-        /**
-         * Renders the statistics table for groups and their certificates.
-         * @param {Array<object>} personnelData - Array of person objects.
-         */
         function renderStatsTable(personnelData) {
             const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
-            
             const certTypes = [
-                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-400 ml-2" title="品管"></span>' },
-                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500 ml-2" title="職安"></span>' },
+                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-400 ml-2"></span>' },
+                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500 ml-2"></span>' },
                 { name: '管挖', keywords: ['管挖'], icon: '' },
                 { name: '無人機', keywords: ['無人機'], icon: '' },
-                { name: '技師', keywords: ['技師'], icon: '<span class="inline-block text-yellow-400 text-sm ml-2" title="技師">★</span>' },
+                { name: '技師', keywords: ['技師'], icon: '<span class="inline-block text-yellow-400 text-sm ml-2">★</span>' },
                 { name: '工地主任', keywords: ['工地主任'], icon: '' }
             ];
-
-            const hasCert = (person, certKeywords) => {
-                if (!person.certificates || person.certificates.length === 0) return false;
-                return person.certificates.some(cert => 
-                    certKeywords.some(keyword => cert.name.includes(keyword))
-                );
-            };
-
-            const stats = {};
-            groups.forEach(group => {
+            const hasCert = (person, keywords) => person.certificates?.some(cert => keywords.some(kw => cert.name.includes(kw)));
+            const stats = groups.reduce((acc, group) => {
                 const members = personnelData.filter(p => p.group === group);
-                stats[group] = {
+                acc[group] = {
                     memberCount: members.length,
-                    certs: {}
+                    certs: certTypes.reduce((certAcc, type) => {
+                        certAcc[type.name] = members.filter(m => hasCert(m, type.keywords)).length;
+                        return certAcc;
+                    }, {})
                 };
-                certTypes.forEach(certType => {
-                    stats[group].certs[certType.name] = members.filter(m => hasCert(m, certType.keywords)).length;
-                });
-            });
-
-            let html = '';
-            html += `<tr class="border-b border-gray-200 bg-gray-50">
-                        <td class="p-3 font-medium text-gray-800">組人數</td>
-                        ${groups.map(g => `<td class="p-3 text-center font-bold text-gray-900">${stats[g].memberCount}</td>`).join('')}
-                     </tr>`;
-
-            certTypes.forEach(certType => {
+                return acc;
+            }, {});
+            let html = `<tr class="border-b border-gray-200 bg-gray-50">
+                <td class="p-3 font-medium text-gray-800">組人數</td>
+                ${groups.map(g => `<td class="p-3 text-center font-bold text-gray-900">${stats[g].memberCount}</td>`).join('')}
+            </tr>`;
+            certTypes.forEach(type => {
                 html += `<tr class="border-b border-gray-200 hover:bg-blue-50/50">
-                            <td class="p-3 font-medium text-gray-800 flex items-center">${certType.name} ${certType.icon || ''}</td>
-                            ${groups.map(g => `<td class="p-3 text-center text-gray-700">${stats[g].certs[certType.name]}</td>`).join('')}
-                         </tr>`;
+                    <td class="p-3 font-medium text-gray-800 flex items-center">${type.name} ${type.icon}</td>
+                    ${groups.map(g => `<td class="p-3 text-center text-gray-700">${stats[g].certs[type.name]}</td>`).join('')}
+                </tr>`;
             });
-
             statsTableBody.innerHTML = html;
         }
 
-
-        /**
-         * Creates a new Chart.js instance or updates an existing one.
-         * @param {object} chartData - The data object for the chart.
-         */
         function createOrUpdateChart(chartData) {
             const ctx = chartCanvas.getContext('2d');
             if (performanceChart) {
@@ -362,168 +259,77 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         scales: {
-                            y: { // Left axis for Amount
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
+                            y: {
                                 beginAtZero: true,
-                                title: { display: true, text: '執行金額 (元)' },
                                 ticks: { callback: value => 'NT$ ' + value.toLocaleString() }
-                            },
-                            y1: { // Right axis for Case Count
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                beginAtZero: true,
-                                title: { display: true, text: '案件數量 (件)' },
-                                grid: { drawOnChartArea: false }, // Avoid grid line clutter
-                                ticks: { precision: 0 } // Ensure whole numbers
                             }
                         },
                         plugins: {
-                            legend: { display: true, position: 'top' }, // Show legend
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.y !== null) {
-                                            // Check which axis this dataset belongs to
-                                            if (context.dataset.yAxisID === 'y1') {
-                                                label += context.parsed.y + ' 件';
-                                            } else {
-                                                label += 'NT$ ' + context.parsed.y.toLocaleString();
-                                            }
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: context => `NT$ ${context.parsed.y.toLocaleString()}` } }
                         }
                     }
                 });
             }
         }
         
-        /**
-         * Processes and renders the performance data into the bar chart and calculates total.
-         * @param {Array<object>} performanceData - Array of performance objects with amount and caseCount.
-         */
         function renderPerformanceChart(performanceData) {
             const chartData = {
                 labels: performanceData.map(p => p.groupName),
                 datasets: [{
                     label: '114年度已請領費用 (元)',
                     data: performanceData.map(p => p.amount),
-                    backgroundColor: performanceData.map(p => {
-                        const mapping = groupColorMapping.find(m => m.groupName === p.groupName);
-                        return mapping ? mapping.color : 'rgba(201, 203, 207, 0.6)';
-                    }),
-                    borderColor: performanceData.map(p => {
-                        const mapping = groupColorMapping.find(m => m.groupName === p.groupName);
-                        return mapping ? mapping.borderColor : 'rgba(201, 203, 207, 1)';
-                    }),
+                    backgroundColor: performanceData.map(p => groupColorMapping.find(m => m.groupName === p.groupName)?.color || 'rgba(201, 203, 207, 0.6)'),
+                    borderColor: performanceData.map(p => groupColorMapping.find(m => m.groupName === p.groupName)?.borderColor || 'rgba(201, 203, 207, 1)'),
                     borderWidth: 1,
-                    borderRadius: 5,
-                    yAxisID: 'y', // Assign to the left Y-axis
-                },
-                {
-                    label: '協助案件 (件)',
-                    data: performanceData.map(p => p.caseCount),
-                    backgroundColor: 'rgba(255, 159, 64, 0.6)',
-                    borderColor: 'rgba(255, 159, 64, 1)',
-                    borderWidth: 1,
-                    borderRadius: 5,
-                    yAxisID: 'y1', // Assign to the right Y-axis
+                    borderRadius: 5
                 }]
             };
             createOrUpdateChart(chartData);
-
-            // Calculate and display total amount
             const totalAmount = performanceData.reduce((sum, item) => sum + item.amount, 0);
-            if (totalAmountEl) {
-                totalAmountEl.textContent = `總金額: ${totalAmount.toLocaleString()} 元`;
-            }
+            totalAmountEl.textContent = `總金額: ${totalAmount.toLocaleString()} 元`;
         }
 
         // --- MAIN DATA FETCHING LOGIC ---
         async function loadDashboardData() {
             refreshDashboardBtn.disabled = true;
             refreshDashboardBtn.textContent = '讀取中...';
-            if (totalAmountEl) {
-                totalAmountEl.textContent = '總金額: 計算中...';
-            }
-            if (statsTableBody) {
-                statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>';
-            }
+            totalAmountEl.textContent = '總金額: 計算中...';
+            statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>';
             
-            const timestamp = new Date().getTime(); // Prevent browser caching
-
+            const timestamp = new Date().getTime();
             try {
-                const personnelUrl = new URL('personnelData.json', window.location.href);
-                personnelUrl.searchParams.set('t', timestamp);
-
-                const performanceUrl = new URL('performanceData.json', window.location.href);
-                performanceUrl.searchParams.set('t', timestamp);
-
                 const [personnelRes, performanceRes] = await Promise.all([
-                    fetch(personnelUrl.href),
-                    fetch(performanceUrl.href)
+                    fetch(`personnelData.json?t=${timestamp}`),
+                    fetch(`performanceData.json?t=${timestamp}`)
                 ]);
 
-                if (personnelRes.ok) {
-                    const personnelData = await personnelRes.json();
-                    buildAccordionUI(personnelData);
-                    renderStatsTable(personnelData); // Render stats table
-                } else {
-                    throw new Error(`找不到人員資料檔案 (personnelData.json): ${personnelRes.statusText}`);
+                if (!personnelRes.ok) throw new Error(`找不到人員資料檔案 (personnelData.json)`);
+                const personnelData = await personnelRes.json();
+                // Assign a unique ID to each person for easier lookup
+                personnelData.forEach((p, index) => p.id = p.id || index);
+                buildAccordionUI(personnelData);
+                renderStatsTable(personnelData);
+                
+                if (!performanceRes.ok) throw new Error(`找不到績效資料檔案 (performanceData.json)`);
+                const values = await performanceRes.json();
+                if (!values || !Array.isArray(values) || values.length < 2 || !Array.isArray(values[0]) || !Array.isArray(values[1])) {
+                    throw new Error("績效資料格式不符");
                 }
                 
-                if (performanceRes.ok) {
-                    const values = await performanceRes.json();
-                    // Expects format: [ ["Group1", "Group2"], [10000, 20000], [5, 8] ]
-                    if (!values || !Array.isArray(values) || values.length < 2 || !Array.isArray(values[0]) || !Array.isArray(values[1])) {
-                        console.error("績效資料格式不符");
-                        renderPerformanceChart([]);
-                        if (totalAmountEl) {
-                            totalAmountEl.textContent = '總金額: 資料格式錯誤';
-                        }
-                        return;
-                    }
-                    
-                    const groupNames = values[0];
-                    const groupAmounts = values[1];
-                    const groupCaseCounts = values[2] || []; // Handle case where case data might be missing
-
-                    const performanceData = groupNames.map((groupName, index) => {
-                        const amountStr = groupAmounts[index] || "0";
-                        const amount = parseInt(String(amountStr).replace(/,/g, ''), 10);
-                        const caseCountStr = groupCaseCounts[index] || "0";
-                        const caseCount = parseInt(String(caseCountStr).replace(/,/g, ''), 10);
-                        
-                        return { 
-                            groupName: groupName, 
-                            amount: isNaN(amount) ? 0 : amount,
-                            caseCount: isNaN(caseCount) ? 0 : caseCount
-                        };
-                    });
-
-                    renderPerformanceChart(performanceData);
-                } else {
-                    throw new Error(`找不到績效資料檔案 (performanceData.json): ${performanceRes.statusText}`);
-                }
+                const [groupNames, groupAmounts] = values;
+                const performanceData = groupNames.map((groupName, index) => {
+                    const amountStr = groupAmounts[index] || "0";
+                    const amount = parseInt(String(amountStr).replace(/,/g, ''), 10);
+                    return { groupName, amount: isNaN(amount) ? 0 : amount };
+                });
+                renderPerformanceChart(performanceData);
 
             } catch (error) {
                 console.error("讀取儀表板資料失敗:", error);
                 accordionContainer.innerHTML = `<div class="text-center p-8 text-red-500">儀表板資料載入失敗。<br>${error.message}</div>`;
-                if (totalAmountEl) {
-                    totalAmountEl.textContent = '總金額: 無法計算';
-                }
-                if (statsTableBody) {
-                    statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-red-500">無法載入統計資料</td></tr>';
-                }
+                totalAmountEl.textContent = '總金額: 無法計算';
+                statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-red-500">無法載入統計資料</td></tr>';
                 const ctx = chartCanvas.getContext('2d');
                 if (ctx) {
                     if (performanceChart) performanceChart.destroy();
@@ -543,16 +349,10 @@
         // --- EVENT LISTENERS ---
         document.addEventListener('DOMContentLoaded', loadDashboardData);
         refreshDashboardBtn.addEventListener('click', loadDashboardData);
-
-        // Modal close event listeners
         modalCloseBtn.addEventListener('click', hidePersonDetailsModal);
         personModal.addEventListener('click', (event) => {
-            // Close modal if the outer container (overlay) is clicked
-            if (event.target === personModal) {
-                hidePersonDetailsModal();
-            }
+            if (event.target === personModal) hidePersonDetailsModal();
         });
-
     </script>
 </body>
 </html>
