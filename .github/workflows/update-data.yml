@@ -41,7 +41,7 @@ jobs:
             // 人員資料工作表設定 (範圍擴大到 K 欄以確保能讀到年資)
             const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:K200', file: 'personnelData.json' };
             // 績效資料工作表設定
-            const PERFORMANCE_SHEET = { name: '工作表2', range: 'B5:F6', file: 'performanceData.json' };
+            const PERFORMANCE_SHEET = { name: '工作表2', range: 'B5:G6', file: 'performanceData.json' };
 
             // 檢查 API 金鑰是否存在
             if (!API_KEY) {
