@@ -99,7 +99,7 @@
                 </button>
             </div>
             <div id="modal-details" class="mt-4 text-left space-y-4">
-                </div>
+            </div>
         </div>
     </div>
 
@@ -361,10 +361,46 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true, ticks: { callback: value => 'NT$ ' + value.toLocaleString() } } },
+                        scales: {
+                            y: { // Left axis for Amount
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                beginAtZero: true,
+                                title: { display: true, text: '執行金額 (元)' },
+                                ticks: { callback: value => 'NT$ ' + value.toLocaleString() }
+                            },
+                            y1: { // Right axis for Case Count
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                beginAtZero: true,
+                                title: { display: true, text: '案件數量 (件)' },
+                                grid: { drawOnChartArea: false }, // Avoid grid line clutter
+                                ticks: { precision: 0 } // Ensure whole numbers
+                            }
+                        },
                         plugins: {
-                            legend: { display: false },
-                            tooltip: { callbacks: { label: context => `NT$ ${context.parsed.y.toLocaleString()}` } }
+                            legend: { display: true, position: 'top' }, // Show legend
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            // Check which axis this dataset belongs to
+                                            if (context.dataset.yAxisID === 'y1') {
+                                                label += context.parsed.y + ' 件';
+                                            } else {
+                                                label += 'NT$ ' + context.parsed.y.toLocaleString();
+                                            }
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
                         }
                     }
                 });
@@ -373,7 +409,7 @@
         
         /**
          * Processes and renders the performance data into the bar chart and calculates total.
-         * @param {Array<object>} performanceData - Array of performance objects.
+         * @param {Array<object>} performanceData - Array of performance objects with amount and caseCount.
          */
         function renderPerformanceChart(performanceData) {
             const chartData = {
@@ -390,7 +426,17 @@
                         return mapping ? mapping.borderColor : 'rgba(201, 203, 207, 1)';
                     }),
                     borderWidth: 1,
-                    borderRadius: 5
+                    borderRadius: 5,
+                    yAxisID: 'y', // Assign to the left Y-axis
+                },
+                {
+                    label: '協助案件 (件)',
+                    data: performanceData.map(p => p.caseCount),
+                    backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    yAxisID: 'y1', // Assign to the right Y-axis
                 }]
             };
             createOrUpdateChart(chartData);
@@ -437,22 +483,31 @@
                 
                 if (performanceRes.ok) {
                     const values = await performanceRes.json();
+                    // Expects format: [ ["Group1", "Group2"], [10000, 20000], [5, 8] ]
                     if (!values || !Array.isArray(values) || values.length < 2 || !Array.isArray(values[0]) || !Array.isArray(values[1])) {
-                         console.error("績效資料格式不符");
-                         renderPerformanceChart([]);
-                         if (totalAmountEl) {
-                             totalAmountEl.textContent = '總金額: 資料格式錯誤';
-                         }
-                         return;
+                        console.error("績效資料格式不符");
+                        renderPerformanceChart([]);
+                        if (totalAmountEl) {
+                            totalAmountEl.textContent = '總金額: 資料格式錯誤';
+                        }
+                        return;
                     }
                     
                     const groupNames = values[0];
                     const groupAmounts = values[1];
+                    const groupCaseCounts = values[2] || []; // Handle case where case data might be missing
 
                     const performanceData = groupNames.map((groupName, index) => {
                         const amountStr = groupAmounts[index] || "0";
                         const amount = parseInt(String(amountStr).replace(/,/g, ''), 10);
-                        return { groupName: groupName, amount: isNaN(amount) ? 0 : amount };
+                        const caseCountStr = groupCaseCounts[index] || "0";
+                        const caseCount = parseInt(String(caseCountStr).replace(/,/g, ''), 10);
+                        
+                        return { 
+                            groupName: groupName, 
+                            amount: isNaN(amount) ? 0 : amount,
+                            caseCount: isNaN(caseCount) ? 0 : caseCount
+                        };
                     });
 
                     renderPerformanceChart(performanceData);
