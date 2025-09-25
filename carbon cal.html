@@ -342,14 +342,6 @@
                 const accordionContent = button.nextElementSibling;
                 const svg = button.querySelector('svg');
 
-                // Close other open accordions
-                document.querySelectorAll('.accordion-content').forEach(content => {
-                    if (content !== accordionContent && content.style.maxHeight) {
-                        content.style.maxHeight = null;
-                        content.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
-                    }
-                });
-
                 if (accordionContent.style.maxHeight) {
                     accordionContent.style.maxHeight = null;
                     svg.style.transform = 'rotate(0deg)';
