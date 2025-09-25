@@ -92,9 +92,18 @@
                         </button>
                         <div class="accordion-content">
                             <div class="p-4">
-                                <div class="input-group"><label for="rebar-sd280w">鋼筋 SD280W</label><input type="number" id="rebar-sd280w" placeholder="0" oninput="calculateEmissions()"><span class="unit">噸 (ton)</span></div>
-                                <div class="input-group"><label for="rebar-sd420w">鋼筋 SD420W</label><input type="number" id="rebar-sd420w" placeholder="0" oninput="calculateEmissions()"><span class="unit">噸 (ton)</span></div>
-                                <div class="input-group"><label for="welded-wire">銲接鋼線網</label><input type="number" id="welded-wire" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
+                                <div class="input-group">
+                                    <label for="rebar-sd280w">鋼筋 SD280W<span class="text-xs font-normal text-gray-400 block">係數: 893.62 kg CO₂e / 噸</span></label>
+                                    <input type="number" id="rebar-sd280w" placeholder="0" oninput="calculateEmissions()"><span class="unit">噸 (ton)</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="rebar-sd420w">鋼筋 SD420W<span class="text-xs font-normal text-gray-400 block">係數: 892.56 kg CO₂e / 噸</span></label>
+                                    <input type="number" id="rebar-sd420w" placeholder="0" oninput="calculateEmissions()"><span class="unit">噸 (ton)</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="welded-wire">銲接鋼線網<span class="text-xs font-normal text-gray-400 block">係數: 6.864 kg CO₂e / M²</span></label>
+                                    <input type="number" id="welded-wire" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,10 +116,14 @@
                         </button>
                         <div class="accordion-content">
                             <div class="p-4">
-                                <div class="input-group"><label for="formwork-metal">金屬模板</label><input type="number" id="formwork-metal" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
-                                <div class="input-group"><label for="formwork-wood">一般木模板</label><input type="number" id="formwork-wood" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
-                                <div class="input-group"><label for="formwork-plastic">塑膠模板</label><input type="number" id="formwork-plastic" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
-                                <div class="input-group"><label for="joint-filler">填縫板</label><input type="number" id="joint-filler" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
+                                <div class="input-group">
+                                    <label for="formwork-metal">金屬模板<span class="text-xs font-normal text-gray-400 block">係數: 11.109 kg CO₂e / M²</span></label>
+                                    <input type="number" id="formwork-metal" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="formwork-wood">一般木模板<span class="text-xs font-normal text-gray-400 block">係數: 1.202 kg CO₂e / M²</span></label>
+                                    <input type="number" id="formwork-wood" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -123,13 +136,38 @@
                         </button>
                         <div class="accordion-content">
                             <div class="p-4">
-                                <div class="input-group"><label for="demolition-concrete">機械拆除，無筋混凝土</label><input type="number" id="demolition-concrete" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="earthwork-excavation">土方工作，挖方</label><input type="number" id="earthwork-excavation" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="earthwork-filling">土方工作，填方</label><input type="number" id="earthwork-filling" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="earthwork-backfill">土方工作，回填方</label><input type="number" id="earthwork-backfill" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="sheet-pile">臨時擋土樁設施，鋼板樁</label><input type="number" id="sheet-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span></div>
-                                <div class="input-group"><label for="bored-pile">場鑄樁，全套管式</label><input type="number" id="bored-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                 <div class="input-group"><label for="micropile">鑽掘(微型)樁</label><input type="number" id="micropile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span></div>
+                                <div class="input-group">
+                                    <label for="demolition-concrete">機械拆除，無筋混凝土<span class="text-xs font-normal text-gray-400 block">係數: 13.641 kg CO₂e / M³</span></label>
+                                    <input type="number" id="demolition-concrete" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="earthwork-excavation">土方工作，挖方<span class="text-xs font-normal text-gray-400 block">係數: 0.981 kg CO₂e / M³</span></label>
+                                    <input type="number" id="earthwork-excavation" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="earthwork-filling">土方工作，填方<span class="text-xs font-normal text-gray-400 block">係數: 1.339 kg CO₂e / M³</span></label>
+                                    <input type="number" id="earthwork-filling" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="earthwork-backfill">土方工作，回填方<span class="text-xs font-normal text-gray-400 block">係數: 0.736 kg CO₂e / M³</span></label>
+                                    <input type="number" id="earthwork-backfill" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="sheet-pile">臨時擋土樁設施，鋼板樁<span class="text-xs font-normal text-gray-400 block">係數: 14.5 kg CO₂e / M</span></label>
+                                    <input type="number" id="sheet-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span>
+                                </div>
+                                 <div class="input-group">
+                                    <label for="steel-rail-pile">臨時擋土樁設施，鋼軌樁，打拔<span class="text-xs font-normal text-gray-400 block">係數: 0.483 kg CO₂e / M</span></label>
+                                    <input type="number" id="steel-rail-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="bored-pile">場鑄樁，全套管式<span class="text-xs font-normal text-gray-400 block">係數: 20.373 kg CO₂e / M³</span></label>
+                                    <input type="number" id="bored-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                 <div class="input-group">
+                                     <label for="micropile">鑽掘(微型)樁<span class="text-xs font-normal text-gray-400 block">係數: 2.502 kg CO₂e / M</span></label>
+                                     <input type="number" id="micropile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span>
+                                 </div>
                             </div>
                         </div>
                     </div>
@@ -145,17 +183,46 @@
                         </button>
                         <div class="accordion-content">
                             <div class="p-4">
-                                <div class="input-group"><label for="concrete-140">混凝土 140 kgf/cm²</label><input type="number" id="concrete-140" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="concrete-175">混凝土 175 kgf/cm²</label><input type="number" id="concrete-175" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="concrete-210">混凝土 210 kgf/cm²</label><input type="number" id="concrete-210" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="concrete-245">混凝土 245 kgf/cm²</label><input type="number" id="concrete-245" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="concrete-280">混凝土 280 kgf/cm²</label><input type="number" id="concrete-280" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="concrete-315">混凝土 315 kgf/cm²</label><input type="number" id="concrete-315" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="concrete-350">混凝土 350 kgf/cm²</label><input type="number" id="concrete-350" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="precast-concrete">預鑄混凝土</label><input type="number" id="precast-concrete" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="clsm">控制性低強度回填材料(CLSM)</label><input type="number" id="clsm" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="mortar">水泥砂漿</label><input type="number" id="mortar" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                <div class="input-group"><label for="mortar-plastering">水泥砂漿粉刷</label><input type="number" id="mortar-plastering" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
+                                <div class="input-group">
+                                    <label for="concrete-140">混凝土 140 kgf/cm²<span class="text-xs font-normal text-gray-400 block">係數: 262 kg CO₂e / M³</span></label>
+                                    <input type="number" id="concrete-140" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="concrete-175">混凝土 175 kgf/cm²<span class="text-xs font-normal text-gray-400 block">係數: 292.505 kg CO₂e / M³</span></label>
+                                    <input type="number" id="concrete-175" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="concrete-210">混凝土 210 kgf/cm²<span class="text-xs font-normal text-gray-400 block">係數: 321.285 kg CO₂e / M³</span></label>
+                                    <input type="number" id="concrete-210" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="concrete-280">混凝土 280 kgf/cm²<span class="text-xs font-normal text-gray-400 block">係數: 366.285 kg CO₂e / M³</span></label>
+                                    <input type="number" id="concrete-280" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="concrete-350">混凝土 350 kgf/cm²<span class="text-xs font-normal text-gray-400 block">係數: 275.865 kg CO₂e / M³</span></label>
+                                    <input type="number" id="concrete-350" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                 <div class="input-group">
+                                    <label for="concrete-420">混凝土 420 kgf/cm²<span class="text-xs font-normal text-gray-400 block">係數: 304.439 kg CO₂e / M³</span></label>
+                                    <input type="number" id="concrete-420" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="precast-concrete">預鑄混凝土<span class="text-xs font-normal text-gray-400 block">係數: 293.004 kg CO₂e / M³</span></label>
+                                    <input type="number" id="precast-concrete" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="clsm">控制性低強度回填材料(CLSM)<span class="text-xs font-normal text-gray-400 block">係數: 94.495 kg CO₂e / M³</span></label>
+                                    <input type="number" id="clsm" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="mortar">水泥砂漿，1:3<span class="text-xs font-normal text-gray-400 block">係數: 437 kg CO₂e / M³</span></label>
+                                    <input type="number" id="mortar" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="mortar-plastering">水泥砂漿粉刷<span class="text-xs font-normal text-gray-400 block">係數: 6.2 kg CO₂e / M²</span></label>
+                                    <input type="number" id="mortar-plastering" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,10 +235,18 @@
                         </button>
                         <div class="accordion-content">
                             <div class="p-4">
-                                 <div class="input-group"><label for="base-course">級配粒料底層</label><input type="number" id="base-course" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                 <div class="input-group"><label for="subbase-course">級配粒料基層</label><input type="number" id="subbase-course" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                 <div class="input-group"><label for="asphalt-pavement">瀝青混凝土舖面</label><input type="number" id="asphalt-pavement" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                                 <div class="input-group"><label for="permeable-asphalt">多孔隙瀝青混凝土舖面</label><input type="number" id="permeable-asphalt" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                 <div class="input-group">
+                                     <label for="base-course">級配粒料底層<span class="text-xs font-normal text-gray-400 block">係數: 5.74 kg CO₂e / M³</span></label>
+                                     <input type="number" id="base-course" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                 </div>
+                                 <div class="input-group">
+                                     <label for="subbase-course">級配粒料基層<span class="text-xs font-normal text-gray-400 block">係數: 5.74 kg CO₂e / M³</span></label>
+                                     <input type="number" id="subbase-course" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span>
+                                 </div>
+                                 <div class="input-group">
+                                     <label for="asphalt-pavement">瀝青混凝土舖面<span class="text-xs font-normal text-gray-400 block">係數: 13.465 kg CO₂e / M²</span></label>
+                                     <input type="number" id="asphalt-pavement" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span>
+                                 </div>
                             </div>
                         </div>
                     </div>
@@ -182,7 +257,7 @@
             <div>
                 <!-- 植栽減碳 -->
                 <div class="card p-4">
-                    <h3 class="text-xl font-bold text-green-600 text-center mb-4">減碳項目 (碳吸收)</h3>
+                    <h3 class="text-2xl font-bold text-green-600 text-center mb-4">減碳項目 (碳吸收)</h3>
                     <table class="w-full text-sm">
                         <thead class="border-b-2 border-gray-200">
                             <tr>
@@ -193,7 +268,7 @@
                         </thead>
                         <tbody>
                             <tr class="border-b border-gray-100">
-                                <td class="p-2 font-medium text-gray-800">植喬木</td>
+                                <td class="p-2 font-medium text-gray-800">植喬木(不分類)<span class="text-xs font-normal text-gray-400 block">係數: -250.8375 kg CO₂e / 株</span></td>
                                 <td class="p-2">
                                     <div class="flex items-center justify-center">
                                         <input id="plant-tree" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
@@ -208,7 +283,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-100">
-                                <td class="p-2 font-medium text-gray-800">植灌木</td>
+                                <td class="p-2 font-medium text-gray-800">植灌木類植栽(不分類)<span class="text-xs font-normal text-gray-400 block">係數: -9.375 kg CO₂e / 株</span></td>
                                 <td class="p-2">
                                     <div class="flex items-center justify-center">
                                         <input id="plant-shrub" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
@@ -223,7 +298,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="p-2 font-medium text-gray-800">植草皮</td>
+                                <td class="p-2 font-medium text-gray-800">植草皮<span class="text-xs font-normal text-gray-400 block">係數: -0.3 kg CO₂e / M²</span></td>
                                 <td class="p-2">
                                     <div class="flex items-center justify-center">
                                         <input id="plant-lawn" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
@@ -286,38 +361,35 @@
         });
 
         const factors = {
-            'demolition-concrete': 13.641, // M3
-            'sheet-pile': 14.5, // M
-            'earthwork-excavation': 0.981, // M3
-            'earthwork-filling': 1.339, // M3
-            'earthwork-backfill': 0.736, // M3
-            'bored-pile': 20.373, // M3
-            'micropile': 2.502, // M
-            'base-course': 19.387, // M3
-            'subbase-course': 19.387, // M3
-            'asphalt-pavement': 105.811, // M3
-            'permeable-asphalt': 105.811, // M3
-            'concrete-140': 262, // M3
-            'concrete-175': 282, // M3
-            'concrete-210': 306, // M3
-            'concrete-245': 329, // M3
-            'concrete-280': 355, // M3
-            'concrete-315': 381, // M3
-            'concrete-350': 405, // M3
-            'formwork-metal': 5.0, // M2
-            'formwork-wood': 8.0, // M2
-            'formwork-plastic': 3.12, // M2
-            'joint-filler': 2.76, // M2
-            'rebar-sd280w': 683, // T
-            'rebar-sd420w': 683, // T
-            'welded-wire': 2.38, // M2
-            'precast-concrete': 293.004, // M3
-            'clsm': 200.56, // M3
-            'mortar': 275.68, // M3
-            'mortar-plastering': 6.2, // M2
-            'plant-tree': -12,
-            'plant-shrub': -3,
-            'plant-lawn': -0.5
+            'demolition-concrete': 13.641,
+            'sheet-pile': 14.5,
+            'steel-rail-pile': 0.483,
+            'earthwork-excavation': 0.981,
+            'earthwork-filling': 1.339,
+            'earthwork-backfill': 0.736,
+            'bored-pile': 20.373,
+            'micropile': 2.502,
+            'base-course': 5.74,
+            'subbase-course': 5.74,
+            'asphalt-pavement': 13.465,
+            'concrete-140': 262,
+            'concrete-175': 292.505,
+            'concrete-210': 321.285,
+            'concrete-280': 366.285,
+            'concrete-350': 275.865,
+            'concrete-420': 304.439,
+            'formwork-metal': 11.109,
+            'formwork-wood': 1.202,
+            'rebar-sd280w': 893.62,
+            'rebar-sd420w': 892.56,
+            'welded-wire': 6.864,
+            'precast-concrete': 293.004,
+            'clsm': 94.495,
+            'mortar': 437,
+            'mortar-plastering': 6.2,
+            'plant-tree': -250.8375,
+            'plant-shrub': -9.375,
+            'plant-lawn': -0.3
         };
 
         function calculateEmissions() {
