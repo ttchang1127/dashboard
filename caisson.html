@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沉箱基礎分析計算器 (勁度修正版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 導入 KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMcNfxrotYRzK7EDVge9oESA/cloudGMLnPmEzM2EuOqkGbh9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        .input-card {
+            background-color: #1F2937; /* bg-gray-800 */
+            border-radius: 1rem; /* rounded-2xl */
+            padding: 1.5rem; /* p-6 */
+        }
+        .result-card {
+            background-color: #1F2937;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #374151;
+        }
+        .katex { font-size: 1.0em !important; }
+        .formula-container .katex { font-size: 1em !important; }
+        .katex-placeholder { display: inline-block; } /* 避免初始閃爍 */
+        .check-ok { color: #34D399; } /* text-green-400 */
+        .check-ng { color: #F87171; } /* text-red-400 */
+        /* Custom slider styles */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #374151; /* bg-gray-700 */
+            border-radius: 5px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #2563EB; /* bg-blue-600 */
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #374151;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #2563EB;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-cyan-400">沉箱基礎分析計算器</h1>
+            <p class="text-gray-400 mt-2">整合規範公式、變位分析、容許值檢核與貢獻係數調整</p>
+        </header>
+
+        <!-- 輸入區 - Reorganized Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Left Side Inputs -->
+            <div class="space-y-6">
+                 <div class="input-card space-y-4">
+                    <h2 class="text-xl font-bold text-cyan-400 border-b border-cyan-700 pb-2">1. 地盤資料</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">試驗鋼鈑直徑 <span class="katex-placeholder">D_p</span></label>
+                            <div class="flex bg-gray-700 rounded-lg p-1 space-x-1" id="plateDiameterContainer">
+                                <button data-diameter="0.3" class="w-full py-2 rounded-md text-sm bg-cyan-500 text-white">30 cm</button>
+                                <button data-diameter="0.75" class="w-full py-2 rounded-md text-sm text-gray-300 hover:bg-gray-600">75 cm</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="kv0" class="block text-sm font-medium text-gray-300 mb-1">垂直試驗反力係數 <span class="katex-placeholder">k_{v0}</span> (tf/m³)</label>
+                            <input type="number" id="kv0" class="w-full bg-gray-700 rounded-md p-2" placeholder="由平鈑試驗取得">
+                        </div>
+                        <div>
+                            <label for="sptN" class="block text-sm font-medium text-gray-300 mb-1">平均 SPT-N 值</label>
+                            <input type="number" id="sptN" class="w-full bg-gray-700 rounded-md p-2" placeholder="用以推估 k_{H0}">
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="input-card space-y-4">
+                    <h2 class="text-xl font-bold text-cyan-400 border-b border-cyan-700 pb-2">2. 沉箱幾何尺寸</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="caissonWidth" class="block text-sm font-medium text-gray-300 mb-1">寬度 <span class="katex-placeholder">B_e</span> (m)</label>
+                            <input type="number" id="caissonWidth" class="w-full bg-gray-700 rounded-md p-2" placeholder="10">
+                        </div>
+                        <div>
+                            <label for="caissonLength" class="block text-sm font-medium text-gray-300 mb-1">長度 <span class="katex-placeholder">D_e</span> (m)</label>
+                            <input type="number" id="caissonLength" class="w-full bg-gray-700 rounded-md p-2" placeholder="15">
+                        </div>
+                        <div>
+                            <label for="caissonDepth" class="block text-sm font-medium text-gray-300 mb-1">有效深度 <span class="katex-placeholder">L_e</span> (m)</label>
+                            <input type="number" id="caissonDepth" class="w-full bg-gray-700 rounded-md p-2" placeholder="20">
+                        </div>
+                    </div>
+                </div>
+                 <div class="input-card space-y-4">
+                     <h2 class="text-xl font-bold text-cyan-400 border-b border-cyan-700 pb-2">3. 設計載重</h2>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         <div>
+                            <label for="caissonWeight" class="block text-sm font-medium text-gray-300 mb-1">沉箱自重 <span class="katex-placeholder">W_{caisson}</span> (tf)</label>
+                            <input type="number" id="caissonWeight" class="w-full bg-gray-700 rounded-md p-2" placeholder="5000">
+                        </div>
+                        <div>
+                            <label for="loadV" class="block text-sm font-medium text-gray-300 mb-1">上部結構垂直力 <span class="katex-placeholder">P_V</span> (tf)</label>
+                            <input type="number" id="loadV" class="w-full bg-gray-700 rounded-md p-2" placeholder="3000">
+                        </div>
+                        <div>
+                            <label for="loadH" class="block text-sm font-medium text-gray-300 mb-1">水平力 <span class="katex-placeholder">P_H</span> (tf)</label>
+                            <input type="number" id="loadH" class="w-full bg-gray-700 rounded-md p-2" placeholder="500">
+                        </div>
+                        <div>
+                            <label for="loadM" class="block text-sm font-medium text-gray-300 mb-1">彎矩 <span class="katex-placeholder">M_{top}</span> (tf-m)</label>
+                            <input type="number" id="loadM" class="w-full bg-gray-700 rounded-md p-2" placeholder="1000">
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            <!-- Right Side Inputs -->
+            <div class="space-y-6">
+                 <div class="input-card space-y-4">
+                    <h2 class="text-xl font-bold text-cyan-400 border-b border-cyan-700 pb-2">4. 分析與檢核條件</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">周圍回填狀況 <span class="katex-placeholder">\alpha_k</span></label>
+                            <div class="flex bg-gray-700 rounded-lg p-1 space-x-1" id="alphaKContainer">
+                                <button data-alpha="1.0" class="w-full py-2 rounded-md text-sm bg-cyan-500 text-white">無 (1.0)</button>
+                                <button data-alpha="1.5" class="w-full py-2 rounded-md text-sm text-gray-300 hover:bg-gray-600">有 (1.5)</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">分析時況 <span class="katex-placeholder">\alpha</span></label>
+                            <div class="flex bg-gray-700 rounded-lg p-1 space-x-1" id="alphaContainer">
+                                <button data-alpha="1" class="w-full py-2 rounded-md text-sm bg-cyan-500 text-white">平時</button>
+                                <button data-alpha="2" class="w-full py-2 rounded-md text-sm text-gray-300 hover:bg-gray-600">地震時</button>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">側向變位檢核狀況</label>
+                            <div class="flex bg-gray-700 rounded-lg p-1 space-x-1" id="loadCaseContainer">
+                                <button data-case="long-term" class="w-full py-2 rounded-md text-sm bg-cyan-500 text-white">長期</button>
+                                <button data-case="short-term" class="w-full py-2 rounded-md text-sm text-gray-300 hover:bg-gray-600">短期</button>
+                                <button data-case="ultimate" class="w-full py-2 rounded-md text-sm text-gray-300 hover:bg-gray-600">極限</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW SECTION -->
+                <div class="input-card space-y-4">
+                    <h2 class="text-xl font-bold text-cyan-400 border-b border-cyan-700 pb-2">5. 地盤反力貢獻係數</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                        <!-- Coefficient Sliders -->
+                        <div class="coeff-slider" data-target="c_kv">
+                            <div class="flex justify-between items-center text-sm">
+                                <label><span class="katex-placeholder">k_V</span> (底面垂直)</label>
+                                <span class="font-mono text-cyan-300">1.00</span>
+                            </div>
+                            <input type="range" min="0" max="1" value="1" step="0.05" class="w-full">
+                        </div>
+                        <div class="coeff-slider" data-target="c_ks">
+                            <div class="flex justify-between items-center text-sm">
+                                <label><span class="katex-placeholder">k_S</span> (底面水平)</label>
+                                <span class="font-mono text-cyan-300">1.00</span>
+                            </div>
+                            <input type="range" min="0" max="1" value="1" step="0.05" class="w-full">
+                        </div>
+                         <div class="coeff-slider" data-target="c_kh">
+                            <div class="flex justify-between items-center text-sm">
+                                <label><span class="katex-placeholder">k_H</span> (前後面水平)</label>
+                                <span class="font-mono text-cyan-300">1.00</span>
+                            </div>
+                            <input type="range" min="0" max="1" value="1" step="0.05" class="w-full">
+                        </div>
+                        <div class="coeff-slider" data-target="c_ksvb">
+                            <div class="flex justify-between items-center text-sm">
+                                <label><span class="katex-placeholder">k_{SVB}</span> (前後面垂直)</label>
+                                <span class="font-mono text-cyan-300">1.00</span>
+                            </div>
+                            <input type="range" min="0" max="1" value="1" step="0.05" class="w-full">
+                        </div>
+                        <div class="coeff-slider" data-target="c_kshd">
+                            <div class="flex justify-between items-center text-sm">
+                                <label><span class="katex-placeholder">k_{SHD}</span> (側面水平)</label>
+                                <span class="font-mono text-cyan-300">1.00</span>
+                            </div>
+                            <input type="range" min="0" max="1" value="1" step="0.05" class="w-full">
+                        </div>
+                        <div class="coeff-slider" data-target="c_ksvd">
+                            <div class="flex justify-between items-center text-sm">
+                                <label><span class="katex-placeholder">k_{SVD}</span> (側面垂直)</label>
+                                <span class="font-mono text-cyan-300">1.00</span>
+                            </div>
+                            <input type="range" min="0" max="1" value="1" step="0.05" class="w-full">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-8">
+            <button id="calculateBtn" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-10 rounded-lg shadow-lg transition-transform transform hover:scale-105">開始分析與檢核</button>
+        </div>
+
+        <!-- 結果區 -->
+        <div id="results-section" class="hidden space-y-8">
+            <div id="check-results-section"></div>
+            <div id="estimated-params-section"></div>
+            <div>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4 text-center">最終地盤反力係數</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="k-results"></div>
+            </div>
+            <div id="stiffness-section"></div>
+            <div>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4 text-center">沉箱頂部變位</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="displacement-results"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        function initializeStaticFormulas() {
+            const katexLoadCheck = setInterval(() => {
+                if (window.katex) {
+                    clearInterval(katexLoadCheck);
+                    document.querySelectorAll('.katex-placeholder').forEach(el => {
+                        const formula = el.textContent.trim().replace(/\\\\/g, '\\');
+                        try {
+                            katex.render(formula, el, {
+                                throwOnError: false,
+                                displayMode: false
+                            });
+                        } catch (e) {
+                            console.error("KaTeX rendering error for static content:", e);
+                            el.textContent = formula;
+                        }
+                    });
+                }
+            }, 50);
+        }
+        
+        initializeStaticFormulas();
+
+        // --- DOM Elements ---
+        const allSliders = document.querySelectorAll('.coeff-slider');
+        const plateDiameterContainer = document.getElementById('plateDiameterContainer');
+        const alphaContainer = document.getElementById('alphaContainer');
+        const alphaKContainer = document.getElementById('alphaKContainer');
+        const loadCaseContainer = document.getElementById('loadCaseContainer');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultsSection = document.getElementById('results-section');
+        const checkResultsSection = document.getElementById('check-results-section');
+        const estimatedParamsSection = document.getElementById('estimated-params-section');
+        const kResultsContainer = document.getElementById('k-results');
+        const stiffnessSection = document.getElementById('stiffness-section');
+        const displacementResultsContainer = document.getElementById('displacement-results');
+
+        // --- State Variables ---
+        let Dp = 0.3;
+        let alpha = 1;
+        let alpha_k = 1.0;
+        let loadCase = 'long-term';
+        const coeffs = {
+            c_kv: 1.0, c_ks: 1.0, c_kh: 1.0, 
+            c_ksvb: 1.0, c_kshd: 1.0, c_ksvd: 1.0
+        };
+
+        // --- Event Listeners ---
+        plateDiameterContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                Dp = parseFloat(e.target.dataset.diameter);
+                updateButtons(plateDiameterContainer, e.target);
+            }
+        });
+        alphaContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                alpha = parseFloat(e.target.dataset.alpha);
+                updateButtons(alphaContainer, e.target);
+            }
+        });
+        alphaKContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                alpha_k = parseFloat(e.target.dataset.alpha);
+                updateButtons(alphaKContainer, e.target);
+            }
+        });
+        loadCaseContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                loadCase = e.target.dataset.case;
+                updateButtons(loadCaseContainer, e.target);
+            }
+        });
+        
+        allSliders.forEach(sliderDiv => {
+            const slider = sliderDiv.querySelector('input[type="range"]');
+            const display = sliderDiv.querySelector('span:last-child');
+            const targetCoeff = sliderDiv.dataset.target;
+
+            slider.addEventListener('input', () => {
+                const value = parseFloat(slider.value);
+                coeffs[targetCoeff] = value;
+                display.textContent = value.toFixed(2);
+            });
+        });
+
+        calculateBtn.addEventListener('click', performCalculation);
+
+        function performCalculation() {
+            // ... (讀取輸入值)
+            const kv0 = parseFloat(document.getElementById('kv0').value);
+            const sptN = parseFloat(document.getElementById('sptN').value);
+            const Be = parseFloat(document.getElementById('caissonWidth').value);
+            const De = parseFloat(document.getElementById('caissonLength').value);
+            const Le = parseFloat(document.getElementById('caissonDepth').value);
+            const W_caisson = parseFloat(document.getElementById('caissonWeight').value);
+            const Pv_super = parseFloat(document.getElementById('loadV').value);
+            const Ph = parseFloat(document.getElementById('loadH').value);
+            const Mtop = parseFloat(document.getElementById('loadM').value);
+
+            if ([kv0, sptN, Be, De, Le, W_caisson, Pv_super, Ph, Mtop].some(isNaN)) {
+                alert("請填寫所有輸入欄位！");
+                return;
+            }
+
+            // ... (計算 k_values)
+            const E0 = 280 * sptN;
+            const kh0 = (1 / 0.3) * alpha * E0;
+            const Av = Be * De;
+            const Bv = Math.sqrt(Av);
+            const Bh = Math.sqrt(Be * Le);
+            const Dh = Math.sqrt(De * Le);
+            const kv = kv0 * Math.pow(Bv / Dp, -0.75);
+            const ks = 0.3 * kv;
+            const kh = alpha_k * kh0 * Math.pow(Bh / Dp, -0.75);
+            const ksvb = 0.3 * kh;
+            const kshd = 0.6 * alpha_k * kh0 * Math.pow(Dh / Dp, -0.75);
+            const ksvd = 0.5 * kshd;
+            const k_values = { kv, ks, kh, ksvb, kshd, ksvd };
+            
+            // --- 計算綜合勁度 (修正版) ---
+            const A_base = Be * De;
+            const A_front = Be * Le;
+            const A_side = De * Le;
+
+            const K_V_total = (coeffs.c_kv * kv * A_base) + (coeffs.c_ksvb * ksvb * 2 * A_side) + (coeffs.c_ksvd * ksvd * 2 * A_front);
+            const K_H_total = (coeffs.c_kh * kh * A_front * 2) + (coeffs.c_ks * ks * A_base) + (coeffs.c_kshd * kshd * 2 * A_side);
+            
+            // ** 轉動勁度 K_M_total 修正 **
+            // 1. 底面垂直反力貢獻
+            const I_base_rocking = (Be * Math.pow(De, 3)) / 12;
+            const K_M_base = coeffs.c_kv * kv * I_base_rocking;
+
+            // 2. 前後面水平反力貢獻 (抵抗力偶)
+            const K_M_front_back = coeffs.c_kh * kh * Be * Math.pow(Le, 3) / 3;
+
+            // 3. 側面垂直摩擦力貢獻
+            const I_side_face = Le * Math.pow(De, 3) / 12;
+            const K_M_sides = coeffs.c_ksvd * ksvd * I_side_face * 2; // 兩側
+
+            const K_M_total = K_M_base + K_M_front_back + K_M_sides;
+            
+            const stiffness_values = { K_V_total, K_H_total, K_M_total };
+            
+            // ... (計算變位與檢核)
+            const Pv_total = Pv_super + W_caisson;
+            const M_base = Mtop + Ph * Le;
+            const delta_v = Pv_total / K_V_total;
+            const delta_h_base = Ph / K_H_total; 
+            const theta = M_base / K_M_total; 
+            const delta_v_top_mm = delta_v * 1000;
+            const delta_h_top_mm = (delta_h_base + theta * Le) * 1000;
+            const displacement_values = { delta_v_top_mm, delta_h_top_mm, theta_rad: theta };
+            const check_results = performChecks(Av, displacement_values);
+
+            // --- 渲染所有結果 ---
+            renderCheckResults(check_results, displacement_values);
+            renderEstimatedParams({E0, kh0});
+            renderKValues(k_values, { Bv, Bh, Dh });
+            renderTotalStiffness(stiffness_values);
+            renderDisplacements(displacement_values);
+            resultsSection.classList.remove('hidden');
+        }
+        
+        // ... (所有 Helper Functions 和 Rendering Functions 與前版相同)
+        function performChecks(Av, displacements) {
+            const Dv_eq = Math.sqrt(4 * Av / Math.PI);
+            const allowable_v_mm = 0.01 * Dv_eq * 1000;
+            const check_v = displacements.delta_v_top_mm <= allowable_v_mm;
+
+            const La = Math.sqrt(4 * Av / Math.PI);
+            let allowable_h_mm, allowable_theta_rad;
+
+            switch(loadCase) {
+                case 'long-term':
+                    allowable_h_mm = Math.min(0.004 * La * 1000, 40);
+                    allowable_theta_rad = 2 / 1000;
+                    break;
+                case 'short-term':
+                    allowable_h_mm = Math.min(0.01 * La * 1000, 100);
+                    allowable_theta_rad = 10 / 1000;
+                    break;
+                case 'ultimate':
+                    allowable_h_mm = 0.1 * La * 1000;
+                    allowable_theta_rad = 20 / 1000;
+                    break;
+            }
+            const check_h = displacements.delta_h_top_mm <= allowable_h_mm;
+            const check_theta = displacements.theta_rad <= allowable_theta_rad;
+
+            return { allowable_v_mm, check_v, allowable_h_mm, check_h, allowable_theta_rad, check_theta };
+        }
+
+        function updateButtons(container, activeButton) {
+             container.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('bg-cyan-500', 'text-white');
+                btn.classList.add('text-gray-300', 'hover:bg-gray-600');
+            });
+            activeButton.classList.add('bg-cyan-500', 'text-white');
+        }
+
+        function renderCheckResults(checks, displacements) {
+            const { delta_v_top_mm, delta_h_top_mm, theta_rad } = displacements;
+            const { allowable_v_mm, check_v, allowable_h_mm, check_h, allowable_theta_rad, check_theta } = checks;
+
+            const status_v = check_v ? '<span class="check-ok font-bold">OK</span>' : '<span class="check-ng font-bold">NG</span>';
+            const status_h = check_h ? '<span class="check-ok font-bold">OK</span>' : '<span class="check-ng font-bold">NG</span>';
+            const status_theta = check_theta ? '<span class="check-ok font-bold">OK</span>' : '<span class="check-ng font-bold">NG</span>';
+
+            checkResultsSection.innerHTML = `
+                 <h2 class="text-2xl font-bold text-cyan-400 mb-4 text-center">變位檢核結果</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="result-card text-center">
+                        <p class="text-lg font-semibold text-gray-300">垂直沉陷檢核</p>
+                        <p class="text-2xl mt-2 ${check_v ? 'check-ok' : 'check-ng'}">${delta_v_top_mm.toFixed(3)} mm ≤ ${allowable_v_mm.toFixed(3)} mm</p>
+                        <p class="text-xl font-bold mt-2">${status_v}</p>
+                    </div>
+                    <div class="result-card text-center">
+                        <p class="text-lg font-semibold text-gray-300">水平變位檢核</p>
+                        <p class="text-2xl mt-2 ${check_h ? 'check-ok' : 'check-ng'}">${delta_h_top_mm.toFixed(3)} mm ≤ ${allowable_h_mm.toFixed(3)} mm</p>
+                        <p class="text-xl font-bold mt-2">${status_h}</p>
+                    </div>
+                    <div class="result-card text-center">
+                        <p class="text-lg font-semibold text-gray-300">轉角變位檢核</p>
+                        <p class="text-2xl mt-2 ${check_theta ? 'check-ok' : 'check-ng'}">${theta_rad.toFixed(6)} rad ≤ ${allowable_theta_rad.toFixed(6)} rad</p>
+                        <p class="text-xl font-bold mt-2">${status_theta}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderEstimatedParams(params) {
+            estimatedParamsSection.innerHTML = `
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4 text-center">由SPT-N推估之地盤參數</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="result-card">
+                        <p class="text-lg font-semibold text-gray-300">地盤變形模數 <span id="e0_symbol"></span></p>
+                        <p class="text-3xl font-bold text-cyan-300 mt-2">${params.E0.toFixed(0)} <span class="text-lg">tf/m²</span></p>
+                        <div class="text-center text-gray-300 text-sm mt-4 pt-2 border-t border-gray-600 formula-container" id="e0_formula"></div>
+                    </div>
+                    <div class="result-card">
+                        <p class="text-lg font-semibold text-gray-300">水平試驗反力係數 <span id="kh0_symbol"></span></p>
+                        <p class="text-3xl font-bold text-cyan-300 mt-2">${params.kh0.toFixed(0)} <span class="text-lg">tf/m³</span></p>
+                        <div class="text-center text-gray-300 text-sm mt-4 pt-2 border-t border-gray-600 formula-container" id="kh0_formula"></div>
+                    </div>
+                </div>`;
+            
+            katex.render("E_0", document.getElementById('e0_symbol'));
+            katex.render("k_{H0}", document.getElementById('kh0_symbol'));
+            katex.render("E_0 = 280 N", document.getElementById('e0_formula'), { displayMode: true });
+            katex.render("k_{H0} = \\frac{1}{0.3} \\alpha E_0", document.getElementById('kh0_formula'), { displayMode: true });
+        }
+
+        function renderKValues(k_values, context) {
+            const { Bv, Bh, Dh } = context;
+            const k_data = [
+                { id: 'kv', name: 'k_V', value: k_values.kv, formula: `k_{v0} (B_V / ${Dp})^{-3/4}`, note: `等值寬度 \\(B_V = ${Bv.toFixed(2)}\\) m` },
+                { id: 'ks', name: 'k_S', value: k_values.ks, formula: `0.3 k_V`, note: '底面水平' },
+                { id: 'kh', name: 'k_H', value: k_values.kh, formula: `\\alpha_k k_{H0,est} (B_H / ${Dp})^{-3/4}`, note: `等值寬度 \\(B_H = ${Bh.toFixed(2)}\\) m` },
+                { id: 'ksvb', name: 'k_{SVB}', value: k_values.ksvb, formula: `0.3 k_H`, note: '前後面垂直' },
+                { id: 'kshd', name: 'k_{SHD}', value: k_values.kshd, formula: `0.6\\alpha_k k_{H0,est} (D_H / ${Dp})^{-3/4}`, note: `等值寬度 \\(D_H = ${Dh.toFixed(2)}\\) m` },
+                { id: 'ksvd', name: 'k_{SVD}', value: k_values.ksvd, formula: `0.5 k_{SHD}`, note: '側面垂直' }
+            ];
+
+            kResultsContainer.innerHTML = k_data.map(item => `
+                <div class="result-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-white" id="${item.id}_symbol"></span>
+                            <span class="text-xs text-gray-400">${item.note}</span>
+                        </div>
+                        <p class="text-2xl font-bold text-cyan-300 mt-2">${item.value.toFixed(0)} <span class="text-base font-normal text-gray-400">tf/m³</span></p>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-gray-600 formula-container" id="${item.id}_formula"></div>
+                </div>
+            `).join('');
+            
+            k_data.forEach(item => {
+                katex.render(item.name, document.getElementById(`${item.id}_symbol`));
+                katex.render(item.formula, document.getElementById(`${item.id}_formula`), { displayMode: true });
+            });
+        }
+        
+        function renderTotalStiffness(stiffness_values) {
+            const { K_V_total, K_H_total, K_M_total } = stiffness_values;
+            stiffnessSection.innerHTML = `
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4 text-center">綜合彈簧勁度 (已考量貢獻係數)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="result-card text-center">
+                        <p class="text-lg font-semibold text-gray-300">總垂直勁度 <span id="kv_total_symbol"></span></p>
+                        <p class="text-3xl font-bold text-cyan-300 mt-2">${K_V_total.toFixed(0)} <span class="text-lg">tf/m</span></p>
+                    </div>
+                    <div class="result-card text-center">
+                        <p class="text-lg font-semibold text-gray-300">總水平勁度 <span id="kh_total_symbol"></span></p>
+                        <p class="text-3xl font-bold text-cyan-300 mt-2">${K_H_total.toFixed(0)} <span class="text-lg">tf/m</span></p>
+                    </div>
+                    <div class="result-card text-center">
+                        <p class="text-lg font-semibold text-gray-300">總轉動勁度 <span id="km_total_symbol"></span></p>
+                        <p class="text-3xl font-bold text-cyan-300 mt-2">${K_M_total.toFixed(0)} <span class="text-lg">tf-m/rad</span></p>
+                    </div>
+                </div>
+            `;
+
+            katex.render("K_{V,total}", document.getElementById('kv_total_symbol'));
+            katex.render("K_{H,total}", document.getElementById('kh_total_symbol'));
+            katex.render("K_{M,total}", document.getElementById('km_total_symbol'));
+        }
+
+        function renderDisplacements(disp_values) {
+            const { delta_v_top_mm, delta_h_top_mm, theta_rad } = disp_values;
+            displacementResultsContainer.innerHTML = `
+                <div class="result-card text-center">
+                    <p class="text-lg font-semibold text-gray-300">垂直變位 <span id="delta_v_symbol"></span></p>
+                    <p class="text-3xl font-bold text-cyan-300 mt-2">${delta_v_top_mm.toFixed(3)} <span class="text-lg">mm</span></p>
+                </div>
+                <div class="result-card text-center">
+                    <p class="text-lg font-semibold text-gray-300">水平變位 <span id="delta_h_symbol"></span></p>
+                    <p class="text-3xl font-bold text-cyan-300 mt-2">${delta_h_top_mm.toFixed(3)} <span class="text-lg">mm</span></p>
+                </div>
+                <div class="result-card text-center">
+                    <p class="text-lg font-semibold text-gray-300">轉角變位 <span id="theta_symbol"></span></p>
+                    <p class="text-3xl font-bold text-cyan-300 mt-2">${theta_rad.toFixed(6)} <span class="text-lg">rad</span></p>
+                </div>
+            `;
+            
+            katex.render("\\delta_V", document.getElementById('delta_v_symbol'));
+            katex.render("\\delta_H", document.getElementById('delta_h_symbol'));
+            katex.render("\\theta", document.getElementById('theta_symbol'));
+        }
+    });
+</script>
+
+</body>
+</html>
