@@ -55,6 +55,20 @@
             background: linear-gradient(135deg, #3b82f6, #6366f1);
             color: white;
         }
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 640px) {
+            .input-group {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            .input-group label {
+                margin-bottom: 0.25rem;
+            }
+             .input-group .unit {
+                justify-self: center;
+             }
+        }
     </style>
 </head>
 <body class="p-4 sm:p-6 md:p-8">
@@ -65,133 +79,99 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Column 1: Emission Items -->
-            <div class="space-y-6">
-                <!-- 鋼筋/鋼網 -->
-                <div class="card">
-                    <button class="accordion-toggle flex items-center w-full p-4 text-xl font-bold text-blue-600">
-                        <span class="flex-grow text-center">鋼筋 / 銲接鋼線網</span>
-                        <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="p-4">
-                            <div class="input-group"><label for="rebar-sd280w">鋼筋 SD280W</label><input type="number" id="rebar-sd280w" placeholder="0" oninput="calculateEmissions()"><span class="unit">噸 (ton)</span></div>
-                            <div class="input-group"><label for="rebar-sd420w">鋼筋 SD420W</label><input type="number" id="rebar-sd420w" placeholder="0" oninput="calculateEmissions()"><span class="unit">噸 (ton)</span></div>
-                            <div class="input-group"><label for="welded-wire">銲接鋼線網</label><input type="number" id="welded-wire" placeholder="0" oninput="calculateEmissions()"><span class="unit">M2</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 模板 -->
-                 <div class="card">
-                    <button class="accordion-toggle flex items-center w-full p-4 text-xl font-bold text-blue-600">
-                        <span class="flex-grow text-center">模板 / 附屬品</span>
-                        <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="p-4">
-                            <div class="input-group"><label for="formwork-metal">金屬模板</label><input type="number" id="formwork-metal" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
-                            <div class="input-group"><label for="formwork-wood">一般木模板</label><input type="number" id="formwork-wood" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
-                            <div class="input-group"><label for="formwork-plastic">塑膠模板</label><input type="number" id="formwork-plastic" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
-                            <div class="input-group"><label for="joint-filler">填縫板</label><input type="number" id="joint-filler" placeholder="0" oninput="calculateEmissions()"><span class="unit">M2</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 土方/開挖 -->
-                <div class="card">
-                    <button class="accordion-toggle flex items-center w-full p-4 text-xl font-bold text-blue-600">
-                        <span class="flex-grow text-center">土方 / 擋土 / 基礎</span>
-                        <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="p-4">
-                            <div class="input-group"><label for="demolition-concrete">機械拆除，無筋混凝土</label><input type="number" id="demolition-concrete" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="earthwork-excavation">土方工作，挖方</label><input type="number" id="earthwork-excavation" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="earthwork-filling">土方工作，填方</label><input type="number" id="earthwork-filling" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="earthwork-backfill">土方工作，回填方</label><input type="number" id="earthwork-backfill" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="sheet-pile">臨時擋土樁設施，鋼板樁</label><input type="number" id="sheet-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span></div>
-                            <div class="input-group"><label for="bored-pile">場鑄樁，全套管式</label><input type="number" id="bored-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                             <div class="input-group"><label for="micropile">鑽掘(微型)樁</label><input type="number" id="micropile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 混凝土/水泥砂漿 -->
-                <div class="card">
-                    <button class="accordion-toggle flex items-center w-full p-4 text-xl font-bold text-blue-600">
-                        <span class="flex-grow text-center">混凝土 / 水泥砂漿</span>
-                        <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="p-4">
-                            <div class="input-group"><label for="concrete-140">混凝土 140 kgf/cm²</label><input type="number" id="concrete-140" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="concrete-175">混凝土 175 kgf/cm²</label><input type="number" id="concrete-175" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="concrete-210">混凝土 210 kgf/cm²</label><input type="number" id="concrete-210" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="concrete-245">混凝土 245 kgf/cm²</label><input type="number" id="concrete-245" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="concrete-280">混凝土 280 kgf/cm²</label><input type="number" id="concrete-280" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="concrete-315">混凝土 315 kgf/cm²</label><input type="number" id="concrete-315" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="concrete-350">混凝土 350 kgf/cm²</label><input type="number" id="concrete-350" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="precast-concrete">預鑄混凝土</label><input type="number" id="precast-concrete" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="clsm">控制性低強度回填材料(CLSM)</label><input type="number" id="clsm" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="mortar">水泥砂漿</label><input type="number" id="mortar" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                            <div class="input-group"><label for="mortar-plastering">水泥砂漿粉刷</label><input type="number" id="mortar-plastering" placeholder="0" oninput="calculateEmissions()"><span class="unit">M2</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 舖面/基底層 -->
-                <div class="card">
-                    <button class="accordion-toggle flex items-center w-full p-4 text-xl font-bold text-blue-600">
-                        <span class="flex-grow text-center">舖面 / 基底層</span>
-                        <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="p-4">
-                             <div class="input-group"><label for="base-course">級配粒料底層</label><input type="number" id="base-course" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                             <div class="input-group"><label for="subbase-course">級配粒料基層</label><input type="number" id="subbase-course" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                             <div class="input-group"><label for="asphalt-pavement">瀝青混凝土舖面</label><input type="number" id="asphalt-pavement" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                             <div class="input-group"><label for="permeable-asphalt">多孔隙瀝青混凝土舖面</label><input type="number" id="permeable-asphalt" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Column 2: Reduction Items -->
-            <div class="space-y-6">
-                 <!-- 植栽減碳 -->
-                <div class="card">
-                    <button class="accordion-toggle flex items-center w-full p-4 text-xl font-bold text-green-600">
-                        <span class="flex-grow text-center">減碳項目 (碳吸收)</span>
-                        <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="p-4">
-                            <div class="input-group">
-                                <label for="plant-tree">植喬木</label>
-                                <div class="flex items-center gap-2">
-                                    <input type="number" id="plant-tree" placeholder="0" oninput="calculateEmissions()"> <span class="unit">株</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                   <input type="number" id="plant-tree-time" value="1" min="1" oninput="calculateEmissions()"> <span class="unit">年</span>
-                                </div>
+            <!-- Column 1 & 2: Emission & Reduction Items -->
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Column 1: Emission Items -->
+                <div class="space-y-6">
+                    <!-- 鋼筋/鋼網 -->
+                    <div class="card">
+                        <button class="accordion-toggle flex items-center justify-between w-full p-4 text-xl font-bold text-blue-600">
+                            <span>鋼筋 / 銲接鋼線網</span>
+                            <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="p-4">
+                                <div class="input-group"><label for="rebar-sd280w">鋼筋 SD280W</label><input type="number" id="rebar-sd280w" placeholder="0" oninput="calculateEmissions()"><span class="unit">噸 (ton)</span></div>
+                                <div class="input-group"><label for="rebar-sd420w">鋼筋 SD420W</label><input type="number" id="rebar-sd420w" placeholder="0" oninput="calculateEmissions()"><span class="unit">噸 (ton)</span></div>
+                                <div class="input-group"><label for="welded-wire">銲接鋼線網</label><input type="number" id="welded-wire" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
                             </div>
-                            <div class="input-group">
-                                <label for="plant-shrub">植灌木</label>
-                                 <div class="flex items-center gap-2">
-                                    <input type="number" id="plant-shrub" placeholder="0" oninput="calculateEmissions()"> <span class="unit">株</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                   <input type="number" id="plant-shrub-time" value="1" min="1" oninput="calculateEmissions()"> <span class="unit">年</span>
-                                </div>
+                        </div>
+                    </div>
+
+                    <!-- 模板 -->
+                     <div class="card">
+                        <button class="accordion-toggle flex items-center justify-between w-full p-4 text-xl font-bold text-blue-600">
+                            <span>模板 / 附屬品</span>
+                            <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="p-4">
+                                <div class="input-group"><label for="formwork-metal">金屬模板</label><input type="number" id="formwork-metal" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
+                                <div class="input-group"><label for="formwork-wood">一般木模板</label><input type="number" id="formwork-wood" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
+                                <div class="input-group"><label for="formwork-plastic">塑膠模板</label><input type="number" id="formwork-plastic" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
+                                <div class="input-group"><label for="joint-filler">填縫板</label><input type="number" id="joint-filler" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
                             </div>
-                            <div class="input-group">
-                                <label for="plant-lawn">植草皮</label>
-                                 <div class="flex items-center gap-2">
-                                    <input type="number" id="plant-lawn" placeholder="0" oninput="calculateEmissions()"> <span class="unit">M²</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                   <input type="number" id="plant-lawn-time" value="1" min="1" oninput="calculateEmissions()"> <span class="unit">年</span>
-                                </div>
+                        </div>
+                    </div>
+
+                    <!-- 土方/開挖 -->
+                    <div class="card">
+                        <button class="accordion-toggle flex items-center justify-between w-full p-4 text-xl font-bold text-blue-600">
+                            <span>土方 / 擋土 / 基礎</span>
+                            <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="p-4">
+                                <div class="input-group"><label for="demolition-concrete">機械拆除，無筋混凝土</label><input type="number" id="demolition-concrete" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="earthwork-excavation">土方工作，挖方</label><input type="number" id="earthwork-excavation" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="earthwork-filling">土方工作，填方</label><input type="number" id="earthwork-filling" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="earthwork-backfill">土方工作，回填方</label><input type="number" id="earthwork-backfill" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="sheet-pile">臨時擋土樁設施，鋼板樁</label><input type="number" id="sheet-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span></div>
+                                <div class="input-group"><label for="bored-pile">場鑄樁，全套管式</label><input type="number" id="bored-pile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                 <div class="input-group"><label for="micropile">鑽掘(微型)樁</label><input type="number" id="micropile" placeholder="0" oninput="calculateEmissions()"><span class="unit">M</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Column 2: Emission & Reduction Items Continued -->
+                 <div class="space-y-6">
+                    <!-- 混凝土/水泥砂漿 -->
+                    <div class="card">
+                        <button class="accordion-toggle flex items-center justify-between w-full p-4 text-xl font-bold text-blue-600">
+                            <span>混凝土 / 水泥砂漿</span>
+                            <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="p-4">
+                                <div class="input-group"><label for="concrete-140">混凝土 140 kgf/cm²</label><input type="number" id="concrete-140" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="concrete-175">混凝土 175 kgf/cm²</label><input type="number" id="concrete-175" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="concrete-210">混凝土 210 kgf/cm²</label><input type="number" id="concrete-210" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="concrete-245">混凝土 245 kgf/cm²</label><input type="number" id="concrete-245" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="concrete-280">混凝土 280 kgf/cm²</label><input type="number" id="concrete-280" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="concrete-315">混凝土 315 kgf/cm²</label><input type="number" id="concrete-315" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="concrete-350">混凝土 350 kgf/cm²</label><input type="number" id="concrete-350" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="precast-concrete">預鑄混凝土</label><input type="number" id="precast-concrete" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="clsm">控制性低強度回填材料(CLSM)</label><input type="number" id="clsm" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="mortar">水泥砂漿</label><input type="number" id="mortar" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                <div class="input-group"><label for="mortar-plastering">水泥砂漿粉刷</label><input type="number" id="mortar-plastering" placeholder="0" oninput="calculateEmissions()"><span class="unit">M²</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 舖面/基底層 -->
+                    <div class="card">
+                        <button class="accordion-toggle flex items-center justify-between w-full p-4 text-xl font-bold text-blue-600">
+                           <span>舖面 / 基底層</span>
+                           <svg class="w-6 h-6 transform transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="p-4">
+                                 <div class="input-group"><label for="base-course">級配粒料底層</label><input type="number" id="base-course" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                 <div class="input-group"><label for="subbase-course">級配粒料基層</label><input type="number" id="subbase-course" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                 <div class="input-group"><label for="asphalt-pavement">瀝青混凝土舖面</label><input type="number" id="asphalt-pavement" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
+                                 <div class="input-group"><label for="permeable-asphalt">多孔隙瀝青混凝土舖面</label><input type="number" id="permeable-asphalt" placeholder="0" oninput="calculateEmissions()"><span class="unit">M³</span></div>
                             </div>
                         </div>
                     </div>
@@ -200,6 +180,66 @@
 
             <!-- Column 3: Results -->
             <div>
+                <!-- 植栽減碳 -->
+                <div class="card p-4">
+                    <h3 class="text-xl font-bold text-green-600 text-center mb-4">減碳項目 (碳吸收)</h3>
+                    <table class="w-full text-sm">
+                        <thead class="border-b-2 border-gray-200">
+                            <tr>
+                                <th class="p-2 text-left font-semibold text-gray-700">項目</th>
+                                <th class="p-2 text-center font-semibold text-gray-700">數量</th>
+                                <th class="p-2 text-center font-semibold text-gray-700">年期</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="p-2 font-medium text-gray-800">植喬木</td>
+                                <td class="p-2">
+                                    <div class="flex items-center justify-center">
+                                        <input id="plant-tree" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
+                                        <span class="ml-2 text-gray-600">株</span>
+                                    </div>
+                                </td>
+                                <td class="p-2">
+                                     <div class="flex items-center justify-center">
+                                        <input id="plant-tree-time" type="number" value="1" min="1" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
+                                        <span class="ml-2 text-gray-600">年</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="p-2 font-medium text-gray-800">植灌木</td>
+                                <td class="p-2">
+                                    <div class="flex items-center justify-center">
+                                        <input id="plant-shrub" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
+                                        <span class="ml-2 text-gray-600">株</span>
+                                    </div>
+                                </td>
+                                <td class="p-2">
+                                     <div class="flex items-center justify-center">
+                                        <input id="plant-shrub-time" type="number" value="1" min="1" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
+                                        <span class="ml-2 text-gray-600">年</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium text-gray-800">植草皮</td>
+                                <td class="p-2">
+                                    <div class="flex items-center justify-center">
+                                        <input id="plant-lawn" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
+                                        <span class="ml-2 text-gray-600">M²</span>
+                                    </div>
+                                </td>
+                                <td class="p-2">
+                                     <div class="flex items-center justify-center">
+                                        <input id="plant-lawn-time" type="number" value="1" min="1" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
+                                        <span class="ml-2 text-gray-600">年</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <div class="card total-card p-6">
                     <h2 class="text-xl font-bold mb-4 text-center">計算結果</h2>
                     <div class="text-center">
@@ -212,7 +252,7 @@
                         <p id="emissions-positive" class="text-lg">總排放量: 0.00 kg CO₂e</p>
                         <p id="emissions-negative" class="text-lg mt-2">總減碳量: 0.00 kg CO₂e</p>
                     </div>
-                    <div class="text-center mt-4">
+                     <div class="text-center mt-6">
                         <p class="text-xl text-green-200">減碳比例</p>
                         <p id="reduction-percentage" class="text-4xl font-extrabold text-lime-300 mt-1">0.00 %</p>
                     </div>
@@ -226,6 +266,14 @@
             button.addEventListener('click', () => {
                 const accordionContent = button.nextElementSibling;
                 const svg = button.querySelector('svg');
+
+                // Close other open accordions
+                document.querySelectorAll('.accordion-content').forEach(content => {
+                    if (content !== accordionContent && content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        content.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                    }
+                });
 
                 if (accordionContent.style.maxHeight) {
                     accordionContent.style.maxHeight = null;
@@ -286,7 +334,7 @@
                     if (factor > 0) {
                         totalPositive += emission;
                     } else {
-                        // 處理有時間乘數的減碳項目
+                        // Handle reduction items with time multiplier
                         const timeElement = document.getElementById(`${id}-time`);
                         if (timeElement) {
                             const timeValue = parseFloat(timeElement.value) || 1;
@@ -309,6 +357,7 @@
             document.getElementById('reduction-percentage').textContent = `${reductionPercentage.toFixed(2)} %`;
         }
         
+        // Initial calculation on page load
         window.onload = calculateEmissions;
     </script>
 </body>
