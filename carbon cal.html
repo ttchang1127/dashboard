@@ -275,12 +275,7 @@
                                         <span class="ml-2 text-gray-600">株</span>
                                     </div>
                                 </td>
-                                <td class="p-2">
-                                     <div class="flex items-center justify-center">
-                                        <input id="plant-tree-time" type="number" value="1" min="1" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
-                                        <span class="ml-2 text-gray-600">年</span>
-                                    </div>
-                                </td>
+                                <td class="p-2"></td>
                             </tr>
                             <tr class="border-b border-gray-100">
                                 <td class="p-2 font-medium text-gray-800">植灌木類植栽(不分類)<span class="text-xs font-normal text-gray-400 block">係數: -9.375 kg CO₂e / 株</span></td>
@@ -290,9 +285,19 @@
                                         <span class="ml-2 text-gray-600">株</span>
                                     </div>
                                 </td>
+                                <td class="p-2"></td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="p-2 font-medium text-gray-800">植喬木 (依面積)<span class="text-xs font-normal text-gray-400 block">係數: -300,000 kg CO₂e / 公頃/年</span></td>
+                                <td class="p-2">
+                                    <div class="flex items-center justify-center">
+                                        <input id="plant-tree-area" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
+                                        <span class="ml-2 text-gray-600">公頃</span>
+                                    </div>
+                                </td>
                                 <td class="p-2">
                                      <div class="flex items-center justify-center">
-                                        <input id="plant-shrub-time" type="number" value="1" min="1" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
+                                        <input id="plant-tree-area-time" type="number" value="1" min="1" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
                                         <span class="ml-2 text-gray-600">年</span>
                                     </div>
                                 </td>
@@ -381,7 +386,8 @@
             'mortar-plastering': 6.2,
             'plant-tree': -250.8375,
             'plant-shrub': -9.375,
-            'plant-lawn': -0.3
+            'plant-lawn': -0.3,
+            'plant-tree-area': -300000
         };
 
         function calculateEmissions() {
