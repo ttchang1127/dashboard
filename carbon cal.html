@@ -261,14 +261,14 @@
                     <table class="w-full text-sm">
                         <thead class="border-b-2 border-gray-200">
                             <tr>
-                                <th class="p-2 text-left font-semibold text-gray-700">項目</th>
+                                <th class="p-2 text-center font-semibold text-gray-700">項目</th>
                                 <th class="p-2 text-center font-semibold text-gray-700">數量</th>
                                 <th class="p-2 text-center font-semibold text-gray-700">年期</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="border-b border-gray-100">
-                                <td class="p-2 font-medium text-gray-800">植喬木(不分類)<span class="text-xs font-normal text-gray-400 block">係數: -250.8375 kg CO₂e / 株</span></td>
+                                <td class="p-2 font-medium text-gray-800 text-center">植喬木(不分類)<span class="text-xs font-normal text-gray-400 block">係數: -250.8375 kg CO₂e / 株</span></td>
                                 <td class="p-2">
                                     <div class="flex items-center justify-center">
                                         <input id="plant-tree" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
@@ -278,7 +278,7 @@
                                 <td class="p-2"></td>
                             </tr>
                             <tr class="border-b border-gray-100">
-                                <td class="p-2 font-medium text-gray-800">植灌木類植栽(不分類)<span class="text-xs font-normal text-gray-400 block">係數: -9.375 kg CO₂e / 株</span></td>
+                                <td class="p-2 font-medium text-gray-800 text-center">植灌木類植栽(不分類)<span class="text-xs font-normal text-gray-400 block">係數: -9.375 kg CO₂e / 株</span></td>
                                 <td class="p-2">
                                     <div class="flex items-center justify-center">
                                         <input id="plant-shrub" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
@@ -288,7 +288,7 @@
                                 <td class="p-2"></td>
                             </tr>
                             <tr class="border-b border-gray-100">
-                                <td class="p-2 font-medium text-gray-800">植喬木 (依面積)<span class="text-xs font-normal text-gray-400 block">係數: -300,000 kg CO₂e / 公頃/年</span></td>
+                                <td class="p-2 font-medium text-gray-800 text-center">植喬木 (依面積)<span class="text-xs font-normal text-gray-400 block">係數: -300,000 kg CO₂e / 公頃/年</span></td>
                                 <td class="p-2">
                                     <div class="flex items-center justify-center">
                                         <input id="plant-tree-area" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
@@ -302,8 +302,16 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr class="border-b border-gray-100">
+                                <td colspan="3" class="p-2">
+                                    <div class="flex justify-center items-center py-2">
+                                        <label for="plant-tree-area-coeff" class="text-lg font-medium text-gray-700 mr-4">植喬木效益係數</label>
+                                        <input id="plant-tree-area-coeff" type="number" value="1" min="0" step="0.1" oninput="calculateEmissions()" class="w-24 text-center border rounded-md p-1">
+                                    </div>
+                                </td>
+                            </tr>
                             <tr>
-                                <td class="p-2 font-medium text-gray-800">植草皮<span class="text-xs font-normal text-gray-400 block">係數: -0.3 kg CO₂e / M²</span></td>
+                                <td class="p-2 font-medium text-gray-800 text-center">植草皮<span class="text-xs font-normal text-gray-400 block">係數: -0.3 kg CO₂e / M²</span></td>
                                 <td class="p-2">
                                     <div class="flex items-center justify-center">
                                         <input id="plant-lawn" type="number" placeholder="0" oninput="calculateEmissions()" class="w-20 text-center border rounded-md p-1">
@@ -410,6 +418,16 @@
                             const timeValue = parseFloat(timeElement.value) || 1;
                             emission *= timeValue;
                         }
+
+                        // Handle effectiveness coefficient for plant-tree-area
+                        if (id === 'plant-tree-area') {
+                            const coeffElement = document.getElementById('plant-tree-area-coeff');
+                            if (coeffElement) {
+                                const coeffValue = parseFloat(coeffElement.value) || 1;
+                                emission *= coeffValue;
+                            }
+                        }
+
                         totalNegative += emission;
                     }
                 }
