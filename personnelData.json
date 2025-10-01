@@ -792,23 +792,6 @@
     "seniority": "0年6月20日"
   },
   {
-    "name": "黃國亮",
-    "group": "巍耀組",
-    "role": "組員",
-    "education": "中原大學 \n土木工程學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ],
-    "seniority": "0年6月11日"
-  },
-  {
     "name": "蕭凱馨",
     "group": "巍耀組",
     "role": "組員",
@@ -886,5 +869,13 @@
       }
     ],
     "seniority": "0年1月6日"
+  },
+  {
+    "name": "何育融",
+    "group": "北分局",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [],
+    "seniority": "#N/A"
   }
 ]
