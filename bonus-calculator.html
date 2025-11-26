@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>年終獎金分配模擬器</title>
+    <title>年終分配模擬器 (隱私版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -18,13 +18,13 @@
 </head>
 <body class="bg-gray-100 text-gray-800 p-4 lg:p-8">
 
-    <div class="w-full max-w-6xl mx-auto">
+    <div class="w-full max-w-5xl mx-auto">
         <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-900">各組年終分配模擬器</h1>
-            <p class="text-gray-500 mt-2">請輸入各組分配總額與個人月數 (薪資資料已隱藏)</p>
+            <h1 class="text-3xl font-bold text-gray-900">年終分配模擬器 <span class="text-sm font-normal text-white bg-gray-800 px-2 py-1 rounded ml-2">隱私模式</span></h1>
+            <p class="text-gray-400 mt-2 text-sm">僅顯示額度狀態 (OK/NG)，不顯示任何薪資與金額數據</p>
         </header>
 
-        <div id="calculator-container" class="space-y-8">
+        <div id="calculator-container" class="space-y-6">
             <div class="text-center p-8 text-gray-500">讀取資料中...</div>
         </div>
     </div>
@@ -32,73 +32,56 @@
     <script>
         // --- 全域變數 ---
         const container = document.getElementById('calculator-container');
-        // 用於儲存人員薪資的 Map，Key 為姓名，Value 為薪資數值
-        // 這是為了安全起見，不將薪資寫入 HTML DOM，只在 JS 運算
+        // 薪資資料 Map (記憶體中運算，不渲染至 DOM)
         const salaryMap = new Map(); 
 
         // --- 輔助函式 ---
-        
-        // 解析薪資字串為數字 (移除逗號)
         function parseSalary(salaryStr) {
             if (!salaryStr) return 0;
             return parseInt(String(salaryStr).replace(/,/g, ''), 10) || 0;
         }
 
-        // 格式化金額
-        function formatCurrency(num) {
-            return new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(num);
-        }
-
-        // 計算單一組別的狀態
+        // 計算單一組別的狀態 (核心邏輯：只判斷 True/False)
         function calculateGroupStatus(groupName) {
             const budgetInput = document.getElementById(`budget-${groupName}`);
-            const totalDisplay = document.getElementById(`total-${groupName}`);
-            const balanceDisplay = document.getElementById(`balance-${groupName}`);
             const statusBadge = document.getElementById(`status-${groupName}`);
             
             // 取得預算
             const budget = parseInt(budgetInput.value) || 0;
             
-            // 計算該組目前發放總和
-            let currentTotalInfo = 0;
+            // 計算該組目前發放總和 (在背景計算，不顯示)
+            let currentTotalUsed = 0;
             const inputs = document.querySelectorAll(`.month-input[data-group="${groupName}"]`);
             
             inputs.forEach(input => {
                 const name = input.dataset.name;
                 const months = parseFloat(input.value) || 0;
-                const salary = salaryMap.get(name) || 0;
-                const bonus = Math.round(salary * months);
+                const salary = salaryMap.get(name) || 0; // 從記憶體取得薪資
                 
-                // 更新該員的預估獎金顯示 (選填，若不想顯示個人金額可移除此行)
-                const bonusDisplay = document.getElementById(`bonus-preview-${name}`);
-                if (bonusDisplay) {
-                    bonusDisplay.textContent = months > 0 ? formatCurrency(bonus) : '-';
-                }
-
-                currentTotalInfo += bonus;
+                // 計算：薪資 x 月數
+                // Math.round 避免浮點數誤差
+                currentTotalUsed += Math.round(salary * months);
             });
-
-            // 更新介面
-            totalDisplay.textContent = formatCurrency(currentTotalInfo);
             
-            const balance = budget - currentTotalInfo;
+            // 判斷餘額 (預算 - 已用)
+            const balance = budget - currentTotalUsed;
             
             if (balance >= 0) {
-                // OK 狀態
+                // OK 狀態 (預算足夠)
                 statusBadge.textContent = 'OK';
-                statusBadge.className = 'px-3 py-1 text-sm font-bold text-white bg-green-500 rounded-full';
-                balanceDisplay.className = 'font-bold text-green-600';
-                balanceDisplay.textContent = `剩餘: ${formatCurrency(balance)}`;
-                budgetInput.classList.remove('border-red-500', 'bg-red-50');
-                budgetInput.classList.add('border-green-500', 'bg-green-50');
+                statusBadge.className = 'px-4 py-1.5 text-lg font-bold text-white bg-green-500 rounded-lg shadow-sm transition-all duration-300';
+                
+                // 輸入框樣式回饋
+                budgetInput.classList.remove('border-red-500', 'bg-red-50', 'text-red-700');
+                budgetInput.classList.add('border-green-500', 'bg-green-50', 'text-green-700');
             } else {
-                // NG 狀態
+                // NG 狀態 (預算超支)
                 statusBadge.textContent = 'NG';
-                statusBadge.className = 'px-3 py-1 text-sm font-bold text-white bg-red-500 rounded-full';
-                balanceDisplay.className = 'font-bold text-red-600';
-                balanceDisplay.textContent = `超支: ${formatCurrency(Math.abs(balance))}`;
-                budgetInput.classList.remove('border-green-500', 'bg-green-50');
-                budgetInput.classList.add('border-red-500', 'bg-red-50');
+                statusBadge.className = 'px-4 py-1.5 text-lg font-bold text-white bg-red-500 rounded-lg shadow-sm transition-all duration-300 animate-pulse';
+                
+                // 輸入框樣式回饋
+                budgetInput.classList.remove('border-green-500', 'bg-green-50', 'text-green-700');
+                budgetInput.classList.add('border-red-500', 'bg-red-50', 'text-red-700');
             }
         }
 
@@ -106,79 +89,81 @@
 
         function buildCalculatorUI(personnelData) {
             const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
-            // 過濾並分組
             const groupedData = {};
             
             personnelData.forEach(p => {
                 if (!p.group || p.group === '北分局') return;
                 if (!groupedData[p.group]) groupedData[p.group] = [];
                 
-                // 將薪資存入 Map，不顯示在 UI
+                // 將薪資存入 Map
                 const salary = parseSalary(p.salary);
                 salaryMap.set(p.name, salary);
 
                 groupedData[p.group].push(p);
             });
 
-            container.innerHTML = ''; // 清空 loading
+            container.innerHTML = ''; 
 
             groups.forEach(groupName => {
                 const members = groupedData[groupName];
                 if (!members) return;
 
-                // 排序：副理優先，其餘按姓名或預設順序
+                // 排序：副理優先
                 members.sort((a, b) => {
                     if (a.role === '副理' && b.role !== '副理') return -1;
                     if (a.role !== '副理' && b.role === '副理') return 1;
                     return 0;
                 });
 
-                // 建立卡片 HTML
+                // 建立卡片
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden';
+                card.className = 'bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden';
 
-                // --- 卡片標頭 (預算輸入區) ---
+                // --- 標頭與預算輸入 ---
                 const header = document.createElement('div');
-                header.className = 'p-6 bg-slate-50 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4';
+                header.className = 'p-5 bg-gray-50 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4';
+                
+                // 為了隱私，將預算輸入框設為 password 類型，但在 focus 時顯示數字，或保持隱藏
                 header.innerHTML = `
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-4">
                         <h2 class="text-2xl font-bold text-gray-800">${groupName}</h2>
-                        <span id="status-${groupName}" class="px-3 py-1 text-sm font-bold text-gray-500 bg-gray-200 rounded-full">待輸入</span>
+                        <span id="status-${groupName}" class="px-4 py-1.5 text-lg font-bold text-gray-400 bg-gray-200 rounded-lg">待輸入</span>
                     </div>
                     
-                    <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-                        <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <label class="font-medium text-gray-700 whitespace-nowrap">分配總額:</label>
-                            <input type="number" id="budget-${groupName}" 
-                                class="w-full sm:w-48 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-right font-mono font-bold text-lg" 
-                                placeholder="輸入金額" oninput="calculateGroupStatus('${groupName}')">
-                        </div>
-                        <div class="text-right min-w-[150px]">
-                            <div class="text-sm text-gray-500">目前發放總和</div>
-                            <div id="total-${groupName}" class="text-xl font-bold text-blue-600">NT$ 0</div>
-                            <div id="balance-${groupName}" class="text-sm font-medium text-gray-400">尚未計算</div>
-                        </div>
+                    <div class="flex items-center gap-3 bg-white p-2 rounded-lg border border-gray-200 shadow-sm">
+                        <label class="font-medium text-gray-600 text-sm">分配總額</label>
+                        <input type="password" id="budget-${groupName}" 
+                            class="w-32 sm:w-40 p-1 bg-transparent outline-none text-right font-mono text-lg font-bold tracking-widest" 
+                            placeholder="輸入金額" 
+                            oninput="calculateGroupStatus('${groupName}')"
+                            autocomplete="off">
+                        <button onclick="toggleVisibility('budget-${groupName}')" class="text-gray-400 hover:text-gray-600 focus:outline-none" title="顯示/隱藏金額">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
                     </div>
                 `;
                 card.appendChild(header);
 
-                // --- 人員列表區 ---
+                // --- 人員列表 (只留 姓名 | 職稱 | 月數輸入) ---
                 const tableContainer = document.createElement('div');
                 tableContainer.className = 'overflow-x-auto';
                 
                 const table = document.createElement('table');
                 table.className = 'w-full text-left border-collapse';
                 
+                // 注意：這裡移除了「試算金額」欄位
                 table.innerHTML = `
                     <thead>
-                        <tr class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                            <th class="p-4 font-semibold border-b">姓名</th>
-                            <th class="p-4 font-semibold border-b">職稱</th>
-                            <th class="p-4 font-semibold border-b text-center w-32">年終月數</th>
-                            <th class="p-4 font-semibold border-b text-right w-40">試算金額</th>
+                        <tr class="bg-white border-b border-gray-100 text-gray-500 text-sm">
+                            <th class="p-4 font-normal w-1/3">姓名</th>
+                            <th class="p-4 font-normal w-1/3">職稱</th>
+                            <th class="p-4 font-normal text-right w-1/3">年終月數</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-gray-50">
                     </tbody>
                 `;
 
@@ -187,23 +172,25 @@
                 members.forEach(member => {
                     const isManager = member.role === '副理';
                     const tr = document.createElement('tr');
-                    tr.className = isManager ? 'bg-blue-50/50 hover:bg-blue-50' : 'hover:bg-gray-50';
+                    tr.className = isManager ? 'bg-blue-50/30' : 'hover:bg-gray-50 transition-colors';
                     
                     tr.innerHTML = `
-                        <td class="p-4 font-medium text-gray-900">
+                        <td class="p-4 font-medium text-gray-800">
                             ${member.name}
-                            ${isManager ? '<span class="ml-2 text-xs text-blue-600 border border-blue-200 bg-blue-100 px-1.5 py-0.5 rounded">副理</span>' : ''}
+                            ${isManager ? '<span class="ml-2 text-xs text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded">副理</span>' : ''}
                         </td>
-                        <td class="p-4 text-gray-500">${member.role || '組員'}</td>
-                        <td class="p-4 text-center">
-                            <input type="number" step="0.1" min="0" 
-                                class="month-input w-24 p-1.5 text-center border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-bold"
-                                data-group="${groupName}" 
-                                data-name="${member.name}"
-                                placeholder="0.0"
-                                oninput="calculateGroupStatus('${groupName}')">
+                        <td class="p-4 text-gray-400 text-sm">${member.role || '組員'}</td>
+                        <td class="p-4 text-right">
+                            <div class="flex justify-end items-center">
+                                <input type="number" step="0.1" min="0" 
+                                    class="month-input w-20 p-2 text-center bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none font-bold text-gray-700"
+                                    data-group="${groupName}" 
+                                    data-name="${member.name}"
+                                    placeholder="0"
+                                    oninput="calculateGroupStatus('${groupName}')">
+                                <span class="ml-2 text-gray-400 text-sm">個月</span>
+                            </div>
                         </td>
-                        <td class="p-4 text-right font-mono text-gray-700" id="bonus-preview-${member.name}">-</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -214,8 +201,17 @@
             });
         }
 
-        // --- 資料讀取 ---
+        // --- 工具功能：切換分配總額的可見度 ---
+        window.toggleVisibility = function(id) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "number";
+            } else {
+                input.type = "password";
+            }
+        }
 
+        // --- 資料讀取 ---
         async function init() {
             try {
                 const timestamp = new Date().getTime();
@@ -225,10 +221,7 @@
                 buildCalculatorUI(data);
             } catch (error) {
                 console.error(error);
-                container.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">發生錯誤!</strong>
-                    <span class="block sm:inline">無法讀取 personnelData-hr.json，請確認檔案是否存在。</span>
-                </div>`;
+                container.innerHTML = `<div class="text-center text-red-400 p-8">讀取資料失敗，請確認 JSON 檔案路徑。</div>`;
             }
         }
 
