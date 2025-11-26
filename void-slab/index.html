@@ -5,21 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>預力混凝土中空版橋梁設計</title>
 
-    <!-- Tailwind CSS for utility classes -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- KaTeX for formula rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 
-    <!-- Plotly.js for plotting (Using a newer, stable version) -->
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
-    <!-- Math.js for calculations -->
     <script src="https://cdn.jsdelivr.net/npm/mathjs@12.4.2/lib/browser/math.min.js"></script>
 
-    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -27,26 +22,27 @@
     <div class="container mx-auto p-4 md:p-8">
         <header class="mb-6">
             <h1 class="text-3xl font-bold text-slate-900">預力混凝土中空版橋梁設計</h1>
-            <p class="text-slate-600 mt-2">一個整合 Math.js, KaTeX.js, 和 Plotly.js 的互動式工程應用程式。</p>
+            <p class="text-slate-600 mt-2">依據容許應力法進行計算</p>
         </header>
 
         <main>
-            <!-- Main Tab Navigation -->
             <div class="border-b border-slate-300">
                 <nav id="main-tabs" class="-mb-px flex space-x-2" aria-label="Tabs">
-                    <button class="main-tab-button active" data-tab-target="#tab-dimensions">橋梁尺寸</button>
-                    <button class="main-tab-button" data-tab-target="#tab-materials">基本材料參數</button>
-                    <button class="main-tab-button" data-tab-target="#tab-loads">設計載重</button>
-                    <button class="main-tab-button" data-tab-target="#tab-tendons">預力鋼腱</button>
-                    <button class="main-tab-button" data-tab-target="#tab-analysis">斷面力計算</button>
+                    <button class="main-tab-button active" data-tab-target="#tab-dimensions">1. 橋梁尺寸</button>
+                    <button class="main-tab-button" data-tab-target="#tab-materials">2. 基本材料參數</button>
+                    <button class="main-tab-button" data-tab-target="#tab-loads">3. 設計載重</button>
+                    <button class="main-tab-button" data-tab-target="#tab-tendons">4. 預力鋼腱</button>
+                    <button class="main-tab-button" data-tab-target="#tab-prestress-loss">5. 預力損失輸入</button>
+                    <button class="main-tab-button" data-tab-target="#tab-stress-check">6. 應力檢核</button>
+                    <button class="main-tab-button" data-tab-target="#tab-flexural-check">7. 撓曲強度檢核</button>
+                    <button class="main-tab-button" data-tab-target="#tab-deflection-check">8. 撓度檢核</button>
+                    <button class="main-tab-button" data-tab-target="#tab-shear-check">9. 剪力檢核</button>
                 </nav>
             </div>
 
-            <!-- Main Tab Content -->
             <div id="tab-content" class="mt-4">
                 <div id="tab-dimensions" class="tab-panel p-4 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
                     <div class="grid grid-cols-10 gap-6">
-                        <!-- Left Panel: Inputs & Derived Values (30%) -->
                         <div class="col-span-10 md:col-span-3">
                             <h2 class="text-2xl font-semibold mb-4 text-indigo-700">1. 橋梁尺寸</h2>
                             <form id="dimensions-form" class="space-y-3">
@@ -54,7 +50,7 @@
                                     <label for="L" class="text-sm font-medium text-slate-700">橋梁跨度 ($L$)</label>
                                     <div class="flex items-center border border-slate-300 rounded-md">
                                         <button type="button" data-target="L" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                        <input type="number" id="L" step="1" value="2500" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <input type="number" id="L" step="1" value="1240" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                         <button type="button" data-target="L" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                         <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                     </div>
@@ -63,7 +59,7 @@
                                     <label for="Ct" class="text-sm font-medium text-slate-700">懸臂版長度 ($C_t$)</label>
                                     <div class="flex items-center border border-slate-300 rounded-md">
                                         <button type="button" data-target="Ct" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                        <input type="number" id="Ct" step="1" value="100" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <input type="number" id="Ct" step="1" value="90" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                         <button type="button" data-target="Ct" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                         <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                     </div>
@@ -90,7 +86,7 @@
                                     <label for="Dr" class="text-sm font-medium text-slate-700">旋楞管直徑 ($D_r$)</label>
                                     <div class="flex items-center border border-slate-300 rounded-md">
                                         <button type="button" data-target="Dr" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                        <input type="number" id="Dr" step="1" value="80" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <input type="number" id="Dr" step="1" value="35" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                         <button type="button" data-target="Dr" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                         <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                     </div>
@@ -99,7 +95,7 @@
                                     <label for="N" class="text-sm font-medium text-slate-700">旋楞管數量 ($N$)</label>
                                     <div class="flex items-center border border-slate-300 rounded-md">
                                         <button type="button" data-target="N" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                        <input type="number" id="N" step="1" value="11" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <input type="number" id="N" step="1" value="9" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                         <button type="button" data-target="N" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                         <span class="ml-2 text-sm text-slate-500 pr-1"></span>
                                     </div>
@@ -108,7 +104,7 @@
                                     <label for="Sr" class="text-sm font-medium text-slate-700">旋楞管間距 ($S_r$)</label>
                                     <div class="flex items-center border border-slate-300 rounded-md">
                                         <button type="button" data-target="Sr" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                        <input type="number" id="Sr" step="1" value="115" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <input type="number" id="Sr" step="1" value="65" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                         <button type="button" data-target="Sr" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                         <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                     </div>
@@ -117,7 +113,7 @@
                                     <label for="Et" class="text-sm font-medium text-slate-700">旋楞管與橋側邊緣 ($E_t$)</label>
                                     <div class="flex items-center border border-slate-300 rounded-md">
                                         <button type="button" data-target="Et" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                        <input type="number" id="Et" step="1" value="35" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <input type="number" id="Et" step="1" value="32.5" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                         <button type="button" data-target="Et" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                         <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                     </div>
@@ -126,7 +122,7 @@
                                     <label for="Dt" class="text-sm font-medium text-slate-700">旋楞管與橋頂邊緣 ($D_t$)</label>
                                     <div class="flex items-center border border-slate-300 rounded-md">
                                         <button type="button" data-target="Dt" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                        <input type="number" id="Dt" step="1" value="20" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <input type="number" id="Dt" step="1" value="18" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                         <button type="button" data-target="Dt" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                         <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                     </div>
@@ -135,17 +131,14 @@
                                     <label for="Db" class="text-sm font-medium text-slate-700">旋楞管與橋底邊緣 ($D_b$)</label>
                                     <div class="flex items-center border border-slate-300 rounded-md">
                                         <button type="button" data-target="Db" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                        <input type="number" id="Db" step="1" value="40" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        <input type="number" id="Db" step="1" value="17" class="flex-1 w-full text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                         <button type="button" data-target="Db" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                         <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- UPDATED: Reordered and categorized derived values -->
                             <div id="derived-values" class="mt-6 pt-4 border-t border-slate-200 space-y-2">
                                 <h3 class="text-lg font-semibold text-slate-800">計算結果</h3>
-                                <!-- 總體尺寸 -->
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-600">橋梁跨度 ($L$)</span>
                                     <span id="display-L-m" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
@@ -162,7 +155,6 @@
                                     <span class="text-slate-600">橋梁梁深 ($H$)</span>
                                     <span id="display-H" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
-                                <!-- 元件尺寸 -->
                                 <div class="flex justify-between items-center text-sm pt-2 border-t border-slate-100">
                                     <span class="text-slate-600">端隔梁厚度 ($H_e$)</span>
                                     <span id="display-He" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
@@ -171,7 +163,6 @@
                                     <span class="text-slate-600">旋楞管長度 ($L_p$)</span>
                                     <span id="display-Lp" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
-                                <!-- 配置尺寸 -->
                                 <div class="flex justify-between items-center text-sm pt-2 border-t border-slate-100">
                                     <span class="text-slate-600">橋梁支承數 ($N_b$)</span>
                                     <span id="display-Nb" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
@@ -188,10 +179,20 @@
                                     <span class="text-slate-600">旋楞管淨間距 ($E_b$)</span>
                                     <span id="display-Eb" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
                                 </div>
+                                <div class="flex justify-between items-center text-sm pt-2 border-t border-slate-100">
+                                    <span class="text-slate-600">橋梁中央淨斷面積(Anet)</span>
+                                    <span id="display-net-area" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">橋梁中央淨斷面慣性矩(Inet)</span>
+                                    <span id="display-net-inertia" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-600">重心位置 (距頂部 $Y_{cg}$)</span>
+                                    <span id="display-centroid-y" class="font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded"></span>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Right Panel: Plots (70%) -->
                         <div class="col-span-10 md:col-span-7">
                              <div class="border-b border-gray-200">
                                 <nav id="sub-tabs" class="flex -mb-px">
@@ -202,7 +203,8 @@
                             </div>
                             <div id="sub-tab-content" class="mt-2">
                                 <div id="subtab-cross-section" class="sub-tab-panel">
-                                    <div id="cross-section-plot" style="width:100%; height:550px;"></div>
+                                    <div id="cross-section-plot" style="width:100%; height:450px;"></div>
+                                    <div id="duct-info-display" class="mt-4"></div>
                                 </div>
                                 <div id="subtab-end-section" class="hidden sub-tab-panel p-4">
                                     <div id="end-section-controls" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 p-4 bg-slate-50 rounded-lg">
@@ -210,7 +212,7 @@
                                             <label for="He" class="text-sm font-medium text-slate-700">端隔梁厚度 ($H_e$)</label>
                                             <div class="flex items-center border border-slate-300 rounded-md">
                                                 <button type="button" data-target="He" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                                <input type="number" id="He" step="1" value="90" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <input type="number" id="He" step="1" value="70" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                                 <button type="button" data-target="He" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                                 <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                             </div>
@@ -219,7 +221,7 @@
                                             <label for="Nb" class="text-sm font-medium text-slate-700">支承數量 ($N_b$)</label>
                                             <div class="flex items-center border border-slate-300 rounded-md">
                                                 <button type="button" data-target="Nb" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                                <input type="number" id="Nb" step="1" value="3" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <input type="number" id="Nb" step="1" value="4" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                                 <button type="button" data-target="Nb" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                             </div>
                                         </div>
@@ -227,7 +229,7 @@
                                             <label for="Nbs" class="text-sm font-medium text-slate-700">支承間距 ($N_{bs}$)</label>
                                             <div class="flex items-center border border-slate-300 rounded-md">
                                                 <button type="button" data-target="Nbs" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                                <input type="number" id="Nbs" step="1" value="500" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <input type="number" id="Nbs" step="1" value="160" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                                 <button type="button" data-target="Nbs" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                                 <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                             </div>
@@ -241,7 +243,7 @@
                                             <label for="L1" class="text-sm font-medium text-slate-700">支承到橋端 ($L_1$)</label>
                                             <div class="flex items-center border border-slate-300 rounded-md">
                                                 <button type="button" data-target="L1" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                                <input type="number" id="L1" step="1" value="55" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <input type="number" id="L1" step="1" value="25" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                                 <button type="button" data-target="L1" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                                 <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                             </div>
@@ -250,7 +252,7 @@
                                             <label for="L2" class="text-sm font-medium text-slate-700">支承到旋楞管邊緣 ($L_2$)</label>
                                             <div class="flex items-center border border-slate-300 rounded-md">
                                                 <button type="button" data-target="L2" class="number-button-minus px-2 text-slate-600 rounded-l-md bg-slate-100 hover:bg-slate-200">-</button>
-                                                <input type="number" id="L2" step="1" value="85" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                <input type="number" id="L2" step="1" value="60" class="w-20 text-center border-l border-r border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                                 <button type="button" data-target="L2" class="number-button-plus px-2 text-slate-600 rounded-r-md bg-slate-100 hover:bg-slate-200">+</button>
                                                 <span class="ml-2 text-sm text-slate-500 pr-1">cm</span>
                                             </div>
@@ -263,28 +265,911 @@
                     </div>
                 </div>
 
-                <!-- Other main tabs remain as placeholders -->
                 <div id="tab-materials" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">2. 基本材料參數</h2>
-                    <p>此處將放置材料性質的輸入欄位，例如：混凝土設計強度 $f'_{ck}$、鋼筋降伏強度 $f_y$、預力鋼材種類與性質等。</p>
+                    <h2 class="text-2xl font-semibold mb-6 text-indigo-700">2. 基本材料參數</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <h3 class="text-xl font-semibold text-indigo-700 border-b pb-2">混凝土</h3>
+                            <div class="flex items-center justify-between">
+                                <label for="fck" class="text-slate-600">混凝土設計強度 ($f'_{ck}$)</label>
+                                <div class="flex items-center w-1/2">
+                                    <input type="number" id="fck" name="fck" value="350" step="35" class="p-2 border border-slate-300 rounded-md w-full text-right focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <span class="ml-3 text-slate-500 whitespace-nowrap">$kgf/cm^2$</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label for="fci" class="text-slate-600">施預力時混凝土強度 ($f'_{ci}$)</label>
+                                <div class="flex items-center w-1/2">
+                                    <input type="number" id="fci" name="fci" value="280" step="35" class="p-2 border border-slate-300 rounded-md w-full text-right focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <span class="ml-3 text-slate-500 whitespace-nowrap">$kgf/cm^2$</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-600">混凝土單位重 ($\gamma_c$)</span>
+                                <span class="font-mono text-slate-800">$2.4 \ tf/m^3$</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-600">瀝青混凝土單位重 ($\gamma_{ac}$)</span>
+                                <span class="font-mono text-slate-800">$2.3 \ tf/m^3$</span>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <h3 class="text-xl font-semibold text-indigo-700 border-b pb-2">鋼材</h3>
+                            <div class="space-y-4 p-4 border rounded-md bg-slate-50">
+                                <h4 class="font-semibold text-slate-800">預力鋼腱</h4>
+                                <div class="flex items-center justify-between">
+                                    <label for="tendon-type" class="text-slate-600">鋼腱種類</label>
+                                    <select id="tendon-type" name="tendon-type" class="p-2 border border-slate-300 rounded-md w-1/2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="SWPR7BL12.7">SWPR7BL 12.7mm</option>
+                                        <option value="SWPR7BL15.2" selected>SWPR7BL 15.2mm</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label for="tendon-strands" class="text-slate-600">布孔數</label>
+                                    <select id="tendon-strands" name="tendon-strands" class="p-2 border border-slate-300 rounded-md w-1/2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="12">12孔</option>
+                                        <option value="15">15孔</option>
+                                        <option value="19" selected>19孔</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2 pt-2 border-t border-slate-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600">每股鋼絞線斷面積 ($A_p$)</span>
+                                        <span id="tendon-total-area" class="font-mono text-indigo-700 font-bold"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600">抗拉強度 ($f_{pu}$)</span>
+                                        <span id="tendon-fpu" class="font-mono text-slate-800"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600">降伏強度 ($f_{py}$)</span>
+                                        <span id="tendon-fpy" class="font-mono text-slate-800"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600">楊氏係數 ($E_s$)</span>
+                                        <span class="font-mono text-slate-800">$2.04 \times 10^5 \ MPa$</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 text-right pt-2">強度引用：日本道路橋示方書III混凝土橋篇, 表-4.1.2</p>
+                            </div>
+                            <div id="rebar-section" class="space-y-4 p-4 border rounded-md bg-slate-50">
+                                <h4 class="font-semibold text-slate-800">鋼筋</h4>
+                                <p class="text-sm text-slate-500">尺寸斷面依據：台灣公共工程施工規範 03210章</p>
+                                <div class="flex items-center justify-between">
+                                    <label for="rebar-select" class="text-slate-600">鋼筋號數</label>
+                                    <select id="rebar-select" name="rebar-select" class="p-2 border border-slate-300 rounded-md w-1/2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="D10">D10</option>
+                                        <option value="D13">D13</option>
+                                        <option value="D16" selected>D16</option>
+                                        <option value="D19">D19</option>
+                                        <option value="D22">D22</option>
+                                        <option value="D25">D25</option>
+                                        <option value="D29">D29</option>
+                                        <option value="D32">D32</option>
+                                        <option value="D36">D36</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2 pt-2 border-t border-slate-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600">標稱直徑</span>
+                                        <span id="rebar-diameter" class="font-mono text-slate-800"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600">剖面積</span>
+                                        <span id="rebar-area" class="font-mono text-slate-800"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-600">降伏強度 ($f_y$)</span>
+                                        <span id="rebar-fy" class="font-mono text-slate-800"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                
                 <div id="tab-loads" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">3. 設計載重</h2>
-                    <p>此處將放置設計載重的輸入欄位，包含靜載重 (DL) 如構材自重、鋪面重，以及活載重 (LL) 如車道載重、衝擊係數等。</p>
+                     <h2 class="text-2xl font-semibold mb-6 text-indigo-700">3. 設計載重</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
+                        <div class="space-y-8">
+                            <div>
+                                <h3 class="text-xl font-semibold text-indigo-700 border-b pb-2 mb-4">附加載重 (DL)</h3>
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-2 items-center gap-4">
+                                        <label for="asphalt-thickness" class="text-slate-600">瀝青混凝土厚度 ($t_{ac}$)</label>
+                                        <div class="flex items-center">
+                                            <input type="number" id="asphalt-thickness" value="8" class="p-2 border border-slate-300 rounded-md w-full text-right focus:ring-2 focus:ring-indigo-500">
+                                            <span class="ml-3 text-slate-500">cm</span>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 items-center gap-4">
+                                        <label for="pipeline-load" class="text-slate-600">附掛管線(雙側)</label>
+                                        <div class="flex items-center">
+                                            <input type="number" id="pipeline-load" value="0.3" step="0.1" class="p-2 border border-slate-300 rounded-md w-full text-right focus:ring-2 focus:ring-indigo-500">
+                                            <span class="ml-3 text-slate-500">tf/m</span>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 items-center gap-4">
+                                        <label for="railing-load" class="text-slate-600">RC護欄(雙側)</label>
+                                        <div class="flex items-center">
+                                            <input type="number" id="railing-load" value="1.5" step="0.1" class="p-2 border border-slate-300 rounded-md w-full text-right focus:ring-2 focus:ring-indigo-500">
+                                            <span class="ml-3 text-slate-500">tf/m</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-indigo-700 border-b pb-2 mb-4">車輛載重 (LL)</h3>
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-2 items-center gap-4">
+                                        <label for="num-lanes" class="text-slate-600">車道數</label>
+                                        <input type="number" id="num-lanes" value="2" step="1" min="1" class="p-2 border border-slate-300 rounded-md w-full text-right focus:ring-2 focus:ring-indigo-500">
+                                    </div>
+                                    <div class="grid grid-cols-2 items-center gap-4">
+                                        <label for="impact-factor-user" class="text-slate-600">衝擊係數 ($i$)</label>
+                                        <input type="number" id="impact-factor-user" value="0.3" step="0.01" class="p-2 border border-slate-300 rounded-md w-full text-right focus:ring-2 focus:ring-indigo-500">
+                                    </div>
+                                    <div class="grid grid-cols-2 items-center gap-4">
+                                        <label for="overload-factor" class="text-slate-600">超載係數</label>
+                                        <input type="number" id="overload-factor" value="0.3" step="0.01" class="p-2 border border-slate-300 rounded-md w-full text-right focus:ring-2 focus:ring-indigo-500">
+                                    </div>
+                                    <div class="grid grid-cols-2 items-center gap-4">
+                                        <label for="lane-reduction-factor" class="text-slate-600">多車道折減係數</label>
+                                        <select id="lane-reduction-factor" class="p-2 border border-slate-300 rounded-md w-full focus:ring-2 focus:ring-indigo-500">
+                                            <option value="1.00"selected>100% (1-2 車道)</option>
+                                            <option value="0.90">90% (3 車道)</option>
+                                            <option value="0.75">75% (4+ 車道)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-semibold text-indigo-700 border-b pb-2 mb-4">計算結果</h3>
+                            <details class="border rounded-lg bg-slate-50">
+                                <summary class="cursor-pointer p-4 flex justify-between items-center font-semibold text-slate-800">
+                                    <span>中空版梁自重 ($W_{slab}$)</span>
+                                    <span id="res-self-weight" class="font-mono text-indigo-700 bg-indigo-100 px-2 py-1 rounded"></span>
+                                </summary>
+                                <div id="calc-self-weight" class="p-4 border-t border-slate-200 text-sm text-slate-600"></div>
+                            </details>
+                            
+                            <details class="border rounded-lg bg-slate-50">
+                                <summary class="cursor-pointer p-4 flex justify-between items-center font-semibold text-slate-800">
+                                    <span>附加載重重 ($W_{ADL}$)</span>
+                                    <span id="res-additional-dead-load" class="font-mono text-indigo-700 bg-indigo-100 px-2 py-1 rounded"></span>
+                                </summary>
+                                <div id="calc-additional-dead-load" class="p-4 border-t border-slate-200 text-sm text-slate-600"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-slate-50 font-bold">
+                                <summary class="cursor-pointer p-4 flex justify-between items-center text-slate-900">
+                                    <span>M靜載重 (橋梁自重+附加載重)</span>
+                                    <span id="res-moment-dead-load" class="font-mono text-indigo-800 bg-indigo-200 px-2 py-1 rounded"></span>
+                                </summary>
+                                <div id="calc-moment-dead-load" class="p-4 border-t border-slate-200 text-sm text-slate-600 font-normal"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-slate-50">
+                                <summary class="cursor-pointer p-4 flex justify-between items-center font-semibold text-slate-800">
+                                    <span>$M_{LL}$ (貨車載重)</span>
+                                    <span id="res-moment-truck" class="font-mono text-indigo-700 bg-indigo-100 px-2 py-1 rounded"></span>
+                                </summary>
+                                <div id="calc-moment-truck" class="p-4 border-t border-slate-200 text-sm text-slate-600"></div>
+                            </details>
+                            <details class="border rounded-lg bg-slate-50">
+                                <summary class="cursor-pointer p-4 flex justify-between items-center font-semibold text-slate-800">
+                                    <span>$M_{LL}$ (車道載重)</span>
+                                    <span id="res-moment-lane" class="font-mono text-indigo-700 bg-indigo-100 px-2 py-1 rounded"></span>
+                                </summary>
+                                <div id="calc-moment-lane" class="p-4 border-t border-slate-200 text-sm text-slate-600"></div>
+                            </details>
+                            <details class="border rounded-lg bg-slate-50 font-bold">
+                                <summary class="cursor-pointer p-4 flex justify-between items-center text-slate-900">
+                                    <span>設計彎矩 ($M_{LL,max}$)</span>
+                                    <span id="res-moment-max" class="font-mono text-indigo-800 bg-indigo-200 px-2 py-1 rounded"></span>
+                                </summary>
+                                <div id="calc-moment-max" class="p-4 border-t border-slate-200 text-sm text-slate-600 font-normal"></div>
+                            </details>
+                            <details class="border-2 border-red-200 rounded-lg bg-red-50 font-bold">
+                                <summary class="cursor-pointer p-4 flex justify-between items-center text-red-800">
+                                    <span>含係數之最終設計彎矩</span>
+                                    <span id="res-moment-final" class="font-mono text-red-800 bg-red-200 px-2 py-1 rounded"></span>
+                                </summary>
+                                <div id="calc-moment-final" class="p-4 border-t border-red-200 text-sm text-slate-700 font-normal"></div>
+                            </details>
+                        </div>
+                    </div>
                 </div>
-                <div id="tab-tendons" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">4. 預力鋼腱</h2>
-                    <p>此處將放置預力鋼腱的相關設定，例如：鋼腱配置（線形、偏心距）、鋼腱數量、初始預力、以及摩擦與錨定損失等參數。</p>
+                
+                <div id="tab-tendons" class="hidden tab-panel">
+                     <div class="flex flex-col md:flex-row gap-6 p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                        <div class="w-full md:w-1/5 flex-shrink-0">
+                             <h2 class="text-2xl font-semibold mb-4 text-indigo-700">4. 預力鋼腱</h2>
+                             <p class="text-sm text-slate-600 mb-4">
+                                 依據右側圖表，顯示對應斷面之鋼腱座標。
+                             </p>
+                             <div id="tendon-info-display" class="space-y-3"></div>
+                         </div>
+                         <div class="w-full md:w-4/5">
+                             <div id="tendon-sub-tabs" class="flex border-b border-slate-300">
+                                 <button data-target="tendon-panel-cross-section" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-indigo-500 hover:text-indigo-600 focus:outline-none active">
+                                     中央斷面
+                                 </button>
+                                 <button data-target="tendon-panel-end-section" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-indigo-500 hover:text-indigo-600 focus:outline-none">
+                                     端部斷面
+                                 </button>
+                                 <button data-target="tendon-panel-side-view" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-indigo-500 hover:text-indigo-600 focus:outline-none">
+                                     側視圖
+                                 </button>
+                             </div>
+                             <div>
+                                 <div id="tendon-panel-cross-section" class="sub-tab-panel py-4">
+                                     <div id="tendon-cross-section-plot" class="w-full h-96"></div>
+                                 </div>
+                                 <div id="tendon-panel-end-section" class="sub-tab-panel py-4 hidden">
+                                     <div id="tendon-end-section-plot" class="w-full h-96"></div>
+                                 </div>
+                                 <div id="tendon-panel-side-view" class="sub-tab-panel py-4 hidden">
+                                     <div id="tendon-side-view-plot" class="w-full h-96"></div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
                 </div>
-                <div id="tab-analysis" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">5. 斷面力計算</h2>
-                    <p>此處將顯示根據前述頁籤輸入的參數，透過 `math.js` 計算出的斷面力結果（彎矩、剪力），並使用 `plotly.js` 繪製相關的圖表。</p>
+
+                <div id="tab-prestress-loss" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">5. 預力損失輸入</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white border border-slate-300 rounded-lg shadow-sm p-6">
+                            <h3 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">預力損失輸入值 ( $ kgf/cm^2 $ )</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                                
+                                <div class="flex flex-col col-span-1 md:col-span-2 lg:col-span-3 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
+                                    <label for="loss_fpj" class="text-sm font-medium text-indigo-700 mb-1">初始施預力 $ f_{pj} $ ( $ kgf/cm^2 $ )</label>
+                                    <input type="number" id="loss_fpj" value="14130" class="p-2 border border-indigo-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 text-lg font-bold">
+                                    <p id="loss-fpj-details" class="text-xs text-slate-500 mt-1">此值將用於計算損失率。預設值由材料參數 $min(0.70 f_{pu}, 0.85 f_{py})$ 計算而來。</p>
+                                </div>
+                                
+                                <div class="flex flex-col">
+                                    <label for="loss_friction" class="text-sm font-medium text-slate-700 mb-1">1. 摩擦損失 $ \Delta f_{pF} $</label>
+                                    <input type="number" id="loss_friction" value="633.29" class="p-2 border border-slate-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div class="flex flex-col">
+                                    <label for="loss_anchor" class="text-sm font-medium text-slate-700 mb-1">2. 錨具滑動損失 $ \Delta f_{pA} $</label>
+                                    <input type="number" id="loss_anchor" value="1425.00" class="p-2 border border-slate-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div class="flex flex-col">
+                                    <label for="loss_elastic" class="text-sm font-medium text-slate-700 mb-1">3. 彈性縮短損失 $ \Delta f_{pES} $</label>
+                                    <input type="number" id="loss_elastic" value="158.46" class="p-2 border border-slate-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div class="flex flex-col">
+                                    <label for="loss_shrinkage" class="text-sm font-medium text-slate-700 mb-1">4. 乾縮損失 $ \Delta f_{pSH} $</label>
+                                    <input type="number" id="loss_shrinkage" value="280.80" class="p-2 border border-slate-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div class="flex flex-col">
+                                    <label for="loss_creep" class="text-sm font-medium text-slate-700 mb-1">5. 潛變損失 $ \Delta f_{pCR} $</label>
+                                    <input type="number" id="loss_creep" value="460.09" class="p-2 border border-slate-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div class="flex flex-col">
+                                    <label for="loss_relaxation" class="text-sm font-medium text-slate-700 mb-1">6. 鬆弛損失 $ \Delta f_{pSR} $</label>
+                                    <input type="number" id="loss_relaxation" value="297.11" class="p-2 border border-slate-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                        <div id="loss-summary-results">
+                            </div>
+
+                    </div>
+                </div>
+
+                <div id="tab-stress-check" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">6. 應力檢核</h2>
+                    
+                    <div id="stress-sub-tabs" class="flex border-b border-slate-300 mb-4">
+                        <button data-target="stress-panel-allowable" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-indigo-500 hover:text-indigo-600 focus:outline-none active">
+                            混凝土容許應力
+                        </button>
+                        <button data-target="stress-panel-midspan" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-indigo-500 hover:text-indigo-600 focus:outline-none">
+                            梁中點上下緣應力計算
+                        </button>
+                        <button data-target="stress-panel-check" class="sub-tab-button px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-indigo-500 hover:text-indigo-600 focus:outline-none">
+                            壓, 張應力檢核
+                        </button>
+                    </div>
+
+                    <div>
+                        
+                        <div id="stress-panel-allowable" class="sub-tab-panel py-4">
+                            <div class="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
+                                <div class="w-full md:w-1/3 flex-shrink-0 flex items-start justify-center">
+                                    <img src="https://raw.githubusercontent.com/ttchang1127/dashboard/main/images/%E5%BE%8C%E6%8B%89%E6%B3%95%E5%AE%B9%E8%A8%B1%E6%87%89%E5%8A%9B.png" alt="後拉法容許應力" class="w-full max-w-md mx-auto rounded-lg shadow-md border border-slate-200">
+                                </div>
+            
+                                <div class="w-full md:w-2/3 flex-grow space-y-6">
+                                    <div class="grid grid-cols-1 gap-4">
+                                        <div class="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                                            <span class="text-slate-600 font-semibold">混凝土設計強度 ($f'_{ck}$)</span>
+                                            <span id="display-fck" class="font-mono text-indigo-700 text-lg font-bold"></span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                                            <span class="text-slate-600 font-semibold">施預力時混凝土強度 ($f'_{ci}$)</span>
+                                            <span id="display-fci" class="font-mono text-indigo-700 text-lg font-bold"></span>
+                                        </div>
+                                    </div>
+                
+                                    <div>
+                                        <p class="text-sm text-slate-600 mb-2 font-semibold">依據公路橋梁設計規範(98年) 表3.3</p>
+                                        <div class="overflow-x-auto border border-slate-300 rounded-lg shadow-sm">
+                                            <table class="min-w-full divide-y divide-slate-200">
+                                                <thead class="bg-slate-100">
+                                                    <tr>
+                                                        <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-slate-600 tracking-wider w-12">Case No.</th>
+                                                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-slate-600 tracking-wider">階段</th>
+                                                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-slate-600 tracking-wider">說明</th>
+                                                        <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-slate-600 tracking-wider">容許壓應力 <br>($kgf/cm^2$)</th>
+                                                        <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-slate-600 tracking-wider">容許張應力 <br>($kgf/cm^2$)</th>
+                                                        <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-slate-600 tracking-wider w-40 whitespace-nowrap">依據章節</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="bg-white divide-y divide-slate-200 text-sm">
+                                                    <tr class="h-20">
+                                                        <td class="px-3 py-4 text-center text-slate-500">1</td>
+                                                        <td class="px-3 py-4 whitespace-nowrap font-medium text-slate-900">施工階段</td>
+                                                        <td class="px-3 py-4 text-slate-500">潛變及乾縮損失前暫時應力</td>
+                                                        <td id="stress-comp-ci" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td id="stress-tens-ci" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td class="px-3 py-4 text-center text-slate-500 whitespace-nowrap">8.15.2 1.項</td>
+                                                    </tr>
+                                                    <tr class="bg-slate-50 h-20">
+                                                        <td class="px-3 py-4 text-center text-slate-500">2</td>
+                                                        <td class="px-3 py-4 whitespace-nowrap font-medium text-slate-900">完工階段</td>
+                                                        <td class="px-3 py-4 text-slate-500">Ps,eff +DL</td>
+                                                        <td id="stress-comp-dl" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td id="stress-tens-dl" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td class="px-3 py-4 text-center text-slate-500 whitespace-nowrap">8.15.2 2.項(2)</td>
+                                                    </tr>
+                                                    <tr class="h-20">
+                                                        <td class="px-3 py-4 text-center text-slate-500">3</td>
+                                                        <td class="px-3 py-4 whitespace-nowrap font-medium text-slate-900">完工階段</td>
+                                                        <td class="px-3 py-4 text-slate-500">(Ps,eff +DL)/2 + LL</td>
+                                                        <td id="stress-comp-case3" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td id="stress-tens-case3" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td class="px-3 py-4 text-center text-slate-500 whitespace-nowrap">8.15.2 2.項(3)</td>
+                                                    </tr>
+                                                    <tr class="bg-slate-50 h-20">
+                                                        <td class="px-3 py-4 text-center text-slate-500">4</td>
+                                                        <td class="px-3 py-4 whitespace-nowrap font-medium text-slate-900">完工階段</td>
+                                                        <td class="px-3 py-4 text-slate-500">I, IB (100%)</td>
+                                                        <td id="stress-comp-100" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td id="stress-tens-100" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td class="px-3 py-4 text-center text-slate-500 whitespace-nowrap">8.15.2 2.項</td>
+                                                    </tr>
+                                                    <tr class="h-20">
+                                                        <td class="px-3 py-4 text-center text-slate-500">5</td>
+                                                        <td class="px-3 py-4 whitespace-nowrap font-medium text-slate-900">完工階段</td>
+                                                        <td class="px-3 py-4 text-slate-500">II, III, IV (125%)</td>
+                                                        <td id="stress-comp-125" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td id="stress-tens-125" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td class="px-3 py-4 text-center text-slate-500 whitespace-nowrap">8.15.2 2.項</td>
+                                                    </tr>
+                                                    <tr class="bg-slate-50 h-20">
+                                                        <td class="px-3 py-4 text-center text-slate-500">6</td>
+                                                        <td class="px-3 py-4 whitespace-nowrap font-medium text-slate-900">完工階段</td>
+                                                        <td class="px-3 py-4 text-slate-500">V, VI (140%)</td>
+                                                        <td id="stress-comp-140" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td id="stress-tens-140" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td class="px-3 py-4 text-center text-slate-500 whitespace-nowrap">8.15.2 2.項</td>
+                                                    </tr>
+                                                    <tr class="h-20">
+                                                        <td class="px-3 py-4 text-center text-slate-500">7</td>
+                                                        <td class="px-3 py-4 whitespace-nowrap font-medium text-slate-900">完工階段</td>
+                                                        <td class="px-3 py-4 text-slate-500">VII (133%)</td>
+                                                        <td id="stress-comp-133" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td id="stress-tens-133" class="px-3 py-4 whitespace-nowrap text-center align-top"></td>
+                                                        <td class="px-3 py-4 text-center text-slate-500 whitespace-nowrap">8.15.2 2.項</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-2">說明: 完工階段指所有預力損失後之應力</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="stress-panel-midspan" class="sub-tab-panel py-4 hidden">
+                            <div class="max-w-7xl mx-auto space-y-4">
+                                <p class="text-sm text-slate-600">此計算將使用「5. 預力損失輸入」計算出的有效預力($f_{pe}$)，以及「1. 橋梁尺寸」和「4. 預力鋼腱」的幾何資料，來計算梁中點的上下緣應力。</p>
+                                <div class="flex flex-col md:flex-row gap-8">
+                                    <div class="w-full md:w-5/12 flex-shrink-0">
+                                        <h3 class="text-lg font-semibold text-slate-800 mb-2">計算結果</h3>
+                                        <div class="border border-slate-300 rounded-lg shadow-sm overflow-hidden">
+                                            <table class="min-w-full divide-y divide-slate-200">
+                                                <thead class="bg-slate-50">
+                                                    <tr>
+                                                        <th class="px-6 py-3 text-left text-sm font-semibold text-slate-700 w-3/5">計算項目</th>
+                                                        <th class="px-6 py-3 text-left text-sm font-semibold text-slate-700 w-2/5">計算結果</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="bg-white divide-y divide-slate-200">
+                                                    <tr><td class="px-6 py-4 text-sm font-medium text-slate-800">有效預力 ($F_{eff}$)</td><td id="stress-F-eff" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr><td class="px-6 py-4 text-sm font-medium text-slate-800">鋼腱偏心矩 ($e_{p,eff}$)</td><td id="stress-ep-eff" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr><td class="px-6 py-4 text-sm font-medium text-slate-800">有效預力彎矩 ($M_{eff}$)</td><td id="stress-M-eff" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr class="bg-slate-50"><td class="px-6 py-4 text-sm font-medium text-slate-800">重心位置 (距底部 $Y_{cg,b}$)</td><td id="stress-Ycg-b" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr><td class="px-6 py-4 text-sm font-medium text-slate-800">斷面一次矩 (頂部 $S_{top}$)</td><td id="stress-S-top" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr><td class="px-6 py-4 text-sm font-medium text-slate-800">斷面一次矩 (底部 $S_{bot}$)</td><td id="stress-S-bot" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr class="bg-indigo-50"><td class="px-6 py-4 text-sm font-semibold text-indigo-800">梁上緣有效應力 ($f_{eff,top}$)</td><td id="stress-f-top" class="px-6 py-4 text-sm text-indigo-800 font-mono font-bold"></td></tr>
+                                                    <tr class="bg-indigo-50"><td class="px-6 py-4 text-sm font-semibold text-indigo-800">梁下緣有效應力 ($f_{eff,bot}$)</td><td id="stress-f-bot" class="px-6 py-4 text-sm text-indigo-800 font-mono font-bold"></td></tr>
+                                                    <tr class="bg-slate-50"><td class="px-6 py-4 text-sm font-medium text-slate-800">梁自重上緣應力 ($f_{DL,top}$)</td><td id="stress-f-dl-top" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr class="bg-slate-50"><td class="px-6 py-4 text-sm font-medium text-slate-800">梁自重下緣應力 ($f_{DL,bot}$)</td><td id="stress-f-dl-bot" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr><td class="px-6 py-4 text-sm font-medium text-slate-800">車輛載重上緣應力 ($f_{LL,top}$)</td><td id="stress-f-ll-top" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr><td class="px-6 py-4 text-sm font-medium text-slate-800">車輛載重下緣應力 ($f_{LL,bot}$)</td><td id="stress-f-ll-bot" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr class="bg-slate-50"><td class="px-6 py-4 text-sm font-medium text-slate-800">暫時預應力 ($f_{s,bf}$)</td><td id="stress-fs-bf" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr class="bg-slate-50"><td class="px-6 py-4 text-sm font-medium text-slate-800">暫時預力 ($F_{s,bf}$)</td><td id="stress-Fs-bf" class="px-6 py-4 text-sm text-slate-900 font-mono"></td></tr>
+                                                    <tr class="bg-blue-50"><td class="px-6 py-4 text-sm font-semibold text-blue-800">潛變乾縮前上緣應力 ($f_{bf,top}$)</td><td id="stress-fbf-top" class="px-6 py-4 text-sm text-blue-800 font-mono font-bold"></td></tr>
+                                                    <tr class="bg-blue-50"><td class="px-6 py-4 text-sm font-semibold text-blue-800">潛變乾縮前下緣應力 ($f_{bf,bot}$)</td><td id="stress-fbf-bot" class="px-6 py-4 text-sm text-blue-800 font-mono font-bold"></td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-full md:w-7/12">
+                                        <h3 class="text-lg font-semibold text-slate-800 mb-2">詳細計算過程</h3>
+                                        <div class="text-sm text-slate-700 space-y-2">
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">1. 有效預力 ($F_{eff}$)</summary><div class="p-3 border-t border-slate-200"><p id="calc-F-eff" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">2. 鋼腱偏心矩 ($e_{p,eff}$)</summary><div class="p-3 border-t border-slate-200"><p id="calc-ep-eff" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">3. 有效預力彎矩 ($M_{eff}$)</summary><div class="p-3 border-t border-slate-200"><p id="calc-M-eff" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">4. 斷面一次矩 ($S_{top}, S_{bot}$)</summary><div class="p-3 border-t border-slate-200 space-y-2"><p id="calc-Ycg-b" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p><p id="calc-S-top" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p><p id="calc-S-bot" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">5. 應力分量 ($P/A, M/S$)</summary><div class="p-3 border-t border-slate-200 space-y-2"><p id="calc-stress-axial" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p><p id="calc-stress-moment-top" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p><p id="calc-stress-moment-bot" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-indigo-50 border-indigo-100 shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-indigo-700 hover:bg-indigo-100">6. 梁上緣有效應力 ($f_{eff,top}$)</summary><div class="p-3 border-t border-indigo-200"><p id="calc-f-top" class="font-mono p-2 bg-white rounded border border-indigo-100"></p></div></details>
+                                            <details class="border rounded-lg bg-indigo-50 border-indigo-100 shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-indigo-700 hover:bg-indigo-100">7. 梁下緣有效應力 ($f_{eff,bot}$)</summary><div class="p-3 border-t border-indigo-200"><p id="calc-f-bot" class="font-mono p-2 bg-white rounded border border-indigo-100"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">8. 梁自重應力 ($f_{DL}$)</summary><div class="p-3 border-t border-slate-200 space-y-2"><p id="calc-f-dl-top" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p><p id="calc-f-dl-bot" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">9. 車輛載重應力 ($f_{LL}$)</summary><div class="p-3 border-t border-slate-200 space-y-2"><p id="calc-f-ll-top" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p><p id="calc-f-ll-bot" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">10. 暫時預應力 ($f_{s,bf}$)</summary><div class="p-3 border-t border-slate-200"><p id="calc-fs-bf" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50">11. 暫時預力 ($F_{s,bf}$) & 彎矩 ($M_{s,bf}$)</summary><div class="p-3 border-t border-slate-200 space-y-2"><p id="calc-Fs-bf" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p><p id="calc-M-s-bf" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-blue-50 border-blue-100 shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-blue-700 hover:bg-blue-100">12. 潛變乾縮前上緣應力 ($f_{bf,top}$)</summary><div class="p-3 border-t border-blue-200"><p id="calc-fbf-top" class="font-mono p-2 bg-white rounded border border-blue-100"></p></div></details>
+                                            <details class="border rounded-lg bg-blue-50 border-blue-100 shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-blue-700 hover:bg-blue-100">13. 潛變乾縮前下緣應力 ($f_{bf,bot}$)</summary><div class="p-3 border-t border-blue-200"><p id="calc-fbf-bot" class="font-mono p-2 bg-white rounded border border-blue-100"></p></div></details>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="stress-panel-check" class="sub-tab-panel py-4 hidden">
+                            <div class="max-w-7xl mx-auto space-y-4">
+                                <p class="text-sm text-slate-600">此處依據規範檢核施工階段（預力施加後、潛變乾縮前）及完工階段（有效預力+靜載重）之混凝土應力是否在容許範圍內。</p>
+                                <div class="flex flex-col md:flex-row gap-8">
+                                    <div class="w-full md:w-7/12 flex-shrink-0">
+                                        <h3 class="text-lg font-semibold text-slate-800 mb-2">檢核結果總表</h3>
+                                        <div class="border border-slate-300 rounded-lg shadow-sm overflow-hidden">
+                                            <table class="min-w-full divide-y divide-slate-200">
+                                                <thead class="bg-slate-50">
+                                                    <tr>
+                                                        <th class="px-2 py-3 text-center text-xs font-semibold text-slate-700 w-12 border-r border-slate-200">Case<br>No.</th>
+                                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 w-1/3">檢核項目</th>
+                                                        <th class="px-2 py-3 text-right text-xs font-semibold text-slate-700">應力值</th>
+                                                        <th class="px-2 py-3 text-center text-xs font-semibold text-slate-700">容許限值</th>
+                                                        <th class="px-2 py-3 text-center text-xs font-semibold text-slate-700 w-16">結果</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="bg-white divide-y divide-slate-200">
+                                                    <tr>
+                                                        <td class="px-2 py-3 text-center text-sm text-slate-500 font-mono font-bold bg-slate-50 border-r border-slate-200" rowspan="2">1</td>
+                                                        <td class="px-4 py-3 text-sm text-slate-800"><div class="font-medium">施工階段 - 上緣</div><div class="text-xs text-slate-500">($f_{bf,top}$)</div></td>
+                                                        <td id="check-val-const-top" class="px-2 py-3 text-sm text-right font-mono"></td>
+                                                        <td id="check-lim-const-top" class="px-2 py-3 text-xs text-center font-mono text-slate-600"></td>
+                                                        <td id="check-res-const-top" class="px-2 py-3 text-sm text-center font-bold"></td>
+                                                    </tr>
+                                                    <tr class="bg-slate-50">
+                                                        <td class="px-4 py-3 text-sm text-slate-800"><div class="font-medium">施工階段 - 下緣</div><div class="text-xs text-slate-500">($f_{bf,bot}$)</div></td>
+                                                        <td id="check-val-const-bot" class="px-2 py-3 text-sm text-right font-mono"></td>
+                                                        <td id="check-lim-const-bot" class="px-2 py-3 text-xs text-center font-mono text-slate-600"></td>
+                                                        <td id="check-res-const-bot" class="px-2 py-3 text-sm text-center font-bold"></td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td class="px-2 py-3 text-center text-sm text-slate-500 font-mono font-bold bg-slate-50 border-r border-slate-200" rowspan="2">2</td>
+                                                        <td class="px-4 py-3 text-sm text-slate-800"><div class="font-medium">完工階段(1) - 上緣</div><div class="text-xs text-slate-500">($f_{eff,top} + f_{DL,top}$)</div></td>
+                                                        <td id="check-val-effdl-top" class="px-2 py-3 text-sm text-right font-mono"></td>
+                                                        <td id="check-lim-effdl-top" class="px-2 py-3 text-xs text-center font-mono text-slate-600"></td>
+                                                        <td id="check-res-effdl-top" class="px-2 py-3 text-sm text-center font-bold"></td>
+                                                    </tr>
+                                                    <tr class="bg-slate-50">
+                                                        <td class="px-4 py-3 text-sm text-slate-800"><div class="font-medium">完工階段(1) - 下緣</div><div class="text-xs text-slate-500">($f_{eff,bot} + f_{DL,bot}$)</div></td>
+                                                        <td id="check-val-effdl-bot" class="px-2 py-3 text-sm text-right font-mono"></td>
+                                                        <td id="check-lim-effdl-bot" class="px-2 py-3 text-xs text-center font-mono text-slate-600"></td>
+                                                        <td id="check-res-effdl-bot" class="px-2 py-3 text-sm text-center font-bold"></td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td class="px-2 py-3 text-center text-sm text-slate-500 font-mono font-bold bg-slate-50 border-r border-slate-200" rowspan="2">3</td>
+                                                        <td class="px-4 py-3 text-sm text-slate-800">
+                                                            <div class="font-medium">完工階段(2) - 上緣</div>
+                                                            <div class="text-xs text-slate-500">$\frac{1}{2}(f_{eff,top}+f_{DL,top}) + f_{LL,top}$</div>
+                                                        </td>
+                                                        <td id="check-val-case3-top" class="px-2 py-3 text-sm text-right font-mono"></td>
+                                                        <td id="check-lim-case3-top" class="px-2 py-3 text-xs text-center font-mono text-slate-600"></td>
+                                                        <td id="check-res-case3-top" class="px-2 py-3 text-sm text-center font-bold"></td>
+                                                    </tr>
+                                                    <tr class="bg-slate-50">
+                                                        <td class="px-4 py-3 text-sm text-slate-800">
+                                                            <div class="font-medium">完工階段(2) - 下緣</div>
+                                                            <div class="text-xs text-slate-500">$\frac{1}{2}(f_{eff,bot}+f_{DL,bot}) + f_{LL,bot}$</div>
+                                                        </td>
+                                                        <td id="check-val-case3-bot" class="px-2 py-3 text-sm text-right font-mono"></td>
+                                                        <td id="check-lim-case3-bot" class="px-2 py-3 text-xs text-center font-mono text-slate-600"></td>
+                                                        <td id="check-res-case3-bot" class="px-2 py-3 text-sm text-center font-bold"></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td class="px-2 py-3 text-center text-sm text-slate-500 font-mono font-bold bg-slate-50 border-r border-slate-200" rowspan="2">4</td>
+                                                        <td class="px-4 py-3 text-sm text-slate-800"><div class="font-medium">完工階段(3) - 上緣</div><div class="text-xs text-slate-500">$f_{DL,top} \cdot a_{DL} + f_{LL,top}$</div></td>
+                                                        <td id="check-val-case4-top" class="px-2 py-3 text-sm text-right font-mono"></td>
+                                                        <td id="check-lim-case4-top" class="px-2 py-3 text-xs text-center font-mono text-slate-600"></td>
+                                                        <td id="check-res-case4-top" class="px-2 py-3 text-sm text-center font-bold"></td>
+                                                    </tr>
+                                                    <tr class="bg-slate-50">
+                                                        <td class="px-4 py-3 text-sm text-slate-800"><div class="font-medium">完工階段(3) - 下緣</div><div class="text-xs text-slate-500">$f_{DL,bot} \cdot a_{DL} + f_{LL,bot}$</div></td>
+                                                        <td id="check-val-case4-bot" class="px-2 py-3 text-sm text-right font-mono"></td>
+                                                        <td id="check-lim-case4-bot" class="px-2 py-3 text-xs text-center font-mono text-slate-600"></td>
+                                                        <td id="check-res-case4-bot" class="px-2 py-3 text-sm text-center font-bold"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <p class="text-xs text-slate-500 text-right mt-2">* 單位: $kgf/cm^2$</p>
+                                    </div>
+
+                                    <div class="w-full md:w-5/12">
+                                        <h3 class="text-lg font-semibold text-slate-800 mb-2">詳細檢核公式與過程</h3>
+                                        <div class="text-sm text-slate-700 space-y-2">
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50 flex justify-between"><span>Case 1. 施工階段 - 梁上緣</span></summary><div class="p-3 border-t border-slate-200"><p id="detail-const-top" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50 flex justify-between"><span>Case 1. 施工階段 - 梁下緣</span></summary><div class="p-3 border-t border-slate-200"><p id="detail-const-bot" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50 flex justify-between"><span>Case 2. 完工階段(1) - 梁上緣</span></summary><div class="p-3 border-t border-slate-200"><p id="detail-effdl-top" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50 flex justify-between"><span>Case 2. 完工階段(1) - 梁下緣</span></summary><div class="p-3 border-t border-slate-200"><p id="detail-effdl-bot" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50 flex justify-between"><span>Case 3. 完工階段(2) - 梁上緣</span></summary><div class="p-3 border-t border-slate-200"><p id="detail-case3-top" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+                                            <details class="border rounded-lg bg-white shadow-sm"><summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50 flex justify-between"><span>Case 3. 完工階段(2) - 梁下緣</span></summary><div class="p-3 border-t border-slate-200"><p id="detail-case3-bot" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p></div></details>
+
+                                            <details class="border rounded-lg bg-white shadow-sm">
+                                                <summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50 flex justify-between">
+                                                    <span>Case 4. 完工階段(3) - 梁上緣</span>
+                                                </summary>
+                                                <div class="p-3 border-t border-slate-200">
+                                                    <p id="detail-case4-top" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p>
+                                                </div>
+                                            </details>
+                                            <details class="border rounded-lg bg-white shadow-sm">
+                                                <summary class="cursor-pointer p-3 font-semibold text-slate-800 hover:bg-slate-50 flex justify-between">
+                                                    <span>Case 4. 完工階段(3) - 梁下緣</span>
+                                                </summary>
+                                                <div class="p-3 border-t border-slate-200">
+                                                    <p id="detail-case4-bot" class="font-mono p-2 bg-slate-50 rounded border border-slate-200"></p>
+                                                </div>
+                                            </details>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+<div id="tab-flexural-check" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">7. 撓曲強度檢核</h2>
+
+                    <div class="mb-8 p-6 border-2 rounded-xl text-center flex flex-col items-center justify-center bg-slate-50" id="flex-check-container">
+                        <h4 class="text-lg font-semibold text-slate-600 mb-2">撓曲強度檢核結果</h4>
+                        <div class="text-3xl font-bold mb-2" id="flex-check-result-text">
+                            </div>
+                        <div class="text-slate-500 font-mono" id="flex-check-formula">
+                            </div>
+                    </div>
+                    
+                    <details class="bg-indigo-50 border border-indigo-100 rounded-lg mb-8">
+                        <summary class="cursor-pointer p-4 font-semibold text-indigo-800 hover:bg-indigo-100 list-none flex items-center">
+                            <span class="mr-2">ℹ️</span> 顯示撓曲強度檢核說明
+                        </summary>
+                        <div class="p-4 pt-0 text-slate-700">
+                            <div class="bg-white p-3 rounded border border-indigo-200 font-mono text-indigo-900 text-center font-bold text-lg mb-3">
+                                檢核公式: $\phi M_n \ge M_u$
+                            </div>
+                            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                <li><strong>所需強度 $M_u$</strong>：依據「設計載重組合 強度I」計算：$M_u = 1.2 \times M_{DL,total} + 1.6 \times M_{final}$</li>
+                                <li><strong>設計強度 $\phi M_n$</strong>：基於應變協合性與斷面力平衡，透過疊代計算求得中性軸深度後，算出標稱強度 $M_n$，再乘上強度折減係數 $\phi$ (預設 0.9)。</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4 border-b pb-2">1. 所需撓曲強度 ($M_u$)</h3>
+                            <div class="border border-slate-300 rounded-lg shadow-sm overflow-hidden">
+                                <table class="min-w-full divide-y divide-slate-200">
+                                    <tbody class="bg-white divide-y divide-slate-200">
+                                        <tr>
+                                            <td class="px-4 py-3 text-sm font-medium text-slate-600">總靜載重彎矩 ($M_{DL,total}$)</td>
+                                            <td id="flex-M-dl" class="px-4 py-3 text-sm text-right font-mono text-slate-900"></td>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <td class="px-4 py-3 text-sm font-medium text-slate-600">活載重彎矩 ($M_{final}$)</td>
+                                            <td id="flex-M-ll" class="px-4 py-3 text-sm text-right font-mono text-slate-900"></td>
+                                        </tr>
+                                        <tr class="bg-slate-100 border-t-2 border-slate-300">
+                                            <td class="px-4 py-3 text-sm font-bold text-slate-800">所需強度 ($M_u$)</td>
+                                            <td id="flex-M-u" class="px-4 py-3 text-sm text-right font-mono font-bold text-indigo-700"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-2 text-xs text-slate-500 text-right">
+                                計算式: $M_u = 1.2 \times M_{DL} + 1.6 \times M_{LL}$
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4 border-b pb-2">2. 設計撓曲強度 ($\phi M_n$)</h3>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                                <div class="p-3 bg-slate-50 rounded border border-slate-200">
+                                    <span class="block text-slate-500 text-xs">有效寬度 ($b$)</span>
+                                    <span id="flex-b" class="font-mono font-semibold"></span>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded border border-slate-200">
+                                    <span class="block text-slate-500 text-xs">鋼腱重心深 ($d_p$)</span>
+                                    <span id="flex-dp" class="font-mono font-semibold"></span>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded border border-slate-200">
+                                    <span class="block text-slate-500 text-xs">鋼腱總面積 ($A_{ps}$)</span>
+                                    <span id="flex-aps" class="font-mono font-semibold"></span>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded border border-slate-200">
+                                    <span class="block text-slate-500 text-xs">混凝土強度 ($f'_c$)</span>
+                                    <span id="flex-fck" class="font-mono font-semibold"></span>
+                                </div>
+                            </div>
+
+                            <details class="border rounded-lg bg-white shadow-sm mb-4">
+                                <summary class="cursor-pointer p-3 font-semibold text-slate-700 hover:bg-slate-50 bg-slate-100 text-sm flex justify-between">
+                                    <span>顯示 $M_n$ 詳細計算過程 (疊代法)</span>
+                                </summary>
+                                <div class="p-4 border-t border-slate-200 text-sm text-slate-700 space-y-2 font-mono leading-relaxed" id="flex-Mn-details">
+                                </div>
+                            </details>
+
+                            <div class="border border-indigo-200 rounded-lg bg-indigo-50 p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-slate-700 font-medium">標稱強度 ($M_n$)</span>
+                                    <span id="flex-Mn" class="font-mono font-bold text-slate-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-slate-700 font-medium">強度折減係數 ($\phi$)</span>
+                                    <span class="font-mono text-slate-900">0.90</span>
+                                </div>
+                                <div class="flex justify-between items-center pt-2 border-t border-indigo-200">
+                                    <span class="text-indigo-900 font-bold">設計強度 ($\phi M_n$)</span>
+                                    <span id="flex-phiMn" class="font-mono font-bold text-indigo-700 text-lg"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<div id="tab-deflection-check" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">8. 撓度檢核</h2>
+                    
+                    <div class="mb-8 p-6 border-2 rounded-xl text-center flex flex-col items-center justify-center bg-slate-50" id="deflection-check-container">
+                        <h4 class="text-lg font-semibold text-slate-600 mb-2">活載重撓度檢核結果</h4>
+                        
+                        <div class="text-xl font-bold mb-2 text-slate-800" id="deflection-check-result-text">
+                            </div>
+                        <div class="text-lg font-mono" id="deflection-check-formula">
+                            </div>
+                    </div>
+
+                    <details class="bg-indigo-50 border border-indigo-100 rounded-lg mb-8">
+                        <summary class="cursor-pointer p-4 font-semibold text-indigo-800 hover:bg-indigo-100 list-none flex items-center">
+                            <span class="mr-2">ℹ️</span> 顯示活載重撓度檢核摘要
+                        </summary>
+                        <div class="p-4 pt-0 text-slate-700">
+                            <p class="mb-2">依據台灣公路橋梁設計規範，橋梁在活載重（含衝擊）作用下之最大撓度應加以限制，以確保行車舒適性與結構服務性。</p>
+                            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                <li><strong>計算公式</strong>：採用簡化公式將彎矩轉換為等效撓度：$\Delta_{LL} = \frac{5 \cdot M_{final} \cdot L^2}{48 \cdot E_c \cdot I_{net}}$</li>
+                                <li><strong>檢核標準</strong>：
+                                    <ul class="list-disc list-inside ml-4 mt-1">
+                                        <li>有人行道：$\Delta_{LL} \le L/1000$</li>
+                                        <li>無人行道：$\Delta_{LL} \le L/800$</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </details>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <div class="p-4 bg-white border border-slate-300 rounded-lg shadow-sm">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">檢核條件設定</h3>
+                                <div class="flex items-center justify-between">
+                                    <label for="has-sidewalk" class="text-slate-700 font-medium">是否有人行道？</label>
+                                    <select id="has-sidewalk" class="p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                                        <option value="no">無人行道 (Limit: L/800)</option>
+                                        <option value="yes">有人行道 (Limit: L/1000)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-4">計算參數</h3>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex justify-between">
+                                        <span class="text-slate-600">跨度 ($L$)</span>
+                                        <span id="defl-L" class="font-mono font-bold text-slate-800"></span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span class="text-slate-600">活載重彎矩 ($M_{final}$)</span>
+                                        <span id="defl-M" class="font-mono font-bold text-slate-800"></span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span class="text-slate-600">混凝土彈性模數 ($E_c$)</span>
+                                        <span id="defl-Ec" class="font-mono font-bold text-slate-800"></span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span class="text-slate-600">淨斷面慣性矩 ($I_{net}$)</span>
+                                        <span id="defl-I" class="font-mono font-bold text-slate-800"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4 border-b pb-2">詳細計算過程</h3>
+                            <div class="text-sm text-slate-700 space-y-4 font-mono bg-white p-4 border border-slate-200 rounded-lg" id="deflection-calc-details"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-shear-check" class="hidden tab-panel p-6 bg-white border border-slate-300 rounded-b-lg rounded-r-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">9. 剪力檢核</h2>
+                    
+                    <div class="mb-8 p-6 border-2 rounded-xl text-center flex flex-col items-center justify-center bg-slate-50" id="shear-check-container">
+                        <h4 class="text-lg font-semibold text-slate-600 mb-2">剪力檢核結果</h4>
+                        <div class="text-3xl font-bold mb-2" id="shear-check-result-text">
+                            </div>
+                        <div class="text-slate-500 font-mono" id="shear-check-formula">
+                            </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        
+                        <div class="space-y-6">
+                            <div class="p-5 bg-white border border-slate-300 rounded-lg shadow-sm">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">剪力筋配置參數</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="shear-rebar-size" class="block text-sm font-medium text-slate-700 mb-1">剪力筋號數</label>
+                                        <select id="shear-rebar-size" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                                            <option value="D10">D10</option>
+                                            <option value="D13" selected>D13</option>
+                                            <option value="D16">D16</option>
+                                            <option value="D19">D19</option>
+                                        </select>
+                                        <p class="text-xs text-slate-500 mt-1">單根截面積: <span id="shear-rebar-area-display" class="font-mono font-bold">1.27</span> $cm^2$</p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">剪力筋降伏強度 ($f_y$)</label>
+                                        <div class="w-full p-2 bg-slate-100 border border-slate-200 rounded-md text-slate-600 font-mono">
+                                            <span id="shear-fy-display">2800</span> kgf/cm²
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label for="shear-legs" class="block text-sm font-medium text-slate-700 mb-1">剪力筋肢數 (Legs)</label>
+                                        <input type="number" id="shear-legs" value="20" min="2" step="1" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 text-right">
+                                        <p class="text-xs text-slate-500 mt-1" id="shear-legs-hint">建議肢數:2</p>
+                                    </div>
+
+                                    <div>
+                                        <label for="shear-spacing" class="block text-sm font-medium text-slate-700 mb-1">剪力筋間距 ($s$)</label>
+                                        <div class="flex items-center">
+                                            <input type="number" id="shear-spacing" value="200" step="10" min="50" class="flex-1 p-2 border border-slate-300 rounded-md text-right focus:ring-2 focus:ring-indigo-500">
+                                            <span class="ml-3 text-slate-600 font-medium">mm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4 border-b pb-2">剪力計算 (單位: tf)</h3>
+                            
+                            <div class="flex justify-between items-center text-sm py-2 border-b border-slate-100">
+                                <div>
+                                    <span class="font-medium text-slate-700">1. 剪力臨界斷面 ($d_v$)</span>
+                                    <span class="block text-xs text-slate-500">距支承 H/2 處</span>
+                                </div>
+                                <span id="calc-x-shear" class="font-mono font-bold text-slate-900"></span>
+                            </div>
+
+                            <details class="border rounded-lg bg-white shadow-sm">
+                                <summary class="cursor-pointer p-3 font-medium text-slate-800 hover:bg-slate-50 flex justify-between">
+                                    <span>2. 靜載重剪力 ($V_{dead}$)</span>
+                                    <span id="res-V-dead" class="font-mono text-indigo-700"></span>
+                                </summary>
+                                <div class="p-3 border-t border-slate-200 text-sm text-slate-600 font-mono" id="detail-V-dead"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-white shadow-sm">
+                                <summary class="cursor-pointer p-3 font-medium text-slate-800 hover:bg-slate-50 flex justify-between">
+                                    <span>3. 貨車載重剪力 ($V_{LL,truck}$)</span>
+                                    <span id="res-V-truck" class="font-mono text-indigo-700"></span>
+                                </summary>
+                                <div class="p-3 border-t border-slate-200 text-sm text-slate-600 font-mono" id="detail-V-truck"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-white shadow-sm">
+                                <summary class="cursor-pointer p-3 font-medium text-slate-800 hover:bg-slate-50 flex justify-between">
+                                    <span>4. 車道載重剪力 ($V_{LL,lane}$)</span>
+                                    <span id="res-V-lane" class="font-mono text-indigo-700"></span>
+                                </summary>
+                                <div class="p-3 border-t border-slate-200 text-sm text-slate-600 font-mono" id="detail-V-lane"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-white shadow-sm">
+                                <summary class="cursor-pointer p-3 font-medium text-slate-800 hover:bg-slate-50 flex justify-between">
+                                    <span>5. 設計活載剪力 ($V_{LL,final}$)</span>
+                                    <span id="res-V-final" class="font-mono text-indigo-700"></span>
+                                </summary>
+                                <div class="p-3 border-t border-slate-200 text-sm text-slate-600 font-mono" id="detail-V-final"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-slate-50 font-bold">
+                                <summary class="cursor-pointer p-3 font-medium text-slate-900 hover:bg-slate-100 flex justify-between">
+                                    <span>6. 極限剪力 ($V_u$)</span>
+                                    <span id="res-V-u" class="font-mono text-red-700"></span>
+                                </summary>
+                                <div class="p-3 border-t border-slate-200 text-sm text-slate-600 font-mono font-normal" id="detail-V-u"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-white shadow-sm">
+                                <summary class="cursor-pointer p-3 font-medium text-slate-800 hover:bg-slate-50 flex justify-between">
+                                    <span>7. 鋼筋提供剪力 ($V_s$)</span>
+                                    <span id="res-V-s" class="font-mono text-blue-700"></span>
+                                </summary>
+                                <div class="p-3 border-t border-slate-200 text-sm text-slate-600 font-mono" id="detail-V-s"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-white shadow-sm">
+                                <summary class="cursor-pointer p-3 font-medium text-slate-800 hover:bg-slate-50 flex justify-between">
+                                    <span>8. 混凝土提供剪力 ($V_c$)</span>
+                                    <span id="res-V-c" class="font-mono text-blue-700"></span>
+                                </summary>
+                                <div class="p-3 border-t border-slate-200 text-sm text-slate-600 font-mono" id="detail-V-c"></div>
+                            </details>
+
+                            <details class="border rounded-lg bg-indigo-50 border-indigo-100 font-bold">
+                                <summary class="cursor-pointer p-3 font-medium text-indigo-900 hover:bg-indigo-100 flex justify-between">
+                                    <span>9. 標稱剪力強度 ($V_n$)</span>
+                                    <span id="res-V-n" class="font-mono text-indigo-700"></span>
+                                </summary>
+                                <div class="p-3 border-t border-indigo-200 text-sm text-slate-600 font-mono font-normal" id="detail-V-n"></div>
+                            </details>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
-
-    <!-- Main Application Logic -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
