@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', 'Noto Sans TC', sans-serif; }
+        /* 隱藏數字輸入框的上下箭頭 */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
@@ -20,7 +21,10 @@
     <div class="w-full max-w-5xl mx-auto">
         <header class="mb-8 text-center">
             <h1 class="text-3xl font-bold text-gray-900">年終分配模擬器 <span class="text-sm font-normal text-white bg-black px-2 py-1 rounded ml-2">盲測版</span></h1>
-            <p class="text-gray-400 mt-2 text-sm">輸入月數以檢核是否符合預算範圍 (OK/NG)</p>
+            <p class="text-gray-500 mt-3 font-medium">
+                <span class="text-red-500 font-bold mr-1">注意:</span> 
+                輸入最小值為 0.5，不可輸入 0 (預設值 1.0)
+            </p>
         </header>
 
         <div id="calculator-container" class="space-y-6">
@@ -48,40 +52,65 @@
             // 1. 取得該組的隱藏額度
             const budgetLimit = budgetMap[groupName];
 
-            // 若該組沒有設定額度資料
             if (budgetLimit === undefined) {
-                statusBadge.textContent = '無資料';
+                statusBadge.textContent = '無分配資料';
                 statusBadge.className = 'px-4 py-1.5 text-lg font-bold text-gray-400 bg-gray-200 rounded-lg';
                 return;
             }
             
-            // 2. 計算目前輸入的總發放金額 (薪資 x 月數)
+            // 2. 驗證與計算
             let currentTotalUsed = 0;
+            let hasInvalidInput = false; // 用來標記是否有違規輸入
+
             const inputs = document.querySelectorAll(`.month-input[data-group="${groupName}"]`);
             
             inputs.forEach(input => {
+                const val = parseFloat(input.value);
+                
+                // 檢查：如果是 NaN (空值) 或 小於 0.5
+                if (isNaN(val) || val < 0.5) {
+                    hasInvalidInput = true;
+                    // 將錯誤的輸入框標紅
+                    input.classList.add('bg-red-100', 'text-red-600', 'border-red-400');
+                    input.classList.remove('bg-gray-50', 'text-gray-800', 'border-gray-200');
+                } else {
+                    // 恢復正常樣式
+                    input.classList.remove('bg-red-100', 'text-red-600', 'border-red-400');
+                    input.classList.add('bg-gray-50', 'text-gray-800', 'border-gray-200');
+                }
+
                 const name = input.dataset.name;
-                const months = parseFloat(input.value) || 0;
                 const salary = salaryMap.get(name) || 0;
-                currentTotalUsed += Math.round(salary * months);
+                // 即使輸入錯誤也先累加(雖然後面會擋下)，避免邏輯中斷
+                currentTotalUsed += Math.round(salary * (val || 0));
             });
-            
-            // 3. 判斷是否超支 (完全不顯示金額)
+
+            // 3. 判斷是否阻擋顯示
+            if (hasInvalidInput) {
+                // 顯示警告訊息，不顯示 OK/NG
+                statusBadge.textContent = '未正確輸入，請修正';
+                statusBadge.className = 'px-4 py-2 text-base font-bold text-white bg-orange-400 rounded-lg shadow transition-all duration-300';
+                
+                // 卡片邊框改為中性或警告色
+                card.classList.remove('border-green-400', 'border-red-400', 'ring-4', 'ring-red-100');
+                card.classList.add('border-orange-200');
+                return; // *** 重要：直接結束函式，不執行下方的 OK/NG 判斷 ***
+            }
+
+            // 4. 若輸入皆合法，才進行預算比對
             const balance = budgetLimit - currentTotalUsed;
             
             if (balance >= 0) {
-                // OK (預算內)
+                // OK
                 statusBadge.textContent = 'OK';
                 statusBadge.className = 'px-6 py-1.5 text-xl font-black text-white bg-green-500 rounded-lg shadow transition-all duration-300 tracking-wider';
-                // 卡片邊框變綠
-                card.classList.remove('border-red-400', 'ring-red-200');
+                card.classList.remove('border-red-400', 'ring-red-200', 'border-orange-200');
                 card.classList.add('border-green-400');
             } else {
-                // NG (超支)
+                // NG
                 statusBadge.textContent = 'NG';
                 statusBadge.className = 'px-6 py-1.5 text-xl font-black text-white bg-red-500 rounded-lg shadow transition-all duration-300 animate-pulse tracking-wider';
-                // 卡片邊框變紅
-                card.classList.remove('border-green-400');
+                card.classList.remove('border-green-400', 'border-orange-200');
                 card.classList.add('border-red-400', 'ring-4', 'ring-red-100');
             }
         }
@@ -91,15 +120,11 @@
             const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
             const groupedData = {};
             
-            // 資料前處理
             personnelData.forEach(p => {
                 if (!p.group || p.group === '北分局') return;
                 if (!groupedData[p.group]) groupedData[p.group] = [];
-                
-                // 儲存薪資至記憶體
                 const salary = parseSalary(p.salary);
                 salaryMap.set(p.name, salary);
-
                 groupedData[p.group].push(p);
             });
 
@@ -109,33 +134,31 @@
                 const members = groupedData[groupName];
                 if (!members) return;
 
-                // 排序：副理優先
+                // 排序
                 members.sort((a, b) => {
                     if (a.role === '副理' && b.role !== '副理') return -1;
                     if (a.role !== '副理' && b.role === '副理') return 1;
                     return 0;
                 });
 
-                // 建立卡片
                 const card = document.createElement('div');
                 card.id = `card-${groupName}`;
                 card.className = 'bg-white rounded-xl shadow-md border-2 border-transparent transition-all duration-300 overflow-hidden';
 
-                // --- 標頭 (只顯示組名 與 OK/NG) ---
+                // 標頭
                 const header = document.createElement('div');
-                header.className = 'p-5 bg-gray-50 border-b border-gray-100 flex justify-between items-center';
-                
+                header.className = 'p-5 bg-gray-50 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4';
                 header.innerHTML = `
                     <div class="flex items-center gap-4">
                         <h2 class="text-2xl font-bold text-gray-800">${groupName}</h2>
                     </div>
                     <div>
-                        <span id="status-${groupName}" class="px-4 py-1.5 text-lg font-bold text-gray-400 bg-gray-200 rounded-lg">待輸入</span>
+                        <span id="status-${groupName}" class="px-4 py-1.5 text-lg font-bold text-gray-400 bg-gray-200 rounded-lg">待計算</span>
                     </div>
                 `;
                 card.appendChild(header);
 
-                // --- 人員列表 (只有 月數 輸入) ---
+                // 列表
                 const tableContainer = document.createElement('div');
                 tableContainer.className = 'overflow-x-auto p-2';
                 
@@ -147,7 +170,7 @@
                         <tr class="text-gray-400 text-xs border-b border-gray-100">
                             <th class="p-3 font-normal w-1/3 pl-6">姓名</th>
                             <th class="p-3 font-normal w-1/3">職稱</th>
-                            <th class="p-3 font-normal text-right w-1/3 pr-6">分配月數</th>
+                            <th class="p-3 font-normal text-right w-1/3 pr-6">分配月數 (Min: 0.5)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
@@ -161,6 +184,7 @@
                     const tr = document.createElement('tr');
                     tr.className = isManager ? 'bg-blue-50/30' : 'hover:bg-gray-50 transition-colors';
                     
+                    // 設定預設值 value="1.0" 和 min="0.5"
                     tr.innerHTML = `
                         <td class="p-3 pl-6 font-medium text-gray-800 text-lg">
                             ${member.name}
@@ -169,11 +193,10 @@
                         <td class="p-3 text-gray-400 text-sm">${member.role || '組員'}</td>
                         <td class="p-3 pr-6 text-right">
                             <div class="flex justify-end items-center gap-2">
-                                <input type="number" step="0.1" min="0" 
-                                    class="month-input w-24 p-2 text-center bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none font-bold text-xl text-gray-800 shadow-sm"
+                                <input type="number" step="0.1" min="0.5" value="1.0"
+                                    class="month-input w-24 p-2 text-center bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none font-bold text-xl text-gray-800 shadow-sm transition-colors duration-200"
                                     data-group="${groupName}" 
                                     data-name="${member.name}"
-                                    placeholder="0"
                                     oninput="calculateGroupStatus('${groupName}')">
                             </div>
                         </td>
@@ -185,18 +208,14 @@
                 card.appendChild(tableContainer);
                 container.appendChild(card);
                 
-                // 初始化狀態 (如果是重新整理頁面，確保讀取到預設狀態)
-                // 這裡稍微延遲一下確保 DOM 建立完成
+                // 初始計算 (因為預設是 1.0，所以載入時就會顯示初始狀態)
                 setTimeout(() => calculateGroupStatus(groupName), 0);
             });
         }
 
-        // --- 資料讀取 ---
         async function init() {
             try {
                 const timestamp = new Date().getTime();
-                
-                // 平行讀取兩個 JSON 檔案
                 const [personnelRes, bonusRes] = await Promise.all([
                     fetch(`personnelData-hr.json?t=${timestamp}`),
                     fetch(`bonus.json?t=${timestamp}`)
@@ -207,23 +226,13 @@
 
                 const personnelData = await personnelRes.json();
                 const bonusData = await bonusRes.json();
-
-                // 將 bonus 資料存入全域變數
                 budgetMap = bonusData;
 
                 buildCalculatorUI(personnelData);
 
             } catch (error) {
                 console.error(error);
-                container.innerHTML = `
-                    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg border-l-4 border-red-500">
-                        <h3 class="font-bold text-red-600 text-lg">資料讀取失敗</h3>
-                        <p class="text-gray-600 mt-2">請確認以下檔案是否存在：</p>
-                        <ul class="list-disc list-inside mt-2 text-sm text-gray-500">
-                            <li>personnelData-hr.json (人員薪資)</li>
-                            <li>bonus.json (各組額度)</li>
-                        </ul>
-                    </div>`;
+                container.innerHTML = `<div class="text-center text-red-500 p-8">資料讀取失敗，請確認檔案路徑。</div>`;
             }
         }
 
