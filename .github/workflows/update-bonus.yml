@@ -1,0 +1,108 @@
+# .github/workflows/update-bonus.yml
+name: Update Bonus Limit Data
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: '5 * * * *' # 每小時執行一次
+  workflow_dispatch:      # 允許手動觸發
+
+jobs:
+  update-bonus:
+    runs-on: self-hosted # 或 ubuntu-latest，視您的環境而定
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Fetch Bonus Data and save to JSON
+        run: |
+          node -e "
+            const https = require('https');
+            const fs = require('fs');
+
+            // --- 設定 ---
+            const SPREADSHEET_ID = '1GjhgGAUuI5g6rtOGiUceMLgeGy12sp93fNQlWKM-UGc';
+            const API_KEY = process.env.GOOGLE_API_KEY;
+            
+            // 設定讀取範圍：工作表5，A2到B20 (假設組別在A欄，金額在B欄，且有標題列)
+            const BONUS_SHEET = { name: '工作表5', range: 'A2:B20', file: 'bonus.json' };
+
+            if (!API_KEY) {
+              console.error('錯誤: 找不到 GOOGLE_API_KEY secret！');
+              process.exit(1);
+            }
+
+            function fetchSheetData(sheetName, range) {
+              return new Promise((resolve, reject) => {
+                const url = \`https://sheets.googleapis.com/v4/spreadsheets/\${SPREADSHEET_ID}/values/\${encodeURIComponent(sheetName)}!\${range}?key=\${API_KEY}\`;
+                https.get(url, (res) => {
+                  let rawData = '';
+                  res.on('data', (chunk) => { rawData += chunk; });
+                  res.on('end', () => {
+                    try {
+                      const parsed = JSON.parse(rawData);
+                      if (parsed.values) resolve(parsed.values);
+                      else reject(new Error(parsed.error ? JSON.stringify(parsed.error) : 'No values found'));
+                    } catch (e) { reject(e); }
+                  });
+                }).on('error', (e) => reject(e));
+              });
+            }
+
+            async function main() {
+              console.log('🚀 開始讀取分配金額資料...');
+              try {
+                const values = await fetchSheetData(BONUS_SHEET.name, BONUS_SHEET.range);
+                
+                // --- 資料轉換邏輯 ---
+                // 將二維陣列轉換為物件: { '孝智組': 600000, '囿任組': 700000 }
+                const bonusMap = {};
+                values.forEach(row => {
+                  const groupName = row[0] ? row[0].trim() : null;
+                  const amountStr = row[1];
+                  
+                  if (groupName && amountStr) {
+                    // 移除金額中的逗號並轉為數字
+                    const amount = parseInt(String(amountStr).replace(/,/g, ''), 10);
+                    if (!isNaN(amount)) {
+                      bonusMap[groupName] = amount;
+                    }
+                  }
+                });
+
+                fs.writeFileSync(BONUS_SHEET.file, JSON.stringify(bonusMap, null, 2), 'utf8');
+                console.log(\`✅ 成功建立 \${BONUS_SHEET.file}\`);
+                console.log('預覽資料:', JSON.stringify(bonusMap));
+
+              } catch (error) {
+                console.error('❌ 錯誤:', error);
+                process.exit(1);
+              }
+            }
+
+            main();
+          "
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "資料無變動。"
+            exit 0
+          fi
+
+          echo "偵測到變動，準備推送..."
+          git add bonus.json
+          git commit -m "chore: 更新年終分配金額資料"
+          git push
