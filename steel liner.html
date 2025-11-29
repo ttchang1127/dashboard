@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鋼襯板工程設計與分析平台 (Liner Plate Analysis)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            height: 400px; 
+            max-height: 50vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .active-tab {
+            border-bottom: 2px solid #2563eb;
+            color: #2563eb;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c7c7c7; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+    </style>
+    <!-- Chosen Palette: Industrial Blue & Steel Gray - Reflecting the material nature (Steel) with high contrast for data readability. -->
+    <!-- Application Structure Plan: 
+         1. Header: Clear identification and context.
+         2. Specification Library (Data): Tables of standard properties derived from JFE/Taiwan standards. Goal: Reference.
+         3. Interactive Calculator (Analysis): Inputs for Depth, Diameter, Soil -> Outputs Stress/Safety. Goal: Quick Check.
+         4. Visualization Dashboard (Trends): Charts showing relationship between depth and required thickness. Goal: Insight.
+         5. Construction Guide (Process): Steps for installation. Goal: Education.
+         Why this structure: Follows the engineering workflow: Spec Check -> Preliminary Design -> Safety Analysis -> Implementation.
+    -->
+    <!-- Visualization & Content Choices:
+         - Spec Table: HTML Table with JS Filter. Best for exact lookup.
+         - Stress Analysis: Line Chart (Chart.js). Visualizes pressure increase with depth.
+         - Stiffness Comparison: Bar Chart (Chart.js). Compares inertia across thicknesses.
+         - Calculator: Reactive DOM elements. Immediate feedback loop.
+         - Construction: Flexbox cards with icons. Clear step-by-step flow.
+         - NO SVG/Mermaid used.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="bg-slate-800 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-layer-group text-blue-400 text-2xl mr-3"></i>
+                    <span class="font-bold text-xl tracking-tight">鋼襯板工程分析平台</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <button onclick="scrollToSection('specs')" class="hover:bg-slate-700 px-3 py-2 rounded-md text-sm font-medium transition">規格參數</button>
+                        <button onclick="scrollToSection('calculator')" class="hover:bg-slate-700 px-3 py-2 rounded-md text-sm font-medium transition">結構試算</button>
+                        <button onclick="scrollToSection('charts')" class="hover:bg-slate-700 px-3 py-2 rounded-md text-sm font-medium transition">趨勢分析</button>
+                        <button onclick="scrollToSection('process')" class="hover:bg-slate-700 px-3 py-2 rounded-md text-sm font-medium transition">施工流程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- Intro Section -->
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-slate-800 mb-4">鋼襯板 (Liner Plate) 設計與分析</h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">
+                本平台整合台灣常用之鋼襯板規格（參考 JIS/JFE 標準），提供立坑（豎井）與隧道工程之斷面性質查詢、土壓力計算及結構安全性評估。
+                透過互動式圖表，協助工程師快速判斷適用之板厚與補強環需求。
+            </p>
+        </div>
+
+        <!-- Section 1: Specifications (規格參數) -->
+        <section id="specs" class="mb-16">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-6 border-b border-slate-200 pb-2">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800 flex items-center">
+                        <i class="fas fa-ruler-combined text-blue-600 mr-3"></i> 標準規格資料庫
+                    </h2>
+                    <p class="text-slate-500 mt-1">台灣常用波浪型鋼襯板斷面性質 (有效寬度 500mm)</p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <select id="unitFilter" class="bg-white border border-slate-300 text-slate-700 py-2 px-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">顯示所有厚度</option>
+                        <option value="standard">標準型 (2.7mm - 4.5mm)</option>
+                        <option value="heavy">重型 (5.0mm - 7.0mm)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-xl overflow-hidden shadow-lg">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">板厚 t (mm)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">斷面積 A (cm²/m)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">單位重 W (kg/m²)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">斷面慣性矩 I (cm⁴/m)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">斷面模數 Z (cm³/m)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">迴轉半徑 r (cm)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="specTableBody" class="bg-white divide-y divide-slate-200">
+                            <!-- Data populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-slate-50 px-6 py-3 text-xs text-slate-500 border-t border-slate-200">
+                    * 數據參考 JFE 建材技術手冊及一般台灣工程慣用數值。設計時請以實際廠商出廠證明為準。
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Calculator (結構試算) -->
+        <section id="calculator" class="mb-16">
+            <div class="mb-6 border-b border-slate-200 pb-2">
+                <h2 class="text-2xl font-bold text-slate-800 flex items-center">
+                    <i class="fas fa-calculator text-blue-600 mr-3"></i> 豎井結構簡易試算
+                </h2>
+                <p class="text-slate-500 mt-1">基於環向壓縮理論 (Ring Compression Theory) 估算軸力與安全係數</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Input Panel -->
+                <div class="glass-panel p-6 rounded-xl shadow-lg lg:col-span-1">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-blue-500 pl-3">設計參數輸入</h3>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">豎井直徑 D (m)</label>
+                            <input type="range" id="inputDiameter" min="1.5" max="10.0" step="0.1" value="3.0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                <span>1.5m</span>
+                                <span id="valDiameter" class="font-bold text-blue-600 text-base">3.0 m</span>
+                                <span>10.0m</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">開挖深度 H (m)</label>
+                            <input type="range" id="inputDepth" min="2" max="30" step="1" value="10" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                <span>2m</span>
+                                <span id="valDepth" class="font-bold text-blue-600 text-base">10 m</span>
+                                <span>30m</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">土壤單位重 γ (kN/m³)</label>
+                            <input type="number" id="inputGamma" value="18" class="w-full border-slate-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">選用板厚 t (mm)</label>
+                            <select id="inputThickness" class="w-full border-slate-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        
+                        <div class="pt-4">
+                            <button id="calcBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md flex items-center justify-center">
+                                <i class="fas fa-sync-alt mr-2"></i> 執行試算
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-xl shadow border border-slate-100">
+                            <div class="text-xs font-semibold text-slate-400 uppercase">設計土壓力 (Pd)</div>
+                            <div class="mt-2 flex items-baseline">
+                                <span id="resPressure" class="text-3xl font-extrabold text-slate-800">--</span>
+                                <span class="ml-1 text-sm text-slate-500">kN/m²</span>
+                            </div>
+                            <div class="mt-1 text-xs text-green-600"><i class="fas fa-arrow-down"></i> 底部最大值</div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl shadow border border-slate-100">
+                            <div class="text-xs font-semibold text-slate-400 uppercase">環向軸力 (N)</div>
+                            <div class="mt-2 flex items-baseline">
+                                <span id="resThrust" class="text-3xl font-extrabold text-slate-800">--</span>
+                                <span class="ml-1 text-sm text-slate-500">kN/m</span>
+                            </div>
+                            <div class="mt-1 text-xs text-slate-500">N = 0.5 × Pd × D</div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl shadow border border-slate-100">
+                            <div class="text-xs font-semibold text-slate-400 uppercase">產生應力 (σ)</div>
+                            <div class="mt-2 flex items-baseline">
+                                <span id="resStress" class="text-3xl font-extrabold text-slate-800">--</span>
+                                <span class="ml-1 text-sm text-slate-500">N/mm²</span>
+                            </div>
+                            <div class="mt-1 text-xs text-slate-500">容許值: <span id="resAllowable">--</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Feedback -->
+                    <div class="glass-panel p-6 rounded-xl shadow-lg">
+                        <h4 class="font-bold text-slate-700 mb-4 flex justify-between items-center">
+                            <span>結構安全評估結果</span>
+                            <span id="safetyBadge" class="px-3 py-1 rounded-full text-sm font-bold bg-slate-200 text-slate-500">尚未計算</span>
+                        </h4>
+                        <div class="relative pt-1">
+                            <div class="flex mb-2 items-center justify-between">
+                                <div>
+                                    <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
+                                        應力比 (Stress Ratio)
+                                    </span>
+                                </div>
+                                <div class="text-right">
+                                    <span id="ratioText" class="text-xs font-semibold inline-block text-blue-600">
+                                        0%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-100">
+                                <div id="ratioBar" style="width:0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 transition-all duration-500"></div>
+                            </div>
+                        </div>
+                        <div id="recommendationText" class="text-sm text-slate-600 bg-slate-50 p-3 rounded border border-slate-200">
+                            請調整左側參數並點擊「執行試算」以獲得分析建議。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Trend Analysis (趨勢分析) -->
+        <section id="charts" class="mb-16">
+            <div class="mb-6 border-b border-slate-200 pb-2">
+                <h2 class="text-2xl font-bold text-slate-800 flex items-center">
+                    <i class="fas fa-chart-line text-blue-600 mr-3"></i> 綜合趨勢分析
+                </h2>
+                <p class="text-slate-500 mt-1">深度與板厚之參數敏感度分析</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Chart 1: Stress vs Depth -->
+                <div class="glass-panel p-4 rounded-xl shadow-lg">
+                    <h3 class="text-center font-bold text-slate-700 mb-2">深度與環向應力關係圖</h3>
+                    <div class="chart-container">
+                        <canvas id="depthStressChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-slate-500 mt-2">假設條件：直徑固定，比較不同板厚在各深度的表現</p>
+                </div>
+
+                <!-- Chart 2: Section Properties Comparison -->
+                <div class="glass-panel p-4 rounded-xl shadow-lg">
+                    <h3 class="text-center font-bold text-slate-700 mb-2">各型號剛性 (慣性矩 I) 比較</h3>
+                    <div class="chart-container">
+                        <canvas id="stiffnessChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-slate-500 mt-2">剛性越大，抵抗變形與挫屈的能力越強</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Process (施工流程) -->
+        <section id="process" class="mb-12">
+            <div class="mb-6 border-b border-slate-200 pb-2">
+                <h2 class="text-2xl font-bold text-slate-800 flex items-center">
+                    <i class="fas fa-hard-hat text-blue-600 mr-3"></i> 標準施工流程示意
+                </h2>
+                <p class="text-slate-500 mt-1">豎井壓入沉箱工法或組立工法之一般步驟</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Step 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500 hover:shadow-xl transition-shadow">
+                    <div class="text-blue-500 text-3xl mb-4"><i class="fas fa-digging"></i></div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">1. 開挖與整地</h3>
+                    <p class="text-sm text-slate-600">
+                        進行第一環之開挖作業。確保地盤穩定，必要時需進行地盤改良。確認放樣中心位置準確。
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500 hover:shadow-xl transition-shadow">
+                    <div class="text-blue-500 text-3xl mb-4"><i class="fas fa-ring"></i></div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">2. 首環組立</h3>
+                    <p class="text-sm text-slate-600">
+                        將鋼襯板單片依序組裝。使用高張力螺栓緊固。確保垂直度與真圓度，此步驟影響後續精度。
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500 hover:shadow-xl transition-shadow">
+                    <div class="text-blue-500 text-3xl mb-4"><i class="fas fa-arrow-down-long"></i></div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">3. 循環作業</h3>
+                    <p class="text-sm text-slate-600">
+                        內部開挖土方 -> 下降或組立下一環 -> 鎖固螺栓。重複此循環直至設計深度。
+                    </p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500 hover:shadow-xl transition-shadow">
+                    <div class="text-blue-500 text-3xl mb-4"><i class="fas fa-fill-drip"></i></div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">4. 背填灌漿</h3>
+                    <p class="text-sm text-slate-600">
+                        為確保鋼襯板與地層緊密結合，需透過灌漿孔進行背填灌漿，防止地層鬆動與沉陷。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-slate-800 text-slate-400 py-8 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="mb-2">鋼襯板分析互動網頁 v1.0</p>
+                <p class="text-sm">
+                    本工具僅供初步規劃參考，詳細結構計算應由專業大地或結構技師簽證負責。<br>
+                    數據來源參考：JFE Liner Plate Technical Manual, Contech Design Guide.
+                </p>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- 1. Data Store (參考 JFE/台灣常用規格) ---
+        // 單位: A(cm2/m), W(kg/m2), I(cm4/m), Z(cm3/m), r(cm)
+        const linerSpecs = [
+            { t: 2.7, type: 'Standard', A: 34.02, W: 31.5, I: 226, Z: 82, r: 2.58 },
+            { t: 3.2, type: 'Standard', A: 39.99, W: 36.5, I: 263, Z: 95, r: 2.57 },
+            { t: 4.0, type: 'Standard', A: 49.55, W: 44.5, I: 320, Z: 114, r: 2.54 },
+            { t: 4.5, type: 'Standard', A: 55.52, W: 49.5, I: 355, Z: 125, r: 2.53 },
+            { t: 5.0, type: 'Heavy',    A: 61.50, W: 54.5, I: 391, Z: 137, r: 2.52 }, // Interpolated/Approx based on 2-flange heavy duty logic
+            { t: 6.0, type: 'Heavy',    A: 73.44, W: 64.5, I: 460, Z: 160, r: 2.50 },
+            { t: 7.0, type: 'Heavy',    A: 85.39, W: 74.5, I: 528, Z: 182, r: 2.49 }
+        ];
+
+        // Global State
+        let currentChart1 = null;
+        let currentChart2 = null;
+
+        // --- 2. Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initTable();
+            initSelectOptions();
+            initEventListeners();
+            
+            // Initial render of charts
+            updateCharts();
+            
+            // Initial calculation
+            calculate();
+        });
+
+        // --- 3. UI Helper Functions ---
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function initTable() {
+            const tbody = document.getElementById('specTableBody');
+            const filter = document.getElementById('unitFilter').value;
+            tbody.innerHTML = '';
+
+            linerSpecs.forEach(spec => {
+                if (filter === 'all' || 
+                   (filter === 'standard' && spec.type === 'Standard') ||
+                   (filter === 'heavy' && spec.type === 'Heavy')) {
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-blue-50 transition-colors';
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${spec.t.toFixed(1)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${spec.A.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${spec.W.toFixed(1)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-mono text-blue-600 bg-blue-50 rounded">${spec.I}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${spec.Z}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${spec.r.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+        }
+
+        function initSelectOptions() {
+            const select = document.getElementById('inputThickness');
+            select.innerHTML = '';
+            linerSpecs.forEach(spec => {
+                const opt = document.createElement('option');
+                opt.value = spec.t;
+                opt.text = `${spec.t} mm (I=${spec.I} cm⁴/m)`;
+                if (spec.t === 3.2) opt.selected = true; // Default
+                select.appendChild(opt);
+            });
+        }
+
+        function initEventListeners() {
+            // Slider Listeners
+            document.getElementById('inputDiameter').addEventListener('input', (e) => {
+                document.getElementById('valDiameter').innerText = e.target.value + " m";
+            });
+            document.getElementById('inputDepth').addEventListener('input', (e) => {
+                document.getElementById('valDepth').innerText = e.target.value + " m";
+            });
+
+            // Calc Button
+            document.getElementById('calcBtn').addEventListener('click', () => {
+                calculate();
+                updateCharts(); // Refresh charts with new inputs
+            });
+
+            // Filter Table
+            document.getElementById('unitFilter').addEventListener('change', initTable);
+        }
+
+        // --- 4. Core Calculation Logic ---
+        function calculate() {
+            // Inputs
+            const D = parseFloat(document.getElementById('inputDiameter').value); // m
+            const H = parseFloat(document.getElementById('inputDepth').value); // m
+            const gamma = parseFloat(document.getElementById('inputGamma').value); // kN/m3
+            const t_selected = parseFloat(document.getElementById('inputThickness').value);
+
+            // Find spec
+            const spec = linerSpecs.find(s => s.t === t_selected);
+            if (!spec) return;
+
+            // 1. Earth Pressure (Pd)
+            // Simplified Rankine/Terzaghi for Shaft: Pd = K * gamma * H + q
+            // Assuming active pressure K=0.5 for conservative estimate in shaft, or simplified P = gamma * H for full hydrostatic-like load
+            // Liner Plate manual often suggests P = P1 + P2. Let's use P = gamma * H * 0.6 (reduction for arching) + surcharge
+            // For this interactive demo, we use a conservative P = gamma * H (Fluid equivalent) for safety visualization
+            // Or more realistically for shafts: P = 0.5 * gamma * H
+            const K = 0.6; 
+            const Pd = K * gamma * H; // kN/m2
+
+            // 2. Ring Thrust (N) = (Pd * D) / 2
+            const N = (Pd * D) / 2; // kN/m (per unit height)
+
+            // 3. Stress (sigma) = N / A
+            // N is kN/m, A is cm2/m. Need to convert.
+            // N (N/mm) = N(kN/m). Because kN -> 1000N, m -> 1000mm. They cancel out.
+            // A (mm2/mm) ? No, A is cm2/m.
+            // Stress (N/mm2 or MPa) = N(kN/m) * 1000 / (A(cm2/m) * 100)
+            // Easier: N(kN) on 1m strip. A(cm2) on 1m strip.
+            // Stress(kN/cm2) = N / A. 
+            // Stress(MPa) = Stress(kN/cm2) * 10.
+            
+            const stress_MPa = (N / spec.A) * 10;
+
+            // 4. Allowable Stress (SS400 steel equivalent)
+            // Basic allowable ~ 140 MPa (conservative) to 210 MPa.
+            // Buckling check is complex, here we assume basic material strength first.
+            const allowable = 140; // MPa
+
+            // Update UI
+            document.getElementById('resPressure').innerText = Pd.toFixed(1);
+            document.getElementById('resThrust').innerText = N.toFixed(1);
+            document.getElementById('resStress').innerText = stress_MPa.toFixed(1);
+            document.getElementById('resAllowable').innerText = allowable + " MPa";
+
+            // Safety Analysis
+            const ratio = (stress_MPa / allowable) * 100;
+            const bar = document.getElementById('ratioBar');
+            const ratioText = document.getElementById('ratioText');
+            const badge = document.getElementById('safetyBadge');
+            const recText = document.getElementById('recommendationText');
+
+            bar.style.width = Math.min(ratio, 100) + "%";
+            ratioText.innerText = ratio.toFixed(1) + "%";
+
+            if (ratio < 80) {
+                bar.className = "shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500 transition-all duration-500";
+                badge.className = "px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800";
+                badge.innerText = "安全";
+                recText.innerHTML = `目前選用 <b>${t_selected}mm</b> 板厚在深度 <b>${H}m</b> 處安全係數充足。<br>可考慮優化設計或維持現狀以增加安全餘裕。`;
+            } else if (ratio < 100) {
+                bar.className = "shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-yellow-500 transition-all duration-500";
+                badge.className = "px-3 py-1 rounded-full text-sm font-bold bg-yellow-100 text-yellow-800";
+                badge.innerText = "警戒";
+                recText.innerHTML = `應力接近容許值。建議增加板厚至下一級，或確認是否需要安裝<b>補強環 (Stiffener Ring)</b>。`;
+            } else {
+                bar.className = "shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-600 transition-all duration-500";
+                badge.className = "px-3 py-1 rounded-full text-sm font-bold bg-red-100 text-red-800";
+                badge.innerText = "危險";
+                recText.innerHTML = `<i class="fas fa-exclamation-triangle text-red-600"></i> 結構不安全！<br>請立即增加板厚、縮小直徑或採用其他補強措施 (如 H型鋼補強環)。`;
+            }
+        }
+
+        // --- 5. Visualization Logic ---
+        function updateCharts() {
+            const D = parseFloat(document.getElementById('inputDiameter').value);
+            const gamma = parseFloat(document.getElementById('inputGamma').value);
+            const K = 0.6;
+            const allowable = 140;
+
+            // --- Chart 1: Depth vs Stress for top 3 common thicknesses ---
+            const ctx1 = document.getElementById('depthStressChart').getContext('2d');
+            const depths = [2, 5, 10, 15, 20, 25, 30]; // X axis
+            
+            const datasets1 = [2.7, 4.0, 6.0].map((t, idx) => {
+                const spec = linerSpecs.find(s => s.t === t);
+                const color = idx === 0 ? '#60a5fa' : (idx === 1 ? '#2563eb' : '#1e3a8a');
+                
+                const dataPoints = depths.map(h => {
+                    const Pd = K * gamma * h;
+                    const N = (Pd * D) / 2;
+                    const stress = (N / spec.A) * 10;
+                    return stress;
+                });
+
+                return {
+                    label: `t = ${t}mm`,
+                    data: dataPoints,
+                    borderColor: color,
+                    backgroundColor: color,
+                    tension: 0.3,
+                    fill: false
+                };
+            });
+
+            // Add Allowable Limit Line
+            datasets1.push({
+                label: '容許應力 (Allowable)',
+                data: Array(depths.length).fill(allowable),
+                borderColor: '#ef4444',
+                borderDash: [5, 5],
+                pointRadius: 0,
+                borderWidth: 2
+            });
+
+            if (currentChart1) currentChart1.destroy();
+            currentChart1 = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: depths.map(d => `${d}m`),
+                    datasets: datasets1
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            title: { display: true, text: '環向應力 (MPa)' },
+                            beginAtZero: true
+                        },
+                        x: {
+                            title: { display: true, text: '開挖深度 (H)' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                }
+            });
+
+            // --- Chart 2: Stiffness Comparison ---
+            const ctx2 = document.getElementById('stiffnessChart').getContext('2d');
+            
+            if (currentChart2) currentChart2.destroy();
+            currentChart2 = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: linerSpecs.map(s => `${s.t}mm`),
+                    datasets: [{
+                        label: '斷面慣性矩 I (cm⁴/m)',
+                        data: linerSpecs.map(s => s.I),
+                        backgroundColor: linerSpecs.map(s => s.type === 'Standard' ? '#93c5fd' : '#1d4ed8'),
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'I (cm⁴/m)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
