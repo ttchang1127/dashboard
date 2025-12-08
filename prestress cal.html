@@ -1,188 +1,488 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>預力損失計算器</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc; /* bg-slate-50 */
+            background-color: #f8fafc;
+            /* bg-slate-50 */
         }
+
         .input-group {
             display: flex;
             align-items: center;
-            margin-bottom: 0.5rem; /* mb-2 */
+            margin-bottom: 0.5rem;
+            /* mb-2 */
         }
+
         .input-label {
-            width: 200px; /* Fixed width for label */
+            width: 200px;
+            /* Fixed width for label */
             flex-shrink: 0;
-            font-size: 0.875rem; /* text-sm */
-            color: #334155; /* text-slate-700 */
+            font-size: 0.875rem;
+            /* text-sm */
+            color: #334155;
+            /* text-slate-700 */
         }
+
         .input-container {
             display: flex;
             align-items: center;
             width: 100%;
         }
+
         .input-field {
             width: 100%;
-            padding: 0.5rem 0.75rem; /* py-2 px-3 */
-            border: 1px solid #cbd5e1; /* border-slate-300 */
-            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.5rem 0.75rem;
+            /* py-2 px-3 */
+            border: 1px solid #cbd5e1;
+            /* border-slate-300 */
+            border-radius: 0.375rem;
+            /* rounded-md */
             text-align: right;
             -moz-appearance: textfield;
         }
+
         .input-field::-webkit-outer-spin-button,
         .input-field::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
+
         .unit-display {
-            width: 50px; /* Fixed width for unit */
+            width: 50px;
+            /* Fixed width for unit */
             flex-shrink: 0;
             text-align: left;
-            margin-left: 0.5rem; /* ml-2 */
-            font-size: 0.875rem; /* text-sm */
-            color: #475569; /* text-slate-600 */
+            margin-left: 0.5rem;
+            /* ml-2 */
+            font-size: 0.875rem;
+            /* text-sm */
+            color: #475569;
+            /* text-slate-600 */
         }
+
         .stepper-btn {
-            width: 2.5rem; /* w-10 */
-            height: 2.5rem; /* h-10 */
+            width: 2.5rem;
+            /* w-10 */
+            height: 2.5rem;
+            /* h-10 */
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: #f1f5f9; /* bg-slate-100 */
-            color: #475569; /* text-slate-600 */
-            border: 1px solid #cbd5e1; /* border-slate-300 */
-            border-radius: 0.375rem; /* rounded-md */
-            margin-left: 0.25rem; /* ml-1 */
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 600; /* font-semibold */
+            background-color: #f1f5f9;
+            /* bg-slate-100 */
+            color: #475569;
+            /* text-slate-600 */
+            border: 1px solid #cbd5e1;
+            /* border-slate-300 */
+            border-radius: 0.375rem;
+            /* rounded-md */
+            margin-left: 0.25rem;
+            /* ml-1 */
+            font-size: 1.25rem;
+            /* text-xl */
+            font-weight: 600;
+            /* font-semibold */
             cursor: pointer;
             user-select: none;
         }
+
         .stepper-btn:hover {
-            background-color: #e2e8f0; /* hover:bg-slate-200 */
+            background-color: #e2e8f0;
+            /* hover:bg-slate-200 */
         }
+
         .suggestion-text {
-            font-size: 0.75rem; /* text-xs */
-            color: #64748b; /* text-slate-500 */
-            margin-top: -0.25rem; /* -mt-1 */
-            margin-bottom: 0.5rem; /* mb-2 */
-            padding-left: 200px; /* Align with input start */
+            font-size: 0.75rem;
+            /* text-xs */
+            color: #64748b;
+            /* text-slate-500 */
+            margin-top: -0.25rem;
+            /* -mt-1 */
+            margin-bottom: 0.5rem;
+            /* mb-2 */
+            padding-left: 200px;
+            /* Align with input start */
         }
+
         .result-table {
             width: 100%;
             border-collapse: collapse;
         }
-        .result-table th, .result-table td {
-            border: 1px solid #e2e8f0; /* border-slate-200 */
-            padding: 0.75rem; /* p-3 */
+
+        .result-table th,
+        .result-table td {
+            border: 1px solid #e2e8f0;
+            /* border-slate-200 */
+            padding: 0.75rem;
+            /* p-3 */
             text-align: right;
         }
+
         .result-table th {
-            background-color: #f8fafc; /* bg-slate-50 */
+            background-color: #f8fafc;
+            /* bg-slate-50 */
             text-align: left;
-            font-weight: 600; /* font-semibold */
-            color: #334155; /* text-slate-700 */
+            font-weight: 600;
+            /* font-semibold */
+            color: #334155;
+            /* text-slate-700 */
         }
+
         .result-table td:first-child {
             text-align: left;
-            color: #475569; /* text-slate-600 */
+            color: #475569;
+            /* text-slate-600 */
         }
+
         .result-table .total-row td {
-            font-weight: 700; /* font-bold */
-            background-color: #f1f5f9; /* bg-slate-100 */
+            font-weight: 700;
+            /* font-bold */
+            background-color: #f1f5f9;
+            /* bg-slate-100 */
         }
-        
+
         .tab-btn {
-            padding: 0.75rem 1.5rem; /* py-3 px-6 */
-            font-size: 1rem; /* text-base */
-            font-weight: 600; /* font-semibold */
-            border-radius: 0.375rem 0.375rem 0 0; /* rounded-t-md */
+            padding: 0.75rem 1.5rem;
+            /* py-3 px-6 */
+            font-size: 1rem;
+            /* text-base */
+            font-weight: 600;
+            /* font-semibold */
+            border-radius: 0.375rem 0.375rem 0 0;
+            /* rounded-t-md */
             cursor: pointer;
-            border: 1px solid #e2e8f0; /* border-slate-200 */
+            border: 1px solid #e2e8f0;
+            /* border-slate-200 */
             border-bottom: 0;
-            background-color: #ffffff; /* bg-white */
-            color: #334155; /* text-slate-700 */
+            background-color: #ffffff;
+            /* bg-white */
+            color: #334155;
+            /* text-slate-700 */
         }
+
         .tab-btn.active {
-            background-color: #0f172a; /* bg-slate-900 */
-            color: #ffffff; /* text-white */
-            border-color: #0f172a; /* border-slate-900 */
+            background-color: #0f172a;
+            /* bg-slate-900 */
+            color: #ffffff;
+            /* text-white */
+            border-color: #0f172a;
+            /* border-slate-900 */
         }
+
         .tab-btn:not(.active):hover {
-            background-color: #f8fafc; /* hover:bg-slate-50 */
+            background-color: #f8fafc;
+            /* hover:bg-slate-50 */
         }
+
         .tab-panel {
-            border-top: 2px solid #0f172a; /* border-t-2 border-slate-900 */
+            border-top: 2px solid #0f172a;
+            /* border-t-2 border-slate-900 */
         }
 
         /* Styles for calculation detail blocks */
         .formula-display {
-            background-color: #f1f5f9; /* bg-slate-100 */
-            padding: 0.75rem; /* p-3 */
-            border-radius: 0.375rem; /* rounded-md */
+            background-color: #f1f5f9;
+            /* bg-slate-100 */
+            padding: 0.75rem;
+            /* p-3 */
+            border-radius: 0.375rem;
+            /* rounded-md */
             font-family: 'Menlo', 'Courier New', monospace;
-            font-size: 0.875rem; /* text-sm */
-            color: #334155; /* text-slate-700 */
-            margin: 1rem 0; /* my-4 */
-            text-align: left; /* Changed from center */
+            font-size: 0.875rem;
+            /* text-sm */
+            color: #334155;
+            /* text-slate-700 */
+            margin: 1rem 0;
+            /* my-4 */
+            text-align: left;
+            /* Changed from center */
             overflow-x: auto;
             white-space: pre;
         }
+
         .variable-list li {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.35rem 0; /* py-1.5 */
-            border-bottom: 1px solid #e2e8f0; /* border-slate-200 */
+            padding: 0.35rem 0;
+            /* py-1.5 */
+            border-bottom: 1px solid #e2e8f0;
+            /* border-slate-200 */
         }
-        .variable-list li span:first-child { 
-            font-weight: 600; /* font-semibold */
-            color: #1e293b; /* text-slate-800 */
+
+        .variable-list li span:first-child {
+            font-weight: 600;
+            /* font-semibold */
+            color: #1e293b;
+            /* text-slate-800 */
         }
-        .variable-list li span:nth-child(2) { 
+
+        .variable-list li span:nth-child(2) {
             font-family: 'Menlo', 'Courier New', monospace;
-            color: #475569; /* text-slate-600 */
+            color: #475569;
+            /* text-slate-600 */
         }
-        .variable-list li span:last-child { 
-            color: #64748b; /* text-slate-500 */
+
+        .variable-list li span:last-child {
+            color: #64748b;
+            /* text-slate-500 */
             min-width: 60px;
             text-align: left;
         }
+
         .calculation-step {
             font-family: 'Menlo', 'Courier New', monospace;
-            font-size: 0.875rem; /* text-sm */
-            color: #1e293b; /* text-slate-800 */
-            margin-top: 1rem; /* mt-4 */
+            font-size: 0.875rem;
+            /* text-sm */
+            color: #1e293b;
+            /* text-slate-800 */
+            margin-top: 1rem;
+            /* mt-4 */
             overflow-x: auto;
             white-space: pre;
             padding: 0.5rem;
             background: #f8fafc;
             border-radius: 0.25rem;
-            text-align: left; /* Ensure left alignment */
+            text-align: left;
+            /* Ensure left alignment */
         }
+
         .final-loss-result {
-            font-weight: 700; /* font-bold */
-            font-size: 1.125rem; /* text-lg */
-            color: #1e3a8a; /* text-blue-900 */
-            margin-top: 1rem; /* mt-4 */
-            padding-top: 1rem; /* pt-4 */
-            border-top: 1px solid #cbd5e1; /* border-slate-300 */
-            text-align: left; /* Changed from right */
+            font-weight: 700;
+            /* font-bold */
+            font-size: 1.125rem;
+            /* text-lg */
+            color: #1e3a8a;
+            /* text-blue-900 */
+            margin-top: 1rem;
+            /* mt-4 */
+            padding-top: 1rem;
+            /* pt-4 */
+            border-top: 1px solid #cbd5e1;
+            /* border-slate-300 */
+            text-align: left;
+            /* Changed from right */
         }
+
         .final-loss-result span {
             font-size: 0.875rem;
             color: #334155;
             font-weight: 500;
         }
+
+        /* =========================================
+           PRINT LAYOUT STYLES (Strict A4)
+           ========================================= */
+        :root {
+            --a4-width: 210mm;
+            --a4-height: 297mm;
+            --print-padding: 12mm;
+            /* Reduced from 20mm */
+        }
+
+        @media print {
+            body {
+                background-color: white !important;
+                -webkit-print-color-adjust: exact;
+                margin: 0;
+                padding: 0;
+            }
+
+            .screen-ui {
+                display: none !important;
+            }
+
+            .print-ui {
+                display: block !important;
+            }
+
+            @page {
+                size: A4;
+                margin: 0;
+            }
+        }
+
+        .print-ui {
+            display: none;
+            /* Hidden on screen */
+            width: var(--a4-width);
+            background: white;
+            font-family: "Times New Roman", "PMingLiU", serif;
+            color: #000;
+        }
+
+        .print-page {
+            width: var(--a4-width);
+            /* min-height: var(--a4-height); REMOVED to prevent blank pages */
+            padding: 10mm;
+            /* Reduced from 12mm */
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Force page break only before the 2nd page, never after the last */
+        .print-page+.print-page {
+            page-break-before: always;
+        }
+
+        .print-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            margin-bottom: 0.5rem;
+            /* Reduced from 1.5rem */
+            padding-bottom: 5px;
+            /* Reduced from 10px */
+        }
+
+        .print-header h1 {
+            font-size: 16pt;
+            /* Reduced from 20pt */
+            font-weight: bold;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .print-header h2 {
+            font-size: 12pt;
+            font-weight: normal;
+            margin: 5px 0 0 0;
+        }
+
+        .print-section {
+            margin-bottom: 1rem;
+            /* Reduced from 2rem */
+            page-break-inside: avoid;
+        }
+
+        .print-section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            margin-bottom: 1rem;
+            padding-bottom: 4px;
+        }
+
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+            /* Reduced from 11pt */
+            margin-bottom: 0.5rem;
+        }
+
+        .print-table th,
+        .print-table td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .print-table th {
+            background-color: #f0f0f0 !important;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .print-table td.num {
+            text-align: right;
+            font-family: "Courier New", monospace;
+        }
+
+        .print-kv-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px 10px;
+            /* Tighter gap */
+            font-size: 9pt;
+            /* Reduced from 10pt */
+            margin-bottom: 0.5rem;
+        }
+
+        .print-kv-item {
+            display: flex;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 2px;
+        }
+
+        .print-kv-label {
+            font-weight: bold;
+            margin-right: auto;
+        }
+
+        .print-kv-value {
+            font-family: "Courier New", monospace;
+        }
+
+        .print-calc-block {
+            border: 1px solid #ddd;
+            padding: 5px;
+            /* Reduced from 8px */
+            margin-bottom: 5px;
+            /* Reduced from 8px */
+            font-size: 9pt;
+            /* Reduced from 10pt */
+            background-color: #fafafa !important;
+        }
+
+        .print-formula {
+            font-family: "Courier New", monospace;
+            margin-bottom: 2px;
+            font-weight: bold;
+            font-size: 10pt;
+            /* Reduced from 11pt */
+        }
+
+        .print-sub {
+            padding-left: 10px;
+            color: #444;
+            line-height: 1.2;
+            /* Tighter line height */
+        }
+
+        .print-footer {
+            margin-top: 3rem;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            font-size: 9pt;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .print-variable-list {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 10px 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 9pt;
+            color: #555;
+        }
+
+        .print-variable-list li {
+            display: flex;
+            gap: 4px;
+        }
+
+        .print-variable-list li span:first-child {
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
     <!-- Chosen Palette: Slate -->
     <!-- Application Structure Plan: 
@@ -229,597 +529,939 @@
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
-    <div class="container mx-auto p-4 sm:p-8 max-w-7xl">
-        <header class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-800">預力損失計算器 (Prestressed Loss Calculator)</h1>
-            <p class="text-lg text-slate-600 mt-2">根據輸入參數估算施工階段與長期預力損失。</p>
-        </header>
+    <div class="screen-ui">
+        <div class="container mx-auto p-4 sm:p-8 max-w-7xl">
+            <header class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-800">預力損失計算器 (Prestressed Loss Calculator)</h1>
+                <p class="text-lg text-slate-600 mt-2">根據輸入參數估算施工階段與長期預力損失。</p>
+            </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            <!-- ====== 輸入參數欄 ====== -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 lg:row-span-2">
-                <h2 class="text-xl font-semibold text-slate-700 mb-6 border-b pb-3">輸入參數</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                <!-- 基礎參數 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                    <div>
-                        <label for="L" class="input-label block mb-1">橋梁跨度 (L)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="L" value="1240" step="10" class="input-field">
+                <!-- ====== 輸入參數欄 ====== -->
+                <div id="input-section" class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 lg:row-span-2">
+                    <h2 class="text-xl font-semibold text-slate-700 mb-6 border-b pb-3">輸入參數</h2>
+
+                    <!-- 基礎參數 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                        <div>
+                            <label for="L" class="input-label block mb-1">橋梁跨度 (L)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="L" value="1240" step="10" class="input-field">
+                                    <span class="unit-display">cm</span>
+                                    <button class="stepper-btn" data-target="L" data-step="10"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="L" data-step="10"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="B" class="input-label block mb-1">錨固點至梁中央水平距離 (B)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="B" value="615" step="5" class="input-field">
+                                    <span class="unit-display">cm</span>
+                                    <button class="stepper-btn" data-target="B" data-step="5"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="B" data-step="5"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="H" class="input-label block mb-1">錨固點至梁中央垂直距離 (H)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="H" value="20" step="1" class="input-field">
+                                    <span class="unit-display">cm</span>
+                                    <button class="stepper-btn" data-target="H" data-step="1"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="H" data-step="1"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="mu" class="input-label block mb-1">摩擦曲率效應係數 (μ)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="mu" value="0.25" step="0.01" class="input-field">
+                                    <span class="unit-display">1/rad</span>
+                                    <button class="stepper-btn" data-target="mu" data-step="0.01"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="mu" data-step="0.01"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                            <p class="suggestion-text pl-0 md:pl-0 text-left">建議值: 0.15 ~ 0.25 (鍍鋅套管)</p>
+                        </div>
+
+                        <div>
+                            <label for="k" class="input-label block mb-1">波浪摩擦係數 (k)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="k" value="0.0049" step="0.0001" class="input-field">
+                                    <span class="unit-display">1/m</span>
+                                    <button class="stepper-btn" data-target="k" data-step="0.0001"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="k" data-step="0.0001"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                            <p class="suggestion-text pl-0 md:pl-0 text-left">建議值: 0.0049 (鍍鋅金屬套管)</p>
+                        </div>
+
+                        <div>
+                            <label for="delta_a" class="input-label block mb-1">錨具滑動量 (Δa)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="delta_a" value="6" step="0.5" class="input-field">
+                                    <span class="unit-display">mm</span>
+                                    <button class="stepper-btn" data-target="delta_a" data-step="0.5"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="delta_a" data-step="0.5"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                            <p class="suggestion-text pl-0 md:pl-0 text-left">建議值: 台灣(6mm), 日本(5-7mm)</p>
+                        </div>
+
+                        <div>
+                            <label for="RH" class="input-label block mb-1">年平均濕度 (RH)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="RH" value="80" step="1" class="input-field">
+                                    <span class="unit-display">%</span>
+                                    <button class="stepper-btn" data-target="RH" data-step="1"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="RH" data-step="1"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 額外工程參數 -->
+                    <h3 class="text-lg font-semibold text-slate-700 mb-4 mt-6 border-b pb-2">額外工程參數 (計算用)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+
+                        <div>
+                            <label for="steel_type" class="input-label block mb-1">預力鋼腱種類</label>
+                            <div class="input-group">
+                                <select id="steel_type" class="input-field w-full bg-white">
+                                    <option value="12.7">SWPR7BL 12.7mm</option>
+                                    <option value="15.2">SWPR7BL 15.2mm</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="Ap" class="input-label block mb-1">鋼腱斷面積 (Ap)</label>
+                            <div class="input-group">
+                                <input type="number" id="Ap" value="0.9875" class="input-field bg-slate-50" readonly>
+                                <span class="unit-display">cm²</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="num_ducts" class="input-label block mb-1">佈孔數</label>
+                            <div class="input-group">
+                                <select id="num_ducts" class="input-field w-full bg-white">
+                                    <option value="12" selected>12孔</option>
+                                    <option value="15">15孔</option>
+                                    <option value="19">19孔</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="num_strands" class="input-label block mb-1">鋼腱股數</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="num_strands" value="10" step="1" class="input-field">
+                                    <span class="unit-display">股</span>
+                                    <button class="stepper-btn" data-target="num_strands" data-step="1"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="num_strands" data-step="1"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="total_Ap_display" class="input-label block mb-1">鋼腱總斷面積 (Total Ap)</label>
+                            <div class="input-group">
+                                <input type="number" id="total_Ap_display" value="0.0" class="input-field bg-slate-100"
+                                    readonly>
+                                <span class="unit-display">cm²</span>
+                            </div>
+                        </div>
+
+                        <!-- GEOMETRY FIELDS -->
+                        <div>
+                            <label for="Anet" class="input-label block mb-1">橋梁中央淨斷面積 (Anet)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="Anet" value="39690.99" step="100" class="input-field">
+                                    <span class="unit-display">cm²</span>
+                                    <button class="stepper-btn" data-target="Anet" data-step="100"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="Anet" data-step="100"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="Inet" class="input-label block mb-1">橋梁中央淨斷慣性矩 (Inet)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="Inet" value="19285477.94" step="10000" class="input-field">
+                                    <span class="unit-display">cm⁴</span>
+                                    <button class="stepper-btn" data-target="Inet" data-step="10000"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="Inet" data-step="10000"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="MDL" class="input-label block mb-1">橋梁靜載重彎矩 (MDL)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="MDL" value="248.71" step="10" class="input-field">
+                                    <span class="unit-display">tf*m</span>
+                                    <button class="stepper-btn" data-target="MDL" data-step="10"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="MDL" data-step="10"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="MADL" class="input-label block mb-1">橋梁附掛載重彎矩 (MADL)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="MADL" value="62.89" step="10" class="input-field">
+                                    <span class="unit-display">tf*m</span>
+                                    <button class="stepper-btn" data-target="MADL" data-step="10"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="MADL" data-step="10"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="Ycg" class="input-label block mb-1">重心位置_距頂部 (Ycg)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="Ycg" value="32.28" step="0.1" class="input-field">
+                                    <span class="unit-display">cm</span>
+                                    <button class="stepper-btn" data-target="Ycg" data-step="0.1"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="Ycg" data-step="0.1"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="Ha" class="input-label block mb-1">錨固點至梁頂部垂直距離 (Ha)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="Ha" value="55" step="1" class="input-field">
+                                    <span class="unit-display">cm</span>
+                                    <button class="stepper-btn" data-target="Ha" data-step="1"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="Ha" data-step="1"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="ep_display" class="input-label block mb-1">鋼腱與梁重心偏心值 (ep)</label>
+                            <div class="input-group">
+                                <input type="number" id="ep_display" value="0.0" class="input-field bg-slate-100"
+                                    readonly>
                                 <span class="unit-display">cm</span>
-                                <button class="stepper-btn" data-target="L" data-step="10" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="L" data-step="10" data-action="dec">-</button>
                             </div>
+                            <p class="suggestion-text pl-0 md:pl-0 text-left">ep = Ha - Ycg</p>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <label for="B" class="input-label block mb-1">錨固點至梁中央水平距離 (B)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="B" value="615" step="5" class="input-field">
-                                <span class="unit-display">cm</span>
-                                <button class="stepper-btn" data-target="B" data-step="5" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="B" data-step="5" data-action="dec">-</button>
-                            </div>
-                        </div>
-                    </div>
+                        <!-- END GEOMETRY FIELDS -->
 
-                    <div>
-                        <label for="H" class="input-label block mb-1">錨固點至梁中央垂直距離 (H)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="H" value="20" step="1" class="input-field">
-                                <span class="unit-display">cm</span>
-                                <button class="stepper-btn" data-target="H" data-step="1" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="H" data-step="1" data-action="dec">-</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label for="mu" class="input-label block mb-1">摩擦曲率效應係數 (μ)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="mu" value="0.25" step="0.01" class="input-field">
-                                <span class="unit-display">1/rad</span>
-                                <button class="stepper-btn" data-target="mu" data-step="0.01" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="mu" data-step="0.01" data-action="dec">-</button>
-                            </div>
-                        </div>
-                        <p class="suggestion-text pl-0 md:pl-0 text-left">建議值: 0.15 ~ 0.25 (鍍鋅套管)</p>
-                    </div>
 
-                    <div>
-                        <label for="k" class="input-label block mb-1">波浪摩擦係數 (k)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="k" value="0.0049" step="0.0001" class="input-field">
-                                <span class="unit-display">1/m</span>
-                                <button class="stepper-btn" data-target="k" data-step="0.0001" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="k" data-step="0.0001" data-action="dec">-</button>
+                        <div>
+                            <label for="fpu" class="input-label block mb-1">抗拉強度 (fpu)</label>
+                            <div class="input-group">
+                                <input type="number" id="fpu" value="18861" class="input-field bg-slate-50" readonly>
+                                <span class="unit-display">kgf/cm²</span>
                             </div>
                         </div>
-                        <p class="suggestion-text pl-0 md:pl-0 text-left">建議值: 0.0049 (鍍鋅金屬套管)</p>
-                    </div>
-                    
-                    <div>
-                        <label for="delta_a" class="input-label block mb-1">錨具滑動量 (Δa)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="delta_a" value="6" step="0.5" class="input-field">
-                                <span class="unit-display">mm</span>
-                                <button class="stepper-btn" data-target="delta_a" data-step="0.5" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="delta_a" data-step="0.5" data-action="dec">-</button>
-                            </div>
-                        </div>
-                        <p class="suggestion-text pl-0 md:pl-0 text-left">建議值: 台灣(6mm), 日本(5-7mm)</p>
-                    </div>
 
-                    <div>
-                        <label for="RH" class="input-label block mb-1">年平均濕度 (RH)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="RH" value="80" step="1" class="input-field">
-                                <span class="unit-display">%</span>
-                                <button class="stepper-btn" data-target="RH" data-step="1" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="RH" data-step="1" data-action="dec">-</button>
+                        <div>
+                            <label for="fpy" class="input-label block mb-1">降伏強度 (fpy)</label>
+                            <div class="input-group">
+                                <input type="number" id="fpy" value="16110" class="input-field bg-slate-50" readonly>
+                                <span class="unit-display">kgf/cm²</span>
                             </div>
                         </div>
-                    </div>
 
+                        <div>
+                            <label for="Es" class="input-label block mb-1">鋼材楊氏係數 (Es)</label>
+                            <div class="input-group">
+                                <input type="number" id="Es" value="2080000" class="input-field bg-slate-50" readonly>
+                                <span class="unit-display">kgf/cm²</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="Ec" class="input-label block mb-1">混凝土彈性模數 (Ec)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="Ec" value="280000" step="1000" class="input-field">
+                                    <span class="unit-display">kgf/cm²</span>
+                                    <button class="stepper-btn" data-target="Ec" data-step="1000"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="Ec" data-step="1000"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="sigma_j" class="input-label block mb-1">初始施預力 (fpj / σj)</label>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <input type="number" id="sigma_j" value="13903" step="10" class="input-field">
+                                    <span class="unit-display">kgf/cm²</span>
+                                    <button class="stepper-btn" data-target="sigma_j" data-step="10"
+                                        data-action="inc">+</button>
+                                    <button class="stepper-btn" data-target="sigma_j" data-step="10"
+                                        data-action="dec">-</button>
+                                </div>
+                            </div>
+                            <p class="suggestion-text pl-0 md:pl-0 text-left">預設值: 0.737 * fpu</p>
+                        </div>
+
+                    </div>
                 </div>
 
-                <!-- 額外工程參數 -->
-                <h3 class="text-lg font-semibold text-slate-700 mb-4 mt-6 border-b pb-2">額外工程參數 (計算用)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                    
-                    <div>
-                        <label for="steel_type" class="input-label block mb-1">預力鋼腱種類</label>
-                        <div class="input-group">
-                            <select id="steel_type" class="input-field w-full bg-white">
-                                <option value="12.7">SWPR7BL 12.7mm</option>
-                                <option value="15.2">SWPR7BL 15.2mm</option>
-                            </select>
-                        </div>
+                <!-- ====== 計算結果欄 (Tabbed) ====== -->
+                <div class="space-y-8">
+                    <!-- Tab Buttons -->
+                    <div class="flex items-center">
+                        <button id="btn-results-tab" class="tab-btn active">計算結果</button>
+                        <button id="btn-details-tab" class="tab-btn">預力損失計算</button>
+                        <!-- Enhanced PDF Export Button -->
+                        <button id="btn-export-pdf"
+                            class="ml-auto bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-md shadow flex items-center gap-2 text-sm font-medium transition-colors">
+                            <span>📄</span> 輸出 PDF 計算書
+                        </button>
                     </div>
 
-                    <div>
-                        <label for="Ap" class="input-label block mb-1">鋼腱斷面積 (Ap)</label>
-                        <div class="input-group">
-                            <input type="number" id="Ap" value="0.9875" class="input-field bg-slate-50" readonly>
-                            <span class="unit-display">cm²</span>
+                    <!-- Tab Panel 1: 計算結果 (Results Summary) -->
+                    <div id="results-tab" class="tab-panel space-y-8 pt-8">
+
+                        <!-- Designer Input -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                            <label for="designer_name" class="input-label block mb-1 font-semibold text-slate-700">計算人員
+                                (Designer)</label>
+                            <input type="text" id="designer_name" class="input-field w-full"
+                                placeholder="請輸入您的姓名 (Name)">
                         </div>
-                    </div>
-                    
-                    <div>
-                        <label for="num_ducts" class="input-label block mb-1">佈孔數</label>
-                        <div class="input-group">
-                            <select id="num_ducts" class="input-field w-full bg-white">
-                                <option value="12" selected>12孔</option>
-                                <option value="15">15孔</option>
-                                <option value="19">19孔</option>
-                            </select>
+
+                        <!-- 施工階段預力損失 -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                            <h2 class="text-xl font-semibold text-slate-700 mb-4">施工階段預力損失 (Δσ_Stage)</h2>
+                            <div class="overflow-x-auto">
+                                <table class="result-table">
+                                    <thead>
+                                        <tr>
+                                            <th>損失項目</th>
+                                            <th>損失應力 (kgf/cm²)</th>
+                                            <th>損失百分比 (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stage-results-body">
+                                        <tr>
+                                            <td>摩擦損失 (Friction)</td>
+                                            <td id="loss_friction">0.00</td>
+                                            <td id="perc_friction">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>滑動損失 (Anchorage Set)</td>
+                                            <td id="loss_anchorage">0.00</td>
+                                            <td id="perc_anchorage">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>彈性縮短損失 (Elastic Shortening)</td>
+                                            <td id="loss_elastic">0.00</td>
+                                            <td id="perc_elastic">0.0%</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="total-row">
+                                            <td>施工階段總損失</td>
+                                            <td id="loss_stage_total">0.00</td>
+                                            <td id="perc_stage_total">0.0%</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <label for="num_strands" class="input-label block mb-1">鋼腱股數</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="num_strands" value="10" step="1" class="input-field">
-                                <span class="unit-display">股</span>
-                                <button class="stepper-btn" data-target="num_strands" data-step="1" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="num_strands" data-step="1" data-action="dec">-</button>
+
+                        <!-- 長期預力損失 -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                            <h2 class="text-xl font-semibold text-slate-700 mb-4">長期預力損失 (Δσ_LongTerm)</h2>
+                            <div class="overflow-x-auto">
+                                <table class="result-table">
+                                    <thead>
+                                        <tr>
+                                            <th>損失項目</th>
+                                            <th>損失應力 (kgf/cm²)</th>
+                                            <th>損失百分比 (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="longterm-results-body">
+                                        <tr>
+                                            <td>乾縮損失 (Shrinkage)</td>
+                                            <td id="loss_shrinkage">0.00</td>
+                                            <td id="perc_shrinkage">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>潛變損失 (Creep)</td>
+                                            <td id="loss_creep">0.00</td>
+                                            <td id="perc_creep">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>鬆弛損失 (Relaxation)</td>
+                                            <td id="loss_relaxation">0.00</td>
+                                            <td id="perc_relaxation">0.0%</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="total-row">
+                                            <td>長期總損失</td>
+                                            <td id="loss_longterm_total">0.00</td>
+                                            <td id="perc_longterm_total">0.0%</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 總預力損失 -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                            <h2 class="text-xl font-semibold text-slate-700 mb-4">總預力損失 (Δσ_Total)</h2>
+                            <div class="overflow-x-auto">
+                                <table class="result-table">
+                                    <tbody id="total-results-body">
+                                        <tr class="total-row">
+                                            <td class="w-1/3">總損失</td>
+                                            <td class="w-1/3" id="loss_total">0.00</td>
+                                            <td class="w-1/3" id="perc_total">0.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>初始施預力 (σj)</td>
+                                            <td id="val_sigma_j">0.00</td>
+                                            <td>100.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>有效預力 (σe)</td>
+                                            <td id="val_sigma_e">0.00</td>
+                                            <td id="perc_sigma_e">0.0%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 視覺化圖表 -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                            <h2 class="text-xl font-semibold text-slate-700 mb-4">損失分佈圖</h2>
+                            <div class="chart-container"
+                                style="position: relative; height:40vh; max-height: 400px; width:100%; max-width: 600px; margin: auto;">
+                                <canvas id="lossChart"></canvas>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="md:col-span-2">
-                        <label for="total_Ap_display" class="input-label block mb-1">鋼腱總斷面積 (Total Ap)</label>
-                        <div class="input-group">
-                            <input type="number" id="total_Ap_display" value="0.0" class="input-field bg-slate-100" readonly>
-                            <span class="unit-display">cm²</span>
-                        </div>
-                    </div>
 
-                    <!-- GEOMETRY FIELDS -->
-                    <div>
-                        <label for="Anet" class="input-label block mb-1">橋梁中央淨斷面積 (Anet)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="Anet" value="39690.99" step="100" class="input-field">
-                                <span class="unit-display">cm²</span>
-                                <button class="stepper-btn" data-target="Anet" data-step="100" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="Anet" data-step="100" data-action="dec">-</button>
+                    <!-- Tab Panel 2: 預力損失計算 (Calculation Details) -->
+                    <div id="details-tab" class="tab-panel hidden pt-8">
+                        <!-- This div is now flex-col, forcing single-column layout -->
+                        <div class="flex flex-col gap-6">
+
+                            <!-- 1. 摩擦損失 -->
+                            <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-700">1. 摩擦損失 (Friction)</h3>
+                                <div class="formula-display">
+                                    α = arctan(2*H / B)
+                                    S = L / 2 (m)
+                                    T_center = σ_j / exp(k*S + μ*α)
+                                    Δσ_F = σ_j - T_center
+                                </div>
+                                <ul class="variable-list text-sm">
+                                    <li><span>σ_j (初始施預力)</span><span
+                                            id="detail_f_sigma_j">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                    <li><span>L (橋梁跨度)</span><span id="detail_f_L">0.00</span><span>cm</span></li>
+                                    <li><span>H (垂直距離)</span><span id="detail_f_H">0.00</span><span>cm</span></li>
+                                    <li><span>B (水平距離)</span><span id="detail_f_B">0.00</span><span>cm</span></li>
+                                    <li><span>k (波浪效應)</span><span id="detail_f_k">0.00</span><span>1/m</span></li>
+                                    <li><span>μ (曲率效應)</span><span id="detail_f_mu">0.00</span><span>1/rad</span></li>
+                                    <li><span>α (縱向總角度)</span><span id="detail_f_alpha">0.0000</span><span>rad</span>
+                                    </li>
+                                </ul>
+                                <div class="calculation-step">
+                                    <div id="detail_f_calc_alpha">α = arctan(2 * 0 / 0) = 0 rad</div>
+                                    <div id="detail_f_calc_S_m">S = 0cm / 2 = 0 m</div>
+                                    <div id="detail_f_calc_Tcenter">T_center = 0 / exp(0*0 + 0*0) = 0 kgf/cm²</div>
+                                    <div id="detail_f_calc_loss">Δσ_F = 0 - 0</div>
+                                </div>
+                                <div class="final-loss-result">
+                                    <span>摩擦損失:</span>
+                                    <span id="detail_f_result">= 0.00 kgf/cm²</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div>
-                        <label for="Inet" class="input-label block mb-1">橋梁中央淨斷慣性矩 (Inet)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="Inet" value="19285477.94" step="10000" class="input-field">
-                                <span class="unit-display">cm⁴</span>
-                                <button class="stepper-btn" data-target="Inet" data-step="10000" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="Inet" data-step="10000" data-action="dec">-</button>
+                            <!-- 2. 滑動損失 -->
+                            <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-700">2. 滑動損失 (Anchorage Set)</h3>
+                                <div class="formula-display">
+                                    m_slide = (k/100) + 2*μ*H/(B^2)
+                                    exp_term = exp(-m_slide * L / 2)
+                                    Term1 = (m_slide * Es * Δa_cm) / (1 - exp_term)
+                                    Term2 = σ_j * (1 - exp_term)
+                                    Δσ_A = Term1 - Term2
+                                </div>
+                                <ul class="variable-list text-sm">
+                                    <li><span>k (波浪效應)</span><span id="detail_a_k">0.00</span><span>1/m</span></li>
+                                    <li><span>μ (曲率效應)</span><span id="detail_a_mu">0.00</span><span>1/rad</span></li>
+                                    <li><span>H (垂直距離)</span><span id="detail_a_H">0.00</span><span>cm</span></li>
+                                    <li><span>B (水平距離)</span><span id="detail_a_B">0.00</span><span>cm</span></li>
+                                    <li><span>L (橋梁跨度)</span><span id="detail_a_L">0.00</span><span>cm</span></li>
+                                    <li><span>Es (鋼材模數)</span><span id="detail_a_Es">0</span><span>kgf/cm²</span></li>
+                                    <li><span>Δa (滑動量)</span><span id="detail_a_delta_a">0.00</span><span>mm</span></li>
+                                    <li><span>σ_j (初始施預力)</span><span
+                                            id="detail_a_sigma_j">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                </ul>
+                                <div class="calculation-step">
+                                    <div id="detail_a_calc_m">m_slide = (0/100) + 2*0*0/(0^2) = 0</div>
+                                    <div id="detail_a_calc_exp">exp_term = exp(-0 * 0 / 2) = 0</div>
+                                    <div id="detail_a_calc_t1">Term1 = (0 * 0 * 0) / (1 - 0) = 0</div>
+                                    <div id="detail_a_calc_t2">Term2 = 0 * (1 - 0) = 0</div>
+                                    <div id="detail_a_calc_loss">Δσ_A = 0 - 0</div>
+                                </div>
+                                <div class="final-loss-result">
+                                    <span>滑動損失:</span>
+                                    <span id="detail_a_result">= 0.00 kgf/cm²</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div>
-                        <label for="MDL" class="input-label block mb-1">橋梁靜載重彎矩 (MDL)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="MDL" value="248.71" step="10" class="input-field">
-                                <span class="unit-display">tf*m</span>
-                                <button class="stepper-btn" data-target="MDL" data-step="10" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="MDL" data-step="10" data-action="dec">-</button>
+                            <!-- 3. 彈性縮短損失 -->
+                            <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-700">3. 彈性縮短 (Elastic Shortening)</h3>
+                                <div class="formula-display">
+                                    n = Es / Ec
+                                    a = Total_Ap / Anet
+                                    b = (Total_Ap * ep^2) / Inet
+                                    c = (MDL * 10^5 * ep) / Inet
+                                    d = σ_j - Δσ_F - Δσ_A
+                                    σx = (d + 0.5*n*c) / (1 + 0.5*n*(a+b))
+                                    Δσ_ES = 0.5*n*(a*σx + b*σx - c)
+                                </div>
+                                <ul class="variable-list text-sm">
+                                    <li><span>n (模數比)</span><span id="detail_e_n">0.00</span><span></span></li>
+                                    <li><span>Total_Ap (鋼腱總面積)</span><span
+                                            id="detail_e_Total_Ap">0.00</span><span>cm²</span></li>
+                                    <li><span>Anet (淨斷面積)</span><span id="detail_e_Anet">0.00</span><span>cm²</span>
+                                    </li>
+                                    <li><span>Inet (淨斷慣性矩)</span><span id="detail_e_Inet">0.00</span><span>cm⁴</span>
+                                    </li>
+                                    <li><span>ep (偏心值)</span><span id="detail_e_ep">0.00</span><span>cm</span></li>
+                                    <li><span>MDL (靜載彎矩)</span><span id="detail_e_MDL">0.00</span><span>tf*m</span></li>
+                                    <li><span>σ_j (初始施預力)</span><span
+                                            id="detail_e_sigma_j">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                    <li><span>Δσ_F (摩擦損失)</span><span
+                                            id="detail_e_loss_f">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                    <li><span>Δσ_A (滑動損失)</span><span
+                                            id="detail_e_loss_a">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                </ul>
+                                <div class="calculation-step">
+                                    <div id="detail_e_calc_a">a = 0 / 0 = 0</div>
+                                    <div id="detail_e_calc_b">b = (0 * 0^2) / 0 = 0</div>
+                                    <div id="detail_e_calc_c">c = (0 * 10^5 * 0) / 0 = 0</div>
+                                    <div id="detail_e_calc_d">d = 0 - 0 - 0 = 0</div>
+                                    <div id="detail_e_calc_sx">σx = (0 + 0.5*0*0) / (1 + 0.5*0*(0+0)) = 0</div>
+                                    <div id="detail_e_calc_loss">Δσ_ES = 0.5*0*(0*0 + 0*0 - 0) = 0</div>
+                                </div>
+                                <div class="final-loss-result">
+                                    <span>彈性縮短損失:</span>
+                                    <span id="detail_e_result">= 0.00 kgf/cm²</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label for="MADL" class="input-label block mb-1">橋梁附掛載重彎矩 (MADL)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="MADL" value="62.89" step="10" class="input-field">
-                                <span class="unit-display">tf*m</span>
-                                <button class="stepper-btn" data-target="MADL" data-step="10" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="MADL" data-step="10" data-action="dec">-</button>
+
+                            <!-- 4. 乾縮損失 -->
+                            <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-700">4. 乾縮損失 (Shrinkage)</h3>
+                                <div class="formula-display">Δσ_SH = 0.8 * (1195 - 10.55 * RH)</div>
+                                <ul class="variable-list text-sm">
+                                    <li><span>RH (年平均濕度)</span><span id="detail_sh_RH">0.0</span><span>%</span></li>
+                                </ul>
+                                <div class="calculation-step">
+                                    <div id="detail_sh_calc">= 0.8 * (1195 - 10.55 * 0)</div>
+                                </div>
+                                <div class="final-loss-result">
+                                    <span>乾縮損失:</span>
+                                    <span id="detail_sh_result">= 0.00 kgf/cm²</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div>
-                        <label for="Ycg" class="input-label block mb-1">重心位置_距頂部 (Ycg)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="Ycg" value="32.28" step="0.1" class="input-field">
-                                <span class="unit-display">cm</span>
-                                <button class="stepper-btn" data-target="Ycg" data-step="0.1" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="Ycg" data-step="0.1" data-action="dec">-</button>
+                            <!-- 5. 潛變損失 -->
+                            <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-700">5. 潛變損失 (Creep)</h3>
+                                <div class="formula-display">
+                                    e = (MADL * 10^5 * ep) / Inet
+                                    f = (Δσ_ES * 2) / n
+                                    Δσ_CR = 12*f - 7*e
+                                </div>
+                                <ul class="variable-list text-sm">
+                                    <li><span>MADL (附掛彎矩)</span><span id="detail_c_MADL">0.00</span><span>tf*m</span>
+                                    </li>
+                                    <li><span>ep (偏心值)</span><span id="detail_c_ep">0.00</span><span>cm</span></li>
+                                    <li><span>Inet (淨斷慣性矩)</span><span id="detail_c_Inet">0.00</span><span>cm⁴</span>
+                                    </li>
+                                    <li><span>Δσ_ES (彈縮損失)</span><span
+                                            id="detail_c_loss_elastic">0.00</span><span>kgf/cm²</span></li>
+                                    <li><span>n (模數比)</span><span id="detail_c_n">0.00</span><span></span></li>
+                                </ul>
+                                <div class="calculation-step">
+                                    <div id="detail_c_calc_e">e = (0 * 10^5 * 0) / 0 = 0</div>
+                                    <div id="detail_c_calc_f">f = (0 * 2) / 0 = 0</div>
+                                    <div id="detail_c_calc_loss">Δσ_CR = 12 * 0 - 7 * 0 = 0</div>
+                                </div>
+                                <div class="final-loss-result">
+                                    <span>潛變損失:</span>
+                                    <span id="detail_c_result">= 0.00 kgf/cm²</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div>
-                        <label for="Ha" class="input-label block mb-1">錨固點至梁頂部垂直距離 (Ha)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="Ha" value="55" step="1" class="input-field">
-                                <span class="unit-display">cm</span>
-                                <button class="stepper-btn" data-target="Ha" data-step="1" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="Ha" data-step="1" data-action="dec">-</button>
+                            <!-- 6. 鬆弛損失 -->
+                            <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-700">6. 鬆弛損失 (Relaxation)</h3>
+                                <div class="formula-display">
+                                    FR = max(0, 0.7*fpu - T_center)
+                                    Δσ_R = 350 - 0.07*FR - 0.1*Δσ_ES - 0.05*(Δσ_SH + Δσ_CR)
+                                </div>
+                                <ul class="variable-list text-sm">
+                                    <li><span>fpu (抗拉強度)</span><span id="detail_r_fpu">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                    <li><span>T_center (中央點應力)</span><span
+                                            id="detail_r_tcenter">0.00</span><span>kgf/cm²</span></li>
+                                    <li><span>Δσ_ES (彈縮損失)</span><span
+                                            id="detail_r_loss_es">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                    <li><span>Δσ_SH (乾縮損失)</span><span
+                                            id="detail_r_loss_sh">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                    <li><span>Δσ_CR (潛變損失)</span><span
+                                            id="detail_r_loss_cr">0.00</span><span>kgf/cm²</span>
+                                    </li>
+                                </ul>
+                                <div class="calculation-step">
+                                    <div id="detail_r_calc_fr">FR = max(0, 0.7*0 - 0) = 0</div>
+                                    <div id="detail_r_calc_loss">Δσ_R = 350 - 0.07*0 - 0.1*0 - 0.05*(0 + 0) = 0</div>
+                                </div>
+                                <div class="final-loss-result">
+                                    <span>鬆弛損失:</span>
+                                    <span id="detail_r_result">= 0.00 kgf/cm²</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div>
-                        <label for="ep_display" class="input-label block mb-1">鋼腱與梁重心偏心值 (ep)</label>
-                        <div class="input-group">
-                            <input type="number" id="ep_display" value="0.0" class="input-field bg-slate-100" readonly>
-                            <span class="unit-display">cm</span>
                         </div>
-                        <p class="suggestion-text pl-0 md:pl-0 text-left">ep = Ha - Ycg</p>
-                    </div>
-                    <!-- END GEOMETRY FIELDS -->
-
-
-                    <div>
-                        <label for="fpu" class="input-label block mb-1">抗拉強度 (fpu)</label>
-                        <div class="input-group">
-                            <input type="number" id="fpu" value="18861" class="input-field bg-slate-50" readonly>
-                            <span class="unit-display">kgf/cm²</span>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label for="fpy" class="input-label block mb-1">降伏強度 (fpy)</label>
-                        <div class="input-group">
-                            <input type="number" id="fpy" value="16110" class="input-field bg-slate-50" readonly>
-                            <span class="unit-display">kgf/cm²</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="Es" class="input-label block mb-1">鋼材楊氏係數 (Es)</label>
-                        <div class="input-group">
-                            <input type="number" id="Es" value="2080000" class="input-field bg-slate-50" readonly>
-                            <span class="unit-display">kgf/cm²</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="Ec" class="input-label block mb-1">混凝土彈性模數 (Ec)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="Ec" value="280000" step="1000" class="input-field">
-                                <span class="unit-display">kgf/cm²</span>
-                                <button class="stepper-btn" data-target="Ec" data-step="1000" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="Ec" data-step="1000" data-action="dec">-</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="md:col-span-2">
-                        <label for="sigma_j" class="input-label block mb-1">初始施預力 (fpj / σj)</label>
-                        <div class="input-group">
-                            <div class="input-container">
-                                <input type="number" id="sigma_j" value="13903" step="10" class="input-field">
-                                <span class="unit-display">kgf/cm²</span>
-                                <button class="stepper-btn" data-target="sigma_j" data-step="10" data-action="inc">+</button>
-                                <button class="stepper-btn" data-target="sigma_j" data-step="10" data-action="dec">-</button>
-                            </div>
-                        </div>
-                        <p class="suggestion-text pl-0 md:pl-0 text-left">預設值: 0.737 * fpu</p>
                     </div>
 
                 </div>
             </div>
+        </div>
 
-            <!-- ====== 計算結果欄 (Tabbed) ====== -->
-            <div class="space-y-8">
-                <!-- Tab Buttons -->
-                <div class="flex">
-                    <button id="btn-results-tab" class="tab-btn active">計算結果</button>
-                    <button id="btn-details-tab" class="tab-btn">預力損失計算</button>
+
+    </div> <!-- Close screen-ui -->
+
+    <!-- ====== PRINT UI STRUCTURE (Hidden on Screen) ====== -->
+    <div class="print-ui">
+        <div class="print-page">
+            <header class="print-header">
+                <h1>預力損失計算書</h1>
+                <h2>Prestressed Loss Calculation Report</h2>
+            </header>
+
+            <div class="print-section">
+                <div class="print-kv-grid">
+                    <div class="print-kv-item"><span class="print-kv-label">列印日期:</span><span class="print-kv-value"
+                            id="p_date">--</span></div>
+                    <div class="print-kv-item"><span class="print-kv-label">計算人員:</span><span class="print-kv-value"
+                            id="p_designer_name">--</span></div>
+                </div>
+            </div>
+
+            <!-- 1. Input Parameters -->
+            <div class="print-section">
+                <h3 class="print-section-title">1. 設計參數 (Design Parameters)</h3>
+                <div class="print-kv-grid">
+                    <div class="print-kv-item"><span class="print-kv-label">跨度 (L):</span><span class="print-kv-value"
+                            id="p_L">--</span> cm</div>
+                    <div class="print-kv-item"><span class="print-kv-label">水平距離 (B):</span><span class="print-kv-value"
+                            id="p_B">--</span> cm</div>
+                    <div class="print-kv-item"><span class="print-kv-label">垂直距離 (H):</span><span class="print-kv-value"
+                            id="p_H">--</span> cm</div>
+                    <div class="print-kv-item"><span class="print-kv-label">摩擦係數 (μ):</span><span class="print-kv-value"
+                            id="p_mu">--</span> 1/rad</div>
+                    <div class="print-kv-item"><span class="print-kv-label">波浪摩擦係數 (k):</span><span
+                            class="print-kv-value" id="p_k">--</span> 1/m</div>
+                    <div class="print-kv-item"><span class="print-kv-label">錨具滑動 (Δa):</span><span
+                            class="print-kv-value" id="p_delta_a">--</span> mm</div>
+                    <div class="print-kv-item"><span class="print-kv-label">濕度 (RH):</span><span class="print-kv-value"
+                            id="p_RH">--</span> %</div>
+                    <div class="print-kv-item"><span class="print-kv-label">初始預力 (σj):</span><span
+                            class="print-kv-value" id="p_sigma_j">--</span> kgf/cm²</div>
+                    <div class="print-kv-item"><span class="print-kv-label">預力鋼腱:</span><span class="print-kv-value"
+                            id="p_steel_type">--</span></div>
+                    <div class="print-kv-item"><span class="print-kv-label">佈孔數:</span><span class="print-kv-value"
+                            id="p_num_ducts">--</span> 孔</div>
+                    <div class="print-kv-item"><span class="print-kv-label">鋼腱股數:</span><span class="print-kv-value"
+                            id="p_num_strands">--</span> 股</div>
+                    <div class="print-kv-item"><span class="print-kv-label">總斷面積 (Ap):</span><span
+                            class="print-kv-value" id="p_total_ap">--</span> cm²</div>
+                    <div class="print-kv-item"><span class="print-kv-label">抗拉強度 (fpu):</span><span
+                            class="print-kv-value" id="p_fpu">--</span> kgf/cm²</div>
+                    <div class="print-kv-item"><span class="print-kv-label">降伏強度 (fpy):</span><span
+                            class="print-kv-value" id="p_fpy">--</span> kgf/cm²</div>
+                    <div class="print-kv-item"><span class="print-kv-label">鋼材模數 (Es):</span><span
+                            class="print-kv-value" id="p_Es">--</span> kgf/cm²</div>
+                    <div class="print-kv-item"><span class="print-kv-label">混凝土模數 (Ec):</span><span
+                            class="print-kv-value" id="p_Ec">--</span> kgf/cm²</div>
+                    <div class="print-kv-item"><span class="print-kv-label">淨斷面積 (Anet):</span><span
+                            class="print-kv-value" id="p_Anet">--</span> cm²</div>
+                    <div class="print-kv-item"><span class="print-kv-label">淨斷慣性矩 (Inet):</span><span
+                            class="print-kv-value" id="p_Inet">--</span> cm⁴</div>
+                    <div class="print-kv-item"><span class="print-kv-label">重心偏心值 (ep):</span><span
+                            class="print-kv-value" id="p_ep">--</span> cm</div>
+                    <div class="print-kv-item"><span class="print-kv-label">靜載彎矩 (MDL):</span><span
+                            class="print-kv-value" id="p_MDL">--</span> tf-m</div>
+                    <div class="print-kv-item"><span class="print-kv-label">附掛彎矩 (MADL):</span><span
+                            class="print-kv-value" id="p_MADL">--</span> tf-m</div>
+                </div>
+            </div>
+
+            <!-- 2. Result Summary -->
+            <div class="print-section">
+                <h3 class="print-section-title">2. 計算結果摘要 (Summary)</h3>
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th>損失項目 (Loss Item)</th>
+                            <th>應力損失 (kgf/cm²)</th>
+                            <th>百分比 (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>摩擦損失 (Friction)</td>
+                            <td class="num" id="p_loss_friction">0.00</td>
+                            <td class="num" id="p_perc_friction">0.0%</td>
+                        </tr>
+                        <tr>
+                            <td>滑動損失 (Anchorage)</td>
+                            <td class="num" id="p_loss_anchorage">0.00</td>
+                            <td class="num" id="p_perc_anchorage">0.0%</td>
+                        </tr>
+                        <tr>
+                            <td>彈性縮短 (Elastic)</td>
+                            <td class="num" id="p_loss_elastic">0.00</td>
+                            <td class="num" id="p_perc_elastic">0.0%</td>
+                        </tr>
+                        <tr style="background:#eee; font-weight:bold;">
+                            <td>施工階段小計</td>
+                            <td class="num" id="p_loss_stage">0.00</td>
+                            <td class="num" id="p_perc_stage">0.0%</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="border:none; height:5px;"></td>
+                        </tr>
+                        <tr>
+                            <td>乾縮損失 (Shrinkage)</td>
+                            <td class="num" id="p_loss_shrinkage">0.00</td>
+                            <td class="num" id="p_perc_shrinkage">0.0%</td>
+                        </tr>
+                        <tr>
+                            <td>潛變損失 (Creep)</td>
+                            <td class="num" id="p_loss_creep">0.00</td>
+                            <td class="num" id="p_perc_creep">0.0%</td>
+                        </tr>
+                        <tr>
+                            <td>鬆弛損失 (Relaxation)</td>
+                            <td class="num" id="p_loss_relaxation">0.00</td>
+                            <td class="num" id="p_perc_relaxation">0.0%</td>
+                        </tr>
+                        <tr style="background:#eee; font-weight:bold;">
+                            <td>長期損失小計</td>
+                            <td class="num" id="p_loss_longterm">0.00</td>
+                            <td class="num" id="p_perc_longterm">0.0%</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="border:none; height:10px;"></td>
+                        </tr>
+                        <tr style="font-size:12pt; border:2px solid black;">
+                            <td><strong>總損失 (Total Loss)</strong></td>
+                            <td class="num"><strong><span id="p_loss_total">0.00</span></strong></td>
+                            <td class="num"><strong><span id="p_perc_total">0.0%</span></strong></td>
+                        </tr>
+                        <tr>
+                            <td>有效預力 (Effective σe)</td>
+                            <td class="num" id="p_sigma_e">0.00</td>
+                            <td class="num" id="p_perc_sigma_e">0.0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+            <div class="print-footer">
+                <span>Generated by Prestress Loss Calculator</span>
+                <span>Page 1/2</span>
+            </div>
+        </div>
+
+        <div class="print-page">
+            <header class="print-header">
+                <h2>詳細計算過程 (Detailed Calculations)</h2>
+            </header>
+
+            <div class="print-section">
+                <!-- 1. Friction -->
+                <div class="print-calc-block">
+                    <div class="print-formula">1. 摩擦損失 (Friction)</div>
+                    <ul class="print-variable-list">
+                        <li><span>σj:</span><span id="p_detail_f_sigma_j">--</span></li>
+                        <li><span>L:</span><span id="p_detail_f_L">--</span></li>
+                        <li><span>H:</span><span id="p_detail_f_H">--</span></li>
+                        <li><span>B:</span><span id="p_detail_f_B">--</span></li>
+                        <li><span>k:</span><span id="p_detail_f_k">--</span></li>
+                        <li><span>μ:</span><span id="p_detail_f_mu">--</span></li>
+                        <li><span>α:</span><span id="p_detail_f_alpha">--</span></li>
+                    </ul>
+                    <div class="print-sub" id="p_detail_f_calc_alpha">--</div>
+                    <div class="print-sub" id="p_detail_f_calc_S_m">--</div>
+                    <div class="print-sub" id="p_detail_f_calc_Tcenter">--</div>
+                    <div class="print-sub" id="p_detail_f_calc_loss">--</div>
+                    <div class="print-sub" id="p_detail_f_result">--</div>
                 </div>
 
-                <!-- Tab Panel 1: 計算結果 (Results Summary) -->
-                <div id="results-tab" class="tab-panel space-y-8 pt-8">
-                    <!-- 施工階段預力損失 -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                        <h2 class="text-xl font-semibold text-slate-700 mb-4">施工階段預力損失 (Δσ_Stage)</h2>
-                        <div class="overflow-x-auto">
-                            <table class="result-table">
-                                <thead>
-                                    <tr>
-                                        <th>損失項目</th>
-                                        <th>損失應力 (kgf/cm²)</th>
-                                        <th>損失百分比 (%)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="stage-results-body">
-                                    <tr>
-                                        <td>摩擦損失 (Friction)</td>
-                                        <td id="loss_friction">0.00</td>
-                                        <td id="perc_friction">0.0%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>滑動損失 (Anchorage Set)</td>
-                                        <td id="loss_anchorage">0.00</td>
-                                        <td id="perc_anchorage">0.0%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>彈性縮短損失 (Elastic Shortening)</td>
-                                        <td id="loss_elastic">0.00</td>
-                                        <td id="perc_elastic">0.0%</td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr class="total-row">
-                                        <td>施工階段總損失</td>
-                                        <td id="loss_stage_total">0.00</td>
-                                        <td id="perc_stage_total">0.0%</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- 長期預力損失 -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                        <h2 class="text-xl font-semibold text-slate-700 mb-4">長期預力損失 (Δσ_LongTerm)</h2>
-                        <div class="overflow-x-auto">
-                            <table class="result-table">
-                                <thead>
-                                    <tr>
-                                        <th>損失項目</th>
-                                        <th>損失應力 (kgf/cm²)</th>
-                                        <th>損失百分比 (%)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="longterm-results-body">
-                                    <tr>
-                                        <td>乾縮損失 (Shrinkage)</td>
-                                        <td id="loss_shrinkage">0.00</td>
-                                        <td id="perc_shrinkage">0.0%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>潛變損失 (Creep)</td>
-                                        <td id="loss_creep">0.00</td>
-                                        <td id="perc_creep">0.0%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>鬆弛損失 (Relaxation)</td>
-                                        <td id="loss_relaxation">0.00</td>
-                                        <td id="perc_relaxation">0.0%</td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr class="total-row">
-                                        <td>長期總損失</td>
-                                        <td id="loss_longterm_total">0.00</td>
-                                        <td id="perc_longterm_total">0.0%</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- 總預力損失 -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                        <h2 class="text-xl font-semibold text-slate-700 mb-4">總預力損失 (Δσ_Total)</h2>
-                        <div class="overflow-x-auto">
-                            <table class="result-table">
-                                <tbody id="total-results-body">
-                                    <tr class="total-row">
-                                        <td class="w-1/3">總損失</td>
-                                        <td class="w-1/3" id="loss_total">0.00</td>
-                                        <td class="w-1/3" id="perc_total">0.0%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>初始施預力 (σj)</td>
-                                        <td id="val_sigma_j">0.00</td>
-                                        <td>100.0%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>有效預力 (σe)</td>
-                                        <td id="val_sigma_e">0.00</td>
-                                        <td id="perc_sigma_e">0.0%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- 視覺化圖表 -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                        <h2 class="text-xl font-semibold text-slate-700 mb-4">損失分佈圖</h2>
-                        <div class="chart-container" style="position: relative; height:40vh; max-height: 400px; width:100%; max-width: 600px; margin: auto;">
-                            <canvas id="lossChart"></canvas>
-                        </div>
-                    </div>
+                <!-- 2. Anchorage -->
+                <div class="print-calc-block">
+                    <div class="print-formula">2. 滑動損失 (Anchorage Set)</div>
+                    <ul class="print-variable-list">
+                        <li><span>k:</span><span id="p_detail_a_k">--</span></li>
+                        <li><span>μ:</span><span id="p_detail_a_mu">--</span></li>
+                        <li><span>H:</span><span id="p_detail_a_H">--</span></li>
+                        <li><span>B:</span><span id="p_detail_a_B">--</span></li>
+                        <li><span>L:</span><span id="p_detail_a_L">--</span></li>
+                        <li><span>Es:</span><span id="p_detail_a_Es">--</span></li>
+                        <li><span>Δa:</span><span id="p_detail_a_delta_a">--</span></li>
+                        <li><span>σj:</span><span id="p_detail_a_sigma_j">--</span></li>
+                    </ul>
+                    <div class="print-sub" id="p_detail_a_calc_m">--</div>
+                    <div class="print-sub" id="p_detail_a_calc_exp">--</div>
+                    <div class="print-sub" id="p_detail_a_calc_t1">--</div>
+                    <div class="print-sub" id="p_detail_a_calc_t2">--</div>
+                    <div class="print-sub" id="p_detail_a_calc_loss">--</div>
+                    <div class="print-sub" id="p_detail_a_result">--</div>
                 </div>
 
-                <!-- Tab Panel 2: 預力損失計算 (Calculation Details) -->
-                <div id="details-tab" class="tab-panel hidden pt-8">
-                    <!-- This div is now flex-col, forcing single-column layout -->
-                    <div class="flex flex-col gap-6">
-                        
-                        <!-- 1. 摩擦損失 -->
-                        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                            <h3 class="text-lg font-semibold text-slate-700">1. 摩擦損失 (Friction)</h3>
-                            <div class="formula-display">
-α = arctan(2*H / B)
-S = L / 2 (m)
-T_center = σ_j / exp(k*S + μ*α)
-Δσ_F = σ_j - T_center
-                            </div>
-                            <ul class="variable-list text-sm">
-                                <li><span>σ_j (初始施預力)</span><span id="detail_f_sigma_j">0.00</span><span>kgf/cm²</span></li>
-                                <li><span>L (橋梁跨度)</span><span id="detail_f_L">0.00</span><span>cm</span></li>
-                                <li><span>H (垂直距離)</span><span id="detail_f_H">0.00</span><span>cm</span></li>
-                                <li><span>B (水平距離)</span><span id="detail_f_B">0.00</span><span>cm</span></li>
-                                <li><span>k (波浪效應)</span><span id="detail_f_k">0.00</span><span>1/m</span></li>
-                                <li><span>μ (曲率效應)</span><span id="detail_f_mu">0.00</span><span>1/rad</span></li>
-                                <li><span>α (縱向總角度)</span><span id="detail_f_alpha">0.0000</span><span>rad</span></li>
-                            </ul>
-                            <div class="calculation-step">
-                                <div id="detail_f_calc_alpha">α = arctan(2 * 0 / 0) = 0 rad</div>
-                                <div id="detail_f_calc_S_m">S = 0cm / 2 = 0 m</div>
-                                <div id="detail_f_calc_Tcenter">T_center = 0 / exp(0*0 + 0*0) = 0 kgf/cm²</div>
-                                <div id="detail_f_calc_loss">Δσ_F = 0 - 0</div>
-                            </div>
-                            <div class="final-loss-result">
-                                <span>摩擦損失:</span>
-                                <span id="detail_f_result">= 0.00 kgf/cm²</span>
-                            </div>
-                        </div>
-
-                        <!-- 2. 滑動損失 -->
-                        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                            <h3 class="text-lg font-semibold text-slate-700">2. 滑動損失 (Anchorage Set)</h3>
-                            <div class="formula-display">
-m_slide = (k/100) + 2*μ*H/(B^2)
-exp_term = exp(-m_slide * L / 2)
-Term1 = (m_slide * Es * Δa_cm) / (1 - exp_term)
-Term2 = σ_j * (1 - exp_term)
-Δσ_A = Term1 - Term2
-                            </div>
-                            <ul class="variable-list text-sm">
-                                <li><span>k (波浪效應)</span><span id="detail_a_k">0.00</span><span>1/m</span></li>
-                                <li><span>μ (曲率效應)</span><span id="detail_a_mu">0.00</span><span>1/rad</span></li>
-                                <li><span>H (垂直距離)</span><span id="detail_a_H">0.00</span><span>cm</span></li>
-                                <li><span>B (水平距離)</span><span id="detail_a_B">0.00</span><span>cm</span></li>
-                                <li><span>L (橋梁跨度)</span><span id="detail_a_L">0.00</span><span>cm</span></li>
-                                <li><span>Es (鋼材模數)</span><span id="detail_a_Es">0</span><span>kgf/cm²</span></li>
-                                <li><span>Δa (滑動量)</span><span id="detail_a_delta_a">0.00</span><span>mm</span></li>
-                                <li><span>σ_j (初始施預力)</span><span id="detail_a_sigma_j">0.00</span><span>kgf/cm²</span></li>
-                            </ul>
-                            <div class="calculation-step">
-                                <div id="detail_a_calc_m">m_slide = (0/100) + 2*0*0/(0^2) = 0</div>
-                                <div id="detail_a_calc_exp">exp_term = exp(-0 * 0 / 2) = 0</div>
-                                <div id="detail_a_calc_t1">Term1 = (0 * 0 * 0) / (1 - 0) = 0</div>
-                                <div id="detail_a_calc_t2">Term2 = 0 * (1 - 0) = 0</div>
-                                <div id="detail_a_calc_loss">Δσ_A = 0 - 0</div>
-                            </div>
-                            <div class="final-loss-result">
-                                <span>滑動損失:</span>
-                                <span id="detail_a_result">= 0.00 kgf/cm²</span>
-                            </div>
-                        </div>
-
-                        <!-- 3. 彈性縮短損失 -->
-                        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                            <h3 class="text-lg font-semibold text-slate-700">3. 彈性縮短 (Elastic Shortening)</h3>
-                            <div class="formula-display">
-n = Es / Ec
-a = Total_Ap / Anet
-b = (Total_Ap * ep^2) / Inet
-c = (MDL * 10^5 * ep) / Inet
-d = σ_j - Δσ_F - Δσ_A
-σx = (d + 0.5*n*c) / (1 + 0.5*n*(a+b))
-Δσ_ES = 0.5*n*(a*σx + b*σx - c)
-                            </div>
-                            <ul class="variable-list text-sm">
-                                <li><span>n (模數比)</span><span id="detail_e_n">0.00</span><span></span></li>
-                                <li><span>Total_Ap (鋼腱總面積)</span><span id="detail_e_Total_Ap">0.00</span><span>cm²</span></li>
-                                <li><span>Anet (淨斷面積)</span><span id="detail_e_Anet">0.00</span><span>cm²</span></li>
-                                <li><span>Inet (淨斷慣性矩)</span><span id="detail_e_Inet">0.00</span><span>cm⁴</span></li>
-                                <li><span>ep (偏心值)</span><span id="detail_e_ep">0.00</span><span>cm</span></li>
-                                <li><span>MDL (靜載彎矩)</span><span id="detail_e_MDL">0.00</span><span>tf*m</span></li>
-                                <li><span>σ_j (初始施預力)</span><span id="detail_e_sigma_j">0.00</span><span>kgf/cm²</span></li>
-                                <li><span>Δσ_F (摩擦損失)</span><span id="detail_e_loss_f">0.00</span><span>kgf/cm²</span></li>
-                                <li><span>Δσ_A (滑動損失)</span><span id="detail_e_loss_a">0.00</span><span>kgf/cm²</span></li>
-                            </ul>
-                            <div class="calculation-step">
-                                <div id="detail_e_calc_a">a = 0 / 0 = 0</div>
-                                <div id="detail_e_calc_b">b = (0 * 0^2) / 0 = 0</div>
-                                <div id="detail_e_calc_c">c = (0 * 10^5 * 0) / 0 = 0</div>
-                                <div id="detail_e_calc_d">d = 0 - 0 - 0 = 0</div>
-                                <div id="detail_e_calc_sx">σx = (0 + 0.5*0*0) / (1 + 0.5*0*(0+0)) = 0</div>
-                                <div id="detail_e_calc_loss">Δσ_ES = 0.5*0*(0*0 + 0*0 - 0) = 0</div>
-                            </div>
-                            <div class="final-loss-result">
-                                <span>彈性縮短損失:</span>
-                                <span id="detail_e_result">= 0.00 kgf/cm²</span>
-                            </div>
-                        </div>
-
-                        <!-- 4. 乾縮損失 -->
-                        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                            <h3 class="text-lg font-semibold text-slate-700">4. 乾縮損失 (Shrinkage)</h3>
-                            <div class="formula-display">Δσ_SH = 0.8 * (1195 - 10.55 * RH)</div>
-                            <ul class="variable-list text-sm">
-                                <li><span>RH (年平均濕度)</span><span id="detail_sh_RH">0.0</span><span>%</span></li>
-                            </ul>
-                            <div class="calculation-step">
-                                <div id="detail_sh_calc">= 0.8 * (1195 - 10.55 * 0)</div>
-                            </div>
-                            <div class="final-loss-result">
-                                <span>乾縮損失:</span>
-                                <span id="detail_sh_result">= 0.00 kgf/cm²</span>
-                            </div>
-                        </div>
-
-                        <!-- 5. 潛變損失 -->
-                        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                            <h3 class="text-lg font-semibold text-slate-700">5. 潛變損失 (Creep)</h3>
-                            <div class="formula-display">
-e = (MADL * 10^5 * ep) / Inet
-f = (Δσ_ES * 2) / n
-Δσ_CR = 12*f - 7*e
-                            </div>
-                            <ul class="variable-list text-sm">
-                                <li><span>MADL (附掛彎矩)</span><span id="detail_c_MADL">0.00</span><span>tf*m</span></li>
-                                <li><span>ep (偏心值)</span><span id="detail_c_ep">0.00</span><span>cm</span></li>
-                                <li><span>Inet (淨斷慣性矩)</span><span id="detail_c_Inet">0.00</span><span>cm⁴</span></li>
-                                <li><span>Δσ_ES (彈縮損失)</span><span id="detail_c_loss_elastic">0.00</span><span>kgf/cm²</span></li>
-                                <li><span>n (模數比)</span><span id="detail_c_n">0.00</span><span></span></li>
-                            </ul>
-                            <div class="calculation-step">
-                                <div id="detail_c_calc_e">e = (0 * 10^5 * 0) / 0 = 0</div>
-                                <div id="detail_c_calc_f">f = (0 * 2) / 0 = 0</div>
-                                <div id="detail_c_calc_loss">Δσ_CR = 12 * 0 - 7 * 0 = 0</div>
-                            </div>
-                            <div class="final-loss-result">
-                                <span>潛變損失:</span>
-                                <span id="detail_c_result">= 0.00 kgf/cm²</span>
-                            </div>
-                        </div>
-
-                        <!-- 6. 鬆弛損失 -->
-                        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                            <h3 class="text-lg font-semibold text-slate-700">6. 鬆弛損失 (Relaxation)</h3>
-                            <div class="formula-display">
-FR = max(0, 0.7*fpu - T_center)
-Δσ_R = 350 - 0.07*FR - 0.1*Δσ_ES - 0.05*(Δσ_SH + Δσ_CR)
-                            </div>
-                            <ul class="variable-list text-sm">
-                                <li><span>fpu (抗拉強度)</span><span id="detail_r_fpu">0.00</span><span>kgf/cm²</span></li>
-                                <li><span>T_center (中央點應力)</span><span id="detail_r_tcenter">0.00</span><span>kgf/cm²</span></li>
-                                <li><span>Δσ_ES (彈縮損失)</span><span id="detail_r_loss_es">0.00</span><span>kgf/cm²</span></li>
-                                <li><span>Δσ_SH (乾縮損失)</span><span id="detail_r_loss_sh">0.00</span><span>kgf/cm²</span></li>
-                                <li><span>Δσ_CR (潛變損失)</span><span id="detail_r_loss_cr">0.00</span><span>kgf/cm²</span></li>
-                            </ul>
-                            <div class="calculation-step">
-                                <div id="detail_r_calc_fr">FR = max(0, 0.7*0 - 0) = 0</div>
-                                <div id="detail_r_calc_loss">Δσ_R = 350 - 0.07*0 - 0.1*0 - 0.05*(0 + 0) = 0</div>
-                            </div>
-                            <div class="final-loss-result">
-                                <span>鬆弛損失:</span>
-                                <span id="detail_r_result">= 0.00 kgf/cm²</span>
-                            </div>
-                        </div>
-
-                    </div>
+                <!-- 3. Elastic -->
+                <div class="print-calc-block">
+                    <div class="print-formula">3. 彈性縮短 (Elastic Shortening)</div>
+                    <ul class="print-variable-list">
+                        <li><span>n:</span><span id="p_detail_e_n">--</span></li>
+                        <li><span>Total Ap:</span><span id="p_detail_e_Total_Ap">--</span></li>
+                        <li><span>Anet:</span><span id="p_detail_e_Anet">--</span></li>
+                        <li><span>Inet:</span><span id="p_detail_e_Inet">--</span></li>
+                        <li><span>ep:</span><span id="p_detail_e_ep">--</span></li>
+                        <li><span>MDL:</span><span id="p_detail_e_MDL">--</span></li>
+                        <li><span>σj:</span><span id="p_detail_e_sigma_j">--</span></li>
+                        <li><span>Δσ_F:</span><span id="p_detail_e_loss_f">--</span></li>
+                        <li><span>Δσ_A:</span><span id="p_detail_e_loss_a">--</span></li>
+                    </ul>
+                    <div class="print-sub" id="p_detail_e_calc_a">--</div>
+                    <div class="print-sub" id="p_detail_e_calc_b">--</div>
+                    <div class="print-sub" id="p_detail_e_calc_c">--</div>
+                    <div class="print-sub" id="p_detail_e_calc_d">--</div>
+                    <div class="print-sub" id="p_detail_e_calc_sx">--</div>
+                    <div class="print-sub" id="p_detail_e_calc_loss">--</div>
+                    <div class="print-sub" id="p_detail_e_result">--</div>
                 </div>
 
+                <!-- 4. Shrinkage -->
+                <div class="print-calc-block">
+                    <div class="print-formula">4. 乾縮損失 (Shrinkage)</div>
+                    <ul class="print-variable-list">
+                        <li><span>RH:</span><span id="p_detail_sh_RH">--</span></li>
+                    </ul>
+                    <div class="print-sub" id="p_detail_sh_calc">--</div>
+                    <div class="print-sub" id="p_detail_sh_result">--</div>
+                </div>
+
+                <!-- 5. Creep -->
+                <div class="print-calc-block">
+                    <div class="print-formula">5. 潛變損失 (Creep)</div>
+                    <ul class="print-variable-list">
+                        <li><span>MADL:</span><span id="p_detail_c_MADL">--</span></li>
+                        <li><span>ep:</span><span id="p_detail_c_ep">--</span></li>
+                        <li><span>Inet:</span><span id="p_detail_c_Inet">--</span></li>
+                        <li><span>Δσ_ES:</span><span id="p_detail_c_loss_elastic">--</span></li>
+                        <li><span>n:</span><span id="p_detail_c_n">--</span></li>
+                    </ul>
+                    <div class="print-sub" id="p_detail_c_calc_e">--</div>
+                    <div class="print-sub" id="p_detail_c_calc_f">--</div>
+                    <div class="print-sub" id="p_detail_c_calc_loss">--</div>
+                    <div class="print-sub" id="p_detail_c_result">--</div>
+                </div>
+
+                <!-- 6. Relaxation -->
+                <div class="print-calc-block">
+                    <div class="print-formula">6. 鬆弛損失 (Relaxation)</div>
+                    <ul class="print-variable-list">
+                        <li><span>fpu:</span><span id="p_detail_r_fpu">--</span></li>
+                        <li><span>T_center:</span><span id="p_detail_r_tcenter">--</span></li>
+                        <li><span>Δσ_ES:</span><span id="p_detail_r_loss_es">--</span></li>
+                        <li><span>Δσ_SH:</span><span id="p_detail_r_loss_sh">--</span></li>
+                        <li><span>Δσ_CR:</span><span id="p_detail_r_loss_cr">--</span></li>
+                    </ul>
+                    <div class="print-sub" id="p_detail_r_calc_fr">--</div>
+                    <div class="print-sub" id="p_detail_r_calc_loss">--</div>
+                    <div class="print-sub" id="p_detail_r_result">--</div>
+                </div>
+            </div>
+
+            <div class="print-footer">
+                <span>Generated by Prestress Loss Calculator</span>
+                <span>Page 2/2</span>
             </div>
         </div>
     </div>
@@ -833,15 +1475,15 @@ FR = max(0, 0.7*fpu - T_center)
                 "15.2": { fpu_mpa: 1880, fpy_mpa: 1600, Ap: 1.3867 }
             };
             // 2.04 * 10^5 MPa * 10.19716 = 2080220.64 kgf/cm^2 -> 2080000
-            const Es_val = 2080000; 
-            
+            const Es_val = 2080000;
+
             const inputIds = [
                 'L', 'B', 'H', 'mu', 'k', 'delta_a', 'RH',
                 'Ap', 'Ec', 'sigma_j', 'fpu', 'fpy', 'Es', 'steel_type',
                 'num_ducts', 'num_strands',
                 'Anet', 'Inet', 'Ycg', 'Ha', 'MDL', 'MADL'
             ];
-            
+
             inputIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) inputs[id] = el;
@@ -850,7 +1492,7 @@ FR = max(0, 0.7*fpu - T_center)
             inputs.Es.value = Es_val;
 
             let lossChart;
-            
+
             const btnResultsTab = document.getElementById('btn-results-tab');
             const btnDetailsTab = document.getElementById('btn-details-tab');
             const resultsTab = document.getElementById('results-tab');
@@ -868,7 +1510,7 @@ FR = max(0, 0.7*fpu - T_center)
                         }
                     }
                 });
-                
+
                 // Convert units
                 values.L_m = values.L / 100;
                 values.B_m = values.B / 100;
@@ -876,37 +1518,192 @@ FR = max(0, 0.7*fpu - T_center)
                 values.delta_a_cm = values.delta_a / 10;
                 values.MDL_kgf_cm = values.MDL * 1000 * 100; // tf*m to kgf*cm
                 values.MADL_kgf_cm = values.MADL * 1000 * 100; // tf*m to kgf*cm
-                
+
                 return values;
             }
 
             function updateSteelParams() {
                 const selectedType = inputs.steel_type.value;
                 const steelData = steelTypes[selectedType];
-                
+
                 const fpu_kgf = Math.round(steelData.fpu_mpa * 10.19716);
                 const fpy_kgf = Math.round(steelData.fpy_mpa * 10.19716);
-                
+
                 inputs.fpu.value = fpu_kgf;
                 inputs.fpy.value = fpy_kgf;
                 inputs.Ap.value = steelData.Ap.toFixed(4); // Update Ap field
-                
+
                 // Recalculate default sigma_j
                 const default_sigma_j = Math.round(0.737 * fpu_kgf);
                 inputs.sigma_j.value = default_sigma_j;
-                
+
                 calculateAndDisplay();
             }
 
+            function updatePrintView(v, losses, intermediate) {
+                // Sync Header
+                const dateEl = document.getElementById('p_date');
+                if (dateEl) dateEl.textContent = new Date().toLocaleDateString('zh-TW');
+
+                // Sync Designer (New)
+                const designerInput = document.getElementById('designer_name');
+                const pDesigner = document.getElementById('p_designer_name');
+                if (designerInput && pDesigner) {
+                    pDesigner.textContent = designerInput.value || '';
+                }
+
+                // Sync Inputs
+                const safeSet = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+
+                safeSet('p_L', v.L.toFixed(1));
+                safeSet('p_B', v.B.toFixed(1));
+                safeSet('p_H', v.H.toFixed(1));
+                safeSet('p_mu', v.mu.toFixed(4));
+                safeSet('p_k', v.k.toFixed(4));
+                safeSet('p_delta_a', v.delta_a.toFixed(1));
+                safeSet('p_RH', v.RH.toFixed(1));
+                safeSet('p_sigma_j', v.sigma_j.toFixed(2));
+                safeSet('p_steel_type', (v.steel_type === '12.7' ? 'SWPR7BL 12.7mm' : 'SWPR7BL 15.2mm'));
+                safeSet('p_num_ducts', v.num_ducts);
+                safeSet('p_num_strands', v.num_strands);
+                safeSet('p_total_ap', intermediate.total_Ap.toFixed(4));
+                safeSet('p_fpu', v.fpu.toFixed(0));
+                safeSet('p_fpy', v.fpy.toFixed(0));
+                safeSet('p_Es', v.Es.toLocaleString());
+                safeSet('p_Ec', v.Ec.toLocaleString());
+                safeSet('p_Anet', v.Anet.toFixed(2));
+                safeSet('p_Inet', v.Inet.toExponential(2));
+                safeSet('p_ep', intermediate.ep.toFixed(2));
+                safeSet('p_MDL', v.MDL.toFixed(2));
+                safeSet('p_MADL', v.MADL.toFixed(2));
+
+                // Sync Results
+                const safeCopy = (pId, srcId) => {
+                    const p = document.getElementById(pId);
+                    const s = document.getElementById(srcId);
+                    if (p && s) p.textContent = s.textContent;
+                };
+
+                safeSet('p_loss_friction', losses.friction.toFixed(2));
+                safeCopy('p_perc_friction', 'perc_friction');
+
+                safeSet('p_loss_anchorage', losses.anchorage.toFixed(2));
+                safeCopy('p_perc_anchorage', 'perc_anchorage');
+
+                safeSet('p_loss_elastic', losses.elastic.toFixed(2));
+                safeCopy('p_perc_elastic', 'perc_elastic');
+
+                safeSet('p_loss_stage', losses.stage_total.toFixed(2));
+                safeCopy('p_perc_stage', 'perc_stage_total');
+
+                safeSet('p_loss_shrinkage', losses.shrinkage.toFixed(2));
+                safeCopy('p_perc_shrinkage', 'perc_shrinkage');
+
+                safeSet('p_loss_creep', losses.creep.toFixed(2));
+                safeCopy('p_perc_creep', 'perc_creep');
+
+                safeSet('p_loss_relaxation', losses.relaxation.toFixed(2));
+                safeCopy('p_perc_relaxation', 'perc_relaxation');
+
+                safeSet('p_loss_longterm', losses.longterm_total.toFixed(2));
+                safeCopy('p_perc_longterm', 'perc_longterm_total');
+
+                safeSet('p_loss_total', losses.total.toFixed(2));
+                safeCopy('p_perc_total', 'perc_total');
+
+                safeSet('p_sigma_e', (v.sigma_j - losses.total).toFixed(2));
+                safeCopy('p_perc_sigma_e', 'perc_sigma_e');
+
+                // 1. Friction
+                safeSet('p_detail_f_sigma_j', v.sigma_j.toFixed(2));
+                safeSet('p_detail_f_L', v.L.toFixed(1));
+                safeSet('p_detail_f_H', v.H.toFixed(1));
+                safeSet('p_detail_f_B', v.B.toFixed(1));
+                safeSet('p_detail_f_k', v.k.toFixed(4));
+                safeSet('p_detail_f_mu', v.mu.toFixed(4));
+                safeSet('p_detail_f_alpha', intermediate.alpha.toFixed(4));
+
+                safeSet('p_detail_f_calc_alpha', document.getElementById('detail_f_calc_alpha').textContent);
+                safeSet('p_detail_f_calc_S_m', document.getElementById('detail_f_calc_S_m').textContent);
+                safeSet('p_detail_f_calc_Tcenter', document.getElementById('detail_f_calc_Tcenter').textContent);
+                safeSet('p_detail_f_calc_loss', document.getElementById('detail_f_calc_loss').textContent);
+                safeSet('p_detail_f_result', document.getElementById('detail_f_result').textContent);
+
+                // 2. Anchorage
+                safeSet('p_detail_a_k', v.k.toFixed(4));
+                safeSet('p_detail_a_mu', v.mu.toFixed(4)); // Fixed to 4 decimals for consistency
+                safeSet('p_detail_a_H', v.H.toFixed(1));
+                safeSet('p_detail_a_B', v.B.toFixed(1));
+                safeSet('p_detail_a_L', v.L.toFixed(1));
+                safeSet('p_detail_a_Es', v.Es.toLocaleString());
+                safeSet('p_detail_a_delta_a', v.delta_a.toFixed(1));
+                safeSet('p_detail_a_sigma_j', v.sigma_j.toFixed(2));
+
+                safeSet('p_detail_a_calc_m', document.getElementById('detail_a_calc_m').textContent);
+                safeSet('p_detail_a_calc_exp', document.getElementById('detail_a_calc_exp').textContent);
+                safeSet('p_detail_a_calc_t1', document.getElementById('detail_a_calc_t1').textContent);
+                safeSet('p_detail_a_calc_t2', document.getElementById('detail_a_calc_t2').textContent);
+                safeSet('p_detail_a_calc_loss', document.getElementById('detail_a_calc_loss').textContent);
+                safeSet('p_detail_a_result', document.getElementById('detail_a_result').textContent);
+
+                // 3. Elastic
+                safeSet('p_detail_e_n', intermediate.n.toFixed(2));
+                safeSet('p_detail_e_Total_Ap', intermediate.total_Ap.toFixed(2)); // Use intermediate value
+                safeSet('p_detail_e_Anet', v.Anet.toFixed(2));
+                safeSet('p_detail_e_Inet', v.Inet.toExponential(2));
+                safeSet('p_detail_e_ep', intermediate.ep.toFixed(2));
+                safeSet('p_detail_e_MDL', v.MDL.toFixed(2));
+                safeSet('p_detail_e_sigma_j', v.sigma_j.toFixed(2));
+                safeSet('p_detail_e_loss_f', losses.friction.toFixed(2));
+                safeSet('p_detail_e_loss_a', losses.anchorage.toFixed(2));
+
+                safeSet('p_detail_e_calc_a', document.getElementById('detail_e_calc_a').textContent);
+                safeSet('p_detail_e_calc_b', document.getElementById('detail_e_calc_b').textContent);
+                safeSet('p_detail_e_calc_c', document.getElementById('detail_e_calc_c').textContent);
+                safeSet('p_detail_e_calc_d', document.getElementById('detail_e_calc_d').textContent);
+                safeSet('p_detail_e_calc_sx', document.getElementById('detail_e_calc_sx').textContent);
+                safeSet('p_detail_e_calc_loss', document.getElementById('detail_e_calc_loss').textContent);
+                safeSet('p_detail_e_result', document.getElementById('detail_e_result').textContent);
+
+                // 4. Shrinkage
+                safeSet('p_detail_sh_RH', v.RH.toFixed(1));
+                safeSet('p_detail_sh_calc', document.getElementById('detail_sh_calc').textContent);
+                safeSet('p_detail_sh_result', document.getElementById('detail_sh_result').textContent);
+
+                // 5. Creep
+                safeSet('p_detail_c_MADL', v.MADL.toFixed(2));
+                safeSet('p_detail_c_ep', intermediate.ep.toFixed(2));
+                safeSet('p_detail_c_Inet', v.Inet.toExponential(2));
+                safeSet('p_detail_c_loss_elastic', losses.elastic.toFixed(2));
+                safeSet('p_detail_c_n', intermediate.n.toFixed(2));
+
+                safeSet('p_detail_c_calc_e', document.getElementById('detail_c_calc_e').textContent);
+                safeSet('p_detail_c_calc_f', document.getElementById('detail_c_calc_f').textContent);
+                safeSet('p_detail_c_calc_loss', document.getElementById('detail_c_calc_loss').textContent);
+                safeSet('p_detail_c_result', document.getElementById('detail_c_result').textContent);
+
+                // 6. Relaxation
+                safeSet('p_detail_r_fpu', v.fpu.toFixed(2));
+                safeSet('p_detail_r_tcenter', intermediate.Tcenter.toFixed(2)); // Use intermediate
+                safeSet('p_detail_r_loss_es', losses.elastic.toFixed(2));
+                safeSet('p_detail_r_loss_sh', losses.shrinkage.toFixed(2));
+                safeSet('p_detail_r_loss_cr', losses.creep.toFixed(2));
+
+                safeSet('p_detail_r_calc_fr', document.getElementById('detail_r_calc_fr').textContent);
+                safeSet('p_detail_r_calc_loss', document.getElementById('detail_r_calc_loss').textContent);
+                safeSet('p_detail_r_result', document.getElementById('detail_r_result').textContent);
+            }
+
             function updateCalculationDetails(v, losses, intermediate) {
-                const { 
-                    alpha, delta_a_cm, n, Tcenter, m_slide, exp_term, term1, term2, 
-                    a, b, c, d, sigma_x, loss_elastic_raw, 
-                    e_param, f_param, loss_creep_raw, 
+
+                const {
+                    alpha, delta_a_cm, n, Tcenter, m_slide, exp_term, term1, term2,
+                    a, b, c, d, sigma_x, loss_elastic_raw,
+                    e_param, f_param, loss_creep_raw,
                     FR_param, loss_relaxation_raw,
-                    total_Ap, ep 
+                    total_Ap, ep
                 } = intermediate;
-                
+
                 // 1. Friction
                 document.getElementById('detail_f_sigma_j').textContent = v.sigma_j.toFixed(2);
                 document.getElementById('detail_f_L').textContent = v.L.toFixed(1);
@@ -914,8 +1711,8 @@ FR = max(0, 0.7*fpu - T_center)
                 document.getElementById('detail_f_B').textContent = v.B.toFixed(1);
                 document.getElementById('detail_f_k').textContent = v.k.toFixed(4);
                 document.getElementById('detail_f_mu').textContent = v.mu.toFixed(4);
-                document.getElementById('detail_f_alpha').textContent = alpha.toFixed(4); 
-                
+                document.getElementById('detail_f_alpha').textContent = alpha.toFixed(4);
+
                 const S_m_friction = v.L_m / 2;
                 document.getElementById('detail_f_calc_alpha').textContent = `α = arctan(2 * ${v.H.toFixed(1)} / ${v.B.toFixed(1)}) = ${alpha.toFixed(4)} rad`;
                 document.getElementById('detail_f_calc_S_m').textContent = `S = ${v.L.toFixed(1)}cm / 2 = ${S_m_friction.toFixed(2)} m`;
@@ -939,7 +1736,7 @@ FR = max(0, 0.7*fpu - T_center)
                 document.getElementById('detail_a_calc_t2').textContent = `Term2 = ${v.sigma_j.toFixed(2)} * (1 - ${exp_term.toFixed(4)}) = ${term2.toFixed(2)}`;
                 document.getElementById('detail_a_calc_loss').textContent = `Δσ_A = ${term1.toFixed(2)} - ${term2.toFixed(2)}`;
                 document.getElementById('detail_a_result').textContent = `= ${losses.anchorage.toFixed(2)} kgf/cm²`;
-                
+
                 // 3. Elastic Shortening (NEW)
                 document.getElementById('detail_e_n').textContent = n.toFixed(2);
                 document.getElementById('detail_e_Total_Ap').textContent = total_Ap.toFixed(2);
@@ -950,7 +1747,7 @@ FR = max(0, 0.7*fpu - T_center)
                 document.getElementById('detail_e_sigma_j').textContent = v.sigma_j.toFixed(2);
                 document.getElementById('detail_e_loss_f').textContent = losses.friction.toFixed(2);
                 document.getElementById('detail_e_loss_a').textContent = losses.anchorage.toFixed(2);
-                
+
                 document.getElementById('detail_e_calc_a').textContent = `a = ${total_Ap.toFixed(2)} / ${v.Anet.toFixed(2)} = ${a.toExponential(4)}`;
                 document.getElementById('detail_e_calc_b').textContent = `b = (${total_Ap.toFixed(2)} * ${ep.toFixed(2)}^2) / ${v.Inet.toExponential(2)} = ${b.toExponential(4)}`;
                 document.getElementById('detail_e_calc_c').textContent = `c = (${v.MDL.toFixed(2)} * 10^5 * ${ep.toFixed(2)}) / ${v.Inet.toExponential(2)} = ${c.toFixed(2)}`;
@@ -958,12 +1755,12 @@ FR = max(0, 0.7*fpu - T_center)
                 document.getElementById('detail_e_calc_sx').textContent = `σx = (${d.toFixed(2)} + 0.5*${n.toFixed(2)}*${c.toFixed(2)}) / (1 + 0.5*${n.toFixed(2)}*(${a.toExponential(4)}+${b.toExponential(4)})) = ${sigma_x.toFixed(2)}`;
                 document.getElementById('detail_e_calc_loss').textContent = `Δσ_ES = 0.5*${n.toFixed(2)}*(${a.toExponential(4)}*${sigma_x.toFixed(2)} + ${b.toExponential(4)}*${sigma_x.toFixed(2)} - ${c.toFixed(2)}) = ${loss_elastic_raw.toFixed(2)}`;
                 document.getElementById('detail_e_result').textContent = `= ${losses.elastic.toFixed(2)} kgf/cm²`;
-                
+
                 // 4. Shrinkage (NEW)
                 document.getElementById('detail_sh_RH').textContent = v.RH.toFixed(1);
                 document.getElementById('detail_sh_calc').textContent = `= 0.8 * (1195 - 10.55 * ${v.RH.toFixed(1)})`;
                 document.getElementById('detail_sh_result').textContent = `= ${losses.shrinkage.toFixed(2)} kgf/cm²`;
-                
+
                 // 5. Creep (NEW)
                 document.getElementById('detail_c_MADL').textContent = v.MADL.toFixed(2);
                 document.getElementById('detail_c_ep').textContent = ep.toFixed(2);
@@ -986,12 +1783,15 @@ FR = max(0, 0.7*fpu - T_center)
                 document.getElementById('detail_r_calc_fr').textContent = `FR = max(0, 0.7*${v.fpu.toFixed(2)} - ${Tcenter.toFixed(2)}) = ${FR_param.toFixed(2)}`;
                 document.getElementById('detail_r_calc_loss').textContent = `Δσ_R = 350 - 0.07*${FR_param.toFixed(2)} - 0.1*${losses.elastic.toFixed(2)} - 0.05*(${losses.shrinkage.toFixed(2)} + ${losses.creep.toFixed(2)}) = ${loss_relaxation_raw.toFixed(2)}`;
                 document.getElementById('detail_r_result').textContent = `= ${losses.relaxation.toFixed(2)} kgf/cm²`;
+
+                // Sync to Print View (Must be called AFTER updating screen DOM)
+                updatePrintView(v, losses, intermediate);
             }
 
             function calculateAndDisplay() {
                 const v = getValues();
                 const sigma_j = v.sigma_j;
-                
+
                 // Calculate and display Total Ap
                 const steelData = steelTypes[v.steel_type];
                 const Ap_single = steelData.Ap;
@@ -1021,39 +1821,39 @@ FR = max(0, 0.7*fpu - T_center)
                 const k_cm = v.k / 100; // k from 1/m to 1/cm
                 const delta_a_cm = v.delta_a_cm;
                 const L_cm = v.L;
-                
+
                 const m_slide = (v.B > 0 && v.B !== 0) ? (k_cm + (2 * v.mu * v.H) / (v.B * v.B)) : k_cm;
-                
+
                 const exp_term_val = -m_slide * L_cm / 2;
                 const exp_term = Math.exp(exp_term_val);
-                
+
                 let term1 = 0;
                 const denominator_a = 1 - exp_term;
                 if (denominator_a !== 0 && denominator_a !== 1) { // Avoid division by zero or NaN
                     term1 = (m_slide * v.Es * delta_a_cm) / denominator_a;
                 }
-                
+
                 const term2 = v.sigma_j * (1 - exp_term);
-                
+
                 const loss_anchorage_raw = term1 - term2; // Use user's formula directly
                 const final_loss_anchorage = (loss_anchorage_raw < 0) ? 0 : loss_anchorage_raw; // Loss cannot be negative
 
                 // 1c. 彈性縮短損失 (Elastic Shortening Loss, Δσ_ES) - **NEW FORMULA**
                 const n = (v.Ec > 0) ? v.Es / v.Ec : 0;
-                
+
                 const a = (v.Anet > 0) ? total_Ap / v.Anet : 0;
                 const b = (v.Inet > 0) ? (total_Ap * ep * ep) / v.Inet : 0;
                 const c = (v.Inet > 0) ? (v.MDL_kgf_cm * ep) / v.Inet : 0; // ** c is positive **
                 const d = v.sigma_j - loss_friction - final_loss_anchorage;
-                
+
                 const numerator_sx = d + 0.5 * n * c;
                 const denominator_sx = 1 + 0.5 * n * (a + b); // ** Corrected denominator **
-                
+
                 const sigma_x = (denominator_sx !== 0) ? numerator_sx / denominator_sx : 0;
-                
+
                 const loss_elastic_raw = 0.5 * n * (a * sigma_x + b * sigma_x - c); // ** New ES formula **
                 const final_loss_elastic = (loss_elastic_raw < 0) ? 0 : loss_elastic_raw; // Prevent negative elastic loss
-                
+
                 const loss_stage_total = loss_friction + final_loss_anchorage + final_loss_elastic;
 
                 // --- 2. 長期損失 (Δσ_LongTerm) ---
@@ -1062,20 +1862,20 @@ FR = max(0, 0.7*fpu - T_center)
                 // 2a. 乾縮損失 (Shrinkage Loss, Δσ_SH) - **NEW FORMULA**
                 const loss_shrinkage_raw = 0.8 * (1195 - 10.55 * v.RH);
                 const loss_shrinkage = (loss_shrinkage_raw < 0) ? 0 : loss_shrinkage_raw;
-                
+
                 // 2b. 潛變損失 (Creep Loss, Δσ_CR) - **NEW FORMULA**
                 const e_param = (v.Inet > 0) ? (v.MADL_kgf_cm * ep) / v.Inet : 0;
                 const f_param = (n > 0) ? (final_loss_elastic * 2) / n : 0;
                 const loss_creep_raw = 12 * f_param - 7 * e_param;
                 const final_loss_creep = (loss_creep_raw < 0) ? 0 : loss_creep_raw;
-                
+
                 // 2c. 鬆弛損失 (Relaxation Loss, Δσ_R) - **NEW FORMULA**
                 const FR_param = Math.max(0, 0.7 * v.fpu - Tcenter);
                 const loss_relaxation_raw = 350 - 0.07 * FR_param - 0.1 * final_loss_elastic - 0.05 * (loss_shrinkage + final_loss_creep);
                 const final_loss_relaxation = (loss_relaxation_raw < 0) ? 0 : loss_relaxation_raw;
 
                 const loss_longterm_total = loss_shrinkage + final_loss_creep + final_loss_relaxation;
-                
+
                 // --- 總損失 ---
                 const loss_total = loss_stage_total + loss_longterm_total;
                 const sigma_e = sigma_j - loss_total; // 有效預力
@@ -1098,25 +1898,25 @@ FR = max(0, 0.7*fpu - T_center)
                     if (el) {
                         el.textContent = losses[key].toFixed(2);
                     }
-                    
+
                     const perc_el = document.getElementById(`perc_${key}`);
                     if (perc_el) {
                         const perc = (sigma_j > 0) ? (losses[key] / sigma_j) * 100 : 0;
                         perc_el.textContent = perc.toFixed(1) + '%';
                     }
                 }
-                
+
                 document.getElementById('val_sigma_j').textContent = sigma_j.toFixed(2);
                 document.getElementById('val_sigma_e').textContent = sigma_e.toFixed(2);
                 document.getElementById('perc_sigma_e').textContent = (sigma_j > 0) ? ((sigma_e / sigma_j) * 100).toFixed(1) + '%' : '0.0%';
 
                 // --- 更新詳細計算過程 ---
-                const intermediate = { 
-                    alpha, delta_a_cm, n, Tcenter, m_slide, exp_term, term1, term2, 
-                    a, b, c, d, sigma_x, loss_elastic_raw, 
-                    e_param, f_param, loss_creep_raw, 
+                const intermediate = {
+                    alpha, delta_a_cm, n, Tcenter, m_slide, exp_term, term1, term2,
+                    a, b, c, d, sigma_x, loss_elastic_raw,
+                    e_param, f_param, loss_creep_raw,
                     FR_param, loss_relaxation_raw,
-                    total_Ap, ep 
+                    total_Ap, ep
                 };
                 updateCalculationDetails(v, losses, intermediate);
 
@@ -1131,7 +1931,7 @@ FR = max(0, 0.7*fpu - T_center)
                     losses.relaxation,
                     Math.max(0, sigma_e) // 有效預力 (不為負)
                 ];
-                
+
                 const chartLabels = [
                     '摩擦損失',
                     '滑動損失',
@@ -1141,7 +1941,7 @@ FR = max(0, 0.7*fpu - T_center)
                     '鬆弛損失',
                     '有效預力 (σe)'
                 ];
-                
+
                 const chartColors = [
                     '#f87171', // red-400
                     '#fb923c', // orange-400
@@ -1179,7 +1979,7 @@ FR = max(0, 0.7*fpu - T_center)
                                 },
                                 tooltip: {
                                     callbacks: {
-                                        label: function(context) {
+                                        label: function (context) {
                                             let label = context.label || '';
                                             if (label) {
                                                 label += ': ';
@@ -1216,33 +2016,42 @@ FR = max(0, 0.7*fpu - T_center)
                 }
             });
 
+            // Listener for Designer Name
+            const designerInput = document.getElementById('designer_name');
+            if (designerInput) {
+                designerInput.addEventListener('input', () => {
+                    const pDesigner = document.getElementById('p_designer_name');
+                    if (pDesigner) pDesigner.textContent = designerInput.value || '';
+                });
+            }
+
             document.querySelectorAll('.stepper-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const targetId = btn.dataset.target;
                     const action = btn.dataset.action;
                     const step = parseFloat(btn.dataset.step);
                     const input = document.getElementById(targetId);
-                    
+
                     if (input) {
                         let currentValue = parseFloat(input.value) || 0;
                         let newValue;
-                        
+
                         if (action === 'inc') {
                             newValue = currentValue + step;
                         } else {
                             newValue = currentValue - step;
                         }
-                        
+
                         const decimalPlaces = (step.toString().split('.')[1] || '').length;
                         if (decimalPlaces > 0) {
-                            newValue = parseFloat( newValue.toFixed(decimalPlaces) );
+                            newValue = parseFloat(newValue.toFixed(decimalPlaces));
                         }
-                        
+
                         if (targetId !== 'mu' && targetId !== 'k' && targetId !== 'num_strands' && targetId !== 'MDL' && targetId !== 'MADL') {
-                             if (newValue < 0) newValue = 0;
+                            if (newValue < 0) newValue = 0;
                         }
-                        
-                        if(targetId === 'num_strands' && newValue < 1) {
+
+                        if (targetId === 'num_strands' && newValue < 1) {
                             newValue = 1; // Strands cannot be less than 1
                         }
 
@@ -1268,10 +2077,18 @@ FR = max(0, 0.7*fpu - T_center)
                 resultsTab.classList.add('hidden');
             });
 
+            // PDF Export Logic (Native Print)
+            const btnExportPdf = document.getElementById('btn-export-pdf');
+            if (btnExportPdf) {
+                btnExportPdf.addEventListener('click', () => {
+                    window.print();
+                });
+            }
 
             // 初始載入
             updateSteelParams();
         });
     </script>
 </body>
+
 </html>
