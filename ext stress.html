@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P30-P31 箱梁預力分析 (分頁版)</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+        }
+
+        .canvas-drawing {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Table Styling */
+        .data-table th {
+            background-color: #e2e8f0;
+            color: #475569;
+            font-size: 0.75rem;
+            padding: 8px;
+            border-bottom: 2px solid #ffffff;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .data-table td {
+            padding: 6px 8px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #ffffff;
+            text-align: center;
+            font-family: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .data-table tr:hover {
+            background-color: #e0f2fe;
+        }
+
+        /* Override border colors to white */
+        .data-table td[class*="border-r"] {
+            border-right-color: #ffffff !important;
+        }
+
+        .data-table th[class*="border-b"] {
+            border-bottom-color: #ffffff !important;
+        }
+
+        .highlight-row {
+            background-color: #fff7ed !important;
+            border-left: 4px solid #f59e0b;
+        }
+
+        /* Tab Styling */
+        .tab-container {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+            padding: 0 8px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-radius: 8px 8px 0 0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-btn {
+            position: relative;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 4px;
+            margin-bottom: -1px;
+            border-radius: 8px 8px 0 0;
+            color: #64748b;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-btn:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            color: #475569;
+        }
+
+        .tab-active {
+            background: white;
+            color: #1e40af;
+            font-weight: 600;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-active::before {
+            transform: scaleX(1);
+        }
+
+        .tab-inactive {
+            color: #64748b;
+        }
+
+        .tab-content-wrapper {
+            background: white;
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            animation: slideDown 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-content {
+            padding: 20px;
+            animation: fadeIn 0.4s ease 0.1s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100">
+
+    <!-- Header -->
+    <nav class="bg-slate-800 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-amber-400 text-2xl mr-3">📑</span>
+                    <div>
+                        <h1 class="font-bold text-lg tracking-wide">P30-P31 箱梁預力分析</h1>
+                        <p class="text-xs text-slate-400">雙分頁模式：數據詳表 vs 加固分析</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2" id="unit-controls">
+                    <span class="text-xs text-slate-300">顯示單位: tf</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Tabs Content -->
+        <div class="lg:col-span-12">
+
+            <!-- Tab Navigation -->
+            <div class="tab-container">
+                <button onclick="switchTab(1)" id="tab-btn-1" class="tab-btn tab-active">
+                    <span class="flex items-center">
+                        <span>預鑄箱型梁基本資訊</span>
+                    </span>
+                </button>
+                <button onclick="switchTab(2)" id="tab-btn-2" class="tab-btn tab-inactive">
+                    <span class="flex items-center">
+                        <span>設計載重</span>
+                    </span>
+                </button>
+                <button onclick="switchTab(3)" id="tab-btn-3" class="tab-btn tab-inactive">
+                    <span class="flex items-center">
+                        <span>預力配置詳表 (基礎圖)</span>
+                    </span>
+                </button>
+                <button onclick="switchTab(4)" id="tab-btn-4" class="tab-btn tab-inactive">
+                    <span class="flex items-center">
+                        <span>應力檢核 (完工階段)</span>
+                    </span>
+                </button>
+                <button onclick="switchTab(5)" id="tab-btn-5" class="tab-btn tab-inactive">
+                    <span class="flex items-center">
+                        <span>加固分析圖表 (加固圖)----建置中</span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- Tab 1 Content (Section Info) -->
+            <div id="tab-content-1" class="tab-content-wrapper">
+                <div id="tab-content-1-inner" class="tab-content space-y-6">
+
+                    <!-- 梁截面示意圖 -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-purple-500 pl-2">預鑄箱型梁截面圖
+                        </h3>
+                        <div class="bg-slate-50 p-4 rounded border border-slate-200 flex justify-center">
+                            <img id="sectionImage"
+                                src="https://raw.githubusercontent.com/ttchang1127/dashboard/main/images/precasr%20boxgirder.png"
+                                alt="預鑄箱型梁截面圖" class="max-w-full h-auto rounded border border-slate-300"
+                                style="max-height: 400px;">
+                        </div>
+                    </div>
+
+                    <!-- 節點資訊表 -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">節點1~5 截面特性
+                        </h3>
+                        <div class="overflow-x-auto border border-slate-200 rounded">
+                            <table class="w-full data-table text-xs">
+                                <thead class="sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th class="bg-slate-100">節點 (Node)</th>
+                                        <th class="bg-slate-100">參數 (A/C/D) (cm)</th>
+                                        <th class="bg-purple-50 text-purple-700">斷面積<br />(cm²)</th>
+                                        <th class="bg-blue-50 text-blue-700">中性軸位置<br />(從頂部 Y_top cm)</th>
+                                        <th class="bg-blue-50 text-blue-700">中性軸位置<br />(從底部 Y_bot cm)</th>
+                                        <th class="bg-green-50 text-green-700">慣性矩 I_zz<br />(cm⁴)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sectionInfoBody">
+                                    <!-- Generated -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab 2 Content (Design Loads) -->
+            <div id="tab-content-2" class="tab-content-wrapper hidden">
+                <div id="tab-content-2-inner" class="tab-content space-y-6">
+
+                    <!-- Profile Canvas (Design Loads) -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-green-500 pl-2">縱向節段佈置圖
+                            (原橋基礎)</h3>
+                        <div class="overflow-x-auto -mx-5 px-5">
+                            <canvas id="profileCanvas3" width="1200" height="200"
+                                class="canvas-drawing min-w-full"></canvas>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1 text-center">僅顯示節段(#)與節點(N)</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Dead Load Block -->
+                        <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+                            <h3 class="text-sm font-bold text-slate-700 mb-3 border-l-4 border-gray-500 pl-2">靜載重版塊
+                                (Dead Load)</h3>
+
+                            <div class="space-y-4 text-sm">
+                                <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                    <span class="text-slate-500">橋梁全長自重</span>
+                                    <span class="font-mono font-bold text-slate-700">2030.82 tf</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                    <span class="text-slate-500">橋梁自重 (w_self)</span>
+                                    <span class="font-mono font-bold text-slate-700">35.94 tf/m</span>
+                                </div>
+
+                                <!-- Input -->
+                                <div class="bg-slate-50 p-3 rounded mt-2">
+                                    <label class="block text-xs font-bold text-slate-600 mb-2">附加載重 (AC+管線+護欄)
+                                        (tf/m)</label>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="number" id="dl-additional" value="3.5" step="0.1"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
+                                            oninput="updateDeadLoad()">
+                                        <span class="text-xs text-slate-400 flex-shrink-0">tf/m</span>
+                                    </div>
+                                </div>
+
+                                <!-- Result -->
+                                <div class="bg-gray-100 p-4 rounded text-center mt-2">
+                                    <div class="text-xs text-slate-500 mb-1">靜載重彎矩 M_DL</div>
+                                    <div class="text-2xl font-bold text-gray-800 font-mono" id="val-m-dl">--</div>
+                                    <div class="text-xs text-slate-400 mt-1">(w_self + w_add) * L² / 8</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Load Block -->
+                        <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+                            <h3 class="text-sm font-bold text-slate-700 mb-3 border-l-4 border-blue-500 pl-2">車輛載重版塊
+                                (Live Load)</h3>
+
+                            <div class="space-y-3 text-sm">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-slate-50 p-2 rounded">
+                                        <div class="text-xs text-slate-500">橋梁載重彎矩</div>
+                                        <div class="font-mono font-bold text-slate-700 text-lg">499 <span
+                                                class="text-xs font-normal">tf·m</span></div>
+                                    </div>
+                                    <div class="bg-slate-50 p-2 rounded">
+                                        <div class="text-xs text-slate-500">端點剪力</div>
+                                        <div class="font-mono font-bold text-slate-700 text-lg">49 <span
+                                                class="text-xs font-normal">tf</span></div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 mt-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-xs text-slate-600">衝擊係數 (IM)</label>
+                                        <div class="flex items-center w-1/2 space-x-2">
+                                            <input type="range" id="ll-impact-slider" min="0" max="0.3" step="0.01"
+                                                value="0.3"
+                                                class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                                            <span class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                id="val-ll-impact">0.3</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-xs text-slate-600">超載係數 (OL)</label>
+                                        <div class="flex items-center w-1/2 space-x-2">
+                                            <input type="range" id="ll-overload-slider" min="0" max="0.3" step="0.01"
+                                                value="0.3"
+                                                class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                                            <span class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                id="val-ll-overload">0.3</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-xs text-slate-600">車道數 (Lanes)</label>
+                                        <div class="flex items-center w-1/2 space-x-2">
+                                            <input type="range" id="ll-lanes-slider" min="1" max="4" step="1" value="4"
+                                                class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                                            <span class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                id="val-ll-lanes">4</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-1">
+                                        <label class="text-xs text-slate-600">多車道折減係數</label>
+                                        <select id="ll-reduction-select"
+                                            class="text-xs px-2 py-1 border border-slate-300 rounded bg-white focus:outline-none focus:border-blue-500"
+                                            onchange="updateLiveLoadVariables(); updateLiveLoad();">
+                                            <option value="1.0" selected>100% (1-2車道)</option>
+                                            <option value="0.9">90% (3車道)</option>
+                                            <option value="0.75">75% (4+車道)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Result -->
+                                <div class="bg-blue-50 p-4 rounded text-center mt-3 border border-blue-100">
+                                    <div class="text-xs text-blue-500 mb-1">車輛載重彎矩 M_LL</div>
+                                    <div class="text-2xl font-bold text-blue-800 font-mono" id="val-m-ll">--</div>
+                                    <div class="text-xs text-blue-400 mt-1">M × (1+IM) × (1+OL) × Red × N</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Segment Moment Table -->
+                    <div class="overflow-hidden mt-8">
+                        <div class="flex justify-between items-end mb-2">
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-green-500 pl-2">橋梁各節段彎矩值</h3>
+                            <span class="text-xs text-slate-400">單位: m, tf·m</span>
+                        </div>
+                        <div class="overflow-x-auto max-h-[600px] overflow-y-auto border border-slate-200 rounded">
+                            <table class="w-full data-table">
+                                <thead class="sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th class="bg-slate-100">節段 #</th>
+                                        <th class="bg-slate-100">長度 (m)</th>
+                                        <th class="bg-green-50 text-green-700">靜載重彎矩 (tf·m)</th>
+                                        <th class="bg-blue-50 text-blue-700">車輛載重彎矩 (tf·m)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="segmentMomentBody">
+                                    <!-- Generated -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab 3 Content (預力配置詳表) -->
+            <div id="tab-content-3" class="tab-content-wrapper hidden">
+                <div id="tab-content-3-inner" class="tab-content space-y-6">
+
+                    <!-- Profile Canvas 1 (No Ext) - Full Width -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-slate-400 pl-2">縱向節段佈置圖
+                            (原橋基礎)</h3>
+                        <div class="overflow-x-auto -mx-5 px-5">
+                            <canvas id="profileCanvas1" width="1200" height="200"
+                                class="canvas-drawing min-w-full"></canvas>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1 text-center">僅顯示節段(#)與節點(N)，未繪製體外索</p>
+                        <div
+                            class="bg-blue-50 border border-blue-200 rounded p-3 mt-3 text-xs text-slate-700 space-y-1">
+                            <p><span class="font-semibold">混凝土抗壓強度：</span>350 kgf/cm²</p>
+                            <p><span class="font-semibold">預力鋼腱位置：</span>梁底部起算 12.5 cm 處</p>
+                        </div>
+
+                        <!-- Bending Moment Capacity Chart -->
+                        <div class="mt-6">
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">
+                                各節段預力造成的彎矩承載力 (tf·m)</h3>
+                            <div class="bg-white border border-slate-200 rounded p-4">
+                                <canvas id="bendingMomentChart" style="max-height: 300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="overflow-hidden">
+                        <div class="flex justify-between items-end mb-2">
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">各節段預力數據表</h3>
+                            <span class="text-xs text-slate-400" id="tableUnitLabel1">單位: tf, cm, cm, tf·m</span>
+                        </div>
+                        <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-200 rounded">
+                            <table class="w-full data-table">
+                                <thead class="sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th rowspan="2" class="bg-slate-100">節段 #</th>
+                                        <th rowspan="2" class="bg-slate-100">節點</th>
+                                        <th rowspan="2" class="bg-slate-100">長度 (m)</th>
+                                        <th colspan="3" class="bg-slate-200 border-b border-white">原橋體內預力 (Internal)
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-blue-50 text-blue-700">預力值 (tf)</th>
+                                        <th class="bg-orange-50 text-orange-700">應力塊深度 (cm)</th>
+                                        <th class="bg-green-50 text-green-700">彎矩承載力 (tf·m)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stressTableBody">
+                                    <!-- Generated -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab 4 Content (加固分析圖表) -->
+            <div id="tab-content-4" class="tab-content-wrapper hidden">
+                <div id="tab-content-4-inner" class="tab-content space-y-6">
+
+                    <!-- Sub-tab Navigation for Tab 4 -->
+                    <div class="flex space-x-1 border-b border-slate-300 overflow-x-auto">
+                        <button onclick="switchSubTab(4, 1)" id="subtab-btn-4-1"
+                            class="px-4 py-2 text-sm font-semibold text-blue-600 border-b-2 border-blue-600 hover:text-blue-800">
+                            混凝土容許應力
+                        </button>
+                        <button onclick="switchSubTab(4, 2)" id="subtab-btn-4-2"
+                            class="px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:text-slate-800">
+                            梁上下緣應力
+                        </button>
+                        <button onclick="switchSubTab(4, 3)" id="subtab-btn-4-3"
+                            class="px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:text-slate-800">
+                            壓張應力檢核
+                        </button>
+                    </div>
+
+                    <!-- Sub-tab 1: 混凝土容許應力 -->
+                    <div id="subtab-content-4-1" class="subtab-content">
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">混凝土容許應力</h3>
+                            <p class="text-xs text-slate-500 mb-4">依據公路橋梁設計規範(98年) 表3.3</p>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th
+                                                class="border border-slate-300 px-4 py-2 text-left text-sm font-semibold">
+                                                Case No.</th>
+                                            <th
+                                                class="border border-slate-300 px-4 py-2 text-left text-sm font-semibold">
+                                                階段</th>
+                                            <th
+                                                class="border border-slate-300 px-4 py-2 text-left text-sm font-semibold">
+                                                容許壓應力<br>(kgf/cm²)</th>
+                                            <th
+                                                class="border border-slate-300 px-4 py-2 text-left text-sm font-semibold">
+                                                容許張應力<br>(kgf/cm²)</th>
+                                            <th
+                                                class="border border-slate-300 px-4 py-2 text-left text-sm font-semibold">
+                                                依據章節</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="border border-slate-300 px-4 py-2 text-center font-semibold">1
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">完工階段</td>
+                                            <td class="border border-slate-300 px-4 py-2">
+                                                <div class="text-sm">I, IB (100%)</div>
+                                                <div class="font-bold text-blue-600">210.00</div>
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">
+                                                <div class="font-bold text-blue-600">14.97</div>
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">8.15.2 2.項</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-300 px-4 py-2 text-center font-semibold">2
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">完工階段</td>
+                                            <td class="border border-slate-300 px-4 py-2">
+                                                <div class="text-sm">II, III, IV (125%)</div>
+                                                <div class="font-bold text-blue-600">262.50</div>
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">
+                                                <div class="font-bold text-blue-600">18.71</div>
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">8.15.2 2.項</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-300 px-4 py-2 text-center font-semibold">3
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">完工階段</td>
+                                            <td class="border border-slate-300 px-4 py-2">
+                                                <div class="text-sm">V, VI (140%)</div>
+                                                <div class="font-bold text-blue-600">294.00</div>
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">
+                                                <div class="font-bold text-blue-600">20.95</div>
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">8.15.2 2.項</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-300 px-4 py-2 text-center font-semibold">4
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">完工階段</td>
+                                            <td class="border border-slate-300 px-4 py-2">
+                                                <div class="text-sm">VII (133%)</div>
+                                                <div class="font-bold text-blue-600">279.30</div>
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">
+                                                <div class="font-bold text-blue-600">19.91</div>
+                                            </td>
+                                            <td class="border border-slate-300 px-4 py-2">8.15.2 2.項</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sub-tab 2: 梁上下緣應力 -->
+                    <div id="subtab-content-4-2" class="subtab-content hidden">
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">梁上下緣應力</h3>
+                            <!-- 載重資訊區塊 (與分頁2連動) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <!-- 靜載重版塊 -->
+                                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+                                    <h4 class="text-sm font-bold text-slate-700 mb-3 border-l-4 border-gray-500 pl-2">
+                                        靜載重版塊 (Dead Load)</h4>
+
+                                    <div class="space-y-4 text-sm">
+                                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                            <span class="text-slate-500">橋梁全長自重</span>
+                                            <span class="font-mono font-bold text-slate-700">2030.82 tf</span>
+                                        </div>
+                                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                            <span class="text-slate-500">橋梁自重 (w_self)</span>
+                                            <span class="font-mono font-bold text-slate-700">35.94 tf/m</span>
+                                        </div>
+
+                                        <!-- Input -->
+                                        <div class="bg-slate-50 p-3 rounded mt-2">
+                                            <label class="block text-xs font-bold text-slate-600 mb-2">附加載重 (AC+管線+護欄)
+                                                (tf/m)</label>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="number" id="dl-additional-tab4" value="3.5" step="0.1"
+                                                    class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
+                                                    oninput="syncDeadLoadInput(this.value)">
+                                                <span class="text-xs text-slate-400 flex-shrink-0">tf/m</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Result -->
+                                        <div class="bg-gray-100 p-4 rounded text-center mt-2">
+                                            <div class="text-xs text-slate-500 mb-1">靜載重彎矩 M_DL</div>
+                                            <div class="text-2xl font-bold text-gray-800 font-mono" id="val-m-dl-tab4">
+                                                --</div>
+                                            <div class="text-xs text-slate-400 mt-1">(w_self + w_add) * L² / 8</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 車輛載重版塊 -->
+                                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+                                    <h4 class="text-sm font-bold text-slate-700 mb-3 border-l-4 border-blue-500 pl-2">
+                                        車輛載重版塊 (Live Load)</h4>
+
+                                    <div class="space-y-3 text-sm">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="bg-slate-50 p-2 rounded">
+                                                <div class="text-xs text-slate-500">橋梁載重彎矩</div>
+                                                <div class="font-mono font-bold text-slate-700 text-lg">499 <span
+                                                        class="text-xs font-normal">tf·m</span></div>
+                                            </div>
+                                            <div class="bg-slate-50 p-2 rounded">
+                                                <div class="text-xs text-slate-500">端點剪力</div>
+                                                <div class="font-mono font-bold text-slate-700 text-lg">49 <span
+                                                        class="text-xs font-normal">tf</span></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="space-y-2 mt-2">
+                                            <div class="flex items-center justify-between">
+                                                <label class="text-xs text-slate-600">衝擊係數 (IM)</label>
+                                                <div class="flex items-center w-1/2 space-x-2">
+                                                    <input type="range" id="ll-impact-slider-tab4" min="0" max="0.3"
+                                                        step="0.01" value="0.3"
+                                                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                                                        oninput="syncLiveLoadSlider('impact', this.value)">
+                                                    <span
+                                                        class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                        id="val-ll-impact-tab4">0.3</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <label class="text-xs text-slate-600">超載係數 (OL)</label>
+                                                <div class="flex items-center w-1/2 space-x-2">
+                                                    <input type="range" id="ll-overload-slider-tab4" min="0" max="0.3"
+                                                        step="0.01" value="0.3"
+                                                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                                                        oninput="syncLiveLoadSlider('overload', this.value)">
+                                                    <span
+                                                        class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                        id="val-ll-overload-tab4">0.3</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <label class="text-xs text-slate-600">車道數 (Lanes)</label>
+                                                <div class="flex items-center w-1/2 space-x-2">
+                                                    <input type="range" id="ll-lanes-slider-tab4" min="1" max="4"
+                                                        step="1" value="4"
+                                                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                                                        oninput="syncLiveLoadSlider('lanes', this.value)">
+                                                    <span
+                                                        class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                        id="val-ll-lanes-tab4">4</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between pt-1">
+                                                <label class="text-xs text-slate-600">多車道折減係數</label>
+                                                <select id="ll-reduction-select-tab4"
+                                                    class="text-xs px-2 py-1 border border-slate-300 rounded bg-white focus:outline-none focus:border-blue-500"
+                                                    onchange="syncLiveLoadReduction(this.value)">
+                                                    <option value="1.0" selected>100% (1-2車道)</option>
+                                                    <option value="0.9">90% (3車道)</option>
+                                                    <option value="0.75">75% (4+車道)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Result -->
+                                        <div class="bg-blue-50 p-4 rounded text-center mt-3 border border-blue-100">
+                                            <div class="text-xs text-blue-500 mb-1">車輛載重彎矩 M_LL</div>
+                                            <div class="text-2xl font-bold text-blue-800 font-mono" id="val-m-ll-tab4">
+                                                --</div>
+                                            <div class="text-xs text-blue-400 mt-1">M × (1+IM) × (1+OL) × Red × N</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">節段 #
+                                            </th>
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">節點
+                                            </th>
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
+                                                鋼腱偏心矩<br>ep,eff (cm)</th>
+                                            <th
+                                                class="border border-slate-300 px-2 py-2 text-right font-semibold bg-green-50 text-green-700">
+                                                靜載重彎矩<br>M_DL (tf·m)</th>
+                                            <th
+                                                class="border border-slate-300 px-2 py-2 text-right font-semibold bg-blue-50 text-blue-700">
+                                                車輛載重彎矩<br>M_LL (tf·m)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
+                                                有效預力彎矩<br>Meff (tf·m)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
+                                                斷面一次矩<br>頂部 Stop (cm³)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
+                                                斷面一次矩<br>底部 Sbot (cm³)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                軸向應力<br>faxial (kgf/cm²)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                上緣彎矩應力<br>fm,top (kgf/cm²)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                下緣彎矩應力<br>fm,bot (kgf/cm²)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                梁上緣有效應力<br>feff,top (kgf/cm²)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                梁下緣有效應力<br>feff,bot (kgf/cm²)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                梁自重上緣應力<br>fDL,top (kgf/cm²)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                梁自重下緣應力<br>fDL,bot (kgf/cm²)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                車輛載重上緣應力<br>fLL,top (kgf/cm²)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                車輛載重下緣應力<br>fLL,bot (kgf/cm²)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stressCalcTableBody">
+                                        <!-- Generated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="mt-6 text-xs text-slate-600 space-y-2">
+                                <p><strong>計算公式：</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>鋼腱偏心矩 ep,eff = Y_bot - 12.5 (cm)</li>
+                                    <li>有效預力彎矩 Meff = 預力值 × ep,eff (+表示底部受壓、頂部受拉; -表示底部受拉、頂部受壓)</li>
+                                    <li>斷面一次矩 Stop = I_zz / Y_top</li>
+                                    <li>斷面一次矩 Sbot = I_zz / Y_bot</li>
+                                    <li>軸向應力 faxial = 預力值 / 斷面積 (+受壓, -受拉)</li>
+                                    <li>上緣彎矩應力 fm,top = -Meff / Stop (Meff>0時*-1表示受拉)</li>
+                                    <li>下緣彎矩應力 fm,bot = Meff / Sbot (Meff>0表示受壓)</li>
+                                    <li>梁上緣有效應力 feff,top = faxial + fm,top (+受壓, -受拉)</li>
+                                    <li>梁下緣有效應力 feff,bot = faxial + fm,bot</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sub-tab 3: 壓張應力檢核 -->
+                    <div id="subtab-content-4-3" class="subtab-content hidden">
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">壓張應力檢核</h3>
+
+                            <!-- 容許應力標準 -->
+                            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                                <h4 class="text-sm font-bold text-blue-900 mb-2">檢核標準：Case No.1 完工階段 I, IB (100%)</h4>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span class="text-blue-700">容許壓應力：</span>
+                                        <span class="font-bold text-blue-900">≤ 210.00 kgf/cm²</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-blue-700">容許張應力：</span>
+                                        <span class="font-bold text-blue-900">≥ -14.97 kgf/cm²</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
+                                                rowspan="2">節段 #</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
+                                                colspan="2">有效預力應力</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
+                                                colspan="2">梁自重應力</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
+                                                colspan="2">車輛載重應力</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold bg-amber-50"
+                                                colspan="2">總應力</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold bg-green-50"
+                                                colspan="2">檢核結果</th>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <th class="border border-slate-300 px-2 py-2 text-center text-xs">
+                                                上緣<br>feff,top</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center text-xs">
+                                                下緣<br>feff,bot</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center text-xs">
+                                                上緣<br>fDL,top</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center text-xs">
+                                                下緣<br>fDL,bot</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center text-xs">
+                                                上緣<br>fLL,top</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-center text-xs">
+                                                下緣<br>fLL,bot</th>
+                                            <th
+                                                class="border border-slate-300 px-2 py-2 text-center text-xs bg-amber-50">
+                                                上緣<br>ftotal,top</th>
+                                            <th
+                                                class="border border-slate-300 px-2 py-2 text-center text-xs bg-amber-50">
+                                                下緣<br>ftotal,bot</th>
+                                            <th
+                                                class="border border-slate-300 px-2 py-2 text-center text-xs bg-green-50">
+                                                上緣</th>
+                                            <th
+                                                class="border border-slate-300 px-2 py-2 text-center text-xs bg-green-50">
+                                                下緣</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stressVerifyTableBody">
+                                        <!-- Generated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="mt-6 text-xs text-slate-600 space-y-2">
+                                <p><strong>計算公式：</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>梁上緣總應力 ftotal,top = feff,top + fDL,top + fLL,top (kgf/cm²)</li>
+                                    <li>梁下緣總應力 ftotal,bot = feff,bot + fDL,bot + fLL,bot (kgf/cm²)</li>
+                                </ul>
+                                <p class="mt-3"><strong>檢核條件：</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li class="text-green-700">✓ OK：-14.97 ≤ 應力 ≤ 210.00 kgf/cm²</li>
+                                    <li class="text-red-700">✗ NG：應力 &lt; -14.97 或 應力 &gt; 210.00 kgf/cm²</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab 5 Content (加固分析圖表) -->
+            <div id="tab-content-5" class="tab-content-wrapper hidden">
+                <div id="tab-content-5-inner" class="tab-content space-y-6">
+
+                    <!-- External Reinforcement Control -->
+                    <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-amber-500 max-w-md">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-sm font-bold text-amber-800">體外加固設定</h3>
+                            <span class="text-xs text-amber-500 bg-amber-50 px-2 py-1 rounded">可調整</span>
+                        </div>
+                        <div class="space-y-4 text-sm">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs text-slate-500">加固束數:</label>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="updateExtStrands(-2)"
+                                        class="w-7 h-7 bg-slate-100 rounded text-xs hover:bg-slate-200">-</button>
+                                    <span id="extStrandCount"
+                                        class="font-bold text-amber-600 text-lg w-6 text-center">6</span>
+                                    <button onclick="updateExtStrands(2)"
+                                        class="w-7 h-7 bg-slate-100 rounded text-xs hover:bg-slate-200">+</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">單束力 (kN):</label>
+                                <input type="range" id="extForce" min="100" max="300" value="200"
+                                    class="w-full h-1 bg-amber-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="text-right text-xs text-amber-700 font-bold" id="extForceVal">200 kN</div>
+                            </div>
+                            <div class="pt-2 border-t border-slate-100">
+                                <label class="block text-xs text-slate-500 mb-1">體外索總力:</label>
+                                <div class="flex justify-between font-mono font-bold text-sm">
+                                    <span id="extTotalKn" class="text-slate-600">-- kN</span>
+                                    <span id="extTotalTf" class="text-amber-600">-- tf</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Canvas 2 (With Ext) -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-amber-500 pl-2">縱向節段佈置圖
+                            (含體外索)</h3>
+                        <div class="overflow-x-auto -mx-5 px-5">
+                            <canvas id="profileCanvas2" width="1200" height="200"
+                                class="canvas-drawing min-w-full"></canvas>
+                        </div>
+                        <div class="flex justify-center space-x-4 mt-1 text-xs text-slate-500">
+                            <span class="flex items-center"><span class="w-3 h-1 bg-red-500 mr-1"></span> 體外索</span>
+                            <span class="flex items-center"><span class="w-2 h-2 bg-slate-700 mr-1"></span> 轉向塊</span>
+                        </div>
+                    </div>
+
+                    <!-- Data Table with Ext Force -->
+                    <div class="overflow-hidden">
+                        <div class="flex justify-between items-end mb-2">
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">各節段預力數據表 (含體外索)
+                            </h3>
+                            <span class="text-xs text-slate-400" id="tableUnitLabel3">單位: tf</span>
+                        </div>
+                        <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-200 rounded">
+                            <table class="w-full data-table">
+                                <thead class="sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th rowspan="2" class="bg-slate-100">節段 #</th>
+                                        <th rowspan="2" class="bg-slate-100">長度 (m)</th>
+                                        <th colspan="3" class="bg-slate-200 border-b border-white">預力值 (Force)</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-blue-50 text-blue-700">原橋體內 (Internal)</th>
+                                        <th class="bg-amber-50 text-amber-700">體外索 (Ext)</th>
+                                        <th class="bg-slate-600 text-white">總計 (Total)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stressTableBody3">
+                                    <!-- Generated -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Chart -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-indigo-500 pl-2">預力分佈曲線
+                            (Distribution Curve)</h3>
+                        <div class="chart-container">
+                            <canvas id="prestressChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+    </main>
+
+    <script>
+        // --- 預鑄箱型梁截面參數 (單位: cm, cm², cm⁴) ---
+        const BEAM_SECTIONS = [
+            { id: 1, A: 25, C: 35, D: 70, Y_top: 97.13, Y_bot: 181.27, Area: 142399.00, I: 1526183555.35 },
+            { id: 2, A: 28.3, C: 40, D: 75.7, Y_top: 101.71, Y_bot: 176.69, Area: 148772.65, I: 1626592843.68 },
+            { id: 3, A: 31.5, C: 45, D: 81.5, Y_top: 105.73, Y_bot: 172.67, Area: 154965.75, I: 1716080621.37 },
+            { id: 4, A: 31.3, C: 40, D: 75.7, Y_top: 104.82, Y_bot: 173.58, Area: 152342.65, I: 1692242685.97 },
+            { id: 5, A: 37.5, C: 45, D: 81.5, Y_top: 111.24, Y_bot: 167.76, Area: 162045.75, I: 1829852831.37 }
+        ];
+
+        // 節段對應節點對應表
+        const SEGMENT_NODE_MAP = {
+            1: 3, 2: 2,
+            // 3~27 對應到 1
+            3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1, 11: 1, 12: 1,
+            13: 1, 14: 1, 15: 1, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1,
+            23: 1, 24: 1, 25: 1, 26: 1, 27: 1,
+            28: 4, 29: 5
+        };
+
+        // 取得對應節點
+        function getSegmentNode(segmentId) {
+            return SEGMENT_NODE_MAP[segmentId] || 1;
+        }
+
+        // 計算彎矩承載力
+        function calcBendingMoment(segmentId, prestress) {
+            const nodeId = getSegmentNode(segmentId);
+            const section = BEAM_SECTIONS.find(s => s.id === nodeId);
+            if (!section) return 0;
+
+            const prestressPos = 12.5; // 預力作用位置 (cm from bottom)
+            const eccentricity = Math.abs(section.Y_bot - prestressPos); // 偏心值 (cm)
+            const moment = prestress * eccentricity; // 彎矩 (tf·cm)
+
+            return { eccentricity, moment };
+        }
+
+        // 計算箱型梁慣性矩（繞x軸）
+        function calcMomentOfInertia(section) {
+            // 單位: cm -> m (1cm = 0.01m)
+            const B = section.B / 100;      // 外寬 (m)
+            const D = section.D / 100;      // 外高 (m)
+            const t_w = section.A / 100;    // 腹板厚度 (m)
+            const t_f = section.C / 100;    // 翼板厚度 (m)
+
+            // 內寬
+            const B_inner = B - 2 * t_w;
+            // 內高
+            const D_inner = D - 2 * t_f;
+
+            // 計算慣性矩: I = (B*D³)/12 - ((B-2*t_w)*(D-2*t_f)³)/12
+            const I_outer = (B * Math.pow(D, 3)) / 12;
+            const I_inner = (B_inner * Math.pow(D_inner, 3)) / 12;
+            const I = I_outer - I_inner;
+
+            return I;
+        }
+
+        // --- Geometry Config ---
+        const SEGMENT_GEOMETRY = [
+            { count: 1, length: 1.96, type: 'start', desc: '端部' },
+            { count: 11, length: 2.00, type: 'standard', desc: '標準' },
+            { count: 1, length: 1.50, type: 'special', desc: '合龍' },
+            { count: 15, length: 2.00, type: 'standard', desc: '標準' },
+            { count: 1, length: 1.04, type: 'end', desc: '端部' }
+        ];
+
+        // User Custom Data (tf)
+        const INTERNAL_PRESTRESS_TF = [
+            1730, 1765, 1782, 3371, 3406, 4934, 4963, 4984, 6414, 6426, 6430, 6427,
+            6296,
+            6286, 6380, 6357, 6326, 6288, 6242, 4825, 4779, 4726, 3251, 3206, 1692, 1663, 127, 126, 125
+        ];
+
+        // --- State ---
+        const state = {
+            unit: 'tf', // default
+            currentTab: 1,
+            extStrands: 6,
+            extForcePerStrandKn: 200,
+            deviatorPos: 18.5,
+            span: 56.5,
+            segments: [],
+            nodes: [], // x positions for drawing
+            M_DL: 0, // 靜載重彎矩 (tf·m) - from Tab 2
+            M_LL: 0  // 車輛載重彎矩 (tf·m) - from Tab 2
+        };
+
+        let chartInst = null;
+        let bendingMomentChartInst = null;
+
+        // --- Init ---
+        function init() {
+            generateSegments();
+            addListeners();
+            updateCalculations();
+            renderSectionInfo(); // Load section info on init
+            // Initial Draw
+            drawProfile(1, false); // Tab 1: No Ext (基本資訊)
+            drawProfile(3, false); // Tab 3: Basic profile (預力配置)
+            drawProfile(2, true);  // Tab 4: With Ext (加固分析圖表)
+            drawSectionDiagram(); // Tab 3: Section diagram
+            // Initialize design loads calculations for Tab 2
+            updateDeadLoad();
+            updateLiveLoad();
+            renderSegmentMomentTable();
+        }
+
+        function switchTab(tabId) {
+            state.currentTab = tabId;
+
+            // Animate out
+            const content1 = document.getElementById('tab-content-1');
+            const content2 = document.getElementById('tab-content-2');
+            const content3 = document.getElementById('tab-content-3');
+            const content4 = document.getElementById('tab-content-4');
+            const content5 = document.getElementById('tab-content-5');
+
+            // Ensure target is visible before animation logic might hide it
+            const targetContent = document.getElementById(`tab-content-${tabId}`);
+            if (targetContent) targetContent.classList.remove('hidden');
+
+            // Setup fade out for others
+            const allContent = [content1, content2, content3, content4, content5];
+            const otherContent = allContent.filter((_, i) => i !== tabId - 1);
+
+            // Fade out others
+            otherContent.forEach(el => {
+                el.style.animation = 'none';
+                void el.offsetWidth;
+                el.style.animation = 'slideDown 0.35s cubic-bezier(0.4, 0, 0.2, 1) reverse';
+            });
+
+            setTimeout(() => {
+                otherContent.forEach(el => el.classList.add('hidden'));
+
+                // Fade in target
+                targetContent.style.animation = 'none';
+                void targetContent.offsetWidth;
+                targetContent.style.animation = 'slideDown 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+            }, 100);
+
+            // Draw profile and tables if tab 2 (Design Loads)
+            if (tabId === 2) {
+                setTimeout(() => {
+                    drawProfile(3, false);
+                    updateDeadLoad();
+                    updateLiveLoad();
+                    renderSegmentMomentTable();
+                }, 400);
+            }
+
+            // Draw profile if tab 5 (External Reinforcement)
+            if (tabId === 5) {
+                setTimeout(() => {
+                    drawProfile(2, true);
+                }, 400);
+            }
+
+            // Toggle Buttons
+            ['tab-btn-1', 'tab-btn-2', 'tab-btn-3', 'tab-btn-4', 'tab-btn-5'].forEach(btnId => {
+                document.getElementById(btnId).classList.remove('tab-active');
+                document.getElementById(btnId).classList.add('tab-inactive');
+            });
+
+            document.getElementById(`tab-btn-${tabId}`).classList.remove('tab-inactive');
+            document.getElementById(`tab-btn-${tabId}`).classList.add('tab-active');
+
+            // Redraw chart if tab 5 (sometimes chartjs needs resize on show)
+            if (tabId === 5 && chartInst) {
+                chartInst.resize();
+            }
+
+            // Render section info if tab 1
+            if (tabId === 1) {
+                renderSectionInfo();
+            }
+
+            // Unit Control Visibility: Hide on Tab 2
+            const unitControls = document.getElementById('unit-controls');
+            if (unitControls) {
+                if (tabId === 2) {
+                    unitControls.style.display = 'none';
+                } else {
+                    unitControls.style.display = 'flex';
+                }
+            }
+        }
+
+        // 子分頁切換函數 (Tab 5 應力檢核)
+        function switchSubTab(tabId, subTabNum) {
+            // Hide all subtabs
+            const subtabs = document.querySelectorAll('.subtab-content');
+            subtabs.forEach(subtab => subtab.classList.add('hidden'));
+
+            // Show selected subtab
+            const selectedSubTab = document.getElementById(`subtab-content-${tabId}-${subTabNum}`);
+            if (selectedSubTab) selectedSubTab.classList.remove('hidden');
+
+            // Update button styles
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`subtab-btn-${tabId}-${i}`);
+                if (btn) {
+                    if (i === subTabNum) {
+                        btn.classList.remove('text-slate-600', 'border-transparent');
+                        btn.classList.add('text-blue-600', 'border-blue-600');
+                    } else {
+                        btn.classList.remove('text-blue-600', 'border-blue-600');
+                        btn.classList.add('text-slate-600', 'border-transparent');
+                    }
+                }
+            }
+        }
+
+        function renderSectionInfo() {
+            renderSectionInfoTable();
+        }
+
+        function renderSectionInfoTable() {
+            const tbody = document.getElementById('sectionInfoBody');
+            tbody.innerHTML = '';
+
+            BEAM_SECTIONS.forEach(section => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="font-bold text-center text-blue-600">節點 ${section.id}</td>
+                    <td class="text-center text-slate-600">${section.A} / ${section.C} / ${section.D}</td>
+                    <td class="text-center text-purple-600 font-bold">${section.Area.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="text-center text-blue-600 font-bold">${section.Y_top.toFixed(2)}</td>
+                    <td class="text-center text-blue-600 font-bold">${section.Y_bot.toFixed(2)}</td>
+                    <td class="text-center text-green-600 font-bold">${section.I.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function generateSegments() {
+            let x = 0;
+            let id = 1;
+            state.segments = [];
+            state.nodes = [];
+
+            state.nodes.push(0); // Node 1 at 0m
+
+            SEGMENT_GEOMETRY.forEach(grp => {
+                for (let i = 0; i < grp.count; i++) {
+                    const len = grp.length;
+                    const endX = x + len;
+                    const midX = (x + endX) / 2;
+
+                    const internalTf = INTERNAL_PRESTRESS_TF[id - 1] || 0;
+
+                    state.segments.push({
+                        id: id++,
+                        type: grp.type,
+                        startX: parseFloat(x.toFixed(3)),
+                        endX: parseFloat(endX.toFixed(3)),  // 新增：節段終點位置
+                        length: len,
+                        midX: midX,
+                        internalTf: internalTf,
+                        extKn: 0,
+                        totalTf: 0
+                    });
+                    x += len;
+                    state.nodes.push(parseFloat(x.toFixed(3)));
+                }
+            });
+        }
+
+        function addListeners() {
+            document.getElementById('extForce').addEventListener('input', (e) => {
+                state.extForcePerStrandKn = parseFloat(e.target.value);
+                document.getElementById('extForceVal').innerText = state.extForcePerStrandKn + ' kN';
+                updateCalculations();
+            });
+
+            // Tab 2 Listeners (Design Loads) - 使用同步函數確保與Tab 4連動
+            document.getElementById('dl-additional').addEventListener('input', (e) => {
+                syncDeadLoadInput(e.target.value);
+            });
+
+            ['ll-impact-slider', 'll-overload-slider', 'll-lanes-slider'].forEach(id => {
+                document.getElementById(id).addEventListener('input', (e) => {
+                    const type = id.includes('impact') ? 'impact' : id.includes('overload') ? 'overload' : 'lanes';
+                    syncLiveLoadSlider(type, e.target.value);
+                });
+            });
+
+            // Tab 4 Listeners - 與Tab 2完全同步
+            const tab4AdditionalInput = document.getElementById('dl-additional-tab4');
+            if (tab4AdditionalInput) {
+                tab4AdditionalInput.addEventListener('input', (e) => {
+                    syncDeadLoadInput(e.target.value);
+                });
+            }
+        }
+
+        // 梁上下緣應力計算表格生成函數
+        function renderStressCalcTable() {
+            const tbody = document.getElementById('stressCalcTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            // 獲取基本數據
+            const prestress_tf = INTERNAL_PRESTRESS_TF; // 預力值(tf)
+            const L = state.span; // 56.5m
+
+            // 使用 Tab 2 計算的 M_DL 和 M_LL (從 state 取得)
+            const M_DL = state.M_DL; // 靜載重彎矩 (tf·m)
+            const M_LL = state.M_LL; // 車輛載重彎矩 (tf·m)
+
+            // 計算分佈載重 (從最大彎矩反推)
+            // M_max = w * L^2 / 8, so w = 8 * M_max / L^2
+            const w_DL = (8 * M_DL) / (L * L); // tf/m
+            const w_LL = (8 * M_LL) / (L * L); // tf/m
+
+            // === 新增節段#0 (x=0, 使用與節段#1相同的斷面) ===
+            const seg0_nodeId = getSegmentNode(1); // 使用節段1的節點
+            const seg0_section = BEAM_SECTIONS.find(s => s.id === seg0_nodeId);
+
+            if (seg0_section) {
+                const A = seg0_section.Area;
+                const I_zz = seg0_section.I;
+                const Y_top = seg0_section.Y_top;
+                const Y_bot = seg0_section.Y_bot;
+
+                const ep_eff = Y_bot - 12.5;
+                const Meff = (prestress_tf[0] * ep_eff) / 100; // 使用第一個預力值
+                const Stop = I_zz / Y_top;
+                const Sbot = I_zz / Y_bot;
+                const faxial = prestress_tf[0] * 1000 / A;
+                const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
+                const fm_bot = (Meff * 100000 / Sbot);
+                const feff_top = faxial + fm_top;
+                const feff_bot = faxial + fm_bot;
+
+                // x=0 時，載重彎矩為0
+                const x = 0;
+                const M_DL_seg = 0; // x=0 時彎矩為0
+                const M_LL_seg = 0; // x=0 時彎矩為0
+                const fDL_top = 0;
+                const fDL_bot = 0;
+                const fLL_top = 0;
+                const fLL_bot = 0;
+
+                const tr0 = document.createElement('tr');
+                tr0.className = 'bg-amber-50'; // 特殊背景色標示節段#0
+                tr0.innerHTML = `
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-amber-700">#0</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-purple-600">${seg0_nodeId}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-green-50 text-green-700">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-blue-50 text-blue-700">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${Meff.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${Stop.toFixed(1)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${Sbot.toFixed(1)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${faxial.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_top < 0 ? '#dc2626' : '#16a34a'}">${fm_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_bot > 0 ? '#2563eb' : '#dc2626'}">${fm_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_top < 0 ? '#dc2626' : '#16a34a'}">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_bot > 0 ? '#2563eb' : '#dc2626'}">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
+                `;
+                tbody.appendChild(tr0);
+            }
+
+            // 逐節段計算
+            state.segments.forEach(seg => {
+                // 取得對應節點
+                const nodeId = getSegmentNode(seg.id);
+                const section = BEAM_SECTIONS.find(s => s.id === nodeId);
+                if (!section) return; // 如果找不到對應節點，跳過
+
+                // 截面參數 (單位: cm)
+                const A = section.Area; // cm²
+                const I_zz = section.I; // cm⁴
+                const Y_top = section.Y_top; // cm (從頂部)
+                const Y_bot = section.Y_bot; // cm (從底部)
+
+                // 1. 鋼腱偏心矩 ep,eff (cm)
+                const ep_eff = Y_bot - 12.5;
+
+                // 2. 有效預力彎矩 Meff (tf·m)
+                const Meff = (prestress_tf[seg.id - 1] * ep_eff) / 100; // 轉換cm到m
+
+                // 3. 斷面一次矩
+                const Stop = I_zz / Y_top; // cm³
+                const Sbot = I_zz / Y_bot; // cm³
+
+                // 4. 軸向應力 faxial (kgf/cm²)
+                const faxial = prestress_tf[seg.id - 1] * 1000 / A; // tf轉kgf
+
+                // 5. 上緣彎矩應力 fm,top (kgf/cm²)
+                const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
+
+                // 6. 下緣彎矩應力 fm,bot (kgf/cm²)
+                const fm_bot = (Meff * 100000 / Sbot);
+
+                // 7. 梁上緣有效應力 feff,top (kgf/cm²)
+                const feff_top = faxial + fm_top;
+
+                // 8. 梁下緣有效應力 feff,bot (kgf/cm²)
+                const feff_bot = faxial + fm_bot;
+
+                // 9. 計算各載重造成的應力
+                // 使用節段終點位置 (endX) 進行彎矩計算
+                const x = seg.endX; // 節段累積終點位置(m)
+                const M_DL_seg = w_DL * (x / 2) * (L - x); // tf·m
+                const M_LL_seg = w_LL * (x / 2) * (L - x); // tf·m
+
+                // 梁自重應力（正彎矩：上緣受壓為正，下緣受拉為負）
+                const fDL_top = (M_DL_seg * 100000 / Stop);   // 上緣壓應力（正值）
+                const fDL_bot = -(M_DL_seg * 100000 / Sbot);  // 下緣拉應力（負值）
+
+                // 車輛載重應力（正彎矩：上緣受壓為正，下緣受拉為負）
+                const fLL_top = (M_LL_seg * 100000 / Stop);   // 上緣壓應力（正值）
+                const fLL_bot = -(M_LL_seg * 100000 / Sbot);  // 下緣拉應力（負值）
+
+                // 生成表格行
+                const tr = document.createElement('tr');
+                if (seg.type === 'special') tr.className = 'bg-yellow-50';
+
+                tr.innerHTML = `
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">#${seg.id}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-purple-600">${nodeId}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-green-50 text-green-700">${M_DL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-blue-50 text-blue-700">${M_LL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${Meff.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${Stop.toFixed(1)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${Sbot.toFixed(1)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${faxial.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_top < 0 ? '#dc2626' : '#16a34a'}">${fm_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_bot > 0 ? '#2563eb' : '#dc2626'}">${fm_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_top < 0 ? '#dc2626' : '#16a34a'}">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_bot > 0 ? '#2563eb' : '#dc2626'}">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_top > 0 ? '#2563eb' : '#dc2626'}">${fDL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_bot < 0 ? '#dc2626' : '#16a34a'}">${fDL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_top > 0 ? '#2563eb' : '#dc2626'}">${fLL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_bot < 0 ? '#dc2626' : '#16a34a'}">${fLL_bot.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 壓張應力檢核表格生成函數
+        function renderStressVerifyTable() {
+            const tbody = document.getElementById('stressVerifyTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            // 容許應力限值 (Case No.1)
+            const allowable_compression = 210.00; // kgf/cm²
+            const allowable_tension = -14.97;     // kgf/cm²
+
+            // 獲取基本數據
+            const prestress_tf = INTERNAL_PRESTRESS_TF;
+            const L = state.span;
+            const M_DL = state.M_DL;
+            const M_LL = state.M_LL;
+            const w_DL = (8 * M_DL) / (L * L);
+            const w_LL = (8 * M_LL) / (L * L);
+
+            // === 節段#0 ===
+            const seg0_nodeId = getSegmentNode(1);
+            const seg0_section = BEAM_SECTIONS.find(s => s.id === seg0_nodeId);
+
+            if (seg0_section) {
+                const A = seg0_section.Area;
+                const I_zz = seg0_section.I;
+                const Y_top = seg0_section.Y_top;
+                const Y_bot = seg0_section.Y_bot;
+                const ep_eff = Y_bot - 12.5;
+                const Meff = (prestress_tf[0] * ep_eff) / 100;
+                const Stop = I_zz / Y_top;
+                const Sbot = I_zz / Y_bot;
+                const faxial = prestress_tf[0] * 1000 / A;
+                const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
+                const fm_bot = (Meff * 100000 / Sbot);
+                const feff_top = faxial + fm_top;
+                const feff_bot = faxial + fm_bot;
+                const fDL_top = 0;
+                const fDL_bot = 0;
+                const fLL_top = 0;
+                const fLL_bot = 0;
+
+                const ftotal_top = feff_top + fDL_top + fLL_top;
+                const ftotal_bot = feff_bot + fDL_bot + fLL_bot;
+
+                const check_top = (ftotal_top >= allowable_tension && ftotal_top <= allowable_compression) ? 'OK' : 'NG';
+                const check_bot = (ftotal_bot >= allowable_tension && ftotal_bot <= allowable_compression) ? 'OK' : 'NG';
+
+                const tr0 = document.createElement('tr');
+                tr0.className = 'bg-amber-50';
+                tr0.innerHTML = `
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-amber-700">#0</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-amber-100">${ftotal_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-amber-100">${ftotal_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_top === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_top}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_bot === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_bot}</td>
+                `;
+                tbody.appendChild(tr0);
+            }
+
+            // === 各節段 ===
+            state.segments.forEach(seg => {
+                const nodeId = getSegmentNode(seg.id);
+                const section = BEAM_SECTIONS.find(s => s.id === nodeId);
+                if (!section) return;
+
+                const A = section.Area;
+                const I_zz = section.I;
+                const Y_top = section.Y_top;
+                const Y_bot = section.Y_bot;
+                const ep_eff = Y_bot - 12.5;
+                const Meff = (prestress_tf[seg.id - 1] * ep_eff) / 100;
+                const Stop = I_zz / Y_top;
+                const Sbot = I_zz / Y_bot;
+                const faxial = prestress_tf[seg.id - 1] * 1000 / A;
+                const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
+                const fm_bot = (Meff * 100000 / Sbot);
+                const feff_top = faxial + fm_top;
+                const feff_bot = faxial + fm_bot;
+
+                const x = seg.endX;
+                const M_DL_seg = w_DL * (x / 2) * (L - x);
+                const M_LL_seg = w_LL * (x / 2) * (L - x);
+                const fDL_top = (M_DL_seg * 100000 / Stop);
+                const fDL_bot = -(M_DL_seg * 100000 / Sbot);
+                const fLL_top = (M_LL_seg * 100000 / Stop);
+                const fLL_bot = -(M_LL_seg * 100000 / Sbot);
+
+                const ftotal_top = feff_top + fDL_top + fLL_top;
+                const ftotal_bot = feff_bot + fDL_bot + fLL_bot;
+
+                const check_top = (ftotal_top >= allowable_tension && ftotal_top <= allowable_compression) ? 'OK' : 'NG';
+                const check_bot = (ftotal_bot >= allowable_tension && ftotal_bot <= allowable_compression) ? 'OK' : 'NG';
+
+                const tr = document.createElement('tr');
+                if (seg.type === 'special') tr.className = 'bg-yellow-50';
+
+                tr.innerHTML = `
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">#${seg.id}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fLL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fLL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-amber-100">${ftotal_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-amber-100">${ftotal_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_top === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_top}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_bot === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_bot}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // === 分頁2與分頁4雙向同步函數 ===
+
+        // 同步靜載重附加載重輸入
+        function syncDeadLoadInput(value) {
+            // 更新兩個分頁的輸入框
+            document.getElementById('dl-additional').value = value;
+            document.getElementById('dl-additional-tab4').value = value;
+            // 觸發計算更新
+            updateDeadLoad();
+        }
+
+        // 同步車輛載重滑桿
+        function syncLiveLoadSlider(type, value) {
+            const numValue = parseFloat(value);
+
+            if (type === 'impact') {
+                document.getElementById('ll-impact-slider').value = numValue;
+                document.getElementById('ll-impact-slider-tab4').value = numValue;
+                document.getElementById('val-ll-impact').innerText = numValue;
+                document.getElementById('val-ll-impact-tab4').innerText = numValue;
+            } else if (type === 'overload') {
+                document.getElementById('ll-overload-slider').value = numValue;
+                document.getElementById('ll-overload-slider-tab4').value = numValue;
+                document.getElementById('val-ll-overload').innerText = numValue;
+                document.getElementById('val-ll-overload-tab4').innerText = numValue;
+            } else if (type === 'lanes') {
+                const intValue = parseInt(value);
+                document.getElementById('ll-lanes-slider').value = intValue;
+                document.getElementById('ll-lanes-slider-tab4').value = intValue;
+                document.getElementById('val-ll-lanes').innerText = intValue;
+                document.getElementById('val-ll-lanes-tab4').innerText = intValue;
+            }
+
+            // 觸發計算更新
+            updateLiveLoad();
+        }
+
+        // 同步車道折減係數選擇
+        function syncLiveLoadReduction(value) {
+            document.getElementById('ll-reduction-select').value = value;
+            document.getElementById('ll-reduction-select-tab4').value = value;
+            // 觸發計算更新
+            updateLiveLoad();
+        }
+
+        function updateLiveLoadVariables() {
+            const im = parseFloat(document.getElementById('ll-impact-slider').value);
+            const ol = parseFloat(document.getElementById('ll-overload-slider').value);
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
+            const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
+
+            document.getElementById('val-ll-impact').innerText = im;
+            document.getElementById('val-ll-overload').innerText = ol;
+            document.getElementById('val-ll-lanes').innerText = lanes;
+        }
+
+        function updateDeadLoad() {
+            // Formula: M_DL = (w_self + w_add) * L^2 / 8
+            const w_self = 35.94;
+            const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
+            const L = state.span; // 56.5
+
+            const M_DL = (w_self + w_add) * Math.pow(L, 2) / 8;
+
+            // Store in state for use by stress calculation table
+            state.M_DL = M_DL;
+
+            const formattedValue = M_DL.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+            // Update Tab 2 display
+            document.getElementById('val-m-dl').innerText = formattedValue + ' tf·m';
+
+            // Update Tab 4 synchronized display
+            const tab4Element = document.getElementById('val-m-dl-tab4');
+            if (tab4Element) {
+                tab4Element.innerText = formattedValue;
+            }
+
+            // Update segment moment table if tab 2
+            if (state.currentTab === 2) {
+                renderSegmentMomentTable();
+            }
+
+            // Update stress calculation table if tab 4
+            if (state.currentTab === 4) {
+                renderStressCalcTable();
+                renderStressVerifyTable();
+            }
+        }
+
+        function updateLiveLoad() {
+            // M_LL = 499 * (1+IM) * (1+OL) * Red * Lanes
+            const M_lane = 499; // tf*m
+            const im = parseFloat(document.getElementById('ll-impact-slider').value);
+            const ol = parseFloat(document.getElementById('ll-overload-slider').value);
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
+            const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
+
+            const M_LL = M_lane * (1 + im) * (1 + ol) * reduction * lanes;
+
+            // Store in state for use by stress calculation table
+            state.M_LL = M_LL;
+
+            const formattedValue = M_LL.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+            // Update Tab 2 display
+            document.getElementById('val-m-ll').innerText = formattedValue + ' tf·m';
+
+            // Update Tab 4 synchronized display
+            const tab4Element = document.getElementById('val-m-ll-tab4');
+            if (tab4Element) {
+                tab4Element.innerText = formattedValue;
+            }
+
+            // Update segment moment table if tab 2
+            if (state.currentTab === 2) {
+                renderSegmentMomentTable();
+            }
+
+            // Update stress calculation table if tab 4
+            if (state.currentTab === 4) {
+                renderStressCalcTable();
+                renderStressVerifyTable();
+            }
+        }
+
+        function renderSegmentMomentTable() {
+            const tbody = document.getElementById('segmentMomentBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            // Get current values
+            const w_self = 35.94;
+            const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
+            const w_static = w_self + w_add;
+
+            const M_lane = 499;
+            const im = parseFloat(document.getElementById('ll-impact-slider').value);
+            const ol = parseFloat(document.getElementById('ll-overload-slider').value);
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
+            const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
+            const M_LL = M_lane * (1 + im) * (1 + ol) * reduction * lanes;
+
+            const L = state.span; // 56.5m
+            const w_vehicle = (8 * M_LL) / (L * L); // 車輛分佈荷載 (tf/m)
+
+            // Render each segment
+            state.segments.forEach(seg => {
+                const tr = document.createElement('tr');
+                if (seg.type === 'special') tr.className = 'highlight-row';
+
+                // Calculate moment at segment endpoint (cumulative position)
+                const x = seg.endX; // 節段累積終點位置 (m)
+
+                // M(x) = w * x/2 * (L - x)
+                const M_static = w_static * (x / 2) * (L - x);
+                const M_vehicle = w_vehicle * (x / 2) * (L - x);
+
+                tr.innerHTML = `
+                    <td class="font-bold text-slate-600 border-r border-slate-200">#${seg.id}</td>
+                    <td class="text-center text-slate-600 border-r border-slate-200">${seg.length.toFixed(2)}</td>
+                    <td class="text-center text-green-600 font-bold border-r border-slate-200">${M_static.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="text-center text-blue-600 font-bold">${M_vehicle.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateExtStrands(delta) {
+            let val = state.extStrands + delta;
+            if (val < 0) val = 0;
+            state.extStrands = val;
+            document.getElementById('extStrandCount').innerText = val;
+            updateCalculations();
+        }
+
+        function toggleUnit(u) {
+            state.unit = u;
+            document.getElementById('btn-kN').className = u === 'kN' ? "px-2 py-1 bg-blue-600 text-white text-xs rounded" : "px-2 py-1 bg-slate-600 text-slate-300 text-xs rounded hover:bg-slate-500";
+            document.getElementById('btn-tf').className = u === 'tf' ? "px-2 py-1 bg-blue-600 text-white text-xs rounded" : "px-2 py-1 bg-slate-600 text-slate-300 text-xs rounded hover:bg-slate-500";
+            updateCalculations();
+        }
+
+        function updateCalculations() {
+            const kn_to_tf = 1 / 9.80665;
+
+            // Calc Ext Total
+            const totalExtKn = state.extStrands * state.extForcePerStrandKn;
+            const totalExtTf = totalExtKn * kn_to_tf;
+
+            document.getElementById('extTotalKn').innerText = totalExtKn.toFixed(0) + ' kN';
+            document.getElementById('extTotalTf').innerText = totalExtTf.toFixed(1) + ' tf';
+            document.getElementById('tableUnitLabel1').innerText = `單位: ${state.unit}`;
+
+            // Update Segments
+            state.segments.forEach(seg => {
+                seg.extKn = totalExtKn;
+                seg.totalTf = seg.internalTf + totalExtTf;
+            });
+
+            renderTable();
+            renderChart();
+            renderBendingMomentChart();
+            // Redraw profile 2 since Ext force doesn't change geometry but conceptually links
+            drawProfile(2, true);
+
+            // Tab 4 Updates
+            updateDeadLoad();
+            updateLiveLoadVariables();
+            updateLiveLoad();
+            renderStressCalcTable(); // 梁上下緣應力計算表格
+            renderStressVerifyTable(); // 壓張應力檢核表格
+        }
+
+        function drawProfile(canvasNum, showExternal) {
+            const canvas = document.getElementById(`profileCanvas${canvasNum}`);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const L = state.span;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const marginX = 30;
+            const drawW = w - 2 * marginX;
+            const scaleX = drawW / L;
+
+            const beamTop = h * 0.35;
+            const beamBot = h * 0.65;
+            const beamH = beamBot - beamTop;
+
+            // 1. Draw Segments
+            state.segments.forEach(seg => {
+                const xScreen = marginX + seg.startX * scaleX;
+                const wScreen = seg.length * scaleX;
+
+                // Box
+                ctx.fillStyle = seg.type === 'special' ? '#e0e7ff' : '#f1f5f9';
+                ctx.fillRect(xScreen, beamTop, wScreen, beamH);
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(xScreen, beamTop, wScreen, beamH);
+
+                // Seg ID (Circle)
+                const cx = xScreen + wScreen / 2;
+                const cy = beamTop - 12;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+                ctx.fillStyle = seg.type === 'special' ? '#6366f1' : '#e2e8f0';
+                ctx.fill();
+                ctx.fillStyle = seg.type === 'special' ? '#fff' : '#475569';
+                ctx.font = 'bold 9px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(seg.id, cx, cy);
+            });
+
+            // 2. Node Labels (Bottom)
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '9px sans-serif';
+            ctx.textAlign = 'center';
+            state.nodes.forEach((nodeX, i) => {
+                const screenX = marginX + nodeX * scaleX;
+                // Tick
+                ctx.beginPath();
+                ctx.moveTo(screenX, beamBot);
+                ctx.lineTo(screenX, beamBot + 4);
+                ctx.strokeStyle = '#94a3b8';
+                ctx.stroke();
+                // Text
+                ctx.fillText('N' + (i + 1), screenX, beamBot + 12);
+            });
+
+            // 3. External Tendons (Only if showExternal)
+            if (showExternal) {
+                const dev1X = marginX + state.deviatorPos * scaleX;
+                const dev2X = marginX + (L - state.deviatorPos) * scaleX;
+                const anchorY = beamTop + 10;
+                const midY = beamBot - 8;
+
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(marginX, anchorY);
+                ctx.lineTo(dev1X, midY);
+                ctx.lineTo(dev2X, midY);
+                ctx.lineTo(marginX + drawW, anchorY);
+                ctx.stroke();
+
+                // Deviators
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(dev1X - 3, midY - 5, 6, 10);
+                ctx.fillRect(dev2X - 3, midY - 5, 6, 10);
+            }
+
+            // Support Labels
+            ctx.fillStyle = '#475569';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText('滑動端', marginX, beamBot + 18);
+            ctx.fillText('鉸接端', marginX + drawW, beamBot + 18);
+        }
+
+        // 應力塊深度和彎矩承載力表
+        const STRESS_BLOCK_DATA = {
+            1: { a: 2.57, Mn: 4577.81 },
+            2: { a: 2.63, Mn: 4669.97 },
+            3: { a: 2.65, Mn: 4714.72 },
+            4: { a: 5.01, Mn: 8878.98 },
+            5: { a: 5.07, Mn: 8970.28 },
+            6: { a: 7.34, Mn: 12938.47 },
+            7: { a: 7.38, Mn: 13013.44 },
+            8: { a: 7.41, Mn: 13067.73 },
+            9: { a: 9.54, Mn: 16748.89 },
+            10: { a: 9.56, Mn: 16779.65 },
+            11: { a: 9.56, Mn: 16789.90 },
+            12: { a: 9.56, Mn: 16782.21 },
+            13: { a: 9.36, Mn: 16446.28 },
+            14: { a: 9.35, Mn: 16420.63 },
+            15: { a: 9.49, Mn: 16661.72 },
+            16: { a: 9.45, Mn: 16602.74 },
+            17: { a: 9.41, Mn: 16523.23 },
+            18: { a: 9.35, Mn: 16425.76 },
+            19: { a: 9.28, Mn: 16307.73 },
+            20: { a: 7.18, Mn: 12656.55 },
+            21: { a: 7.11, Mn: 12537.52 },
+            22: { a: 7.03, Mn: 12400.34 },
+            23: { a: 4.84, Mn: 8565.81 },
+            24: { a: 4.77, Mn: 8448.32 },
+            25: { a: 2.52, Mn: 4477.74 },
+            26: { a: 2.47, Mn: 4401.35 },
+            27: { a: 0.19, Mn: 337.57 },
+            28: { a: 0.19, Mn: 334.92 },
+            29: { a: 0.19, Mn: 332.26 }
+        };
+
+        // 橋梁自重數據表
+        const DEAD_LOAD_DATA = [
+            { id: 1, node: 3, area: 154965.75, length: 1.96, deadLoad: 38.74 },
+            { id: 2, node: 2, area: 148772.65, length: 2.00, deadLoad: 37.19 },
+            { id: 3, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 4, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 5, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 6, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 7, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 8, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 9, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 10, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 11, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 12, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 13, node: 1, area: 142399.00, length: 1.50, deadLoad: 35.60 },
+            { id: 14, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 15, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 16, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 17, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 18, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 19, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 20, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 21, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 22, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 23, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 24, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 25, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 26, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 27, node: 1, area: 142399.00, length: 2.00, deadLoad: 35.60 },
+            { id: 28, node: 4, area: 152342.65, length: 2.00, deadLoad: 38.09 },
+            { id: 29, node: 5, area: 162045.75, length: 1.04, deadLoad: 40.51 }
+        ];
+
+        function renderTable() {
+            const tbody = document.getElementById('stressTableBody');
+            tbody.innerHTML = '';
+
+            const tf_to_kn = 9.80665;
+            const factor = state.unit === 'tf' ? 1 : tf_to_kn;
+
+            state.segments.forEach(seg => {
+                const tr = document.createElement('tr');
+                if (seg.type === 'special') tr.className = 'highlight-row';
+
+                const intVal = seg.internalTf * factor;
+                const nodeId = getSegmentNode(seg.id);
+                const stressData = STRESS_BLOCK_DATA[seg.id] || { a: 0, Mn: 0 };
+
+                tr.innerHTML = `
+                    <td class="font-bold text-slate-600 border-r border-slate-200">#${seg.id}</td>
+                    <td class="text-center text-purple-600 font-bold border-r border-slate-200">${nodeId}</td>
+                    <td class="text-xs text-slate-500 border-r border-slate-200">${seg.length.toFixed(2)}</td>
+                    <td class="col-main border-r border-blue-200">${Math.round(intVal).toLocaleString()}</td>
+                    <td class="col-main border-r border-orange-200">${stressData.a.toFixed(2)}</td>
+                    <td class="col-tot text-green-600 font-bold">${stressData.Mn.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Also render Tab 3 table
+            renderTable3();
+        }
+
+        function renderTable3() {
+            const tbody = document.getElementById('stressTableBody3');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const tf_to_kn = 9.80665;
+            const factor = state.unit === 'tf' ? 1 : tf_to_kn;
+
+            state.segments.forEach(seg => {
+                const tr = document.createElement('tr');
+                if (seg.type === 'special') tr.className = 'highlight-row';
+
+                const intVal = seg.internalTf * factor;
+                const extVal = (seg.extKn * (1 / 9.80665)) * factor;
+                const totVal = seg.totalTf * factor;
+
+                tr.innerHTML = `
+                    <td class="font-bold text-slate-600 border-r border-slate-200">#${seg.id}</td>
+                    <td class="text-xs text-slate-500 border-r border-slate-200">${seg.length.toFixed(2)}</td>
+                    <td class="col-main border-r border-blue-200">${Math.round(intVal).toLocaleString()}</td>
+                    <td class="col-ext border-r border-amber-200">${Math.round(extVal).toLocaleString()}</td>
+                    <td class="col-tot">${Math.round(totVal).toLocaleString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('prestressChart').getContext('2d');
+            const tf_to_kn = 9.80665;
+            const factor = state.unit === 'tf' ? 1 : tf_to_kn;
+
+            const labels = state.segments.map(s => s.id);
+            const dataInt = state.segments.map(s => s.internalTf * factor);
+            const dataExt = state.segments.map(s => (s.extKn * (1 / 9.80665)) * factor);
+
+            const data = {
+                labels: labels,
+                datasets: [
+                    {
+                        type: 'line',
+                        label: '原橋體內 (Internal)',
+                        data: dataInt,
+                        borderColor: '#3b82f6',
+                        backgroundColor: '#3b82f6',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        tension: 0.3,
+                        fill: false
+                    },
+                    {
+                        type: 'bar',
+                        label: '體外索 (Ext)',
+                        data: dataExt,
+                        backgroundColor: 'rgba(245, 158, 11, 0.6)', // Amber transparent
+                        borderColor: '#d97706',
+                        borderWidth: 1
+                    },
+                    {
+                        type: 'line',
+                        label: '總預力包絡 (Total)',
+                        data: state.segments.map(s => s.totalTf * factor),
+                        borderColor: '#1e293b', // Slate 800
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        tension: 0.3,
+                        fill: false
+                    }
+                ]
+            };
+
+            if (chartInst) {
+                chartInst.data = data;
+                chartInst.options.scales.y.title.text = `預力值 Force (${state.unit})`;
+                chartInst.update();
+            } else {
+                chartInst = new Chart(ctx, {
+                    type: 'bar', // Mixed type base
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: {
+                                title: { display: true, text: '節段編號 (Segment ID)' },
+                                grid: { display: false }
+                            },
+                            y: {
+                                title: { display: true, text: `預力值 Force (${state.unit})` },
+                                stacked: true // Stacks bars, lines overlay
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    footer: (items) => {
+                                        // Find total line value
+                                        const tot = items.find(i => i.dataset.label.includes('Total'));
+                                        return tot ? `總計: ${Math.round(tot.raw).toLocaleString()} ${state.unit}` : '';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function renderDeadLoadTable() {
+            const tbody = document.getElementById('deadLoadTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            DEAD_LOAD_DATA.forEach(data => {
+                const tr = document.createElement('tr');
+
+                // Check if this is a special segment (合龍段 - segment 13)
+                const segment = state.segments.find(s => s.id === data.id);
+                if (segment && segment.type === 'special') {
+                    tr.className = 'highlight-row';
+                }
+
+                tr.innerHTML = `
+                    <td class="font-bold text-slate-600 border-r border-white">#${data.id}</td>
+                    <td class="text-center text-purple-600 font-bold border-r border-white">${data.node}</td>
+                    <td class="text-center text-green-600 font-bold border-r border-white">${data.area.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="text-center text-green-600 font-bold border-r border-white">${data.length.toFixed(2)}</td>
+                    <td class="text-center text-green-600 font-bold">${data.deadLoad.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderBendingMomentChart() {
+            const ctx = document.getElementById('bendingMomentChart');
+            if (!ctx) return;
+
+            const labels = state.segments.map(s => `#${s.id}`);
+            const data = state.segments.map(s => {
+                const stressData = STRESS_BLOCK_DATA[s.id] || { Mn: 0 };
+                return stressData.Mn;
+            });
+
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    type: 'line',
+                    label: '彎矩承載力 (tf·m)',
+                    data: data,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 2,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1,
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
+
+            if (bendingMomentChartInst) {
+                bendingMomentChartInst.data = chartData;
+                bendingMomentChartInst.update();
+            } else {
+                bendingMomentChartInst = new Chart(ctx, {
+                    type: 'line',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: '橋梁縱向節段 (Segment)',
+                                    font: { size: 12, weight: 'bold' }
+                                },
+                                grid: { display: true, color: 'rgba(203, 213, 225, 0.2)' }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '彎矩承載力 (tf·m)',
+                                    font: { size: 12, weight: 'bold' }
+                                },
+                                beginAtZero: true,
+                                grid: { color: 'rgba(203, 213, 225, 0.3)' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                                padding: 12,
+                                titleFont: { size: 12, weight: 'bold' },
+                                bodyFont: { size: 11 },
+                                callbacks: {
+                                    label: (context) => {
+                                        return `彎矩: ${context.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tf·m`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        } init();
+    </script>
+</body>
+
+</html>
