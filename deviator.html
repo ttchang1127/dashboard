@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外置預力轉向塊三維設計計算器 (Three.js 版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 使用 Import Map 引入 Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: "Noto Sans TC", sans-serif; background-color: #f3f4f6; }
+        .input-group label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; }
+        .input-group input { width: 100%; border-radius: 0.375rem; border: 1px solid #d1d5db; padding: 0.5rem; font-size: 0.875rem; }
+        .input-group input:focus { border-color: #3b82f6; outline: none; ring: 2px solid #93c5fd; }
+        .result-card { background: white; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #3b82f6; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .status-pass { color: #059669; font-weight: bold; }
+        .status-fail { color: #dc2626; font-weight: bold; }
+        
+        /* 3D Container Style */
+        #container3D {
+            width: 100%;
+            height: 500px;
+            background-color: #f0f0f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+        #gui-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            pointer-events: none;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
+        .legend-color { width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Header -->
+        <div class="col-span-1 lg:col-span-12 mb-2">
+            <h1 class="text-2xl font-bold text-gray-800">外置預力轉向塊三維設計計算器</h1>
+            <p class="text-gray-600 text-sm mt-1">
+                依據文檔第十章設計：採用簡化分析及壓拉桿模式 (STM)。<br>
+                <span class="text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs">視覺化：顯示各軸分力與幾何夾角 (左鍵旋轉 / 右鍵平移 / 滾輪縮放)</span>
+            </p>
+        </div>
+
+        <!-- Input Section (Left Column) -->
+        <div class="col-span-1 lg:col-span-4 bg-white p-6 rounded-lg shadow-md space-y-6 h-fit max-h-screen overflow-y-auto">
+            <h2 class="text-lg font-semibold border-b pb-2 mb-4 text-gray-700">1. 設計參數輸入</h2>
+            
+            <!-- Prestressing Force -->
+            <div class="input-group">
+                <label>單束預力筋張拉力 (P)</label>
+                <div class="flex items-center">
+                    <input type="number" id="forceP" value="300" step="10">
+                    <span class="ml-2 text-gray-500 text-sm">tf</span>
+                </div>
+            </div>
+
+            <!-- 3D Geometry Angles -->
+            <div class="space-y-4">
+                <h3 class="text-md font-medium text-gray-700 border-l-4 border-blue-500 pl-2">豎向幾何 (X-Y 平面)</h3>
+                <p class="text-xs text-gray-400">定義預力索在立面圖上的投影角 (與X軸夾角，正值為開口向上)</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="input-group">
+                        <label>左側豎向角 (α<sub>vL</sub>)</label>
+                        <div class="flex items-center">
+                            <input type="number" id="angleVL" value="15" step="0.1">
+                            <span class="ml-1 text-gray-500 text-sm">°</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>右側豎向角 (α<sub>vR</sub>)</label>
+                        <div class="flex items-center">
+                            <input type="number" id="angleVR" value="15" step="0.1">
+                            <span class="ml-1 text-gray-500 text-sm">°</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-md font-medium text-gray-700 border-l-4 border-green-500 pl-2 mt-4">橫向幾何 (X-Z 平面)</h3>
+                <p class="text-xs text-gray-400">定義預力索在平面圖上的投影角 (與X軸夾角，正值為向外凸出)</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="input-group">
+                        <label>左側水平角 (α<sub>hL</sub>)</label>
+                        <div class="flex items-center">
+                            <input type="number" id="angleHL" value="5" step="0.1">
+                            <span class="ml-1 text-gray-500 text-sm">°</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>右側水平角 (α<sub>hR</sub>)</label>
+                        <div class="flex items-center">
+                            <input type="number" id="angleHR" value="5" step="0.1">
+                            <span class="ml-1 text-gray-500 text-sm">°</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Material Properties -->
+            <h3 class="text-md font-medium text-gray-700 mt-4 border-t pt-4">材料性質</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="input-group">
+                    <label>混凝土 (f'<sub>c</sub>)</label>
+                    <div class="flex items-center">
+                        <input type="number" id="fc" value="500" step="10">
+                        <span class="ml-1 text-gray-500 text-xs">kgf/cm²</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>鋼筋 (f<sub>y</sub>)</label>
+                    <div class="flex items-center">
+                        <input type="number" id="fy" value="4200" step="100">
+                        <span class="ml-1 text-gray-500 text-xs">kgf/cm²</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reinforcement Design -->
+            <h3 class="text-md font-medium text-gray-700 mt-2">配筋設計</h3>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="input-group">
+                    <label>尺寸</label>
+                    <select id="barSize" class="w-full border p-2 rounded bg-white text-sm">
+                        <option value="127">D13</option>
+                        <option value="198">D16</option>
+                        <option value="287">D19</option>
+                        <option value="387">D22</option>
+                        <option value="507" selected>D25</option>
+                        <option value="647">D29</option>
+                        <option value="794">D32</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>肢數(n)</label>
+                    <input type="number" id="legs" value="4" step="1">
+                </div>
+                <div class="input-group">
+                    <label>總數</label>
+                    <input type="number" id="totalBars" value="8" step="1">
+                </div>
+            </div>
+            
+            <!-- Geometry for Bearing -->
+             <h3 class="text-md font-medium text-gray-700 mt-2">承壓幾何</h3>
+             <div class="grid grid-cols-2 gap-3">
+                 <div class="input-group">
+                     <label>轉向半徑(R)</label>
+                     <div class="flex items-center">
+                         <input type="number" id="radiusR" value="3.5" step="0.1">
+                         <span class="ml-1 text-gray-500 text-xs">m</span>
+                     </div>
+                 </div>
+                 <div class="input-group">
+                     <label>管道外徑(D)</label>
+                     <div class="flex items-center">
+                         <input type="number" id="ductDia" value="160" step="5">
+                         <span class="ml-1 text-gray-500 text-xs">mm</span>
+                     </div>
+                 </div>
+             </div>
+
+            <button id="calcBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg mt-2 transition duration-200">
+                執行計算並更新 3D
+            </button>
+        </div>
+
+        <!-- Output Section (Right Column) -->
+        <div class="col-span-1 lg:col-span-8 space-y-6">
+            
+            <!-- 3D Visualization Canvas -->
+            <div class="bg-white p-2 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold border-b pb-2 mb-2 px-4 pt-2 text-gray-700">3. 3D 空間模擬 (Three.js)</h2>
+                <div id="container3D">
+                    <div id="gui-overlay">
+                        <div class="font-bold border-b mb-2 pb-1">受力圖例</div>
+                        <div class="legend-item"><div class="legend-color bg-gray-600"></div><span id="overlay-fd" class="font-bold">合力 Fd: 0.0 tf</span></div>
+                        <div class="legend-item"><div class="legend-color bg-red-500"></div><span id="overlay-fx">縱向 Fx: 0.0 tf</span></div>
+                        <div class="legend-item"><div class="legend-color bg-green-500"></div><span id="overlay-fy">豎向 Fy: 0.0 tf</span></div>
+                        <div class="legend-item"><div class="legend-color bg-blue-500"></div><span id="overlay-fz">橫向 Fz: 0.0 tf</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculation Results -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold border-b pb-2 mb-4 text-gray-700">2. 受力分析結果</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Force Vector Result -->
+                    <div class="space-y-4">
+                        <div class="result-card bg-blue-50 border-blue-500">
+                            <div class="text-sm text-gray-500">空間合力大小 (Resultant Force F<sub>d</sub>)</div>
+                            <div class="flex justify-between items-end">
+                                <span class="text-3xl font-bold text-gray-800" id="resFd">0.0 tf</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div class="p-2 bg-gray-50 rounded border">
+                                <div class="text-xs text-gray-500">縱向力 F<sub>x</sub></div>
+                                <div class="font-bold text-gray-700" id="resFx">0.0</div>
+                                <div class="text-[10px] text-gray-400">不平衡力</div>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded border border-blue-200">
+                                <div class="text-xs text-blue-600 font-bold">豎向力 F<sub>y</sub></div>
+                                <div class="font-bold text-gray-700" id="resFy">0.0</div>
+                                <div class="text-[10px] text-gray-400">主要承載</div>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded border border-green-200">
+                                <div class="text-xs text-green-600 font-bold">橫向力 F<sub>z</sub></div>
+                                <div class="font-bold text-gray-700" id="resFz">0.0</div>
+                                <div class="text-[10px] text-gray-400">水平擠壓</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Check Results -->
+                    <div class="space-y-4">
+                         <div class="result-card border-l-amber-500">
+                            <div class="text-sm text-gray-500">極限設計拉力 (F<sub>u</sub> = 1.7 × F<sub>d</sub>)</div>
+                            <div class="text-2xl font-bold text-gray-800" id="resFu">0.0 tf</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="block text-gray-500">需求鋼筋 A<sub>s,req</sub></span>
+                                <span class="font-bold text-gray-800 text-lg" id="resAsReq">0</span> <span class="text-xs">mm²</span>
+                            </div>
+                            <div>
+                                <span class="block text-gray-500">提供鋼筋 A<sub>s,prov</sub></span>
+                                <span class="font-bold text-gray-800 text-lg" id="resAsProv">0</span> <span class="text-xs">mm²</span>
+                            </div>
+                        </div>
+
+                        <div class="p-2 rounded bg-gray-50 border text-sm">
+                            <div class="flex justify-between mb-1">
+                                <span>配筋檢核:</span>
+                                <span id="statusTie" class="status-fail">計算中</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>局部承壓:</span>
+                                <span id="statusBearing" class="status-fail">計算中</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Script (Module) -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- Global Variables for 3D ---
+        let scene, camera, renderer, controls;
+        let tendonMesh, blockMesh;
+        let arrows = []; // Store arrow helpers
+        let textSprites = []; // Store text sprites
+        const container = document.getElementById('container3D');
+
+        // --- 1. Initialization 3D ---
+        function init3D() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f0f0);
+            
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(4, 3, 5); 
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // Controls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 10, 7);
+            scene.add(dirLight);
+
+            // Helpers
+            const gridHelper = new THREE.GridHelper(10, 10, 0xcccccc, 0xe5e5e5);
+            scene.add(gridHelper);
+            
+            // Axes Helper (small one at origin)
+            const axesHelper = new THREE.AxesHelper(1);
+            scene.add(axesHelper);
+
+            // Objects Placeholder
+            // Block (Concrete)
+            const blockGeo = new THREE.BoxGeometry(1, 0.8, 1);
+            const blockMat = new THREE.MeshLambertMaterial({ color: 0x9ca3af, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+            blockMesh = new THREE.Mesh(blockGeo, blockMat);
+            blockMesh.position.y = 0.4; // Sit on grid
+            scene.add(blockMesh);
+
+            // Rebar Cage (Wireframe)
+            const cageGeo = new THREE.BoxGeometry(0.8, 0.6, 0.8);
+            const cageEdges = new THREE.EdgesGeometry(cageGeo);
+            const cageHelper = new THREE.LineSegments(cageEdges, new THREE.LineBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.5 }));
+            cageHelper.position.y = 0.4;
+            scene.add(cageHelper);
+
+            // Initial Calculate
+            calculateAndUpdate();
+
+            // Loop
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // --- Helper: Create Text Sprite ---
+        function createTextSprite(message, colorStr, scale = 0.015) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const fontSize = 48;
+            ctx.font = `bold ${fontSize}px Arial`;
+            
+            // Measure text
+            const metrics = ctx.measureText(message);
+            const textWidth = metrics.width;
+            
+            // Resize canvas
+            canvas.width = textWidth + 20;
+            canvas.height = fontSize + 20;
+            
+            // Background (optional, making it transparent or semi-white)
+            ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+            ctx.roundRect(0, 0, canvas.width, canvas.height, 10);
+            ctx.fill();
+
+            // Text
+            ctx.font = `bold ${fontSize}px Arial`; // Reset font after resize
+            ctx.fillStyle = colorStr;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, depthTest: false, depthWrite: false });
+            const sprite = new THREE.Sprite(material);
+            
+            // Scale sprite based on text width to keep aspect ratio
+            sprite.scale.set(canvas.width * scale, canvas.height * scale, 1);
+            
+            return sprite;
+        }
+
+        // --- 2. Calculation & Update Logic ---
+        function calculateAndUpdate() {
+            // 2.1 Get Inputs
+            const P = parseFloat(document.getElementById('forceP').value);
+            
+            const angVL = parseFloat(document.getElementById('angleVL').value);
+            const angVR = parseFloat(document.getElementById('angleVR').value);
+            
+            const angHL = parseFloat(document.getElementById('angleHL').value);
+            const angHR = parseFloat(document.getElementById('angleHR').value);
+            
+            const fc = parseFloat(document.getElementById('fc').value);
+            const fy = parseFloat(document.getElementById('fy').value);
+            
+            const barArea = parseFloat(document.getElementById('barSize').value);
+            const legs = parseFloat(document.getElementById('legs').value);
+            const totalBars = parseFloat(document.getElementById('totalBars').value);
+            
+            const R = parseFloat(document.getElementById('radiusR').value);
+            const D = parseFloat(document.getElementById('ductDia').value);
+
+            // 2.2 Vector Math
+            const rVL = angVL * Math.PI / 180;
+            const rVR = angVR * Math.PI / 180;
+            const rHL = angHL * Math.PI / 180;
+            const rHR = angHR * Math.PI / 180;
+
+            // Unit Vectors
+            const vLx = -1;
+            const vLy = Math.tan(rVL);
+            const vLz = Math.tan(rHL);
+            const magL = Math.sqrt(vLx*vLx + vLy*vLy + vLz*vLz);
+            const uLx = vLx / magL;
+            const uLy = vLy / magL;
+            const uLz = vLz / magL;
+
+            const vRx = 1;
+            const vRy = Math.tan(rVR);
+            const vRz = Math.tan(rHR);
+            const magR = Math.sqrt(vRx*vRx + vRy*vRy + vRz*vRz);
+            const uRx = vRx / magR;
+            const uRy = vRy / magR;
+            const uRz = vRz / magR;
+
+            const Fx = P * (uLx + uRx);
+            const Fy = P * (uLy + uRy);
+            const Fz = P * (uLz + uRz);
+            const Fd = Math.sqrt(Fx*Fx + Fy*Fy + Fz*Fz);
+
+            // 2.3 UI Update (Text Panel)
+            document.getElementById('resFd').innerText = Fd.toFixed(1) + " tf";
+            document.getElementById('resFx').innerText = Math.abs(Fx).toFixed(1) + " tf";
+            document.getElementById('resFy').innerText = Fy.toFixed(1) + " tf";
+            document.getElementById('resFz').innerText = Fz.toFixed(1) + " tf";
+            
+            // 2.4 Update Overlay Legend
+            document.getElementById('overlay-fd').innerText = `合力 Fd: ${Fd.toFixed(1)} tf`;
+            document.getElementById('overlay-fx').innerText = `縱向 Fx: ${Math.abs(Fx).toFixed(1)} tf`;
+            document.getElementById('overlay-fy').innerText = `豎向 Fy: ${Fy.toFixed(1)} tf`;
+            document.getElementById('overlay-fz').innerText = `橫向 Fz: ${Fz.toFixed(1)} tf`;
+
+            const Fu = 1.7 * Fd;
+            document.getElementById('resFu').innerText = Fu.toFixed(1) + " tf";
+            
+            const Fu_kgf = Fu * 1000;
+            const AsReq = (Fu_kgf / fy) * 100;
+            const AsProv = barArea * legs * totalBars;
+            
+            document.getElementById('resAsReq').innerText = Math.ceil(AsReq);
+            document.getElementById('resAsProv').innerText = Math.ceil(AsProv);
+
+            const tieEl = document.getElementById('statusTie');
+            if (AsProv >= AsReq) {
+                tieEl.innerText = "合格 (" + ((AsReq/AsProv)*100).toFixed(0) + "%)";
+                tieEl.className = "status-pass";
+            } else {
+                tieEl.innerText = "不合格";
+                tieEl.className = "status-fail";
+            }
+
+            const dotProd = uLx*uRx + uLy*uRy + uLz*uRz;
+            const totalAngleRad = Math.acos(Math.max(-1, Math.min(1, dotProd)));
+            const arcLen = R * 1000 * totalAngleRad;
+            const bearArea_cm2 = (D * arcLen) / 100;
+            const bearStress = Fu_kgf / bearArea_cm2;
+            const allowBear = 0.6 * fc;
+
+            const bearEl = document.getElementById('statusBearing');
+            if (bearStress <= allowBear) {
+                bearEl.innerText = "合格 (" + bearStress.toFixed(0) + ")";
+                bearEl.className = "status-pass";
+            } else {
+                bearEl.innerText = "注意 (" + bearStress.toFixed(0) + ")";
+                bearEl.className = "status-fail";
+            }
+
+            // --- 3. Update 3D Geometry ---
+            update3DVisuals(uLx, uLy, uLz, uRx, uRy, uRz, Fx, Fy, Fz, Fd, angVL, angVR, angHL, angHR);
+        }
+
+        function update3DVisuals(uLx, uLy, uLz, uRx, uRy, uRz, Fx, Fy, Fz, Fd, angVL, angVR, angHL, angHR) {
+            // Remove old visual elements
+            if (tendonMesh) scene.remove(tendonMesh);
+            arrows.forEach(a => scene.remove(a));
+            arrows = [];
+            textSprites.forEach(s => scene.remove(s));
+            textSprites = [];
+
+            const center = new THREE.Vector3(0, 0.4, 0);
+
+            // 1. Tendon Curve
+            const p1 = new THREE.Vector3(uLx * 1.5, uLy * 1.5, uLz * 1.5).add(center);
+            const p2 = new THREE.Vector3(uRx * 1.5, uRy * 1.5, uRz * 1.5).add(center);
+            const curve = new THREE.QuadraticBezierCurve3(p1, new THREE.Vector3(0, 0.2, 0).add(center), p2); 
+            const tubeGeo = new THREE.TubeGeometry(curve, 20, 0.05, 8, false);
+            const tubeMat = new THREE.MeshLambertMaterial({ color: 0x1f2937 });
+            tendonMesh = new THREE.Mesh(tubeGeo, tubeMat);
+            scene.add(tendonMesh);
+
+            // 2. Angle Text Sprites (Small Text)
+            // Left Label
+            const leftLabelPos = p1.clone().add(new THREE.Vector3(0, 0.2, 0));
+            const leftSprite = createTextSprite(`L: αv=${angVL}°, αh=${angHL}°`, '#1f2937', 0.008);
+            leftSprite.position.copy(leftLabelPos);
+            scene.add(leftSprite);
+            textSprites.push(leftSprite);
+
+            // Right Label
+            const rightLabelPos = p2.clone().add(new THREE.Vector3(0, 0.2, 0));
+            const rightSprite = createTextSprite(`R: αv=${angVR}°, αh=${angHR}°`, '#1f2937', 0.008);
+            rightSprite.position.copy(rightLabelPos);
+            scene.add(rightSprite);
+            textSprites.push(rightSprite);
+
+
+            // 3. Force Arrows and Labels
+            const scaleLen = 1.5; 
+            
+            const forces = [
+                { vec: new THREE.Vector3(Fx, Fy, Fz), color: 0x4b5563, val: Fd, label: "Fd", isMain: true },
+                { vec: new THREE.Vector3(Fx, 0, 0), color: 0xef4444, val: Math.abs(Fx), label: "Fx" },
+                { vec: new THREE.Vector3(0, Fy, 0), color: 0x22c55e, val: Fy, label: "Fy" },
+                { vec: new THREE.Vector3(0, 0, Fz), color: 0x3b82f6, val: Fz, label: "Fz" }
+            ];
+
+            forces.forEach(f => {
+                if (f.val > 0.1) {
+                    const dir = f.vec.clone().normalize();
+                    const len = Math.min(f.val / 50, 2.5) + 0.5; 
+                    
+                    const arrow = new THREE.ArrowHelper(dir, center, len, f.color, 0.25, 0.2);
+                    scene.add(arrow);
+                    arrows.push(arrow);
+
+                    const tipPos = center.clone().add(dir.multiplyScalar(len + 0.2));
+                    const sprite = createTextSprite(`${f.label}: ${f.val.toFixed(1)}`, '#' + new THREE.Color(f.color).getHexString());
+                    sprite.position.copy(tipPos);
+                    scene.add(sprite);
+                    textSprites.push(sprite);
+                }
+            });
+        }
+
+        // --- Event Listeners ---
+        window.addEventListener('resize', () => {
+            if (!camera || !renderer) return;
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('change', calculateAndUpdate);
+        });
+        document.getElementById('calcBtn').addEventListener('click', calculateAndUpdate);
+
+        // Start
+        init3D();
+
+    </script>
+</body>
+</html>
