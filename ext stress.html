@@ -791,6 +791,128 @@
                                 </div>
                             </div>
 
+                            <!-- 載重輸入區塊 -->
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <!-- 靜載重版塊 -->
+                                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+                                    <h4 class="text-sm font-bold text-slate-700 mb-3 border-l-4 border-green-500 pl-2">
+                                        靜載重版塊 (Dead Load)</h4>
+
+                                    <div class="space-y-3">
+                                        <!-- Bridge Self-Weight -->
+                                        <div class="bg-slate-50 p-3 rounded">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <span class="text-xs text-slate-600">橋梁全長自重</span>
+                                                <span class="text-sm font-bold text-slate-800">2030.82 tf</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs text-slate-600">橋梁自重 (w)</span>
+                                                <span class="text-sm font-bold text-slate-800">35.94 tf/m</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Additional Load Input -->
+                                        <div class="flex items-center justify-between">
+                                            <label class="text-xs text-slate-600">附加載重 (AC+管線+護欄)</label>
+                                            <div class="flex items-center gap-2">
+                                                <input type="number" id="dl-additional-tab4-3"
+                                                    class="w-20 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-green-500"
+                                                    value="3.5" step="0.1" min="0"
+                                                    oninput="syncDeadLoadInput(this.value)">
+                                                <span class="text-xs text-slate-500">tf/m</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Result -->
+                                        <div class="bg-gray-100 p-4 rounded text-center mt-2">
+                                            <div class="text-xs text-slate-500 mb-1">靜載重彎矩 M_DL</div>
+                                            <div class="text-2xl font-bold text-gray-800 font-mono"
+                                                id="val-m-dl-tab4-3">
+                                                --</div>
+                                            <div class="text-xs text-slate-400 mt-1">(w_self + w_add) * L² / 8</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 車輛載重版塊 -->
+                                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+                                    <h4 class="text-sm font-bold text-slate-700 mb-3 border-l-4 border-blue-500 pl-2">
+                                        車輛載重版塊 (Live Load)</h4>
+
+                                    <div class="space-y-3">
+                                        <!-- Base Values -->
+                                        <div class="bg-slate-50 p-3 rounded">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <span class="text-xs text-slate-600">橋梁載重彎矩</span>
+                                                <span class="text-sm font-bold text-slate-800">499 tf·m</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs text-slate-600">端點剪力</span>
+                                                <span class="text-sm font-bold text-slate-800">49 tf</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Sliders -->
+                                        <div class="space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <label class="text-xs text-slate-600">衝擊係數 (IM)</label>
+                                                <div class="flex items-center gap-2 flex-1 ml-3">
+                                                    <input type="range" id="ll-impact-slider-tab4-3"
+                                                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                                                        min="0" max="0.3" step="0.01" value="0.3"
+                                                        oninput="syncLiveLoadSlider('impact', this.value)">
+                                                    <span
+                                                        class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                        id="val-ll-impact-tab4-3">0.3</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <label class="text-xs text-slate-600">超載係數 (OL)</label>
+                                                <div class="flex items-center gap-2 flex-1 ml-3">
+                                                    <input type="range" id="ll-overload-slider-tab4-3"
+                                                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                                                        min="0" max="0.3" step="0.01" value="0.3"
+                                                        oninput="syncLiveLoadSlider('overload', this.value)">
+                                                    <span
+                                                        class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                        id="val-ll-overload-tab4-3">0.3</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <label class="text-xs text-slate-600">車道數 (Lanes)</label>
+                                                <div class="flex items-center gap-2 flex-1 ml-3">
+                                                    <input type="range" id="ll-lanes-slider-tab4-3"
+                                                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                                                        min="1" max="4" step="1" value="4"
+                                                        oninput="syncLiveLoadSlider('lanes', this.value)">
+                                                    <span
+                                                        class="font-mono text-xs w-8 text-right font-bold text-blue-600"
+                                                        id="val-ll-lanes-tab4-3">4</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between pt-1">
+                                                <label class="text-xs text-slate-600">多車道折減係數</label>
+                                                <select id="ll-reduction-select-tab4-3"
+                                                    class="text-xs px-2 py-1 border border-slate-300 rounded bg-white focus:outline-none focus:border-blue-500"
+                                                    onchange="syncLiveLoadReduction(this.value)">
+                                                    <option value="1.0" selected>100% (1-2車道)</option>
+                                                    <option value="0.9">90% (3車道)</option>
+                                                    <option value="0.75">75% (4+車道)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Result -->
+                                        <div class="bg-blue-50 p-4 rounded text-center mt-3 border border-blue-100">
+                                            <div class="text-xs text-blue-500 mb-1">車輛載重彎矩 M_LL</div>
+                                            <div class="text-2xl font-bold text-blue-800 font-mono"
+                                                id="val-m-ll-tab4-3">--</div>
+                                            <div class="text-xs text-blue-400 mt-1">M × (1+IM) × (1+OL) × Red × N</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="overflow-x-auto">
                                 <table class="w-full border-collapse text-xs">
                                     <thead>
@@ -1525,9 +1647,10 @@
 
         // 同步靜載重附加載重輸入
         function syncDeadLoadInput(value) {
-            // 更新兩個分頁的輸入框
+            // 更新三個分頁的輸入框
             document.getElementById('dl-additional').value = value;
             document.getElementById('dl-additional-tab4').value = value;
+            document.getElementById('dl-additional-tab4-3').value = value;
             // 觸發計算更新
             updateDeadLoad();
         }
@@ -1539,19 +1662,25 @@
             if (type === 'impact') {
                 document.getElementById('ll-impact-slider').value = numValue;
                 document.getElementById('ll-impact-slider-tab4').value = numValue;
+                document.getElementById('ll-impact-slider-tab4-3').value = numValue;
                 document.getElementById('val-ll-impact').innerText = numValue;
                 document.getElementById('val-ll-impact-tab4').innerText = numValue;
+                document.getElementById('val-ll-impact-tab4-3').innerText = numValue;
             } else if (type === 'overload') {
                 document.getElementById('ll-overload-slider').value = numValue;
                 document.getElementById('ll-overload-slider-tab4').value = numValue;
+                document.getElementById('ll-overload-slider-tab4-3').value = numValue;
                 document.getElementById('val-ll-overload').innerText = numValue;
                 document.getElementById('val-ll-overload-tab4').innerText = numValue;
+                document.getElementById('val-ll-overload-tab4-3').innerText = numValue;
             } else if (type === 'lanes') {
                 const intValue = parseInt(value);
                 document.getElementById('ll-lanes-slider').value = intValue;
                 document.getElementById('ll-lanes-slider-tab4').value = intValue;
+                document.getElementById('ll-lanes-slider-tab4-3').value = intValue;
                 document.getElementById('val-ll-lanes').innerText = intValue;
                 document.getElementById('val-ll-lanes-tab4').innerText = intValue;
+                document.getElementById('val-ll-lanes-tab4-3').innerText = intValue;
             }
 
             // 觸發計算更新
@@ -1562,6 +1691,7 @@
         function syncLiveLoadReduction(value) {
             document.getElementById('ll-reduction-select').value = value;
             document.getElementById('ll-reduction-select-tab4').value = value;
+            document.getElementById('ll-reduction-select-tab4-3').value = value;
             // 觸發計算更新
             updateLiveLoad();
         }
@@ -1593,10 +1723,16 @@
             // Update Tab 2 display
             document.getElementById('val-m-dl').innerText = formattedValue + ' tf·m';
 
-            // Update Tab 4 synchronized display
+            // Update Tab 4 Sub-tab 2 synchronized display
             const tab4Element = document.getElementById('val-m-dl-tab4');
             if (tab4Element) {
                 tab4Element.innerText = formattedValue;
+            }
+
+            // Update Tab 4 Sub-tab 3 synchronized display
+            const tab4_3Element = document.getElementById('val-m-dl-tab4-3');
+            if (tab4_3Element) {
+                tab4_3Element.innerText = formattedValue;
             }
 
             // Update segment moment table if tab 2
@@ -1629,10 +1765,16 @@
             // Update Tab 2 display
             document.getElementById('val-m-ll').innerText = formattedValue + ' tf·m';
 
-            // Update Tab 4 synchronized display
+            // Update Tab 4 Sub-tab 2 synchronized display
             const tab4Element = document.getElementById('val-m-ll-tab4');
             if (tab4Element) {
                 tab4Element.innerText = formattedValue;
+            }
+
+            // Update Tab 4 Sub-tab 3 synchronized display
+            const tab4_3Element = document.getElementById('val-m-ll-tab4-3');
+            if (tab4_3Element) {
+                tab4_3Element.innerText = formattedValue;
             }
 
             // Update segment moment table if tab 2
