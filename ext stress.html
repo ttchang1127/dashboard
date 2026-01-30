@@ -169,6 +169,64 @@
                 opacity: 1;
             }
         }
+
+        /* Custom Amber Slider for Tab 5 */
+        input[type=range].slider-amber {
+            -webkit-appearance: none;
+            /* Override default CSS styles */
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #fcd34d;
+            /* amber-300 */
+            border-radius: 9999px;
+            cursor: pointer;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        input[type=range].slider-amber:focus {
+            outline: none;
+        }
+
+        /* Webkit Thumb */
+        input[type=range].slider-amber::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #d97706;
+            /* amber-600 */
+            border: 2px solid #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            margin-top: -6px;
+            /* center thumb */
+            transition: transform 0.1s ease, background-color 0.1s;
+        }
+
+        input[type=range].slider-amber:active::-webkit-slider-thumb {
+            transform: scale(1.1);
+            background: #b45309;
+            /* amber-700 */
+        }
+
+        /* Mozilla Thumb */
+        input[type=range].slider-amber::-moz-range-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #d97706;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.1s ease, background-color 0.1s;
+        }
+
+        input[type=range].slider-amber::-moz-range-progress {
+            background-color: #d97706;
+            height: 6px;
+            border-radius: 9999px;
+        }
     </style>
 </head>
 
@@ -985,50 +1043,208 @@
             <div id="tab-content-5" class="tab-content-wrapper hidden">
                 <div id="tab-content-5-inner" class="tab-content space-y-6">
 
-                    <!-- External Reinforcement Control -->
-                    <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-amber-500 max-w-md">
+                    <!-- External Prestress Geometry Configuration -->
+                    <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-amber-500">
                         <div class="flex justify-between items-center mb-3">
-                            <h3 class="text-sm font-bold text-amber-800">體外加固設定</h3>
-                            <span class="text-xs text-amber-500 bg-amber-50 px-2 py-1 rounded">可調整</span>
+                            <h3 class="text-sm font-bold text-amber-800">外置預力幾何</h3>
+                            <span class="text-xs text-amber-500 bg-amber-50 px-2 py-1 rounded">幾何配置</span>
                         </div>
-                        <div class="space-y-4 text-sm">
-                            <div class="flex items-center justify-between">
-                                <label class="text-xs text-slate-500">加固束數:</label>
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="updateExtStrands(-2)"
-                                        class="w-7 h-7 bg-slate-100 rounded text-xs hover:bg-slate-200">-</button>
-                                    <span id="extStrandCount"
-                                        class="font-bold text-amber-600 text-lg w-6 text-center">6</span>
-                                    <button onclick="updateExtStrands(2)"
-                                        class="w-7 h-7 bg-slate-100 rounded text-xs hover:bg-slate-200">+</button>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 錨碇區設定 -->
+                            <div class="border border-slate-200 rounded-lg p-3 bg-slate-50">
+                                <h4 class="text-xs font-bold text-slate-700 mb-3">錨碇區設定 (從梁深度頂部起算)</h4>
+
+                                <div class="space-y-3">
+                                    <!-- Force Input -->
+                                    <div class="border-b border-slate-200 pb-3 mb-3">
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">外置預力力量 (P)</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" id="ext-force-input"
+                                                class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500 font-mono text-amber-700 font-bold"
+                                                value="500" step="10" oninput="updateExtForceTf(this.value)">
+                                            <span class="text-xs text-slate-500 font-bold">tf</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 滑動端 -->
+                                    <div>
+                                        <label class="block text-xs text-slate-600 mb-1">滑動端 (X = 0 m, N1)</label>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-xs text-slate-500">梁深度位置 Y:</span>
+                                            <input type="number" id="anchorage-sliding-y"
+                                                class="w-20 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500"
+                                                value="40" min="0" max="278" step="1"
+                                                oninput="updateAnchorageY('sliding', this.value, 'input')">
+                                            <span class="text-xs text-slate-500">cm</span>
+                                        </div>
+                                        <input type="range" id="anchorage-sliding-y-slider" class="slider-amber" min="0"
+                                            max="278" step="1" value="40"
+                                            oninput="updateAnchorageY('sliding', this.value, 'slider')">
+                                    </div>
+
+                                    <!-- 鉸接端 -->
+                                    <div>
+                                        <label class="block text-xs text-slate-600 mb-1">鉸接端 (X = 56.5 m, N30)</label>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-xs text-slate-500">梁深度位置 Y:</span>
+                                            <input type="number" id="anchorage-hinged-y"
+                                                class="w-20 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500"
+                                                value="40" min="0" max="278" step="1"
+                                                oninput="updateAnchorageY('hinged', this.value, 'input')">
+                                            <span class="text-xs text-slate-500">cm</span>
+                                        </div>
+                                        <input type="range" id="anchorage-hinged-y-slider" class="slider-amber" min="0"
+                                            max="278" step="1" value="40"
+                                            oninput="updateAnchorageY('hinged', this.value, 'slider')">
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <label class="block text-xs text-slate-500 mb-1">單束力 (kN):</label>
-                                <input type="range" id="extForce" min="100" max="300" value="200"
-                                    class="w-full h-1 bg-amber-200 rounded-lg appearance-none cursor-pointer">
-                                <div class="text-right text-xs text-amber-700 font-bold" id="extForceVal">200 kN</div>
-                            </div>
-                            <div class="pt-2 border-t border-slate-100">
-                                <label class="block text-xs text-slate-500 mb-1">體外索總力:</label>
-                                <div class="flex justify-between font-mono font-bold text-sm">
-                                    <span id="extTotalKn" class="text-slate-600">-- kN</span>
-                                    <span id="extTotalTf" class="text-amber-600">-- tf</span>
+
+                            <!-- 轉向塊設定 -->
+                            <div class="border border-slate-200 rounded-lg p-3 bg-slate-50">
+                                <h4 class="text-xs font-bold text-slate-700 mb-3">轉向塊設定 (垂直位置貼齊梁底)</h4>
+
+                                <div class="space-y-3">
+                                    <!-- 轉向塊數量 -->
+                                    <div>
+                                        <label class="block text-xs text-slate-600 mb-1">轉向塊數量</label>
+                                        <select id="deviation-block-count"
+                                            class="text-sm px-3 py-1 border border-slate-300 rounded bg-white focus:outline-none focus:border-amber-500"
+                                            onchange="updateDeviationBlockCount(this.value)">
+                                            <option value="1">1 個</option>
+                                            <option value="2" selected>2 個</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 轉向塊1 -->
+                                    <div>
+                                        <label class="block text-xs text-slate-600 mb-1">轉向塊 1</label>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-xs text-slate-500">水平位置 X:</span>
+                                            <input type="number" id="deviation-block-1-x"
+                                                class="w-24 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500"
+                                                value="14.125" min="0" max="28.25" step="0.001"
+                                                oninput="updateDeviationBlockX(1, this.value, 'input')">
+                                            <span class="text-xs text-slate-500">m</span>
+                                        </div>
+                                        <input type="range" id="deviation-block-1-x-slider" class="slider-amber" min="0"
+                                            max="28.25" step="0.001" value="14.125"
+                                            oninput="updateDeviationBlockX(1, this.value, 'slider')">
+                                        <div class="flex gap-2 mt-2">
+                                            <button
+                                                class="px-2 py-1 text-xs bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
+                                                onclick="updateDeviationBlockX(1, 14.125, 'button')">L/4</button>
+                                            <button
+                                                class="px-2 py-1 text-xs bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
+                                                onclick="updateDeviationBlockX(1, 18.833, 'button')">L/3</button>
+                                            <button
+                                                class="px-2 py-1 text-xs bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
+                                                onclick="updateDeviationBlockX(1, 28.25, 'button')">L/2</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- 轉向塊2 -->
+                                    <div id="deviation-block-2-container">
+                                        <label class="block text-xs text-slate-600 mb-1">轉向塊 2</label>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-xs text-slate-500">水平位置 X:</span>
+                                            <input type="number" id="deviation-block-2-x"
+                                                class="w-24 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500"
+                                                value="42.375" min="28.25" max="56.5" step="0.001"
+                                                oninput="updateDeviationBlockX(2, this.value, 'input')">
+                                            <span class="text-xs text-slate-500">m</span>
+                                        </div>
+                                        <input type="range" id="deviation-block-2-x-slider" class="slider-amber"
+                                            min="28.25" max="56.5" step="0.001" value="42.375"
+                                            oninput="updateDeviationBlockX(2, this.value, 'slider')">
+                                        <div class="flex gap-2 mt-2">
+                                            <button
+                                                class="px-2 py-1 text-xs bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
+                                                onclick="updateDeviationBlockX(2, 37.667, 'button')">2L/3</button>
+                                            <button
+                                                class="px-2 py-1 text-xs bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
+                                                onclick="updateDeviationBlockX(2, 42.375, 'button')">3L/4</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Block -->
+                    <div class="mt-4 border border-slate-200 rounded-lg p-3 bg-white">
+                        <h4 class="text-xs font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">外置預力分力計算結果
+                            (Components)</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-600">
+                                        <th class="border border-slate-200 p-2">位置 (Location)</th>
+                                        <th class="border border-slate-200 p-2">軸向壓力 (Axial Comp.)</th>
+                                        <th class="border border-slate-200 p-2">垂直分力 (Vertical Shear/Lift)</th>
+                                        <th class="border border-slate-200 p-2 text-left pl-3">說明 (Notes)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-slate-700">
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="border border-slate-200 p-2 font-bold">錨錠區 N1</td>
+                                        <td class="border border-slate-200 p-2 text-blue-600 font-mono font-bold"
+                                            id="res-n1-axial">-- tf</td>
+                                        <td class="border border-slate-200 p-2 text-red-600 font-mono font-bold"
+                                            id="res-n1-shear">-- tf</td>
+                                        <td class="border border-slate-200 p-2 text-left pl-3 text-slate-500">向下剪力 (Down
+                                            Shear)</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="border border-slate-200 p-2 font-bold">錨錠區 N30</td>
+                                        <td class="border border-slate-200 p-2 text-blue-600 font-mono font-bold"
+                                            id="res-n30-axial">-- tf</td>
+                                        <td class="border border-slate-200 p-2 text-red-600 font-mono font-bold"
+                                            id="res-n30-shear">-- tf</td>
+                                        <td class="border border-slate-200 p-2 text-left pl-3 text-slate-500">向下剪力 (Down
+                                            Shear)</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="border border-slate-200 p-2 font-bold">轉向塊 1</td>
+                                        <td class="border border-slate-200 p-2 text-slate-300">-</td>
+                                        <td class="border border-slate-200 p-2 text-green-600 font-mono font-bold"
+                                            id="res-b1-lift">-- tf</td>
+                                        <td class="border border-slate-200 p-2 text-left pl-3 text-slate-500">向上上抬
+                                            (Upward Lift)</td>
+                                    </tr>
+                                    <tr id="res-row-between-blocks" class="hover:bg-slate-50 bg-amber-50">
+                                        <td class="border border-slate-200 p-2 font-bold text-amber-800">轉向塊間 (B1-B2)
+                                        </td>
+                                        <td class="border border-slate-200 p-2 text-blue-600 font-mono font-bold"
+                                            id="res-between-axial">-- tf</td>
+                                        <td class="border border-slate-200 p-2 text-slate-400">0 tf</td>
+                                        <td class="border border-slate-200 p-2 text-left pl-3 text-slate-500">純軸向壓力
+                                            (Pure Axial)</td>
+                                    </tr>
+                                    <tr id="res-row-b2" class="hover:bg-slate-50">
+                                        <td class="border border-slate-200 p-2 font-bold">轉向塊 2</td>
+                                        <td class="border border-slate-200 p-2 text-slate-300">-</td>
+                                        <td class="border border-slate-200 p-2 text-green-600 font-mono font-bold"
+                                            id="res-b2-lift">-- tf</td>
+                                        <td class="border border-slate-200 p-2 text-left pl-3 text-slate-500">向上上抬
+                                            (Upward Lift)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
                     <!-- Profile Canvas 2 (With Ext) -->
                     <div>
                         <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-amber-500 pl-2">縱向節段佈置圖
-                            (含體外索)</h3>
+                            (含外置預力)</h3>
                         <div class="overflow-x-auto -mx-5 px-5">
                             <canvas id="profileCanvas2" width="1200" height="200"
                                 class="canvas-drawing min-w-full"></canvas>
                         </div>
                         <div class="flex justify-center space-x-4 mt-1 text-xs text-slate-500">
-                            <span class="flex items-center"><span class="w-3 h-1 bg-red-500 mr-1"></span> 體外索</span>
+                            <span class="flex items-center"><span class="w-3 h-1 bg-red-500 mr-1"></span> 外置預力</span>
                             <span class="flex items-center"><span class="w-2 h-2 bg-slate-700 mr-1"></span> 轉向塊</span>
                         </div>
                     </div>
@@ -1036,28 +1252,63 @@
                     <!-- Data Table with Ext Force -->
                     <div class="overflow-hidden">
                         <div class="flex justify-between items-end mb-2">
-                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">各節段預力數據表 (含體外索)
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">各節段外置預力數據表
                             </h3>
-                            <span class="text-xs text-slate-400" id="tableUnitLabel3">單位: tf</span>
+                            <span class="text-xs text-slate-400" id="tableUnitLabel3">單位: tf, cm</span>
                         </div>
                         <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-200 rounded">
                             <table class="w-full data-table">
                                 <thead class="sticky top-0 z-10 shadow-sm">
                                     <tr>
-                                        <th rowspan="2" class="bg-slate-100">節段 #</th>
-                                        <th rowspan="2" class="bg-slate-100">長度 (m)</th>
-                                        <th colspan="3" class="bg-slate-200 border-b border-white">預力值 (Force)</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-blue-50 text-blue-700">原橋體內 (Internal)</th>
-                                        <th class="bg-amber-50 text-amber-700">體外索 (Ext)</th>
-                                        <th class="bg-slate-600 text-white">總計 (Total)</th>
+                                        <th class="bg-slate-100 p-2 border-r border-white">節段 #</th>
+                                        <th class="bg-slate-100 p-2 border-r border-white">對應節點 (Node)</th>
+                                        <th class="bg-slate-100 p-2 border-r border-white">長度 (m)</th>
+                                        <th class="bg-amber-50 p-2 border-r border-white text-amber-900 font-bold">外置預力
+                                            (Force) <span class="text-xs block font-normal">(tf)</span></th>
+                                        <th class="bg-slate-200 p-2 border-r border-white text-slate-700 font-bold">
+                                            外置預力位置(從頂部) <span class="text-xs block font-normal">(cm)</span></th>
+                                        <th class="bg-green-50 p-2 border-r border-white text-green-900 font-bold">
+                                            外置預力偏心矩 (ep_ext) <span class="text-xs block font-normal">(cm)</span></th>
+                                        <th class="bg-blue-50 p-2 border-r border-white text-blue-900 font-bold">
+                                            外置預力有效彎矩 (Meff_ext) <span class="text-xs block font-normal">(tf-m)</span>
+                                        </th>
+                                        <th class="bg-cyan-50 p-2 border-r border-white text-cyan-900 font-bold">
+                                            上緣外置彎矩應力 (fm_ext,top)
+                                            <span class="text-xs block font-normal">(kgf/cm²)</span>
+                                        </th>
+                                        <th class="bg-cyan-100 p-2 border-r border-white text-cyan-900 font-bold">
+                                            下緣外置彎矩應力 (fm_ext,bot)
+                                            <span class="text-xs block font-normal">(kgf/cm²)</span>
+                                        </th>
+                                        <th class="bg-purple-50 p-2 border-r border-white text-purple-900 font-bold">
+                                            外置預力軸向應力 (faxial_ext)
+                                            <span class="text-xs block font-normal">(kgf/cm²)</span>
+                                        </th>
+                                        <th class="bg-indigo-50 p-2 border-r border-white text-indigo-900 font-bold">
+                                            梁上緣外置有效應力 (feff,top_ext)
+                                            <span class="text-xs block font-normal">(kgf/cm²)</span>
+                                        </th>
+                                        <th class="bg-indigo-100 p-2 text-indigo-900 font-bold">梁下緣外置有效應力 (feff,bot_ext)
+                                            <span class="text-xs block font-normal">(kgf/cm²)</span>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody id="stressTableBody3">
                                     <!-- Generated -->
                                 </tbody>
                             </table>
+                            <div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded text-sm text-slate-600">
+                                <h4 class="font-bold text-slate-800 mb-2">欄位說明：</h4>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li><strong>外置預力偏心矩 ep_ext</strong> = 外置預力位置(從頂部) - Y_top</li>
+                                    <li><strong>外置預力有效彎矩 Meff_ext</strong> = Force * ep_ext / 100</li>
+                                    <li><strong>上緣外置彎矩應力 fm_ext,top</strong> = -1 * Meff_ext / Stop</li>
+                                    <li><strong>下緣外置彎矩應力 fm_ext,bot</strong> = Meff_ext / Sbot</li>
+                                    <li><strong>外置預力軸向應力 faxial_ext</strong> = Force / Area</li>
+                                    <li><strong>梁上緣外置有效應力 feff,top_ext</strong> = fm_ext,top + faxial_ext</li>
+                                    <li><strong>梁下緣外置有效應力 feff,bot_ext</strong> = fm_ext,bot + faxial_ext</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -1161,7 +1412,26 @@
             segments: [],
             nodes: [], // x positions for drawing
             M_DL: 0, // 靜載重彎矩 (tf·m) - from Tab 2
-            M_LL: 0  // 車輛載重彎矩 (tf·m) - from Tab 2
+            M_LL: 0,  // 車輛載重彎矩 (tf·m) - from Tab 2
+            // External Prestress Geometry State
+            extGeometry: {
+                forceTf: 500,
+                anchorage: {
+                    sliding: { x: 0, y: 40 },      // cm from top (X fixed at 0)
+                    hinged: { x: 56.5, y: 40 }     // cm from top (X fixed at 56.5)
+                },
+                deviationBlocks: {
+                    count: 2,
+                    blocks: [
+                        { x: 14.125, y: 278 }, // Block 1 (Y will be calculated as beam depth)
+                        { x: 42.375, y: 278 }  // Block 2
+                    ]
+                }
+            },
+            extResults: {
+                n1_axial: 0,
+                n30_axial: 0
+            }
         };
 
         let chartInst = null;
@@ -1176,7 +1446,7 @@
             // Initial Draw
             drawProfile(1, false); // Tab 1: No Ext (基本資訊)
             drawProfile(3, false); // Tab 3: Basic profile (預力配置)
-            drawProfile(2, true);  // Tab 4: With Ext (加固分析圖表)
+            drawProfile2();  // Tab 5: With Ext (外置預力幾何)
             drawSectionDiagram(); // Tab 3: Section diagram
             // Initialize design loads calculations for Tab 2
             updateDeadLoad();
@@ -1231,7 +1501,12 @@
             // Draw profile if tab 5 (External Reinforcement)
             if (tabId === 5) {
                 setTimeout(() => {
-                    drawProfile(2, true);
+                    // Draw profile if tab 5 (External Reinforcement)
+                    if (tabId === 5) {
+                        setTimeout(() => {
+                            drawProfile2();
+                        }, 400);
+                    }
                 }, 400);
             }
 
@@ -1346,13 +1621,7 @@
         }
 
         function addListeners() {
-            document.getElementById('extForce').addEventListener('input', (e) => {
-                state.extForcePerStrandKn = parseFloat(e.target.value);
-                document.getElementById('extForceVal').innerText = state.extForcePerStrandKn + ' kN';
-                updateCalculations();
-            });
-
-            // Tab 2 Listeners (Design Loads) - 使用同步函數確保與Tab 4連動
+            // Tab 2 Listeners (Design Loads)
             document.getElementById('dl-additional').addEventListener('input', (e) => {
                 syncDeadLoadInput(e.target.value);
             });
@@ -1371,6 +1640,335 @@
                     syncDeadLoadInput(e.target.value);
                 });
             }
+        }
+
+        // --- External Prestress Geometry Handlers ---
+
+        function updateAnchorageY(type, value, source) {
+            value = parseFloat(value);
+            if (isNaN(value)) return;
+
+            // Limit range check (0-278)
+            if (value < 0) value = 0;
+            if (value > 278) value = 278;
+
+            if (type === 'sliding') {
+                state.extGeometry.anchorage.sliding.y = value;
+                // Sync UI
+                if (source !== 'input') {
+                    const el = document.getElementById('anchorage-sliding-y');
+                    if (el) el.value = value;
+                }
+                if (source !== 'slider') {
+                    const slider = document.getElementById('anchorage-sliding-y-slider');
+                    if (slider) slider.value = value;
+                }
+            } else if (type === 'hinged') {
+                state.extGeometry.anchorage.hinged.y = value;
+                // Sync UI
+                if (source !== 'input') {
+                    const el = document.getElementById('anchorage-hinged-y');
+                    if (el) el.value = value;
+                }
+                if (source !== 'slider') {
+                    const slider = document.getElementById('anchorage-hinged-y-slider');
+                    if (slider) slider.value = value;
+                }
+            }
+            drawProfile2(); // Trigger redraw
+        }
+
+        function updateDeviationBlockCount(value) {
+            const count = parseInt(value);
+            state.extGeometry.deviationBlocks.count = count;
+
+            // Toggle visibility of Block 2 input
+            const block2Container = document.getElementById('deviation-block-2-container');
+            if (count === 2) {
+                block2Container.classList.remove('hidden');
+            } else {
+                block2Container.classList.add('hidden');
+            }
+            drawProfile2(); // Trigger redraw
+        }
+
+        function updateDeviationBlockX(blockNum, value, source) {
+            value = parseFloat(value);
+            if (isNaN(value)) return;
+
+            // Block 1: 0 - 28.25
+            // Block 2: 28.25 - 56.5
+
+            if (blockNum === 1) {
+                if (value < 0) value = 0;
+                if (value > 28.25) value = 28.25;
+                state.extGeometry.deviationBlocks.blocks[0].x = value;
+
+                if (source !== 'input') {
+                    const el = document.getElementById('deviation-block-1-x');
+                    if (el) el.value = value;
+                }
+                if (source !== 'slider') {
+                    const slider = document.getElementById('deviation-block-1-x-slider');
+                    if (slider) slider.value = value;
+                }
+
+            } else if (blockNum === 2) {
+                if (value < 28.25) value = 28.25;
+                if (value > 56.5) value = 56.5;
+                state.extGeometry.deviationBlocks.blocks[1].x = value;
+
+                if (source !== 'input') {
+                    const el = document.getElementById('deviation-block-2-x');
+                    if (el) el.value = value;
+                }
+                if (source !== 'slider') {
+                    const slider = document.getElementById('deviation-block-2-x-slider');
+                    if (slider) slider.value = value;
+                }
+            }
+            drawProfile2(); // Trigger redraw
+        }
+
+        // --- Calculation Logic for External Forces ---
+        function calculateExtForces() {
+            const P = state.extGeometry.forceTf;
+            const beamDepthM = 2.78; // Fixed beam depth for bottom reference
+
+            // 1. Sliding End (N1, x=0)
+            const n1_x = 0;
+            const n1_y = state.extGeometry.anchorage.sliding.y / 100; // cm -> m
+
+            // Block 1
+            const b1_x = state.extGeometry.deviationBlocks.blocks[0].x;
+            const b1_y = beamDepthM;
+
+            // Segment 1 Vector (N1 -> B1)
+            // Cable pulls N1 towards B1 (Down-Right)
+            // Force on Structure: Compression (Right), Downward Shear (Down)
+            const dx1 = b1_x - n1_x;
+            const dy1 = b1_y - n1_y; // Positive means Down
+            const L1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+
+            // Forces at N1
+            const n1_axial = L1 > 0 ? P * (dx1 / L1) : 0;
+            const n1_shear = L1 > 0 ? P * (dy1 / L1) : 0;
+
+            // 2. Hinged End (N30, x=56.5)
+            const n30_x = 56.5;
+            const n30_y = state.extGeometry.anchorage.hinged.y / 100; // cm -> m
+
+            // Last Block
+            const count = state.extGeometry.deviationBlocks.count;
+            const lastBlock_x = state.extGeometry.deviationBlocks.blocks[count - 1].x;
+            const lastBlock_y = beamDepthM;
+
+            // Vector N30 -> LastBlock (Cable pulls N30 towards LastBlock)
+            // dx is lastBlock - N30 (Negative)
+            const dx_last = lastBlock_x - n30_x;
+            const dy_last = lastBlock_y - n30_y; // Positive (Down)
+            const L_last = Math.sqrt(dx_last * dx_last + dy_last * dy_last);
+
+            // Forces at N30
+            // Axial (Horizontal Comp) -> abs(dx)
+            const n30_axial = L_last > 0 ? P * (Math.abs(dx_last) / L_last) : 0;
+            const n30_shear = L_last > 0 ? P * (dy_last / L_last) : 0;
+
+            // 3. Deviation Blocks Lift
+            // Block 1 Lift
+            // Component from Seg 1: P * (dy1 / L1). This is Downward pull by cable on Anchor. 
+            // On Block, Cable pulls UP towards Anchor. Vertical Comp = P * (b1_y - n1_y) / L1 ?
+            // dy1 = b1_y - n1_y. So P * dy1/L1 is correct magnitude.
+            // Wait, dy1 is positive (down). Lift should be Up.
+            // Force on Block = P * (Vector_to_N1 + Vector_to_Next).
+            // Vector B1->N1: dy = n1_y - b1_y (Negative).
+            // Vertical Force = P * (n1_y - b1_y)/L1. (Negative means Up? No, Force Y usually positive for up?)
+            // Let's settle on Magnitude "Upward Lift".
+            // Lift form Seg 1 = P * (b1_y - n1_y) / L1. (Positive Value).
+
+            let b1_lift = L1 > 0 ? P * (dy1 / L1) : 0;
+            let b2_lift = 0;
+
+            if (count === 1) {
+                // B1 connects to N30
+                // Lift from N30 side: P * (b1_y - n30_y) / L_seg2
+                const dx2 = n30_x - b1_x;
+                const dy2 = n30_y - b1_y; // Negative (Up)
+                const L2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                // Magnitude of Upward Lift
+                b1_lift += L2 > 0 ? P * ((b1_y - n30_y) / L2) : 0;
+            } else {
+                // 2 Blocks. B1 connects to B2 (Horizontal). Lift from Right = 0.
+
+                // Block 2: Connects to B1 (Left, 0 lift) and N30 (Right).
+                // Lift from N30 side: P * (b2_y - n30_y) / L_last
+                // Note dy_last was lastBlock_y - n30_y (Positive).
+                // Lift = P * (b2_y - n30_y) / L_last.
+                const b2_x = state.extGeometry.deviationBlocks.blocks[1].x;
+                const b2_y = beamDepthM;
+                // re-calc L for B2->N30 just to be sure (L_last is same)
+
+                b2_lift = L_last > 0 ? P * ((b2_y - n30_y) / L_last) : 0;
+            }
+
+            // Store results in state for table rendering
+            state.extResults.n1_axial = n1_axial;
+            state.extResults.n30_axial = n30_axial;
+
+            // Update DOM
+            updateResultDOM('res-n1-axial', n1_axial);
+            updateResultDOM('res-n1-shear', n1_shear);
+            updateResultDOM('res-n30-axial', n30_axial);
+            updateResultDOM('res-n30-shear', n30_shear);
+            updateResultDOM('res-b1-lift', b1_lift);
+
+            const b2Row = document.getElementById('res-row-b2');
+            const betweenRow = document.getElementById('res-row-between-blocks');
+
+            if (count === 2) {
+                if (b2Row) b2Row.classList.remove('hidden');
+                if (betweenRow) {
+                    betweenRow.classList.remove('hidden');
+                    updateResultDOM('res-between-axial', P);
+                }
+                updateResultDOM('res-b2-lift', b2_lift);
+            } else {
+                if (b2Row) b2Row.classList.add('hidden');
+                if (betweenRow) betweenRow.classList.add('hidden');
+            }
+
+            // Sync Table
+            renderTable3();
+        }
+
+        function updateResultDOM(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = val.toFixed(2) + ' tf';
+        }
+
+        function updateExtForceTf(val) {
+            state.extGeometry.forceTf = parseFloat(val) || 0;
+            calculateExtForces();
+        }
+
+        // 繪製 Tab 5 的 Profile (含外置預力)
+        function drawProfile2() {
+            calculateExtForces();
+            const canvas = document.getElementById('profileCanvas2');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Scaling
+            const paddingX = 50;
+            const paddingY = 40;
+            const drawWidth = width - 2 * paddingX;
+            const drawHeight = height - 2 * paddingY;
+
+            const scaleX = drawWidth / state.span;
+            const maxDepth = 2.78; // 2.78m
+            const scaleY = 120 / maxDepth; // Scale for depth visualizing
+
+            // Reference Y (Top of beam)
+            const beamTopY = 40;
+            const beamBotY = beamTopY + (maxDepth * scaleY);
+
+            // 1. Draw Beam Outline (Simplified Box)
+            ctx.beginPath();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(paddingX, beamTopY, state.span * scaleX, maxDepth * scaleY);
+
+            // Draw Segments lines
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            let currentX = 0;
+            state.segments.forEach(seg => {
+                currentX += seg.length;
+                if (currentX < state.span) {
+                    const xPos = paddingX + currentX * scaleX;
+                    ctx.moveTo(xPos, beamTopY);
+                    ctx.lineTo(xPos, beamBotY);
+                }
+            });
+            ctx.stroke();
+
+            // 2. Draw Deviation Blocks
+            ctx.fillStyle = '#334155'; // Dark Slate
+            const blockWidthPixel = 0.8 * scaleX; // Approx 0.8m width visually
+            const blockHeightPixel = 20; // Fixed visual height
+
+            const count = state.extGeometry.deviationBlocks.count;
+            const blocks = state.extGeometry.deviationBlocks.blocks;
+
+            // Define deviations points for line drawing
+            const deviationPoints = [];
+
+            for (let i = 0; i < count; i++) {
+                const blockX = blocks[i].x;
+                const xPos = paddingX + blockX * scaleX;
+                const yPos = beamBotY; // Bottom alignment
+
+                // Draw Triangle/Block shape to represent deviator
+                ctx.beginPath();
+                ctx.moveTo(xPos, yPos);
+                ctx.lineTo(xPos - 5, yPos - blockHeightPixel);
+                ctx.lineTo(xPos + 5, yPos - blockHeightPixel);
+                ctx.fill();
+
+                // Save point for line connection (at the "hole" location, slightly above bottom)
+                deviationPoints.push({ x: xPos, y: yPos - (blockHeightPixel / 2) });
+            }
+
+            // 3. Draw External Prestress Line
+            ctx.beginPath();
+            ctx.strokeStyle = '#ef4444'; // Red-500
+            ctx.lineWidth = 3;
+
+            // Sliding End Anchorage
+            const slideAnchY_cm = state.extGeometry.anchorage.sliding.y;
+            const slideAnchX_m = state.extGeometry.anchorage.sliding.x; // 0
+
+            const startX = paddingX + slideAnchX_m * scaleX; // Should be paddingX
+            const startY = beamTopY + (slideAnchY_cm / 100) * scaleY; // Convert cm to m for scaleY
+
+            // Hinged End Anchorage
+            const hingedAnchY_cm = state.extGeometry.anchorage.hinged.y;
+            const hingedAnchX_m = state.extGeometry.anchorage.hinged.x; // 56.5
+
+            const endX = paddingX + hingedAnchX_m * scaleX;
+            const endY = beamTopY + (hingedAnchY_cm / 100) * scaleY;
+
+            // Draw Path: Start -> Deviator 1 -> Deviator 2 (if exists) -> End
+            ctx.moveTo(startX, startY);
+
+            deviationPoints.forEach(pt => {
+                ctx.lineTo(pt.x, pt.y);
+            });
+
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Draw Anchorage Points
+            ctx.fillStyle = '#ef4444';
+            // Start Point Circle
+            ctx.beginPath();
+            ctx.arc(startX, startY, 4, 0, Math.PI * 2);
+            ctx.fill();
+            // End Point Circle
+            ctx.beginPath();
+            ctx.arc(endX, endY, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Labels
+            ctx.fillStyle = '#1e293b';
+            ctx.font = '10px Arial';
+            ctx.fillText(`N1 (Y=${slideAnchY_cm}cm)`, startX + 5, startY - 5);
+            ctx.fillText(`N30 (Y=${hingedAnchY_cm}cm)`, endX - 70, endY - 5);
         }
 
         // 梁上下緣應力計算表格生成函數
@@ -1831,14 +2429,6 @@
             });
         }
 
-        function updateExtStrands(delta) {
-            let val = state.extStrands + delta;
-            if (val < 0) val = 0;
-            state.extStrands = val;
-            document.getElementById('extStrandCount').innerText = val;
-            updateCalculations();
-        }
-
         function toggleUnit(u) {
             state.unit = u;
             document.getElementById('btn-kN').className = u === 'kN' ? "px-2 py-1 bg-blue-600 text-white text-xs rounded" : "px-2 py-1 bg-slate-600 text-slate-300 text-xs rounded hover:bg-slate-500";
@@ -1847,32 +2437,20 @@
         }
 
         function updateCalculations() {
-            const kn_to_tf = 1 / 9.80665;
+            // Update Tab 2 and Tab 4
+            updateDeadLoad();
+            updateLiveLoadVariables();
+            updateLiveLoad();
 
-            // Calc Ext Total
-            const totalExtKn = state.extStrands * state.extForcePerStrandKn;
-            const totalExtTf = totalExtKn * kn_to_tf;
-
-            document.getElementById('extTotalKn').innerText = totalExtKn.toFixed(0) + ' kN';
-            document.getElementById('extTotalTf').innerText = totalExtTf.toFixed(1) + ' tf';
-            document.getElementById('tableUnitLabel1').innerText = `單位: ${state.unit}`;
-
-            // Update Segments
-            state.segments.forEach(seg => {
-                seg.extKn = totalExtKn;
-                seg.totalTf = seg.internalTf + totalExtTf;
-            });
+            // Tab 5 Redraw
+            if (state.currentTab === 5) {
+                drawProfile2();
+            }
 
             renderTable();
             renderChart();
             renderBendingMomentChart();
-            // Redraw profile 2 since Ext force doesn't change geometry but conceptually links
-            drawProfile(2, true);
 
-            // Tab 4 Updates
-            updateDeadLoad();
-            updateLiveLoadVariables();
-            updateLiveLoad();
             renderStressCalcTable(); // 梁上下緣應力計算表格
             renderStressVerifyTable(); // 壓張應力檢核表格
         }
@@ -2069,23 +2647,189 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            const tf_to_kn = 9.80665;
-            const factor = state.unit === 'tf' ? 1 : tf_to_kn;
+            // 1. Identify Blocks' Segments
+            const blocks = state.extGeometry.deviationBlocks.blocks;
+            const count = state.extGeometry.deviationBlocks.count;
+            const b1_x = blocks[0].x;
 
-            state.segments.forEach(seg => {
+            // Find segment containing b1_x (strictly: startX <= b1_x < endX)
+            const b1_seg = state.segments.find(s => b1_x >= s.startX && b1_x < s.endX);
+            const b1_id = b1_seg ? b1_seg.id : -1;
+
+            let b2_id = -1;
+            if (count === 2) {
+                const b2_x = blocks[1].x;
+                const b2_seg = state.segments.find(s => b2_x >= s.startX && b2_x < s.endX);
+                b2_id = b2_seg ? b2_seg.id : -1;
+            }
+
+            // Helper: Y position (cm from top)
+            const getCableY = (x) => {
+                const ancSlideY = state.extGeometry.anchorage.sliding.y;
+                const ancHingeY = state.extGeometry.anchorage.hinged.y;
+                const b1_y = 278; // cm
+
+                if (x <= b1_x) {
+                    if (b1_x === 0) return ancSlideY;
+                    return ancSlideY + (b1_y - ancSlideY) * (x / b1_x);
+                }
+
+                if (count === 2) {
+                    const b2_x = blocks[1].x;
+                    const b2_y = 278;
+                    if (x <= b2_x) return 278; // Horizontal between blocks
+                    if (x >= 56.5) return ancHingeY;
+                    return b2_y + (ancHingeY - b2_y) * ((x - b2_x) / (56.5 - b2_x));
+                } else {
+                    if (x >= 56.5) return ancHingeY;
+                    return b1_y + (ancHingeY - b1_y) * ((x - b1_x) / (56.5 - b1_x));
+                }
+            };
+
+            // Helper: Cable Force (tf) based on Segment ID
+            const getCableForce = (segId) => {
+                const P = state.extGeometry.forceTf;
+                const n1_ax = state.extResults.n1_axial || 0;
+                const n30_ax = state.extResults.n30_axial || 0;
+
+                // Seg #0 is treated as part of Range 1
+                if (segId === 0) return n1_ax;
+
+                // Range 1: N1 ~ Block 1 (Inclusive of Block 1 segment)
+                if (segId <= b1_id) return n1_ax;
+
+                if (count === 2) {
+                    // Range 2: Between B1 and B2
+                    if (segId < b2_id) return P;
+                    return n30_ax;
+                } else {
+                    return n30_ax;
+                }
+            };
+
+            // 1. Row #0 (x=0) used for Node 1 Baseline
+            {
                 const tr = document.createElement('tr');
-                if (seg.type === 'special') tr.className = 'highlight-row';
+                tr.className = 'bg-amber-100 font-bold';
 
-                const intVal = seg.internalTf * factor;
-                const extVal = (seg.extKn * (1 / 9.80665)) * factor;
-                const totVal = seg.totalTf * factor;
+                const f0 = getCableForce(0);
+                const pos0 = state.extGeometry.anchorage.sliding.y; // Position from top
+
+                // Node 3 Props (User Request)
+                const nodeId = 3;
+                const sec = BEAM_SECTIONS.find(s => s.id === nodeId);
+
+                const y_top = sec ? sec.Y_top : 0;
+                // const y_bot = sec ? sec.Y_bot : 0;
+                const area = sec ? sec.Area : 0;
+                const I_val = sec ? sec.I : 0;
+
+                const ep_ext0 = pos0 - y_top;
+                const meff0 = (f0 * ep_ext0) / 100;
+
+                const faxial0 = area > 0 ? (f0 * 1000) / area : 0;
+
+                // Effective Stress Calc
+                // S_top = I/y_top (+), S_bot = I/y_bot (+)
+                // Sign Convention: Compression is Positive (+), Tension is Negative (-)
+                // User requirement: If Meff < 0 (High Cable): Top Comp (*-1 -> +), Bot Tens (No *-1 -> - if Meff/Sbot negative)
+
+                const Stop = (y_top > 0) ? I_val / y_top : 0;
+                const Sbot = (sec && sec.Y_bot) ? I_val / sec.Y_bot : 0; // Sbot Positive
+
+                const faxial_calc = faxial0; // Comp is Positive
+
+                // fm_top: Meff/Stop. If Meff < 0 -> (-). We want Comp (+). So * -1. 
+                const fm_top0 = (Stop !== 0) ? -(meff0 * 100000 / Stop) : 0;
+                // fm_bot: Meff/Sbot. If Meff < 0 -> (-). We want Tens (-). So keep sign.
+                const fm_bot0 = (Sbot !== 0) ? (meff0 * 100000 / Sbot) : 0;
+
+                const feff_top0 = fm_top0 + faxial_calc;
+                const feff_bot0 = fm_bot0 + faxial_calc;
 
                 tr.innerHTML = `
-                    <td class="font-bold text-slate-600 border-r border-slate-200">#${seg.id}</td>
-                    <td class="text-xs text-slate-500 border-r border-slate-200">${seg.length.toFixed(2)}</td>
-                    <td class="col-main border-r border-blue-200">${Math.round(intVal).toLocaleString()}</td>
-                    <td class="col-ext border-r border-amber-200">${Math.round(extVal).toLocaleString()}</td>
-                    <td class="col-tot">${Math.round(totVal).toLocaleString()}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center">#0</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 font-mono text-center">N${nodeId}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-500 font-normal text-center">-</td>
+                    <td class="p-2 border-r border-amber-200 text-amber-700 text-center">${f0.toFixed(2)}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center">${pos0.toFixed(2)}</td>
+                    <td class="p-2 border-r border-green-50 text-green-700 text-center font-bold">${ep_ext0.toFixed(2)}</td>
+                    <td class="p-2 border-r border-blue-100 text-blue-700 text-center font-bold" style="color: ${meff0 >= 0 ? '#2563eb' : '#dc2626'}">${meff0.toFixed(2)}</td>
+                    <td class="p-2 border-r border-cyan-50 text-cyan-700 font-bold text-center" style="color: ${fm_top0 >= 0 ? '#2563eb' : '#dc2626'}">${fm_top0.toFixed(2)}</td>
+                    <td class="p-2 border-r border-cyan-100 text-cyan-900 font-bold text-center" style="color: ${fm_bot0 >= 0 ? '#2563eb' : '#dc2626'}">${fm_bot0.toFixed(2)}</td>
+                    <td class="p-2 border-r border-purple-50 text-purple-700 font-bold text-center">${faxial0.toFixed(2)}</td>
+                    <td class="p-2 border-r border-indigo-50 text-indigo-700 font-bold text-center" style="color: ${feff_top0 >= 0 ? '#2563eb' : '#dc2626'}">${feff_top0.toFixed(2)}</td>
+                    <td class="p-2 text-indigo-900 font-bold text-center" style="color: ${feff_bot0 >= 0 ? '#2563eb' : '#dc2626'}">${feff_bot0.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            // 2. Rows #1 ~ #29
+            // 2. Rows #1 ~ #29
+            state.segments.forEach(seg => {
+                const tr = document.createElement('tr');
+
+                // Determine Row Style & Label
+                let rowClass = seg.type === 'special' ? 'bg-blue-50' : '';
+                let idLabel = `#${seg.id}`;
+
+                if (seg.id === b1_id) {
+                    rowClass = 'bg-orange-100 border-l-4 border-orange-500';
+                    idLabel += ' <span class="text-xs text-orange-700 block font-normal">(轉向塊1)</span>';
+                } else if (seg.id === b2_id) {
+                    rowClass = 'bg-orange-100 border-l-4 border-orange-500';
+                    idLabel += ' <span class="text-xs text-orange-700 block font-normal">(轉向塊2)</span>';
+                }
+
+                tr.className = rowClass;
+
+                const midX = seg.startX + seg.length / 2;
+
+                const force = getCableForce(seg.id);
+                // Seg #29 Position override (Hinged End Y)
+                const pos = (seg.id === 29)
+                    ? state.extGeometry.anchorage.hinged.y
+                    : getCableY(midX);
+
+                // Props
+                const nodeId = getSegmentNode(seg.id);
+                const sec = BEAM_SECTIONS.find(s => s.id === nodeId);
+
+                const y_top = sec ? sec.Y_top : 0;
+                // const y_bot = sec ? sec.Y_bot : 0;
+                const area = sec ? sec.Area : 0;
+                const I_val = sec ? sec.I : 0;
+
+                const ep_ext = pos - y_top;
+                const meff = (force * ep_ext) / 100;
+
+                const faxial = area > 0 ? (force * 1000) / area : 0;
+
+                // Effective Stress Calc
+                const Stop = (y_top > 0) ? I_val / y_top : 0;
+                const Sbot = (sec && sec.Y_bot) ? I_val / sec.Y_bot : 0; // Sbot Positive
+
+                const faxial_calc = faxial; // Comp is Positive
+
+                const fm_top = (Stop !== 0) ? -(meff * 100000 / Stop) : 0;
+                const fm_bot = (Sbot !== 0) ? (meff * 100000 / Sbot) : 0;
+
+                const feff_top = fm_top + faxial_calc;
+                const feff_bot = fm_bot + faxial_calc;
+
+                tr.innerHTML = `
+                    <td class="p-2 border-r border-slate-200 text-slate-700 font-bold text-center align-middle">${idLabel}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center font-mono align-middle">N${nodeId}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-500 text-xs text-center align-middle">${seg.length.toFixed(2)}</td>
+                    <td class="p-2 border-r border-amber-200 text-amber-700 font-bold text-center align-middle">${force.toFixed(2)}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 font-mono text-center align-middle">${pos.toFixed(2)}</td>
+                    <td class="p-2 border-r border-green-50 text-green-700 font-bold text-center align-middle">${ep_ext.toFixed(2)}</td>
+                    <td class="p-2 border-r border-blue-100 text-blue-700 font-bold text-center align-middle" style="color: ${meff >= 0 ? '#2563eb' : '#dc2626'}">${meff.toFixed(2)}</td>
+                    <td class="p-2 border-r border-cyan-50 text-cyan-700 font-bold text-center align-middle" style="color: ${fm_top >= 0 ? '#2563eb' : '#dc2626'}">${fm_top.toFixed(2)}</td>
+                    <td class="p-2 border-r border-cyan-100 text-cyan-900 font-bold text-center align-middle" style="color: ${fm_bot >= 0 ? '#2563eb' : '#dc2626'}">${fm_bot.toFixed(2)}</td>
+                    <td class="p-2 border-r border-purple-50 text-purple-700 font-bold text-center align-middle">${faxial.toFixed(2)}</td>
+                    <td class="p-2 border-r border-indigo-50 text-indigo-700 font-bold text-center align-middle" style="color: ${feff_top >= 0 ? '#2563eb' : '#dc2626'}">${feff_top.toFixed(2)}</td>
+                    <td class="p-2 text-indigo-900 font-bold text-center align-middle" style="color: ${feff_bot >= 0 ? '#2563eb' : '#dc2626'}">${feff_bot.toFixed(2)}</td>
                 `;
                 tbody.appendChild(tr);
             });
