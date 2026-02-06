@@ -282,6 +282,11 @@
                         <span>外置預力配置詳表 (加固圖)</span>
                     </span>
                 </button>
+                <button onclick="switchTab(6)" id="tab-btn-6" class="tab-btn tab-inactive">
+                    <span class="flex items-center">
+                        <span>應力檢核 (加固階段)</span>
+                    </span>
+                </button>
             </div>
 
             <!-- Tab 1 Content (Section Info) -->
@@ -334,9 +339,8 @@
                     <div>
                         <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-green-500 pl-2">縱向節段佈置圖
                             (原橋基礎)</h3>
-                        <div class="overflow-x-auto -mx-5 px-5">
-                            <canvas id="profileCanvas3" width="1200" height="200"
-                                class="canvas-drawing min-w-full"></canvas>
+                        <div class="chart-container" style="height: 200px;">
+                            <canvas id="profileCanvas3"></canvas>
                         </div>
                         <p class="text-xs text-slate-400 mt-1 text-center">僅顯示節段(#)與節點(N)</p>
                     </div>
@@ -483,9 +487,8 @@
                     <div>
                         <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-slate-400 pl-2">縱向節段佈置圖
                             (原橋基礎)</h3>
-                        <div class="overflow-x-auto -mx-5 px-5">
-                            <canvas id="profileCanvas1" width="1200" height="200"
-                                class="canvas-drawing min-w-full"></canvas>
+                        <div class="chart-container" style="height: 200px;">
+                            <canvas id="profileCanvas1"></canvas>
                         </div>
                         <p class="text-xs text-slate-400 mt-1 text-center">僅顯示節段(#)與節點(N)，未繪製體外索</p>
                         <div
@@ -1062,7 +1065,7 @@
                                         <div class="flex items-center gap-2">
                                             <input type="number" id="ext-force-input"
                                                 class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500 font-mono text-amber-700 font-bold"
-                                                value="500" step="10" oninput="updateExtForceTf(this.value)">
+                                                value="2100" step="10" oninput="updateExtForceTf(this.value)">
                                             <span class="text-xs text-slate-500 font-bold">tf</span>
                                         </div>
                                     </div>
@@ -1317,6 +1320,72 @@
                 </div>
             </div>
 
+            <!-- Tab 6 Content (應力檢核-加固階段) -->
+            <div id="tab-content-6" class="tab-content-wrapper hidden">
+                <div id="tab-content-6-inner" class="tab-content space-y-6">
+
+
+
+                    <!-- Section 4: Strengthening Stress Verify Table -->
+                    <div class="overflow-hidden">
+                        <div class="flex justify-between items-end mb-2">
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-purple-500 pl-2">加固應力檢核表
+                            </h3>
+                            <span class="text-xs text-slate-400">單位: kgf/cm²</span>
+                        </div>
+                        <div class="overflow-x-auto border border-slate-200 rounded shadow-sm">
+                            <table class="w-full data-table text-sm">
+                                <thead class="bg-slate-800 text-white sticky top-0 z-10">
+                                    <tr>
+                                        <th rowspan="2" class="p-2 border border-slate-600">節段 #</th>
+                                        <th colspan="2" class="p-2 border border-slate-600 bg-slate-700">總應力 (與分頁4連動)
+                                        </th>
+                                        <th colspan="2" class="p-2 border border-slate-600 bg-amber-700">外置有效應力 (與分頁5連動)
+                                        </th>
+                                        <th colspan="2" class="p-2 border border-slate-600 bg-purple-700">加固後應力
+                                            (kgf/cm²)</th>
+                                        <th colspan="2" class="p-2 border border-slate-600 bg-slate-700">檢核結果</th>
+                                    </tr>
+                                    <tr>
+                                        <!-- Total (Tab 4) -->
+                                        <th class="p-2 border border-slate-600 bg-slate-600 text-xs">上緣<br>ftotal,top
+                                        </th>
+                                        <th class="p-2 border border-slate-600 bg-slate-600 text-xs">下緣<br>ftotal,bot
+                                        </th>
+                                        <!-- Ext (Tab 5) -->
+                                        <th class="p-2 border border-slate-600 bg-amber-600 text-xs">上緣<br>feff,ext,top
+                                        </th>
+                                        <th class="p-2 border border-slate-600 bg-amber-600 text-xs">下緣<br>feff,ext,bot
+                                        </th>
+                                        <!-- Strengthened -->
+                                        <th class="p-2 border border-slate-600 bg-purple-600 text-xs">上緣<br>(Total+Ext)
+                                        </th>
+                                        <th class="p-2 border border-slate-600 bg-purple-600 text-xs">下緣<br>(Total+Ext)
+                                        </th>
+                                        <!-- Check -->
+                                        <th class="p-2 border border-slate-600 bg-slate-600 text-xs">上緣</th>
+                                        <th class="p-2 border border-slate-600 bg-slate-600 text-xs">下緣</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="strengtheningVerifyTableBody">
+                                    <!-- Dynamic Content -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded text-sm text-slate-600">
+                            <p class="mb-2"><strong>檢核說明：</strong></p>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><strong>加固後應力 (上緣)</strong> = 總應力上緣 (Tab 4) + 外置有效應力上緣 (Tab 5)</li>
+                                <li><strong>加固後應力 (下緣)</strong> = 總應力下緣 (Tab 4) + 外置有效應力下緣 (Tab 5)</li>
+                                <li class="mt-2 text-green-700">✓ OK：-14.97 ≤ 應力 ≤ 210.00 kgf/cm²</li>
+                                <li class="text-red-700">✗ NG：應力 < -14.97 或 應力> 210.00 kgf/cm²</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
     </main>
 
     <script>
@@ -1408,7 +1477,7 @@
             M_LL: 0,  // 車輛載重彎矩 (tf·m) - from Tab 2
             // External Prestress Geometry State
             extGeometry: {
-                forceTf: 500,
+                forceTf: 2100,
                 anchorage: {
                     sliding: { x: 0, y: 100 },      // cm from top (X fixed at 0)
                     hinged: { x: 56.5, y: 100 }     // cm from top (X fixed at 56.5)
@@ -1456,13 +1525,14 @@
             const content3 = document.getElementById('tab-content-3');
             const content4 = document.getElementById('tab-content-4');
             const content5 = document.getElementById('tab-content-5');
+            const content6 = document.getElementById('tab-content-6');
 
             // Ensure target is visible before animation logic might hide it
             const targetContent = document.getElementById(`tab-content-${tabId}`);
             if (targetContent) targetContent.classList.remove('hidden');
 
             // Setup fade out for others
-            const allContent = [content1, content2, content3, content4, content5];
+            const allContent = [content1, content2, content3, content4, content5, content6];
             const otherContent = allContent.filter((_, i) => i !== tabId - 1);
 
             // Fade out others
@@ -1484,27 +1554,36 @@
             // Draw profile and tables if tab 2 (Design Loads)
             if (tabId === 2) {
                 setTimeout(() => {
-                    drawProfile(3, false);
+                    drawProfile(3, false); // Canvas 3 (Tab 2)
                     updateDeadLoad();
                     updateLiveLoad();
                     renderSegmentMomentTable();
                 }, 400);
             }
 
-            // Draw profile if tab 5 (External Reinforcement)
-            if (tabId === 5) {
+            // Draw profile if tab 3 (Internal Prestress)
+            if (tabId === 3) {
                 setTimeout(() => {
-                    // Draw profile if tab 5 (External Reinforcement)
-                    if (tabId === 5) {
-                        setTimeout(() => {
-                            drawProfile2();
-                        }, 400);
-                    }
+                    drawProfile(1, false); // Canvas 1 (Tab 3)
                 }, 400);
             }
 
+            // Draw profile if tab 5 (External Reinforcement)
+            if (tabId === 5) {
+                setTimeout(() => {
+                    drawProfile2();
+                }, 400);
+            }
+
+            // Draw profile if tab 6
+            if (tabId === 6) {
+                setTimeout(() => {
+                    renderStrengtheningVerifyTable();
+                }, 100);
+            }
+
             // Toggle Buttons
-            ['tab-btn-1', 'tab-btn-2', 'tab-btn-3', 'tab-btn-4', 'tab-btn-5'].forEach(btnId => {
+            ['tab-btn-1', 'tab-btn-2', 'tab-btn-3', 'tab-btn-4', 'tab-btn-5', 'tab-btn-6'].forEach(btnId => {
                 document.getElementById(btnId).classList.remove('tab-active');
                 document.getElementById(btnId).classList.add('tab-inactive');
             });
@@ -1630,6 +1709,19 @@
                     syncDeadLoadInput(e.target.value);
                 });
             }
+
+            // Window Resize Listener for Responsive Charts
+            window.addEventListener('resize', () => {
+                // Throttle resize
+                if (this.resizeTimeout) clearTimeout(this.resizeTimeout);
+
+                this.resizeTimeout = setTimeout(() => {
+                    if (state.currentTab === 2) drawProfile(3, false); // Tab 2 uses Canvas 3
+                    if (state.currentTab === 3) drawProfile(1, false); // Tab 3 uses Canvas 1
+                    if (state.currentTab === 5) drawProfile2();
+                    if (state.currentTab === 6) renderStrengtheningVerifyTable();
+                }, 100);
+            });
         }
 
         // --- External Prestress Geometry Handlers ---
@@ -1653,6 +1745,11 @@
                     const slider = document.getElementById('anchorage-sliding-y-slider');
                     if (slider) slider.value = value;
                 }
+                // Sync Tab 6 Input
+                if (source !== 'input') {
+                    const el6 = document.getElementById('anchorage-sliding-y-tab6');
+                    if (el6) el6.value = value;
+                }
             } else if (type === 'hinged') {
                 state.extGeometry.anchorage.hinged.y = value;
                 // Sync UI
@@ -1663,6 +1760,11 @@
                 if (source !== 'slider') {
                     const slider = document.getElementById('anchorage-hinged-y-slider');
                     if (slider) slider.value = value;
+                }
+                // Sync Tab 6 Input
+                if (source !== 'input') {
+                    const el6 = document.getElementById('anchorage-hinged-y-tab6');
+                    if (el6) el6.value = value;
                 }
             }
             drawProfile2(); // Trigger redraw
@@ -1829,6 +1931,9 @@
 
             // Sync Table
             renderTable3();
+            if (state.currentTab === 6) {
+                renderStrengtheningVerifyTable();
+            }
         }
 
         function updateResultDOM(id, val) {
@@ -2239,6 +2344,9 @@
             document.getElementById('dl-additional').value = value;
             document.getElementById('dl-additional-tab4').value = value;
             document.getElementById('dl-additional-tab4-3').value = value;
+            const tab6Input = document.getElementById('dl-additional-tab6');
+            if (tab6Input) tab6Input.value = value;
+
             // 觸發計算更新
             updateDeadLoad();
         }
@@ -2269,6 +2377,24 @@
                 document.getElementById('val-ll-lanes').innerText = intValue;
                 document.getElementById('val-ll-lanes-tab4').innerText = intValue;
                 document.getElementById('val-ll-lanes-tab4-3').innerText = intValue;
+
+                const slider6 = document.getElementById('ll-lanes-slider-tab6');
+                if (slider6) slider6.value = intValue;
+                const val6 = document.getElementById('val-ll-lanes-tab6');
+                if (val6) val6.innerText = intValue;
+            }
+
+            // Sync Tab 6 specific sliders if not covered above (impact/overload)
+            if (type === 'impact') {
+                const slider6 = document.getElementById('ll-impact-slider-tab6');
+                if (slider6) slider6.value = numValue;
+                const val6 = document.getElementById('val-ll-impact-tab6');
+                if (val6) val6.innerText = numValue;
+            } else if (type === 'overload') {
+                const slider6 = document.getElementById('ll-overload-slider-tab6');
+                if (slider6) slider6.value = numValue;
+                const val6 = document.getElementById('val-ll-overload-tab6');
+                if (val6) val6.innerText = numValue;
             }
 
             // 觸發計算更新
@@ -2323,6 +2449,12 @@
                 tab4_3Element.innerText = formattedValue;
             }
 
+            // Update Tab 6
+            const tab6Element = document.getElementById('val-m-dl-tab6');
+            if (tab6Element) {
+                tab6Element.innerText = formattedValue;
+            }
+
             // Update segment moment table if tab 2
             if (state.currentTab === 2) {
                 renderSegmentMomentTable();
@@ -2332,6 +2464,11 @@
             if (state.currentTab === 4) {
                 renderStressCalcTable();
                 renderStressVerifyTable();
+            }
+
+            // Update Tab 6 if active
+            if (state.currentTab === 6) {
+                renderStrengtheningVerifyTable();
             }
         }
 
@@ -2365,6 +2502,12 @@
                 tab4_3Element.innerText = formattedValue;
             }
 
+            // Update Tab 6
+            const tab6Element = document.getElementById('val-m-ll-tab6');
+            if (tab6Element) {
+                tab6Element.innerText = formattedValue;
+            }
+
             // Update segment moment table if tab 2
             if (state.currentTab === 2) {
                 renderSegmentMomentTable();
@@ -2374,6 +2517,11 @@
             if (state.currentTab === 4) {
                 renderStressCalcTable();
                 renderStressVerifyTable();
+            }
+
+            // Update Tab 6 if active
+            if (state.currentTab === 6) {
+                renderStrengtheningVerifyTable();
             }
         }
 
@@ -2443,11 +2591,252 @@
 
             renderStressCalcTable(); // 梁上下緣應力計算表格
             renderStressVerifyTable(); // 壓張應力檢核表格
+            renderStrengtheningVerifyTable(); // 加固應力檢核表格
+        }
+
+        function renderStrengtheningVerifyTable() {
+            const tbody = document.getElementById('strengtheningVerifyTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            // 容許應力 (相同標準)
+            const allowable_compression = 210.00;
+            const allowable_tension = -14.97;
+
+            // 1. Get Tab 4 Data Points (Total Stress)
+            // Need to recalculate or access pre-calculated data?
+            // Since we don't store per-segment total stress in state, we re-calc.
+
+            const prestress_tf = INTERNAL_PRESTRESS_TF;
+            const L = state.span;
+
+            // Loads
+            const w_self = 35.94;
+            const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
+            const w_DL = (w_self + w_add) * 8 / (L * L) * state.M_DL / (w_self + w_add); // Just use M_DL from state
+            // Better: M_DL in state is Total Moment.
+            // Segment Moment M(x) calc:
+            // M_DL(x) = M_DL_total * 4 * (x/L) * (1 - x/L) ? Parabolic
+            // Or just re-use formula: w * x/2 * (L-x)
+
+            const w_total_dl = (state.M_DL * 8) / (L * L); // deduce w from M_DL
+            const w_total_ll = (state.M_LL * 8) / (L * L); // deduce w from M_LL
+
+            // 2. Get Tab 5 Data Points (Ext Effective Stress)
+            // Use same logic as renderTable3
+
+            // External Force Prep
+            const blocks = state.extGeometry.deviationBlocks.blocks;
+            const count = state.extGeometry.deviationBlocks.count;
+            const b1_x = blocks[0].x;
+            const b1_seg = state.segments.find(s => b1_x >= s.startX && b1_x < s.endX);
+            const b1_id = b1_seg ? b1_seg.id : -1;
+            let b2_id = -1;
+            if (count === 2) {
+                const b2_x = blocks[1].x;
+                const b2_seg = state.segments.find(s => b2_x >= s.startX && b2_x < s.endX);
+                b2_id = b2_seg ? b2_seg.id : -1;
+            }
+
+            const getUExtY = (x) => {
+                const ancSlideY = state.extGeometry.anchorage.sliding.y;
+                const ancHingeY = state.extGeometry.anchorage.hinged.y;
+                const b_y = 278;
+                if (x <= b1_x) return b1_x === 0 ? ancSlideY : ancSlideY + (b_y - ancSlideY) * (x / b1_x);
+                if (count === 2) {
+                    const b2_x = blocks[1].x;
+                    if (x <= b2_x) return 278;
+                    if (x >= 56.5) return ancHingeY;
+                    return b_y + (ancHingeY - b_y) * ((x - b2_x) / (56.5 - b2_x));
+                } else {
+                    if (x >= 56.5) return ancHingeY;
+                    return b_y + (ancHingeY - b_y) * ((x - b1_x) / (56.5 - b1_x));
+                }
+            };
+
+            const getUExtForce = (segId) => {
+                const P = state.extGeometry.forceTf;
+                const n1_ax = state.extResults.n1_axial || 0;
+                const n30_ax = state.extResults.n30_axial || 0;
+                if (segId === 0) return n1_ax;
+                if (segId <= b1_id) return n1_ax;
+                if (count === 2) {
+                    return (segId < b2_id) ? P : n30_ax;
+                }
+                return n30_ax;
+            }
+
+            // Include Seg #0 logic
+            const allSegs = [...state.segments];
+            // Add pseudo-segment 0 for looping if needed, or just handle #0 separate
+
+            // Defined Nodes Iteration? No, match table 3 / 4 rows
+            // Table should range #0 to #29
+
+            // --- Row #0 ---
+            {
+                // Tab 4 (#0)
+                const nodeId = 3; // Node 3 for Seg 0? Table 4 says Node 3
+                // Actually Tab 4 renderStressVerifyTable Seg 0 uses getSegmentNode(1) -> Node 3
+                const sec = BEAM_SECTIONS.find(s => s.id === 3);
+
+                let int_ftotal_top = 0, int_ftotal_bot = 0;
+                let ext_feff_top = 0, ext_feff_bot = 0;
+
+                // Recalculate #0 Internal
+                if (sec) {
+                    const A = sec.Area; const I = sec.I; const Yt = sec.Y_top; const Yb = sec.Y_bot;
+                    const ep = Yb - 12.5;
+                    const M = (prestress_tf[0] * ep) / 100;
+                    const Stop = I / Yt; const Sbot = I / Yb;
+                    const fa = prestress_tf[0] * 1000 / A;
+                    const fmt = (M > 0 ? -1 : 1) * (Math.abs(M) * 100000 / Stop);
+                    const fmb = (M * 100000 / Sbot);
+                    const feff_t = fa + fmt;
+                    const feff_b = fa + fmb;
+                    // Loads at x=0 are 0
+                    int_ftotal_top = feff_t;
+                    int_ftotal_bot = feff_b;
+                }
+
+                // Recalculate #0 External
+                {
+                    const f0 = getUExtForce(0);
+                    const pos0 = state.extGeometry.anchorage.sliding.y;
+                    const ep_ext = pos0 - sec.Y_top;
+                    const meff = (f0 * ep_ext) / 100;
+                    const fa_ext = (f0 * 1000) / sec.Area;
+
+                    const Stop = sec.I / sec.Y_top;
+                    const Sbot = sec.I / sec.Y_bot;
+
+                    // fm_top: Meff/Stop * (-1 if Meff>0? No, definition: -M/S)
+                    // If Meff (Force*ep) is (+), Moment is (+). Top Comp is (+).
+                    // Formula: sigma = -My/I. 
+                    // My convention: Comp (+).
+                    // Positive Moment => Top Comp (+).
+                    // Wait, in previous code: fm_top = (Meff > 0) ? -(...) : (...) -> This implies Meff>0 gives Tension(-).
+                    // Let's check Tab 4 Logic:
+                    // const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
+                    // If Meff (+) (Sagging), Top should be Comp (+).
+                    // Current code says Meff>0 -> Negative result. Negative is Tension?
+                    // Verify Limit: Tension -14.97. 
+                    // So Code treats (-) as Tension.
+                    // Meff (+) -> Sagging -> Top Compression (+).
+                    // Why does code use -(...)?
+                    // PRESTRESS Moment is Hogging (usually).
+                    // Prestress force at bottom -> Hogging Moment (M < 0).
+                    // Meff calc: Force * ep. ep = Ybot - 12.5 (positive). So Meff is Positive?
+                    // If Meff is positive representing Prestress Moment, it should be Hogging?
+                    // Let's stick to Validated Code Logic in renderTable3:
+                    // const fm_top0 = (Stop !== 0) ? -(meff0 * 100000 / Stop) : 0;
+
+                    const fm_t = -(meff * 100000 / Stop);
+                    const fm_b = (meff * 100000 / Sbot);
+
+                    ext_feff_top = fa_ext + fm_t;
+                    ext_feff_bot = fa_ext + fm_b;
+                }
+
+                createVerifyRow(0, int_ftotal_top, int_ftotal_bot, ext_feff_top, ext_feff_bot);
+            }
+
+            // --- Rows #1~#29 ---
+            state.segments.forEach(seg => {
+                const x = seg.endX;
+                const nodeId = getSegmentNode(seg.id);
+                const sec = BEAM_SECTIONS.find(s => s.id === nodeId);
+                if (!sec) return;
+
+                // Internal Total
+                let int_tot_t = 0, int_tot_b = 0;
+                {
+                    const A = sec.Area; const I = sec.I; const Yt = sec.Y_top; const Yb = sec.Y_bot;
+                    const ep = Yb - 12.5;
+                    const M_p = (prestress_tf[seg.id - 1] * ep) / 100;
+                    const Stop = I / Yt; const Sbot = I / Yb;
+                    const fa = prestress_tf[seg.id - 1] * 1000 / A;
+                    const fmt = (M_p > 0 ? -1 : 1) * (Math.abs(M_p) * 100000 / Stop);
+                    const fmb = (M_p * 100000 / Sbot);
+                    const feff_t = fa + fmt;
+                    const feff_b = fa + fmb;
+
+                    const M_dl = w_total_dl * (x / 2) * (L - x);
+                    const M_ll = w_total_ll * (x / 2) * (L - x);
+
+                    // Loads Moment is Sagging (+). Top Comp (+), Bot Tens (-).
+                    // Code Tab 4: 
+                    // fDL_top = (M * / Stop). Positive. Correct.
+                    // fDL_bot = -(M * / Sbot). Negative. Correct.
+
+                    const fload_t = ((M_dl + M_ll) * 100000 / Stop);
+                    const fload_b = -((M_dl + M_ll) * 100000 / Sbot);
+
+                    int_tot_t = feff_t + fload_t;
+                    int_tot_b = feff_b + fload_b;
+                }
+
+                // External
+                let ext_eff_t = 0, ext_eff_b = 0;
+                {
+                    const midX = seg.startX + seg.length / 2;
+                    const pos = (seg.id === 29) ? state.extGeometry.anchorage.hinged.y : getUExtY(midX); // use midX for avg depth? or endX?
+                    // renderTable3 uses getCableY(midX). 
+                    // Let's match renderTable3 exactly.
+
+                    const force = getUExtForce(seg.id);
+                    const ep_ext = pos - sec.Y_top;
+                    const meff = (force * ep_ext) / 100;
+                    const fa_ext = (force * 1000) / sec.Area;
+                    const Stop = sec.I / sec.Y_top;
+                    const Sbot = sec.I / sec.Y_bot;
+
+                    const fm_t = -(meff * 100000 / Stop);
+                    const fm_b = (meff * 100000 / Sbot);
+
+                    ext_eff_t = fa_ext + fm_t;
+                    ext_eff_b = fa_ext + fm_b;
+                }
+
+                createVerifyRow(seg.id, int_tot_t, int_tot_b, ext_eff_t, ext_eff_b, seg.type);
+            });
+        }
+
+        function createVerifyRow(id, t4_top, t4_bot, t5_top, t5_bot, type = 'standard') {
+            const tbody = document.getElementById('strengtheningVerifyTableBody');
+            const tr = document.createElement('tr');
+            if (type === 'special') tr.className = 'bg-yellow-50';
+            if (id === 0) tr.className = 'bg-amber-50';
+
+            const str_top = t4_top + t5_top;
+            const str_bot = t4_bot + t5_bot;
+
+            const check_top = (str_top >= -14.97 && str_top <= 210.00) ? 'OK' : 'NG';
+            const check_bot = (str_bot >= -14.97 && str_bot <= 210.00) ? 'OK' : 'NG';
+
+            tr.innerHTML = `
+                <td class="p-2 border border-slate-200 text-center font-bold text-slate-700">#${id}</td>
+                <td class="p-2 border border-slate-200 text-right font-mono text-slate-600">${t4_top.toFixed(2)}</td>
+                <td class="p-2 border border-slate-200 text-right font-mono text-slate-600">${t4_bot.toFixed(2)}</td>
+                <td class="p-2 border border-amber-100 text-right font-mono text-amber-700 bg-amber-50">${t5_top.toFixed(2)}</td>
+                <td class="p-2 border border-amber-100 text-right font-mono text-amber-700 bg-amber-50">${t5_bot.toFixed(2)}</td>
+                <td class="p-2 border border-purple-100 text-right font-bold font-mono text-purple-700 bg-purple-50">${str_top.toFixed(2)}</td>
+                <td class="p-2 border border-purple-100 text-right font-bold font-mono text-purple-700 bg-purple-50">${str_bot.toFixed(2)}</td>
+                <td class="p-2 border border-slate-200 text-center font-bold ${check_top === 'OK' ? 'text-green-600' : 'text-red-600'}">${check_top}</td>
+                <td class="p-2 border border-slate-200 text-center font-bold ${check_bot === 'OK' ? 'text-green-600' : 'text-red-600'}">${check_bot}</td>
+             `;
+            tbody.appendChild(tr);
         }
 
         function drawProfile(canvasNum, showExternal) {
             const canvas = document.getElementById(`profileCanvas${canvasNum}`);
             if (!canvas) return;
+
+            // Resize canvas to match display size (High DPI / Full Width)
+            const parent = canvas.parentElement;
+            canvas.width = parent.clientWidth;
+            canvas.height = parent.clientHeight;
+
             const ctx = canvas.getContext('2d');
             const w = canvas.width;
             const h = canvas.height;
