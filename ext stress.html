@@ -279,7 +279,7 @@
                 </button>
                 <button onclick="switchTab(5)" id="tab-btn-5" class="tab-btn tab-inactive">
                     <span class="flex items-center">
-                        <span>加固分析圖表 (加固圖)----建置中</span>
+                        <span>外置預力配置詳表 (加固圖)</span>
                     </span>
                 </button>
             </div>
@@ -1312,14 +1312,7 @@
                         </div>
                     </div>
 
-                    <!-- Chart -->
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-indigo-500 pl-2">預力分佈曲線
-                            (Distribution Curve)</h3>
-                        <div class="chart-container">
-                            <canvas id="prestressChart"></canvas>
-                        </div>
-                    </div>
+
 
                 </div>
             </div>
@@ -1417,8 +1410,8 @@
             extGeometry: {
                 forceTf: 500,
                 anchorage: {
-                    sliding: { x: 0, y: 40 },      // cm from top (X fixed at 0)
-                    hinged: { x: 56.5, y: 40 }     // cm from top (X fixed at 56.5)
+                    sliding: { x: 0, y: 100 },      // cm from top (X fixed at 0)
+                    hinged: { x: 56.5, y: 100 }     // cm from top (X fixed at 56.5)
                 },
                 deviationBlocks: {
                     count: 2,
@@ -1434,7 +1427,7 @@
             }
         };
 
-        let chartInst = null;
+
         let bendingMomentChartInst = null;
 
         // --- Init ---
@@ -1519,10 +1512,7 @@
             document.getElementById(`tab-btn-${tabId}`).classList.remove('tab-inactive');
             document.getElementById(`tab-btn-${tabId}`).classList.add('tab-active');
 
-            // Redraw chart if tab 5 (sometimes chartjs needs resize on show)
-            if (tabId === 5 && chartInst) {
-                chartInst.resize();
-            }
+
 
             // Render section info if tab 1
             if (tabId === 1) {
@@ -2448,7 +2438,7 @@
             }
 
             renderTable();
-            renderChart();
+
             renderBendingMomentChart();
 
             renderStressCalcTable(); // 梁上下緣應力計算表格
@@ -2835,88 +2825,7 @@
             });
         }
 
-        function renderChart() {
-            const ctx = document.getElementById('prestressChart').getContext('2d');
-            const tf_to_kn = 9.80665;
-            const factor = state.unit === 'tf' ? 1 : tf_to_kn;
 
-            const labels = state.segments.map(s => s.id);
-            const dataInt = state.segments.map(s => s.internalTf * factor);
-            const dataExt = state.segments.map(s => (s.extKn * (1 / 9.80665)) * factor);
-
-            const data = {
-                labels: labels,
-                datasets: [
-                    {
-                        type: 'line',
-                        label: '原橋體內 (Internal)',
-                        data: dataInt,
-                        borderColor: '#3b82f6',
-                        backgroundColor: '#3b82f6',
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        tension: 0.3,
-                        fill: false
-                    },
-                    {
-                        type: 'bar',
-                        label: '體外索 (Ext)',
-                        data: dataExt,
-                        backgroundColor: 'rgba(245, 158, 11, 0.6)', // Amber transparent
-                        borderColor: '#d97706',
-                        borderWidth: 1
-                    },
-                    {
-                        type: 'line',
-                        label: '總預力包絡 (Total)',
-                        data: state.segments.map(s => s.totalTf * factor),
-                        borderColor: '#1e293b', // Slate 800
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        pointRadius: 0,
-                        tension: 0.3,
-                        fill: false
-                    }
-                ]
-            };
-
-            if (chartInst) {
-                chartInst.data = data;
-                chartInst.options.scales.y.title.text = `預力值 Force (${state.unit})`;
-                chartInst.update();
-            } else {
-                chartInst = new Chart(ctx, {
-                    type: 'bar', // Mixed type base
-                    data: data,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: { mode: 'index', intersect: false },
-                        scales: {
-                            x: {
-                                title: { display: true, text: '節段編號 (Segment ID)' },
-                                grid: { display: false }
-                            },
-                            y: {
-                                title: { display: true, text: `預力值 Force (${state.unit})` },
-                                stacked: true // Stacks bars, lines overlay
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    footer: (items) => {
-                                        // Find total line value
-                                        const tot = items.find(i => i.dataset.label.includes('Total'));
-                                        return tot ? `總計: ${Math.round(tot.raw).toLocaleString()} ${state.unit}` : '';
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
 
         function renderDeadLoadTable() {
             const tbody = document.getElementById('deadLoadTableBody');
