@@ -871,8 +871,8 @@
                                         <div class="flex items-center gap-2">
                                             <input type="number" id="ext-force-input"
                                                 class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500 font-mono text-amber-700 font-bold"
-                                                value="2100" step="10" oninput="updateExtForceTf(this.value)">
-                                            <span class="text-xs text-slate-500 font-bold">tf</span>
+                                                value="500" step="10" oninput="updateExtForceTf(this.value)">
+                                            <span class="text-xs text-slate-500 font-bold">t</span>
                                         </div>
                                     </div>
 
@@ -892,9 +892,9 @@
                                             oninput="updateAnchorageY('sliding', this.value, 'slider')">
                                     </div>
 
-                                    <!-- 鉸接端 -->
+                                    <!-- 固定端 -->
                                     <div>
-                                        <label class="block text-xs text-slate-600 mb-1">鉸接端 (X = 56.5 m, N30)</label>
+                                        <label class="block text-xs text-slate-600 mb-1">固定端 (X = 56.5 m, N30)</label>
                                         <div class="flex items-center gap-2 mb-1">
                                             <span class="text-xs text-slate-500">梁深度位置 Y:</span>
                                             <input type="number" id="anchorage-hinged-y"
@@ -1061,7 +1061,7 @@
                     <!-- Data Table with Ext Force -->
                     <div class="overflow-hidden">
                         <div class="flex justify-between items-end mb-2">
-                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">各節段外置預力數據表
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">各節點外置預力數據表
                             </h3>
                             <span class="text-xs text-slate-400" id="tableUnitLabel3">單位: tf, cm</span>
                         </div>
@@ -1069,9 +1069,11 @@
                             <table class="w-full data-table">
                                 <thead class="sticky top-0 z-10 shadow-sm">
                                     <tr>
+                                        <th class="bg-slate-100 p-2 border-r border-white">節點 (Node)</th>
                                         <th class="bg-slate-100 p-2 border-r border-white">節段 #</th>
-                                        <th class="bg-slate-100 p-2 border-r border-white">對應節點 (Node)</th>
+                                        <th class="bg-slate-100 p-2 border-r border-white">斷面</th>
                                         <th class="bg-slate-100 p-2 border-r border-white">長度 (m)</th>
+                                        <th class="bg-slate-100 p-2 border-r border-white">距離 (Dist.) (m)</th>
                                         <th class="bg-amber-50 p-2 border-r border-white text-amber-900 font-bold">外置預力
                                             (Force) <span class="text-xs block font-normal">(tf)</span></th>
                                         <th class="bg-slate-200 p-2 border-r border-white text-slate-700 font-bold">
@@ -1399,7 +1401,7 @@
             M_LL: 0,  // 車輛載重彎矩 (tf·m) - from Tab 2
             // External Prestress Geometry State
             extGeometry: {
-                forceTf: 2100,
+                forceTf: 500,
                 anchorage: {
                     sliding: { x: 0, y: 100 },      // cm from top (X fixed at 0)
                     hinged: { x: 56.5, y: 100 }     // cm from top (X fixed at 56.5)
@@ -1430,6 +1432,7 @@
             // Initial Draw
             drawProfile(1, false); // Tab 1: No Ext (基本資訊)
             drawProfile(3, false); // Tab 3: Basic profile (預力配置)
+            calculateExtForces(); // Initialize external force calculations
             drawProfile2();  // Tab 5: With Ext (外置預力幾何)
             drawSectionDiagram(); // Tab 3: Section diagram
             // Initialize design loads calculations for Tab 2
@@ -1494,6 +1497,7 @@
             // Draw profile if tab 5 (External Reinforcement)
             if (tabId === 4) {
                 setTimeout(() => {
+                    calculateExtForces(); // Update forces and table
                     drawProfile2();
                 }, 400);
             }
@@ -1698,6 +1702,7 @@
                     if (el6) el6.value = value;
                 }
             }
+            calculateExtForces(); // Update external forces and table
             drawProfile2(); // Trigger redraw
         }
 
@@ -1712,6 +1717,7 @@
             } else {
                 block2Container.classList.add('hidden');
             }
+            calculateExtForces(); // Update external forces and table
             drawProfile2(); // Trigger redraw
         }
 
@@ -1750,6 +1756,7 @@
                     if (slider) slider.value = value;
                 }
             }
+            calculateExtForces(); // Update external forces and table
             drawProfile2(); // Trigger redraw
         }
 
@@ -3262,62 +3269,7 @@
                 }
             };
 
-            // 1. Row #0 (x=0) used for Node 1 Baseline
-            {
-                const tr = document.createElement('tr');
-                tr.className = 'bg-amber-100 font-bold';
-
-                const f0 = getCableForce(0);
-                const pos0 = state.extGeometry.anchorage.sliding.y; // Position from top
-
-                // Node 3 Props (User Request)
-                const nodeId = 3;
-                const sec = BEAM_SECTIONS.find(s => s.id === nodeId);
-
-                const y_top = sec ? sec.Y_top : 0;
-                // const y_bot = sec ? sec.Y_bot : 0;
-                const area = sec ? sec.Area : 0;
-                const I_val = sec ? sec.I : 0;
-
-                const ep_ext0 = pos0 - y_top;
-                const meff0 = (f0 * ep_ext0) / 100;
-
-                const faxial0 = area > 0 ? (f0 * 1000) / area : 0;
-
-                // Effective Stress Calc
-                // S_top = I/y_top (+), S_bot = I/y_bot (+)
-                // Sign Convention: Compression is Positive (+), Tension is Negative (-)
-                // User requirement: If Meff < 0 (High Cable): Top Comp (*-1 -> +), Bot Tens (No *-1 -> - if Meff/Sbot negative)
-
-                const Stop = (y_top > 0) ? I_val / y_top : 0;
-                const Sbot = (sec && sec.Y_bot) ? I_val / sec.Y_bot : 0; // Sbot Positive
-
-                const faxial_calc = faxial0; // Comp is Positive
-
-                // fm_top: Meff/Stop. If Meff < 0 -> (-). We want Comp (+). So * -1. 
-                const fm_top0 = (Stop !== 0) ? -(meff0 * 100000 / Stop) : 0;
-                // fm_bot: Meff/Sbot. If Meff < 0 -> (-). We want Tens (-). So keep sign.
-                const fm_bot0 = (Sbot !== 0) ? (meff0 * 100000 / Sbot) : 0;
-
-                const feff_top0 = fm_top0 + faxial_calc;
-                const feff_bot0 = fm_bot0 + faxial_calc;
-
-                tr.innerHTML = `
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center">#0</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 font-mono text-center">N${nodeId}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-500 font-normal text-center">-</td>
-                    <td class="p-2 border-r border-amber-200 text-amber-700 text-center">${f0.toFixed(2)}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center">${pos0.toFixed(2)}</td>
-                    <td class="p-2 border-r border-green-50 text-green-700 text-center font-bold">${ep_ext0.toFixed(2)}</td>
-                    <td class="p-2 border-r border-blue-100 text-blue-700 text-center font-bold" style="color: ${meff0 >= 0 ? '#2563eb' : '#dc2626'}">${meff0.toFixed(2)}</td>
-                    <td class="p-2 border-r border-cyan-50 text-cyan-700 font-bold text-center" style="color: ${fm_top0 >= 0 ? '#2563eb' : '#dc2626'}">${fm_top0.toFixed(2)}</td>
-                    <td class="p-2 border-r border-cyan-100 text-cyan-900 font-bold text-center" style="color: ${fm_bot0 >= 0 ? '#2563eb' : '#dc2626'}">${fm_bot0.toFixed(2)}</td>
-                    <td class="p-2 border-r border-purple-50 text-purple-700 font-bold text-center">${faxial0.toFixed(2)}</td>
-                    <td class="p-2 border-r border-indigo-50 text-indigo-700 font-bold text-center" style="color: ${feff_top0 >= 0 ? '#2563eb' : '#dc2626'}">${feff_top0.toFixed(2)}</td>
-                    <td class="p-2 text-indigo-900 font-bold text-center" style="color: ${feff_bot0 >= 0 ? '#2563eb' : '#dc2626'}">${feff_bot0.toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr);
-            }
+            // 1. Row #0 (x=0) used for Node 1 Baseline - REMOVED
 
             // 2. Rows #1 ~ #29
             // 2. Rows #1 ~ #29
@@ -3338,13 +3290,10 @@
 
                 tr.className = rowClass;
 
-                const midX = seg.startX + seg.length / 2;
-
                 const force = getCableForce(seg.id);
-                // Seg #29 Position override (Hinged End Y)
-                const pos = (seg.id === 29)
-                    ? state.extGeometry.anchorage.hinged.y
-                    : getCableY(midX);
+                // Use node position X (start of segment) for cable Y position
+                const nodeX = state.nodes[seg.id - 1]; // Node position
+                const pos = getCableY(nodeX); // Get Y position at node X
 
                 // Props
                 const nodeId = getSegmentNode(seg.id);
@@ -3372,14 +3321,19 @@
                 const feff_top = fm_top + faxial_calc;
                 const feff_bot = fm_bot + faxial_calc;
 
+                // Get node position (distance from start)
+                const nodePos = state.nodes[seg.id - 1]; // N1~N29 positions
+
                 tr.innerHTML = `
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center font-mono align-middle">N${seg.id}</td>
                     <td class="p-2 border-r border-slate-200 text-slate-700 font-bold text-center align-middle">${idLabel}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center font-mono align-middle">N${nodeId}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center align-middle">${nodeId}</td>
                     <td class="p-2 border-r border-slate-200 text-slate-500 text-xs text-center align-middle">${seg.length.toFixed(2)}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center align-middle font-mono">${nodePos.toFixed(2)}</td>
                     <td class="p-2 border-r border-amber-200 text-amber-700 font-bold text-center align-middle">${force.toFixed(2)}</td>
                     <td class="p-2 border-r border-slate-200 text-slate-700 font-mono text-center align-middle">${pos.toFixed(2)}</td>
-                    <td class="p-2 border-r border-green-50 text-green-700 font-bold text-center align-middle">${ep_ext.toFixed(2)}</td>
-                    <td class="p-2 border-r border-blue-100 text-blue-700 font-bold text-center align-middle" style="color: ${meff >= 0 ? '#2563eb' : '#dc2626'}">${meff.toFixed(2)}</td>
+                    <td class="p-2 border-r border-green-50 text-green-700 font-bold text-center align-middle">${(ep_ext * -1).toFixed(2)}</td>
+                    <td class="p-2 border-r border-blue-100 text-blue-700 font-bold text-center align-middle" style="color: ${meff >= 0 ? '#2563eb' : '#dc2626'}">${(meff * -1).toFixed(2)}</td>
                     <td class="p-2 border-r border-cyan-50 text-cyan-700 font-bold text-center align-middle" style="color: ${fm_top >= 0 ? '#2563eb' : '#dc2626'}">${fm_top.toFixed(2)}</td>
                     <td class="p-2 border-r border-cyan-100 text-cyan-900 font-bold text-center align-middle" style="color: ${fm_bot >= 0 ? '#2563eb' : '#dc2626'}">${fm_bot.toFixed(2)}</td>
                     <td class="p-2 border-r border-purple-50 text-purple-700 font-bold text-center align-middle">${faxial.toFixed(2)}</td>
@@ -3388,6 +3342,60 @@
                 `;
                 tbody.appendChild(tr);
             });
+
+            // Add N30 Special Row (Empty, representing section 5)
+            {
+                const tr30 = document.createElement('tr');
+                tr30.className = 'bg-amber-100 font-bold border-l-4 border-amber-500';
+
+                // N30 position is at the hinged end
+                const n30Pos = state.nodes[29]; // x = 56.5
+                
+                // N30 calculations
+                const n30Force = state.extResults.n30_axial || 0; // External force at N30 (tf)
+                const n30PosY = state.extGeometry.anchorage.hinged.y; // Position from top (cm)
+                
+                // Get section 5 properties
+                const n30Section = BEAM_SECTIONS.find(s => s.id === 5);
+                const n30YTop = n30Section ? n30Section.Y_top : 0;
+                const n30YBot = n30Section ? n30Section.Y_bot : 0;
+                const n30Area = n30Section ? n30Section.Area : 0;
+                const n30I = n30Section ? n30Section.I : 0;
+                
+                // Calculate moment and stresses
+                const n30EpExt = n30PosY - n30YTop; // Eccentric moment (cm)
+                const n30Meff = (n30Force * n30EpExt) / 100; // Effective moment (tf-m)
+                
+                const n30Stop = (n30YTop > 0) ? n30I / n30YTop : 0; // Section modulus top
+                const n30Sbot = (n30YBot > 0) ? n30I / n30YBot : 0; // Section modulus bot
+                
+                // Cable stresses
+                const n30FmTop = (n30Stop !== 0) ? -(n30Meff * 100000 / n30Stop) : 0; // Bending stress top
+                const n30FmBot = (n30Sbot !== 0) ? (n30Meff * 100000 / n30Sbot) : 0; // Bending stress bot
+                const n30Faxial = (n30Area > 0) ? (n30Force * 1000) / n30Area : 0; // Axial stress
+                
+                // Total effective stresses
+                const n30FeffTop = n30FmTop + n30Faxial;
+                const n30FeffBot = n30FmBot + n30Faxial;
+
+                tr30.innerHTML = `
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center font-mono align-middle">N30</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-500 text-xs text-center align-middle">-</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center align-middle">5</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-500 text-xs text-center align-middle">-</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center align-middle font-mono">${n30Pos.toFixed(2)}</td>
+                    <td class="p-2 border-r border-amber-200 text-amber-700 font-bold text-center align-middle">${n30Force.toFixed(2)}</td>
+                    <td class="p-2 border-r border-slate-200 text-slate-700 font-mono text-center align-middle">${n30PosY.toFixed(2)}</td>
+                    <td class="p-2 border-r border-green-50 text-green-700 font-bold text-center align-middle">${(n30EpExt * -1).toFixed(2)}</td>
+                    <td class="p-2 border-r border-blue-100 text-blue-700 font-bold text-center align-middle" style="color: ${n30Meff >= 0 ? '#2563eb' : '#dc2626'}">${(n30Meff * -1).toFixed(2)}</td>
+                    <td class="p-2 border-r border-cyan-50 text-cyan-700 font-bold text-center align-middle" style="color: ${n30FmTop >= 0 ? '#2563eb' : '#dc2626'}">${n30FmTop.toFixed(2)}</td>
+                    <td class="p-2 border-r border-cyan-100 text-cyan-900 font-bold text-center align-middle" style="color: ${n30FmBot >= 0 ? '#2563eb' : '#dc2626'}">${n30FmBot.toFixed(2)}</td>
+                    <td class="p-2 border-r border-purple-50 text-purple-700 font-bold text-center align-middle">${n30Faxial.toFixed(2)}</td>
+                    <td class="p-2 border-r border-indigo-50 text-indigo-700 font-bold text-center align-middle" style="color: ${n30FeffTop >= 0 ? '#2563eb' : '#dc2626'}">${n30FeffTop.toFixed(2)}</td>
+                    <td class="p-2 text-indigo-900 font-bold text-center align-middle" style="color: ${n30FeffBot >= 0 ? '#2563eb' : '#dc2626'}">${n30FeffBot.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr30);
+            }
         }
 
 
