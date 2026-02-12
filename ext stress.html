@@ -307,13 +307,13 @@
 
                     <!-- 節點資訊表 -->
                     <div>
-                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">節點1~5 截面特性
+                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">斷面1~5 特性
                         </h3>
                         <div class="overflow-x-auto border border-slate-200 rounded">
                             <table class="w-full data-table text-xs">
                                 <thead class="sticky top-0 z-10 shadow-sm">
                                     <tr>
-                                        <th class="bg-slate-100">節點 (Node)</th>
+                                        <th class="bg-slate-100">斷面 (Section)</th>
                                         <th class="bg-slate-100">參數 (A/C/D) (cm)</th>
                                         <th class="bg-purple-50 text-purple-700">斷面積<br />(cm²)</th>
                                         <th class="bg-blue-50 text-blue-700">中性軸位置<br />(從頂部 Y_top cm)</th>
@@ -374,10 +374,50 @@
                                 </div>
 
                                 <!-- Result -->
-                                <div class="bg-gray-100 p-4 rounded text-center mt-2">
-                                    <div class="text-xs text-slate-500 mb-1">靜載重彎矩 M_DL</div>
-                                    <div class="text-2xl font-bold text-gray-800 font-mono" id="val-m-dl">--</div>
-                                    <div class="text-xs text-slate-400 mt-1">(w_self + w_add) * L² / 8</div>
+                                <!-- Result -->
+                                <div class="bg-gray-100 p-4 rounded mt-2">
+                                    <div class="text-xs text-slate-500 mb-2 text-center">最大靜載重彎矩 M_DL_max</div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center">
+                                            <div class="text-xs text-slate-400 mb-1">M_DL_max+ (正彎矩)</div>
+                                            <div class="text-xl font-bold text-gray-800 font-mono" id="val-m-dl-pos">--
+                                            </div>
+                                            <div class="text-[10px] text-slate-400 mt-1">x = 3/8 L</div>
+                                        </div>
+                                        <div class="text-center border-l border-gray-200">
+                                            <div class="text-xs text-slate-400 mb-1">M_DL_max- (負彎矩)</div>
+                                            <div class="text-xl font-bold text-gray-800 font-mono" id="val-m-dl-neg">--
+                                            </div>
+                                            <div class="text-[10px] text-slate-400 mt-1">x = L</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-[10px] text-slate-400 mt-2 text-center">
+                                        M_DL_max+=9/128*( w_self+add)*L^2,發生在x=3/8L處<br>
+                                        M_DL_max-顯示最大負彎矩, x=L處
+                                    </div>
+                                </div>
+
+                                <!-- Max Shear Force Block -->
+                                <div class="bg-gray-100 p-4 rounded mt-2">
+                                    <div class="text-xs text-slate-500 mb-2 text-center">最大靜載重剪力 V_DL_max</div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center">
+                                            <div class="text-xs text-slate-400 mb-1">V_DL_max+ (正剪力)</div>
+                                            <div class="text-xl font-bold text-gray-800 font-mono" id="val-v-dl-pos">--
+                                            </div>
+                                            <div class="text-[10px] text-slate-400 mt-1">x = 0</div>
+                                        </div>
+                                        <div class="text-center border-l border-gray-200">
+                                            <div class="text-xs text-slate-400 mb-1">V_DL_max- (負剪力)</div>
+                                            <div class="text-xl font-bold text-gray-800 font-mono" id="val-v-dl-neg">--
+                                            </div>
+                                            <div class="text-[10px] text-slate-400 mt-1">x = L</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-[10px] text-slate-400 mt-2 text-center">
+                                        V_DL_max+=3/8*(w_self+add)*L,發生在x=0處<br>
+                                        V_DL_max-=3/8*(w_self+add)*L-(w_self+add)*L, x=L處
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -388,16 +428,12 @@
                                 (Live Load)</h3>
 
                             <div class="space-y-3 text-sm">
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 gap-4">
                                     <div class="bg-slate-50 p-2 rounded">
-                                        <div class="text-xs text-slate-500">橋梁載重彎矩</div>
-                                        <div class="font-mono font-bold text-slate-700 text-lg">499 <span
-                                                class="text-xs font-normal">tf·m</span></div>
-                                    </div>
-                                    <div class="bg-slate-50 p-2 rounded">
-                                        <div class="text-xs text-slate-500">端點剪力</div>
-                                        <div class="font-mono font-bold text-slate-700 text-lg">49 <span
-                                                class="text-xs font-normal">tf</span></div>
+                                        <div class="text-xs text-slate-500">車道載重 w_LL</div>
+                                        <div class="font-mono font-bold text-slate-700 text-lg" id="val-w-ll">-- <span
+                                                class="text-xs font-normal">tf/m</span></div>
+                                        <div class="text-[10px] text-slate-400 mt-1">w_LL=0.96*(1+IM)*(1+OL)*車道數</div>
                                     </div>
                                 </div>
 
@@ -444,10 +480,50 @@
                                 </div>
 
                                 <!-- Result -->
-                                <div class="bg-blue-50 p-4 rounded text-center mt-3 border border-blue-100">
-                                    <div class="text-xs text-blue-500 mb-1">車輛載重彎矩 M_LL</div>
-                                    <div class="text-2xl font-bold text-blue-800 font-mono" id="val-m-ll">--</div>
-                                    <div class="text-xs text-blue-400 mt-1">M × (1+IM) × (1+OL) × Red × N</div>
+                                <!-- Result -->
+                                <div class="bg-blue-50 p-4 rounded mt-3 border border-blue-100">
+                                    <div class="text-xs text-blue-500 mb-2 text-center">車輛載重最大彎矩 M_LL_max</div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center">
+                                            <div class="text-xs text-blue-400 mb-1">M_LL_max+ (正彎矩)</div>
+                                            <div class="text-xl font-bold text-blue-800 font-mono" id="val-m-ll-pos">--
+                                            </div>
+                                            <div class="text-[10px] text-blue-400 mt-1">x = 3/8 L</div>
+                                        </div>
+                                        <div class="text-center border-l border-blue-200">
+                                            <div class="text-xs text-blue-400 mb-1">M_LL_max- (負彎矩)</div>
+                                            <div class="text-xl font-bold text-blue-800 font-mono" id="val-m-ll-neg">--
+                                            </div>
+                                            <div class="text-[10px] text-blue-400 mt-1">x = L</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-[10px] text-blue-400 mt-2 text-center">
+                                        M_LL_max+=[9/128*( w_LL)*L^2]*(1+IM)*(1+OL)*Red, 發生在x=3/8L處<br>
+                                        M_LL_max-顯示最大負彎矩, x=L處
+                                    </div>
+                                </div>
+
+                                <!-- Max Shear Force Block -->
+                                <div class="bg-blue-50 p-4 rounded mt-3 border border-blue-100">
+                                    <div class="text-xs text-blue-500 mb-2 text-center">車輛載重最大剪力 V_LL_max</div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center">
+                                            <div class="text-xs text-blue-400 mb-1">V_LL_max+ (正剪力)</div>
+                                            <div class="text-xl font-bold text-blue-800 font-mono" id="val-v-ll-pos">--
+                                            </div>
+                                            <div class="text-[10px] text-blue-400 mt-1">x = 0</div>
+                                        </div>
+                                        <div class="text-center border-l border-blue-200">
+                                            <div class="text-xs text-blue-400 mb-1">V_LL_max- (負剪力)</div>
+                                            <div class="text-xl font-bold text-blue-800 font-mono" id="val-v-ll-neg">--
+                                            </div>
+                                            <div class="text-[10px] text-blue-400 mt-1">x = L</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-[10px] text-blue-400 mt-2 text-center">
+                                        V_LL_max+=3/8*(w_LL)*L,發生在x=0處<br>
+                                        V_LL_max-=3/8*(w_LL)*L-(w_LL)*L, x=L處
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -456,17 +532,24 @@
                     <!-- Segment Moment Table -->
                     <div class="overflow-hidden mt-8">
                         <div class="flex justify-between items-end mb-2">
-                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-green-500 pl-2">橋梁各節段彎矩值</h3>
-                            <span class="text-xs text-slate-400">單位: m, tf·m</span>
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-green-500 pl-2">橋梁各節段剪力及彎矩值
+                            </h3>
+                            <span class="text-xs text-slate-400">單位: m, tf, tf·m <span
+                                    class="ml-2 text-slate-500">(彎矩正負值說明:
+                                    壓在頂部為正)</span></span>
                         </div>
                         <div class="overflow-x-auto max-h-[600px] overflow-y-auto border border-slate-200 rounded">
                             <table class="w-full data-table">
                                 <thead class="sticky top-0 z-10 shadow-sm">
                                     <tr>
+                                        <th class="bg-slate-100">節點 (Node)</th>
                                         <th class="bg-slate-100">節段 #</th>
-                                        <th class="bg-slate-100">長度 (m)</th>
+                                        <th class="bg-slate-100">距離 (Dist) (m)</th>
                                         <th class="bg-green-50 text-green-700">靜載重彎矩 (tf·m)</th>
-                                        <th class="bg-blue-50 text-blue-700">車輛載重彎矩 (tf·m)</th>
+                                        <th class="bg-green-100 text-green-700">靜載重剪力 (tf)</th>
+                                        <th class="bg-blue-50 text-blue-700">設計車輛載重彎矩 (tf·m)<br><span
+                                                class="text-[10px] font-normal">M_LL=M(x)*(1+IM)*(1+OL)*Red</span></th>
+                                        <th class="bg-blue-100 text-blue-700">設計車輛載重剪力 (tf)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="segmentMomentBody">
@@ -589,18 +672,32 @@
                     <div id="subtab-content-3-2" class="subtab-content hidden">
                         <div class="bg-white rounded-lg shadow-sm p-6">
                             <h3 class="text-lg font-bold text-slate-800 mb-4">梁上下緣應力</h3>
+                            <div class="text-xs text-slate-500 mb-3">
+                                註：斷面為節點右側斷面<br>
+                                底版鋼腱偏心矩 ep,eff = Y_bot - 12.5 (cm)<br>
+                                頂版鋼腱偏心矩 ep,eff_top = Y_top - 12.5 (cm)
+                            </div>
                             <!-- 載重資訊區塊 (已移除) -->
 
                             <div class="overflow-x-auto">
                                 <table class="w-full border-collapse text-xs">
                                     <thead>
                                         <tr class="bg-slate-100">
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
+                                                節點<br>(Node)
+                                            </th>
                                             <th class="border border-slate-300 px-2 py-2 text-left font-semibold">節段 #
                                             </th>
-                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">節點
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">斷面
                                             </th>
                                             <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
-                                                鋼腱偏心矩<br>ep,eff (cm)</th>
+                                                底版鋼腱偏心矩<br>ep,eff (cm)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
+                                                頂版鋼腱偏心矩<br>ep,eff_top (cm)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                頂版預力<br>(tf)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-right font-semibold">
+                                                底版預力<br>(tf)</th>
                                             <th
                                                 class="border border-slate-300 px-2 py-2 text-right font-semibold bg-green-50 text-green-700">
                                                 靜載重彎矩<br>M_DL (tf·m)</th>
@@ -608,7 +705,11 @@
                                                 class="border border-slate-300 px-2 py-2 text-right font-semibold bg-blue-50 text-blue-700">
                                                 車輛載重彎矩<br>M_LL (tf·m)</th>
                                             <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
-                                                有效預力彎矩<br>Meff (tf·m)</th>
+                                                底版有效預力彎矩<br>Meff (tf·m)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
+                                                頂版有效預力彎矩<br>Meff_top (tf·m)</th>
+                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
+                                                合成後有效預力彎矩<br>(tf·m)</th>
                                             <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
                                                 斷面一次矩<br>頂部 Stop (cm³)</th>
                                             <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
@@ -642,13 +743,14 @@
                             <div class="mt-6 text-xs text-slate-600 space-y-2">
                                 <p><strong>計算公式：</strong></p>
                                 <ul class="list-disc list-inside space-y-1">
-                                    <li>鋼腱偏心矩 ep,eff = Y_bot - 12.5 (cm)</li>
+                                    <li>底版鋼腱偏心矩 ep,eff = Y_bot - 12.5 (cm)</li>
+                                    <li>頂版鋼腱偏心矩 ep,eff_top = Y_top - 12.5 (cm)</li>
                                     <li>有效預力彎矩 Meff = 預力值 × ep,eff (+表示底部受壓、頂部受拉; -表示底部受拉、頂部受壓)</li>
                                     <li>斷面一次矩 Stop = I_zz / Y_top</li>
                                     <li>斷面一次矩 Sbot = I_zz / Y_bot</li>
                                     <li>軸向應力 faxial = 預力值 / 斷面積 (+受壓, -受拉)</li>
-                                    <li>上緣彎矩應力 fm,top = -Meff / Stop (Meff>0時*-1表示受拉)</li>
-                                    <li>下緣彎矩應力 fm,bot = Meff / Sbot (Meff>0表示受壓)</li>
+                                    <li>上緣彎矩應力 fm,top = 合成後有效預力彎矩 / Stop * (-1) (壓:+, 拉:-)</li>
+                                    <li>下緣彎矩應力 fm,bot = 合成後有效預力彎矩 / Sbot (壓:+, 拉:-)</li>
                                     <li>梁上緣有效應力 feff,top = faxial + fm,top (+受壓, -受拉)</li>
                                     <li>梁下緣有效應力 feff,bot = faxial + fm,bot</li>
                                 </ul>
@@ -683,7 +785,7 @@
                                     <thead>
                                         <tr class="bg-slate-100">
                                             <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
-                                                rowspan="2">節段 #</th>
+                                                rowspan="2">節點 (Node)</th>
                                             <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
                                                 colspan="2">有效預力應力</th>
                                             <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
@@ -1157,7 +1259,11 @@
                             <div class="flex justify-between items-end mb-2">
                                 <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">各節段預力數據表
                                 </h3>
-                                <span class="text-xs text-slate-400" id="tableUnitLabel1">單位: tf, cm, cm, tf·m</span>
+                                <div class="text-right">
+                                    <div class="text-xs text-slate-500 mb-1">每股(12x15.5mm)鋼腱面積=16.6404cm²</div>
+                                    <span class="text-xs text-slate-400" id="tableUnitLabel1">單位: tf, cm, cm,
+                                        tf·m</span>
+                                </div>
                             </div>
                             <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-200 rounded">
                                 <table class="w-full data-table">
@@ -1166,11 +1272,12 @@
                                             <th rowspan="2" class="bg-slate-100">節段 #</th>
                                             <th rowspan="2" class="bg-slate-100">節點</th>
                                             <th rowspan="2" class="bg-slate-100">長度 (m)</th>
-                                            <th colspan="3" class="bg-slate-200 border-b border-white">原橋體內預力 (Internal)
+                                            <th colspan="4" class="bg-slate-200 border-b border-white">原橋體內預力 (Internal)
                                             </th>
                                         </tr>
                                         <tr>
                                             <th class="bg-blue-50 text-blue-700">預力值 (tf)</th>
+                                            <th class="bg-slate-50 text-slate-700">預力鋼腱股數 (Np)</th>
                                             <th class="bg-orange-50 text-orange-700">應力塊深度 (cm)</th>
                                             <th class="bg-green-50 text-green-700">彎矩承載力 (tf·m)</th>
                                         </tr>
@@ -1208,6 +1315,20 @@
             23: 1, 24: 1, 25: 1, 26: 1, 27: 1,
             28: 4, 29: 5
         };
+
+        // 頂版預力和底版預力資料 (tf) - 對應節點 N1~N30
+        const TOP_PRESTRESS_TF = [
+            0, 411, 409, 406, 404, 401, 401, 399, 397, 398,     // N1-N10
+            397, 397, 397, 0, 0, 606, 1212, 1815, 2444, 3066,   // N11-N20
+            3691, 4336, 4976, 5592, 6258, 6863, 7526, 8141, 9339, 10456  // N21-N30
+        ];
+
+        const BOTTOM_PRESTRESS_TF = [
+            0, 1730, 1765, 1782, 3371, 3406, 4934, 4963, 4984, 6414,      // N1-N10
+            6426, 6430, 6427, 6296, 6286, 6380, 6357, 6326, 6288, 6242,   // N11-N20
+            4825, 4779, 4726, 3251, 3206, 1692, 1663, 127, 126, 125       // N21-N30
+        ];
+
 
         // 取得對應節點
         function getSegmentNode(segmentId) {
@@ -1455,7 +1576,7 @@
             BEAM_SECTIONS.forEach(section => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="font-bold text-center text-blue-600">節點 ${section.id}</td>
+                    <td class="font-bold text-center text-blue-600">斷面 ${section.id}</td>
                     <td class="text-center text-slate-600">${section.A} / ${section.C} / ${section.D}</td>
                     <td class="text-center text-purple-600 font-bold">${section.Area.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     <td class="text-center text-blue-600 font-bold">${section.Y_top.toFixed(2)}</td>
@@ -1886,67 +2007,20 @@
             const prestress_tf = INTERNAL_PRESTRESS_TF; // 預力值(tf)
             const L = state.span; // 56.5m
 
-            // 使用 Tab 2 計算的 M_DL 和 M_LL (從 state 取得)
-            const M_DL = state.M_DL; // 靜載重彎矩 (tf·m)
-            const M_LL = state.M_LL; // 車輛載重彎矩 (tf·m)
+            // Get Dead Load Parameters
+            const w_self = 35.94;
+            const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
+            const w_DL_val = w_self + w_add;
 
-            // 計算分佈載重 (從最大彎矩反推)
-            // M_max = w * L^2 / 8, so w = 8 * M_max / L^2
-            const w_DL = (8 * M_DL) / (L * L); // tf/m
-            const w_LL = (8 * M_LL) / (L * L); // tf/m
+            // Get Live Load Parameters
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
+            const im = parseFloat(document.getElementById('ll-impact-slider').value);
+            const ol = parseFloat(document.getElementById('ll-overload-slider').value);
+            const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
 
-            // === 新增節段#0 (x=0, 使用與節段#1相同的斷面) ===
-            const seg0_nodeId = getSegmentNode(1); // 使用節段1的節點
-            const seg0_section = BEAM_SECTIONS.find(s => s.id === seg0_nodeId);
+            const w_LL_val = lanes * 0.96;
+            const ll_factors = (1 + im) * (1 + ol) * reduction;
 
-            if (seg0_section) {
-                const A = seg0_section.Area;
-                const I_zz = seg0_section.I;
-                const Y_top = seg0_section.Y_top;
-                const Y_bot = seg0_section.Y_bot;
-
-                const ep_eff = Y_bot - 12.5;
-                const Meff = (prestress_tf[0] * ep_eff) / 100; // 使用第一個預力值
-                const Stop = I_zz / Y_top;
-                const Sbot = I_zz / Y_bot;
-                const faxial = prestress_tf[0] * 1000 / A;
-                const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
-                const fm_bot = (Meff * 100000 / Sbot);
-                const feff_top = faxial + fm_top;
-                const feff_bot = faxial + fm_bot;
-
-                // x=0 時，載重彎矩為0
-                const x = 0;
-                const M_DL_seg = 0; // x=0 時彎矩為0
-                const M_LL_seg = 0; // x=0 時彎矩為0
-                const fDL_top = 0;
-                const fDL_bot = 0;
-                const fLL_top = 0;
-                const fLL_bot = 0;
-
-                const tr0 = document.createElement('tr');
-                tr0.className = 'bg-amber-50'; // 特殊背景色標示節段#0
-                tr0.innerHTML = `
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-amber-700">#0</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-purple-600">${seg0_nodeId}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-green-50 text-green-700">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-blue-50 text-blue-700">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${Meff.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${Stop.toFixed(1)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${Sbot.toFixed(1)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${faxial.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_top < 0 ? '#dc2626' : '#16a34a'}">${fm_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_bot > 0 ? '#2563eb' : '#dc2626'}">${fm_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_top < 0 ? '#dc2626' : '#16a34a'}">${feff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_bot > 0 ? '#2563eb' : '#dc2626'}">${feff_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
-                `;
-                tbody.appendChild(tr0);
-            }
 
             // 逐節段計算
             state.segments.forEach(seg => {
@@ -1961,24 +2035,33 @@
                 const Y_top = section.Y_top; // cm (從頂部)
                 const Y_bot = section.Y_bot; // cm (從底部)
 
-                // 1. 鋼腱偏心矩 ep,eff (cm)
+                // 1. 底版鋼腱偏心矩 ep,eff (cm)
                 const ep_eff = Y_bot - 12.5;
 
-                // 2. 有效預力彎矩 Meff (tf·m)
-                const Meff = (prestress_tf[seg.id - 1] * ep_eff) / 100; // 轉換cm到m
+                // 2. 頂版鋼腱偏心矩 ep,eff_top (cm)
+                const ep_eff_top = Y_top - 12.5;
+
+                // 2. 底版有效預力彎矩 Meff (tf·m)
+                const Meff = (BOTTOM_PRESTRESS_TF[seg.id - 1] * ep_eff) / 100; // 使用底版預力值，轉換cm到m
+
+                // 3. 頂版有效預力彎矩 Meff_top (tf·m)
+                const Meff_top = (TOP_PRESTRESS_TF[seg.id - 1] * ep_eff_top * -1) / 100; // 轉換cm到m，乘以-1
+
+                // 4. 合成後有效預力彎矩 (tf·m) - 直接相加底版和頂版預力彎矩
+                const Meff_combined = (BOTTOM_PRESTRESS_TF[seg.id - 1] * ep_eff) / 100 + (TOP_PRESTRESS_TF[seg.id - 1] * ep_eff_top * -1) / 100;
 
                 // 3. 斷面一次矩
                 const Stop = I_zz / Y_top; // cm³
                 const Sbot = I_zz / Y_bot; // cm³
 
                 // 4. 軸向應力 faxial (kgf/cm²)
-                const faxial = prestress_tf[seg.id - 1] * 1000 / A; // tf轉kgf
+                const faxial = (TOP_PRESTRESS_TF[seg.id - 1] + BOTTOM_PRESTRESS_TF[seg.id - 1]) * 1000 / A; // tf轉kgf
 
-                // 5. 上緣彎矩應力 fm,top (kgf/cm²)
-                const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
+                // 5. 上緣彎矩應力 fm,top (kgf/cm²) - 使用合成後有效預力彎矩
+                const fm_top = -(Meff_combined * 100000 / Stop); // 乘以-1，正值表示壓應力
 
-                // 6. 下緣彎矩應力 fm,bot (kgf/cm²)
-                const fm_bot = (Meff * 100000 / Sbot);
+                // 6. 下緣彎矩應力 fm,bot (kgf/cm²) - 使用合成後有效預力彎矩
+                const fm_bot = (Meff_combined * 100000 / Sbot); // 正值表示壓應力
 
                 // 7. 梁上緣有效應力 feff,top (kgf/cm²)
                 const feff_top = faxial + fm_top;
@@ -1987,10 +2070,12 @@
                 const feff_bot = faxial + fm_bot;
 
                 // 9. 計算各載重造成的應力
-                // 使用節段終點位置 (endX) 進行彎矩計算
-                const x = seg.endX; // 節段累積終點位置(m)
-                const M_DL_seg = w_DL * (x / 2) * (L - x); // tf·m
-                const M_LL_seg = w_LL * (x / 2) * (L - x); // tf·m
+                // 使用節點位置進行彎矩計算 (與分頁2對應)
+                const x = state.nodes[seg.id - 1]; // 節點位置(m) - seg.id對應N{seg.id}
+                const M_DL_seg = (3.0 / 8.0) * w_DL_val * L * x - (w_DL_val / 2.0) * Math.pow(x, 2); // tf·m
+
+                const term_LL_seg = (3.0 / 8.0) * w_LL_val * L * x - (w_LL_val / 2.0) * Math.pow(x, 2);
+                const M_LL_seg = term_LL_seg * ll_factors; // tf·m
 
                 // 梁自重應力（正彎矩：上緣受壓為正，下緣受拉為負）
                 const fDL_top = (M_DL_seg * 100000 / Stop);   // 上緣壓應力（正值）
@@ -2005,26 +2090,95 @@
                 if (seg.type === 'special') tr.className = 'bg-yellow-50';
 
                 tr.innerHTML = `
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">N${seg.id}</td>
                     <td class="border border-slate-300 px-2 py-2 text-center font-semibold">#${seg.id}</td>
                     <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-purple-600">${nodeId}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${TOP_PRESTRESS_TF[seg.id - 1]}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${BOTTOM_PRESTRESS_TF[seg.id - 1]}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-green-50 text-green-700">${M_DL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-blue-50 text-blue-700">${M_LL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${Meff.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${(Meff * -1).toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${(Meff_top * -1).toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-semibold">${(Meff_combined * -1).toFixed(2)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${Stop.toFixed(1)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${Sbot.toFixed(1)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right font-mono">${faxial.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_top < 0 ? '#dc2626' : '#16a34a'}">${fm_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_bot > 0 ? '#2563eb' : '#dc2626'}">${fm_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_top < 0 ? '#dc2626' : '#16a34a'}">${feff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_bot > 0 ? '#2563eb' : '#dc2626'}">${feff_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_top > 0 ? '#2563eb' : '#dc2626'}">${fDL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_bot < 0 ? '#dc2626' : '#16a34a'}">${fDL_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_top > 0 ? '#2563eb' : '#dc2626'}">${fLL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_bot < 0 ? '#dc2626' : '#16a34a'}">${fLL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_top > 0 ? '#2563eb' : fm_top < 0 ? '#dc2626' : '#16a34a'}">${fm_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_bot > 0 ? '#2563eb' : fm_bot < 0 ? '#dc2626' : '#16a34a'}">${fm_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_top > 0 ? '#2563eb' : feff_top < 0 ? '#dc2626' : '#16a34a'}">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_bot > 0 ? '#2563eb' : feff_bot < 0 ? '#dc2626' : '#16a34a'}">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_top > 0 ? '#2563eb' : fDL_top < 0 ? '#dc2626' : '#16a34a'}">${fDL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_bot > 0 ? '#2563eb' : fDL_bot < 0 ? '#dc2626' : '#16a34a'}">${fDL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_top > 0 ? '#2563eb' : fLL_top < 0 ? '#dc2626' : '#16a34a'}">${fLL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_bot > 0 ? '#2563eb' : fLL_bot < 0 ? '#dc2626' : '#16a34a'}">${fLL_bot.toFixed(2)}</td>
                 `;
                 tbody.appendChild(tr);
             });
+
+
+
+            // Add N30 row with no segment
+            const n30_nodeId = 5; // N30 使用斷面5
+            const n30_section = BEAM_SECTIONS.find(s => s.id === n30_nodeId);
+
+            if (n30_section) {
+                const A = n30_section.Area;
+                const I_zz = n30_section.I;
+                const Y_top = n30_section.Y_top;
+                const Y_bot = n30_section.Y_bot;
+                const ep_eff = Y_bot - 12.5;
+                const ep_eff_top = Y_top - 12.5;
+                const Meff = (BOTTOM_PRESTRESS_TF[29] * ep_eff) / 100; // 使用底版預力值
+                const Meff_top = (TOP_PRESTRESS_TF[29] * ep_eff_top * -1) / 100;
+                const Meff_combined = (BOTTOM_PRESTRESS_TF[29] * ep_eff) / 100 + (TOP_PRESTRESS_TF[29] * ep_eff_top * -1) / 100;
+                const Stop = I_zz / Y_top;
+                const Sbot = I_zz / Y_bot;
+                const faxial = (TOP_PRESTRESS_TF[29] + BOTTOM_PRESTRESS_TF[29]) * 1000 / A; // tf轉kgf
+                const fm_top = -(Meff_combined * 100000 / Stop); // 乘以-1，正值表示壓應力
+                const fm_bot = (Meff_combined * 100000 / Sbot); // 正值表示壓應力
+                const feff_top = faxial + fm_top;
+                const feff_bot = faxial + fm_bot;
+
+                // x = L (end point) - use node position for N30
+                const x = state.nodes[29];
+                const M_DL_seg = (3.0 / 8.0) * w_DL_val * L * x - (w_DL_val / 2.0) * Math.pow(x, 2);
+                const term_LL_seg = (3.0 / 8.0) * w_LL_val * L * x - (w_LL_val / 2.0) * Math.pow(x, 2);
+                const M_LL_seg = term_LL_seg * ll_factors;
+                const fDL_top = (M_DL_seg * 100000 / Stop);
+                const fDL_bot = -(M_DL_seg * 100000 / Sbot);
+                const fLL_top = (M_LL_seg * 100000 / Stop);
+                const fLL_bot = -(M_LL_seg * 100000 / Sbot);
+
+                const tr30 = document.createElement('tr');
+                tr30.innerHTML = `
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">N30</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold"></td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-purple-600">${n30_nodeId}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${TOP_PRESTRESS_TF[29]}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${BOTTOM_PRESTRESS_TF[29]}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-green-50 text-green-700">${M_DL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-blue-50 text-blue-700">${M_LL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${(Meff * -1).toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${(Meff_top * -1).toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-semibold">${(Meff_combined * -1).toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${Stop.toFixed(1)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${Sbot.toFixed(1)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${faxial.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_top > 0 ? '#2563eb' : fm_top < 0 ? '#dc2626' : '#16a34a'}">${fm_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_bot > 0 ? '#2563eb' : fm_bot < 0 ? '#dc2626' : '#16a34a'}">${fm_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_top > 0 ? '#2563eb' : feff_top < 0 ? '#dc2626' : '#16a34a'}">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_bot > 0 ? '#2563eb' : feff_bot < 0 ? '#dc2626' : '#16a34a'}">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_top > 0 ? '#2563eb' : fDL_top < 0 ? '#dc2626' : '#16a34a'}">${fDL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_bot > 0 ? '#2563eb' : fDL_bot < 0 ? '#dc2626' : '#16a34a'}">${fDL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_top > 0 ? '#2563eb' : fLL_top < 0 ? '#dc2626' : '#16a34a'}">${fLL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_bot > 0 ? '#2563eb' : fLL_bot < 0 ? '#dc2626' : '#16a34a'}">${fLL_bot.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr30);
+            }
         }
 
         // 壓張應力檢核表格生成函數
@@ -2040,59 +2194,21 @@
             // 獲取基本數據
             const prestress_tf = INTERNAL_PRESTRESS_TF;
             const L = state.span;
-            const M_DL = state.M_DL;
-            const M_LL = state.M_LL;
-            const w_DL = (8 * M_DL) / (L * L);
-            const w_LL = (8 * M_LL) / (L * L);
+            // Get Dead Load Parameters
+            const w_self = 35.94;
+            const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
+            const w_DL_val = w_self + w_add;
 
-            // === 節段#0 ===
-            const seg0_nodeId = getSegmentNode(1);
-            const seg0_section = BEAM_SECTIONS.find(s => s.id === seg0_nodeId);
+            // Get Live Load Parameters
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
+            const im = parseFloat(document.getElementById('ll-impact-slider').value);
+            const ol = parseFloat(document.getElementById('ll-overload-slider').value);
+            const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
 
-            if (seg0_section) {
-                const A = seg0_section.Area;
-                const I_zz = seg0_section.I;
-                const Y_top = seg0_section.Y_top;
-                const Y_bot = seg0_section.Y_bot;
-                const ep_eff = Y_bot - 12.5;
-                const Meff = (prestress_tf[0] * ep_eff) / 100;
-                const Stop = I_zz / Y_top;
-                const Sbot = I_zz / Y_bot;
-                const faxial = prestress_tf[0] * 1000 / A;
-                const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
-                const fm_bot = (Meff * 100000 / Sbot);
-                const feff_top = faxial + fm_top;
-                const feff_bot = faxial + fm_bot;
-                const fDL_top = 0;
-                const fDL_bot = 0;
-                const fLL_top = 0;
-                const fLL_bot = 0;
+            const w_LL_val = lanes * 0.96;
+            const ll_factors = (1 + im) * (1 + ol) * reduction;
 
-                const ftotal_top = feff_top + fDL_top + fLL_top;
-                const ftotal_bot = feff_bot + fDL_bot + fLL_bot;
-
-                const check_top = (ftotal_top >= allowable_tension && ftotal_top <= allowable_compression) ? 'OK' : 'NG';
-                const check_bot = (ftotal_bot >= allowable_tension && ftotal_bot <= allowable_compression) ? 'OK' : 'NG';
-
-                const tr0 = document.createElement('tr');
-                tr0.className = 'bg-amber-50';
-                tr0.innerHTML = `
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-amber-700">#0</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono text-slate-400">0.00</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-amber-100">${ftotal_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-amber-100">${ftotal_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_top === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_top}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_bot === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_bot}</td>
-                `;
-                tbody.appendChild(tr0);
-            }
-
-            // === 各節段 ===
+            // === 各節段 N1~N29 ===
             state.segments.forEach(seg => {
                 const nodeId = getSegmentNode(seg.id);
                 const section = BEAM_SECTIONS.find(s => s.id === nodeId);
@@ -2102,24 +2218,33 @@
                 const I_zz = section.I;
                 const Y_top = section.Y_top;
                 const Y_bot = section.Y_bot;
+
+                // 計算有效預力應力（與梁上下緣應力表格一致）
                 const ep_eff = Y_bot - 12.5;
-                const Meff = (prestress_tf[seg.id - 1] * ep_eff) / 100;
+                const ep_eff_top = Y_top - 12.5;
+                const Meff = (BOTTOM_PRESTRESS_TF[seg.id - 1] * ep_eff) / 100;
+                const Meff_top = (TOP_PRESTRESS_TF[seg.id - 1] * ep_eff_top * -1) / 100;
+                const Meff_combined = (BOTTOM_PRESTRESS_TF[seg.id - 1] * ep_eff) / 100 + (TOP_PRESTRESS_TF[seg.id - 1] * ep_eff_top * -1) / 100;
+
                 const Stop = I_zz / Y_top;
                 const Sbot = I_zz / Y_bot;
-                const faxial = prestress_tf[seg.id - 1] * 1000 / A;
-                const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
-                const fm_bot = (Meff * 100000 / Sbot);
+                const faxial = (TOP_PRESTRESS_TF[seg.id - 1] + BOTTOM_PRESTRESS_TF[seg.id - 1]) * 1000 / A;
+                const fm_top = -(Meff_combined * 100000 / Stop);
+                const fm_bot = (Meff_combined * 100000 / Sbot);
                 const feff_top = faxial + fm_top;
                 const feff_bot = faxial + fm_bot;
 
-                const x = seg.endX;
-                const M_DL_seg = w_DL * (x / 2) * (L - x);
-                const M_LL_seg = w_LL * (x / 2) * (L - x);
+                const x = state.nodes[seg.id - 1]; // 節點位置(m) - 與梁上下緣應力表格一致
+                const M_DL_seg = (3.0 / 8.0) * w_DL_val * L * x - (w_DL_val / 2.0) * Math.pow(x, 2);
+
+                const term_LL_seg = (3.0 / 8.0) * w_LL_val * L * x - (w_LL_val / 2.0) * Math.pow(x, 2);
+                const M_LL_seg = term_LL_seg * ll_factors;
                 const fDL_top = (M_DL_seg * 100000 / Stop);
                 const fDL_bot = -(M_DL_seg * 100000 / Sbot);
                 const fLL_top = (M_LL_seg * 100000 / Stop);
                 const fLL_bot = -(M_LL_seg * 100000 / Sbot);
 
+                // 總應力 = 有效預力應力 + 梁自重應力 + 車輛載重應力
                 const ftotal_top = feff_top + fDL_top + fLL_top;
                 const ftotal_bot = feff_bot + fDL_bot + fLL_bot;
 
@@ -2130,7 +2255,7 @@
                 if (seg.type === 'special') tr.className = 'bg-yellow-50';
 
                 tr.innerHTML = `
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">#${seg.id}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">N${seg.id}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_top.toFixed(2)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_bot.toFixed(2)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_top.toFixed(2)}</td>
@@ -2144,6 +2269,65 @@
                 `;
                 tbody.appendChild(tr);
             });
+
+            // === 新增 N30 行 ===
+            const n30_nodeId = 5; // N30 使用斷面5
+            const n30_section = BEAM_SECTIONS.find(s => s.id === n30_nodeId);
+
+            if (n30_section) {
+                const A = n30_section.Area;
+                const I_zz = n30_section.I;
+                const Y_top = n30_section.Y_top;
+                const Y_bot = n30_section.Y_bot;
+
+                // 計算有效預力應力（與梁上下緣應力表格一致）
+                const ep_eff = Y_bot - 12.5;
+                const ep_eff_top = Y_top - 12.5;
+                const Meff = (BOTTOM_PRESTRESS_TF[29] * ep_eff) / 100;
+                const Meff_top = (TOP_PRESTRESS_TF[29] * ep_eff_top * -1) / 100;
+                const Meff_combined = (BOTTOM_PRESTRESS_TF[29] * ep_eff) / 100 + (TOP_PRESTRESS_TF[29] * ep_eff_top * -1) / 100;
+
+                const Stop = I_zz / Y_top;
+                const Sbot = I_zz / Y_bot;
+                const faxial = (TOP_PRESTRESS_TF[29] + BOTTOM_PRESTRESS_TF[29]) * 1000 / A;
+                const fm_top = -(Meff_combined * 100000 / Stop);
+                const fm_bot = (Meff_combined * 100000 / Sbot);
+                const feff_top = faxial + fm_top;
+                const feff_bot = faxial + fm_bot;
+
+                const x = state.nodes[29]; // N30 position
+                const M_DL_seg = (3.0 / 8.0) * w_DL_val * L * x - (w_DL_val / 2.0) * Math.pow(x, 2);
+                const term_LL_seg = (3.0 / 8.0) * w_LL_val * L * x - (w_LL_val / 2.0) * Math.pow(x, 2);
+                const M_LL_seg = term_LL_seg * ll_factors;
+                const fDL_top = (M_DL_seg * 100000 / Stop);
+                const fDL_bot = -(M_DL_seg * 100000 / Sbot);
+                const fLL_top = (M_LL_seg * 100000 / Stop);
+                const fLL_bot = -(M_LL_seg * 100000 / Sbot);
+
+                // 總應力 = 有效預力應力 + 梁自重應力 + 車輛載重應力
+                const ftotal_top = feff_top + fDL_top + fLL_top;
+                const ftotal_bot = feff_bot + fDL_bot + fLL_bot;
+
+                const check_top = (ftotal_top >= allowable_tension && ftotal_top <= allowable_compression) ? 'OK' : 'NG';
+                const check_bot = (ftotal_bot >= allowable_tension && ftotal_bot <= allowable_compression) ? 'OK' : 'NG';
+
+                const trN30 = document.createElement('tr');
+                trN30.className = 'bg-cyan-50';
+                trN30.innerHTML = `
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-cyan-700">N30</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fLL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fLL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-cyan-100">${ftotal_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-cyan-100">${ftotal_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_top === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_top}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_bot === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_bot}</td>
+                `;
+                tbody.appendChild(trN30);
+            }
         }
 
         // === 分頁2與分頁4雙向同步函數 ===
@@ -2250,20 +2434,48 @@
         }
 
         function updateDeadLoad() {
-            // Formula: M_DL = (w_self + w_add) * L^2 / 8
+            // Formula: M_DL_max at x = 3/8 L
+            // M(x) = (3/8) * w * L * x - (w/2) * x^2
             const w_self = 35.94;
             const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
             const L = state.span; // 56.5
 
-            const M_DL = (w_self + w_add) * Math.pow(L, 2) / 8;
+            const w = w_self + w_add;
 
-            // Store in state for use by stress calculation table
-            state.M_DL = M_DL;
+            // Pos Moment at x = 3/8 L
+            const x_pos = (3.0 / 8.0) * L;
+            const M_DL_pos = (3.0 / 8.0) * w * L * x_pos - (w / 2.0) * Math.pow(x_pos, 2);
 
-            const formattedValue = M_DL.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            // Neg Moment at x = L
+            const M_DL_neg = (-1.0 / 8.0) * w * Math.pow(L, 2);
 
-            // Update Tab 2 display
-            document.getElementById('val-m-dl').innerText = formattedValue + ' tf·m';
+            // Shear Force: V(x) = 3/8*w*L - w*x
+            // V_max+ at x = 0
+            const V_DL_pos = (3.0 / 8.0) * w * L;
+            // V_max- at x = L
+            const V_DL_neg = (3.0 / 8.0) * w * L - w * L;
+
+            // Store in state for use by stress calculation table (keeping Pos as default)
+            state.M_DL = M_DL_pos;
+
+            const formattedMPos = M_DL_pos.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            const formattedMNeg = M_DL_neg.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            const formattedVPos = V_DL_pos.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            const formattedVNeg = V_DL_neg.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+            // Update Tab 2 display - Moments
+            const elMPos = document.getElementById('val-m-dl-pos');
+            if (elMPos) elMPos.innerText = formattedMPos + ' tf·m';
+
+            const elMNeg = document.getElementById('val-m-dl-neg');
+            if (elMNeg) elMNeg.innerText = formattedMNeg + ' tf·m';
+
+            // Update Tab 2 display - Shear Forces
+            const elVPos = document.getElementById('val-v-dl-pos');
+            if (elVPos) elVPos.innerText = formattedVPos + ' tf';
+
+            const elVNeg = document.getElementById('val-v-dl-neg');
+            if (elVNeg) elVNeg.innerText = formattedVNeg + ' tf';
 
             // Update Tab 4 Sub-tab 2 synchronized display
             const tab4Element = document.getElementById('val-m-dl-tab4');
@@ -2298,22 +2510,63 @@
         }
 
         function updateLiveLoad() {
-            // M_LL = 499 * (1+IM) * (1+OL) * Red * Lanes
-            const M_lane = 499; // tf*m
+            // w_LL = Lanes * 0.96
+            // M(x) = [3/8*(w_LL)*L*x-(w_LL)/2*x^2]*(1+IM)*(1+OL)*Red
+            // M_LL_max = [9/128*( w_LL)*L^2]*(1+IM)*(1+OL)*Red
+
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
             const im = parseFloat(document.getElementById('ll-impact-slider').value);
             const ol = parseFloat(document.getElementById('ll-overload-slider').value);
-            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
             const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
+            const L = state.span; // 56.5
 
-            const M_LL = M_lane * (1 + im) * (1 + ol) * reduction * lanes;
+            const w_LL = 0.96 * (1 + im) * (1 + ol) * lanes;
 
-            // Store in state for use by stress calculation table
-            state.M_LL = M_LL;
+            // Calculate Max Moment at x = 3/8 L (Pos)
+            const term1 = (9.0 / 128.0) * w_LL * Math.pow(L, 2);
 
-            const formattedValue = M_LL.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            // Explicit Factor Calculation
+            const factor_total = (1 + im) * (1 + ol) * reduction;
 
-            // Update Tab 2 display
-            document.getElementById('val-m-ll').innerText = formattedValue + ' tf·m';
+            const M_LL_pos = term1 * reduction;
+
+            // Calculate Max Moment at x = L (Neg)
+            // M(L) = -1/8 * w * L^2
+            const term2 = (-1.0 / 8.0) * w_LL * Math.pow(L, 2);
+            const M_LL_neg = term2 * reduction;
+
+            // Store in state (Pos as default)
+            state.M_LL = M_LL_pos;
+            state.w_LL = w_LL;
+
+            // Shear Force: V(x) = 3/8*w_LL*L - w_LL*x
+            // V_max+ at x = 0
+            const V_LL_pos = (3.0 / 8.0) * w_LL * L;
+            // V_max- at x = L
+            const V_LL_neg = (3.0 / 8.0) * w_LL * L - w_LL * L;
+
+            // Update w_LL UI
+            const wLLEl = document.getElementById('val-w-ll');
+            if (wLLEl) wLLEl.innerHTML = w_LL.toFixed(2) + ' <span class="text-xs font-normal">tf/m</span>';
+
+            const formattedMPos = M_LL_pos.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            const formattedMNeg = M_LL_neg.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            const formattedVPos = V_LL_pos.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            const formattedVNeg = V_LL_neg.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+            // Update Tab 2 display - Moments
+            const elMPos = document.getElementById('val-m-ll-pos');
+            if (elMPos) elMPos.innerText = formattedMPos + ' tf·m';
+
+            const elMNeg = document.getElementById('val-m-ll-neg');
+            if (elMNeg) elMNeg.innerText = formattedMNeg + ' tf·m';
+
+            // Update Tab 2 display - Shear Forces
+            const elVPos = document.getElementById('val-v-ll-pos');
+            if (elVPos) elVPos.innerText = formattedVPos + ' tf';
+
+            const elVNeg = document.getElementById('val-v-ll-neg');
+            if (elVNeg) elVNeg.innerText = formattedVNeg + ' tf';
 
             // Update Tab 4 Sub-tab 2 synchronized display
             const tab4Element = document.getElementById('val-m-ll-tab4');
@@ -2357,33 +2610,64 @@
             const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
             const w_static = w_self + w_add;
 
-            const M_lane = 499;
+            // Live Load Parameters
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
             const im = parseFloat(document.getElementById('ll-impact-slider').value);
             const ol = parseFloat(document.getElementById('ll-overload-slider').value);
-            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
             const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
-            const M_LL = M_lane * (1 + im) * (1 + ol) * reduction * lanes;
 
+            const w_LL = 0.96 * (1 + im) * (1 + ol) * lanes;
+            const factors = (1 + im) * (1 + ol) * reduction;
             const L = state.span; // 56.5m
-            const w_vehicle = (8 * M_LL) / (L * L); // 車輛分佈荷載 (tf/m)
 
-            // Render each segment
-            state.segments.forEach(seg => {
+            // DEBUG: Log factor calculation
+            console.log('[DEBUG] renderSegmentMomentTable - Live Load Factors:', {
+                lanes, im, ol, reduction,
+                w_LL,
+                factors,
+                calculation: `(1 + ${im}) * (1 + ${ol}) * ${reduction} = ${factors}`
+            });
+
+            // Render rows for each Node (N1 to N30)
+            state.nodes.forEach((nodeX, index) => {
+                const nodeId = index + 1; // 1-based Node ID
                 const tr = document.createElement('tr');
-                if (seg.type === 'special') tr.className = 'highlight-row';
 
-                // Calculate moment at segment endpoint (cumulative position)
-                const x = seg.endX; // 節段累積終點位置 (m)
+                // Determine if this row corresponds to a special segment (for highlighting)
+                // Note: state.segments is 0-indexed, so segment mapping is direct if index < 29
+                let isSpecial = false;
+                if (index < state.segments.length) {
+                    if (state.segments[index].type === 'special') isSpecial = true;
+                }
 
-                // M(x) = w * x/2 * (L - x)
-                const M_static = w_static * (x / 2) * (L - x);
-                const M_vehicle = w_vehicle * (x / 2) * (L - x);
+                if (isSpecial) tr.className = 'highlight-row';
+
+                // Calculate moment at Node position (x = nodeX)
+                // M(x) = (3/8) * w * L * x - (w/2) * x^2
+                // Note: w in the formula is w_static (w_self + w_add)
+                const M_static = (3.0 / 8.0) * w_static * L * nodeX - (w_static / 2.0) * Math.pow(nodeX, 2);
+
+                // M_vehicle(x) = [(3/8)*w_LL*L*x - (w_LL/2)*x^2] * Red
+                // w_LL already includes (1+IM)*(1+OL)
+                const term_LL_moment = (3.0 / 8.0) * w_LL * L * nodeX - (w_LL / 2.0) * Math.pow(nodeX, 2);
+
+                const M_vehicle = term_LL_moment * reduction;
+
+                // Shear Force: V(x) = 3/8*w*L - w*x
+                const V_static = (3.0 / 8.0) * w_static * L - w_static * nodeX;
+                const V_vehicle = ((3.0 / 8.0) * w_LL * L - w_LL * nodeX) * reduction;
+
+                // Segment Column: Show "#(index+1)" if index < 29, else empty
+                const segmentText = (index < state.segments.length) ? `#${state.segments[index].id}` : '';
 
                 tr.innerHTML = `
-                    <td class="font-bold text-slate-600 border-r border-slate-200">#${seg.id}</td>
-                    <td class="text-center text-slate-600 border-r border-slate-200">${seg.length.toFixed(2)}</td>
+                    <td class="font-bold text-slate-600 border-r border-slate-200 text-center">N${nodeId}</td>
+                    <td class="text-center text-slate-600 border-r border-slate-200">${segmentText}</td>
+                    <td class="text-center text-slate-600 border-r border-slate-200 font-mono">${nodeX.toFixed(2)}</td>
                     <td class="text-center text-green-600 font-bold border-r border-slate-200">${M_static.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="text-center text-blue-600 font-bold">${M_vehicle.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="text-center text-green-700 font-bold border-r border-slate-200">${V_static.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="text-center text-blue-600 font-bold border-r border-slate-200">${M_vehicle.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="text-center text-blue-700 font-bold">${V_vehicle.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -2660,15 +2944,13 @@
             const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
             const w_static = w_self + w_add;
 
-            const M_lane = 499; // tf*m
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
             const im = parseFloat(document.getElementById('ll-impact-slider').value);
             const ol = parseFloat(document.getElementById('ll-overload-slider').value);
-            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
             const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
-            const M_LL = M_lane * (1 + im) * (1 + ol) * reduction * lanes;
+            const L = state.span;
 
-            const L = state.span; // 56.5m
-            const w_vehicle = (8 * M_LL) / (L * L); // tf/m
+            const w_LL = 0.96 * (1 + im) * (1 + ol) * lanes;
 
             // Add Row #0
             const tr0 = document.createElement('tr');
@@ -2686,8 +2968,15 @@
                     M_design = 0;
                 } else {
                     const x = seg.endX;
-                    const M_static_val = w_static * (x / 2) * (L - x);
-                    const M_vehicle_val = w_vehicle * (x / 2) * (L - x);
+
+                    // Calc M_static
+                    const term_DL = (3.0 / 8.0) * w_static * L * x - (w_static / 2.0) * Math.pow(x, 2);
+                    const M_static_val = term_DL;
+
+                    // Calc M_vehicle
+                    const term_LL = (3.0 / 8.0) * w_LL * L * x - (w_LL / 2.0) * Math.pow(x, 2);
+                    const M_vehicle_val = term_LL * reduction;
+
                     M_design = 1.3 * M_static_val + 2.17 * M_vehicle_val;
                 }
 
@@ -2796,7 +3085,7 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             ctx.fillText('滑動端', marginX, beamBot + 18);
-            ctx.fillText('鉸接端', marginX + drawW, beamBot + 18);
+            ctx.fillText('固定端', marginX + drawW, beamBot + 18);
         }
 
         // 應力塊深度和彎矩承載力表
@@ -2880,11 +3169,24 @@
                 const nodeId = getSegmentNode(seg.id);
                 const stressData = STRESS_BLOCK_DATA[seg.id] || { a: 0, Mn: 0 };
 
+                // Determine Np (Tendon Count)
+                let Np = 0;
+                const id = seg.id;
+                if (id >= 1 && id <= 3) Np = 8;
+                else if (id >= 4 && id <= 5) Np = 16;
+                else if (id >= 6 && id <= 8) Np = 24;
+                else if (id >= 9 && id <= 19) Np = 32;
+                else if (id >= 20 && id <= 22) Np = 24;
+                else if (id >= 23 && id <= 24) Np = 16;
+                else if (id >= 25 && id <= 26) Np = 8;
+                else if (id >= 27 && id <= 29) Np = 0;
+
                 tr.innerHTML = `
                     <td class="font-bold text-slate-600 border-r border-slate-200">#${seg.id}</td>
                     <td class="text-center text-purple-600 font-bold border-r border-slate-200">${nodeId}</td>
                     <td class="text-xs text-slate-500 border-r border-slate-200">${seg.length.toFixed(2)}</td>
                     <td class="col-main border-r border-blue-200">${Math.round(intVal).toLocaleString()}</td>
+                    <td class="col-main border-r border-slate-200 text-slate-700 font-mono text-center">${Np}</td>
                     <td class="col-main border-r border-orange-200">${stressData.a.toFixed(2)}</td>
                     <td class="col-tot text-green-600 font-bold">${stressData.Mn.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 `;
