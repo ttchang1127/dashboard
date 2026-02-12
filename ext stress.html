@@ -686,8 +686,7 @@
                                             <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
                                                 節點<br>(Node)
                                             </th>
-                                            <th class="border border-slate-300 px-2 py-2 text-left font-semibold">節段 #
-                                            </th>
+
                                             <th class="border border-slate-300 px-2 py-2 text-left font-semibold">斷面
                                             </th>
                                             <th class="border border-slate-300 px-2 py-2 text-left font-semibold">
@@ -1137,7 +1136,8 @@
                     <!-- Section 4: Strengthening Stress Verify Table -->
                     <div class="overflow-hidden">
                         <div class="flex justify-between items-end mb-2">
-                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-purple-500 pl-2">加固應力檢核表
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-purple-500 pl-2">加固應力檢核表 (節點
+                                N1~N30)
                             </h3>
                             <span class="text-xs text-slate-400">單位: kgf/cm²</span>
                         </div>
@@ -1145,7 +1145,7 @@
                             <table class="w-full data-table text-sm">
                                 <thead class="bg-slate-800 text-white sticky top-0 z-10">
                                     <tr>
-                                        <th rowspan="2" class="p-2 border border-slate-600">節段 #</th>
+                                        <th rowspan="2" class="p-2 border border-slate-600">節點<br>(Nodes)</th>
                                         <th colspan="2" class="p-2 border border-slate-600 bg-slate-700">總應力 (與分頁3連動)
                                         </th>
                                         <th colspan="2" class="p-2 border border-slate-600 bg-amber-700">外置有效應力 (與分頁4連動)
@@ -2010,182 +2010,89 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            // 獲取基本數據
-            const prestress_tf = INTERNAL_PRESTRESS_TF; // 預力值(tf)
-            const L = state.span; // 56.5m
-
-            // Get Dead Load Parameters
-            const w_self = 35.94;
-            const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
-            const w_DL_val = w_self + w_add;
-
-            // Get Live Load Parameters
+            const L = state.span;
+            const w_DL_val = 35.94 + (parseFloat(document.getElementById('dl-additional').value) || 0);
             const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
             const im = parseFloat(document.getElementById('ll-impact-slider').value);
             const ol = parseFloat(document.getElementById('ll-overload-slider').value);
             const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
-
             const w_LL_val = lanes * 0.96;
             const ll_factors = (1 + im) * (1 + ol) * reduction;
 
+            // 直接遍歷 30 個節點
+            state.nodes.forEach((nodeX, index) => {
+                const nodeNum = index + 1; // N1 ~ N30
 
-            // 逐節段計算
-            state.segments.forEach(seg => {
-                // 取得對應節點
-                const nodeId = getSegmentNode(seg.id);
-                const section = BEAM_SECTIONS.find(s => s.id === nodeId);
-                if (!section) return; // 如果找不到對應節點，跳過
+                // 取得該節點對應的斷面 (這裡統一邏輯：N1用#1的斷面，N2~N29用對應編號，N30用#29的)
+                let segIdForSection = nodeNum === 30 ? 29 : nodeNum;
+                const sectionId = getSegmentNode(segIdForSection);
+                const section = BEAM_SECTIONS.find(s => s.id === sectionId);
 
-                // 截面參數 (單位: cm)
-                const A = section.Area; // cm²
-                const I_zz = section.I; // cm⁴
-                const Y_top = section.Y_top; // cm (從頂部)
-                const Y_bot = section.Y_bot; // cm (從底部)
+                if (!section) return;
 
-                // 1. 底版鋼腱偏心矩 ep,eff (cm)
-                const ep_eff = Y_bot - 12.5;
+                const A = section.Area;
+                const I_zz = section.I;
+                const Stop = I_zz / section.Y_top;
+                const Sbot = I_zz / section.Y_bot;
 
-                // 2. 頂版鋼腱偏心矩 ep,eff_top (cm)
-                const ep_eff_top = Y_top - 12.5;
+                const ep_eff = section.Y_bot - 12.5;
+                const ep_eff_top = section.Y_top - 12.5;
 
-                // 2. 底版有效預力彎矩 Meff (tf·m)
-                const Meff = (BOTTOM_PRESTRESS_TF[seg.id - 1] * ep_eff) / 100; // 使用底版預力值，轉換cm到m
+                // 預力計算
+                const P_top = TOP_PRESTRESS_TF[index];
+                const P_bot = BOTTOM_PRESTRESS_TF[index];
 
-                // 3. 頂版有效預力彎矩 Meff_top (tf·m)
-                const Meff_top = (TOP_PRESTRESS_TF[seg.id - 1] * ep_eff_top * -1) / 100; // 轉換cm到m，乘以-1
+                const Meff = (P_bot * ep_eff) / 100;
+                const Meff_top = (P_top * ep_eff_top * -1) / 100;
+                const Meff_combined = Meff + Meff_top; // (P_bot * (section.Y_bot - 12.5) / 100) + (P_top * (section.Y_top - 12.5) * -1 / 100)
 
-                // 4. 合成後有效預力彎矩 (tf·m) - 直接相加底版和頂版預力彎矩
-                const Meff_combined = (BOTTOM_PRESTRESS_TF[seg.id - 1] * ep_eff) / 100 + (TOP_PRESTRESS_TF[seg.id - 1] * ep_eff_top * -1) / 100;
+                const faxial = (P_top + P_bot) * 1000 / A;
+                const fm_top = -(Meff_combined * 100000 / Stop);
+                const fm_bot = (Meff_combined * 100000 / Sbot);
 
-                // 3. 斷面一次矩
-                const Stop = I_zz / Y_top; // cm³
-                const Sbot = I_zz / Y_bot; // cm³
-
-                // 4. 軸向應力 faxial (kgf/cm²)
-                const faxial = (TOP_PRESTRESS_TF[seg.id - 1] + BOTTOM_PRESTRESS_TF[seg.id - 1]) * 1000 / A; // tf轉kgf
-
-                // 5. 上緣彎矩應力 fm,top (kgf/cm²) - 使用合成後有效預力彎矩
-                const fm_top = -(Meff_combined * 100000 / Stop); // 乘以-1，正值表示壓應力
-
-                // 6. 下緣彎矩應力 fm,bot (kgf/cm²) - 使用合成後有效預力彎矩
-                const fm_bot = (Meff_combined * 100000 / Sbot); // 正值表示壓應力
-
-                // 7. 梁上緣有效應力 feff,top (kgf/cm²)
                 const feff_top = faxial + fm_top;
-
-                // 8. 梁下緣有效應力 feff,bot (kgf/cm²)
                 const feff_bot = faxial + fm_bot;
 
-                // 9. 計算各載重造成的應力
-                // 使用節點位置進行彎矩計算 (與分頁2對應)
-                const x = state.nodes[seg.id - 1]; // 節點位置(m) - seg.id對應N{seg.id}
-                const M_DL_seg = (3.0 / 8.0) * w_DL_val * L * x - (w_DL_val / 2.0) * Math.pow(x, 2); // tf·m
+                // 載重彎矩計算 (使用該節點的 nodeX)
+                const M_DL = (3 / 8) * w_DL_val * L * nodeX - (w_DL_val / 2) * Math.pow(nodeX, 2);
+                const M_LL = ((3 / 8) * w_LL_val * L * nodeX - (w_LL_val / 2) * Math.pow(nodeX, 2)) * ll_factors;
 
-                const term_LL_seg = (3.0 / 8.0) * w_LL_val * L * x - (w_LL_val / 2.0) * Math.pow(x, 2);
-                const M_LL_seg = term_LL_seg * ll_factors; // tf·m
+                const fDL_top = (M_DL * 100000 / Stop);
+                const fDL_bot = -(M_DL * 100000 / Sbot);
+                const fLL_top = (M_LL * 100000 / Stop);
+                const fLL_bot = -(M_LL * 100000 / Sbot);
 
-                // 梁自重應力（正彎矩：上緣受壓為正，下緣受拉為負）
-                const fDL_top = (M_DL_seg * 100000 / Stop);   // 上緣壓應力（正值）
-                const fDL_bot = -(M_DL_seg * 100000 / Sbot);  // 下緣拉應力（負值）
-
-                // 車輛載重應力（正彎矩：上緣受壓為正，下緣受拉為負）
-                const fLL_top = (M_LL_seg * 100000 / Stop);   // 上緣壓應力（正值）
-                const fLL_bot = -(M_LL_seg * 100000 / Sbot);  // 下緣拉應力（負值）
-
-                // 生成表格行
                 const tr = document.createElement('tr');
-                if (seg.type === 'special') tr.className = 'bg-yellow-50';
+                if (nodeNum === 1) tr.className = 'bg-amber-50';
+                if (nodeNum === 30) tr.className = 'bg-cyan-50';
 
                 tr.innerHTML = `
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">N${seg.id}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">#${seg.id}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-purple-600">${nodeId}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">N${nodeNum}</td>
+
+                    <td class="border border-slate-300 px-2 py-2 text-center text-purple-600">${sectionId}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff.toFixed(2)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${TOP_PRESTRESS_TF[seg.id - 1]}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${BOTTOM_PRESTRESS_TF[seg.id - 1]}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-green-50 text-green-700">${M_DL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-blue-50 text-blue-700">${M_LL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${P_top}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${P_bot}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right bg-green-50 text-green-700">${M_DL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right bg-blue-50 text-blue-700">${M_LL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${(Meff * -1).toFixed(2)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${(Meff_top * -1).toFixed(2)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right font-semibold">${(Meff_combined * -1).toFixed(2)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${Stop.toFixed(1)}</td>
                     <td class="border border-slate-300 px-2 py-2 text-right">${Sbot.toFixed(1)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${faxial.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_top > 0 ? '#2563eb' : fm_top < 0 ? '#dc2626' : '#16a34a'}">${fm_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_bot > 0 ? '#2563eb' : fm_bot < 0 ? '#dc2626' : '#16a34a'}">${fm_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_top > 0 ? '#2563eb' : feff_top < 0 ? '#dc2626' : '#16a34a'}">${feff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_bot > 0 ? '#2563eb' : feff_bot < 0 ? '#dc2626' : '#16a34a'}">${feff_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_top > 0 ? '#2563eb' : fDL_top < 0 ? '#dc2626' : '#16a34a'}">${fDL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_bot > 0 ? '#2563eb' : fDL_bot < 0 ? '#dc2626' : '#16a34a'}">${fDL_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_top > 0 ? '#2563eb' : fLL_top < 0 ? '#dc2626' : '#16a34a'}">${fLL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_bot > 0 ? '#2563eb' : fLL_bot < 0 ? '#dc2626' : '#16a34a'}">${fLL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${faxial.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fm_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fm_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fDL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fDL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fLL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fLL_bot.toFixed(2)}</td>
                 `;
                 tbody.appendChild(tr);
             });
-
-
-
-            // Add N30 row with no segment
-            const n30_nodeId = 5; // N30 使用斷面5
-            const n30_section = BEAM_SECTIONS.find(s => s.id === n30_nodeId);
-
-            if (n30_section) {
-                const A = n30_section.Area;
-                const I_zz = n30_section.I;
-                const Y_top = n30_section.Y_top;
-                const Y_bot = n30_section.Y_bot;
-                const ep_eff = Y_bot - 12.5;
-                const ep_eff_top = Y_top - 12.5;
-                const Meff = (BOTTOM_PRESTRESS_TF[29] * ep_eff) / 100; // 使用底版預力值
-                const Meff_top = (TOP_PRESTRESS_TF[29] * ep_eff_top * -1) / 100;
-                const Meff_combined = (BOTTOM_PRESTRESS_TF[29] * ep_eff) / 100 + (TOP_PRESTRESS_TF[29] * ep_eff_top * -1) / 100;
-                const Stop = I_zz / Y_top;
-                const Sbot = I_zz / Y_bot;
-                const faxial = (TOP_PRESTRESS_TF[29] + BOTTOM_PRESTRESS_TF[29]) * 1000 / A; // tf轉kgf
-                const fm_top = -(Meff_combined * 100000 / Stop); // 乘以-1，正值表示壓應力
-                const fm_bot = (Meff_combined * 100000 / Sbot); // 正值表示壓應力
-                const feff_top = faxial + fm_top;
-                const feff_bot = faxial + fm_bot;
-
-                // x = L (end point) - use node position for N30
-                const x = state.nodes[29];
-                const M_DL_seg = (3.0 / 8.0) * w_DL_val * L * x - (w_DL_val / 2.0) * Math.pow(x, 2);
-                const term_LL_seg = (3.0 / 8.0) * w_LL_val * L * x - (w_LL_val / 2.0) * Math.pow(x, 2);
-                const M_LL_seg = term_LL_seg * ll_factors;
-                const fDL_top = (M_DL_seg * 100000 / Stop);
-                const fDL_bot = -(M_DL_seg * 100000 / Sbot);
-                const fLL_top = (M_LL_seg * 100000 / Stop);
-                const fLL_bot = -(M_LL_seg * 100000 / Sbot);
-
-                const tr30 = document.createElement('tr');
-                tr30.innerHTML = `
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">N30</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold"></td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-purple-600">${n30_nodeId}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${ep_eff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${TOP_PRESTRESS_TF[29]}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${BOTTOM_PRESTRESS_TF[29]}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-green-50 text-green-700">${M_DL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono bg-blue-50 text-blue-700">${M_LL_seg.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${(Meff * -1).toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${(Meff_top * -1).toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-semibold">${(Meff_combined * -1).toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${Stop.toFixed(1)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right">${Sbot.toFixed(1)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${faxial.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_top > 0 ? '#2563eb' : fm_top < 0 ? '#dc2626' : '#16a34a'}">${fm_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fm_bot > 0 ? '#2563eb' : fm_bot < 0 ? '#dc2626' : '#16a34a'}">${fm_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_top > 0 ? '#2563eb' : feff_top < 0 ? '#dc2626' : '#16a34a'}">${feff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${feff_bot > 0 ? '#2563eb' : feff_bot < 0 ? '#dc2626' : '#16a34a'}">${feff_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_top > 0 ? '#2563eb' : fDL_top < 0 ? '#dc2626' : '#16a34a'}">${fDL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fDL_bot > 0 ? '#2563eb' : fDL_bot < 0 ? '#dc2626' : '#16a34a'}">${fDL_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_top > 0 ? '#2563eb' : fLL_top < 0 ? '#dc2626' : '#16a34a'}">${fLL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono" style="color: ${fLL_bot > 0 ? '#2563eb' : fLL_bot < 0 ? '#dc2626' : '#16a34a'}">${fLL_bot.toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr30);
-            }
         }
 
         // 壓張應力檢核表格生成函數
@@ -2194,147 +2101,76 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            // 容許應力限值 (Case No.1)
-            const allowable_compression = 210.00; // kgf/cm²
-            const allowable_tension = -14.97;     // kgf/cm²
-
-            // 獲取基本數據
-            const prestress_tf = INTERNAL_PRESTRESS_TF;
             const L = state.span;
-            // Get Dead Load Parameters
-            const w_self = 35.94;
-            const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
-            const w_DL_val = w_self + w_add;
-
-            // Get Live Load Parameters
+            const w_DL_val = 35.94 + (parseFloat(document.getElementById('dl-additional').value) || 0);
             const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
             const im = parseFloat(document.getElementById('ll-impact-slider').value);
             const ol = parseFloat(document.getElementById('ll-overload-slider').value);
             const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
-
             const w_LL_val = lanes * 0.96;
             const ll_factors = (1 + im) * (1 + ol) * reduction;
 
-            // === 各節段 N1~N29 ===
-            state.segments.forEach(seg => {
-                const nodeId = getSegmentNode(seg.id);
-                const section = BEAM_SECTIONS.find(s => s.id === nodeId);
-                if (!section) return;
+            const limit_comp = 210.00;
+            const limit_tens = -14.97;
+
+            state.totalStressData = {};
+
+            // 直接遍歷 30 個節點
+            state.nodes.forEach((nodeX, index) => {
+                const nodeNum = index + 1;
+                let segIdForSection = nodeNum === 30 ? 29 : nodeNum;
+                const sectionId = getSegmentNode(segIdForSection);
+                const section = BEAM_SECTIONS.find(s => s.id === sectionId);
 
                 const A = section.Area;
                 const I_zz = section.I;
-                const Y_top = section.Y_top;
-                const Y_bot = section.Y_bot;
+                const Stop = I_zz / section.Y_top;
+                const Sbot = I_zz / section.Y_bot;
 
-                // 計算有效預力應力（與梁上下緣應力表格一致）
-                const ep_eff = Y_bot - 12.5;
-                const ep_eff_top = Y_top - 12.5;
-                const Meff = (BOTTOM_PRESTRESS_TF[seg.id - 1] * ep_eff) / 100;
-                const Meff_top = (TOP_PRESTRESS_TF[seg.id - 1] * ep_eff_top * -1) / 100;
-                const Meff_combined = (BOTTOM_PRESTRESS_TF[seg.id - 1] * ep_eff) / 100 + (TOP_PRESTRESS_TF[seg.id - 1] * ep_eff_top * -1) / 100;
+                const P_top = TOP_PRESTRESS_TF[index];
+                const P_bot = BOTTOM_PRESTRESS_TF[index];
+                const Meff_combined = (P_bot * (section.Y_bot - 12.5) / 100) + (P_top * (section.Y_top - 12.5) * -1 / 100);
 
-                const Stop = I_zz / Y_top;
-                const Sbot = I_zz / Y_bot;
-                const faxial = (TOP_PRESTRESS_TF[seg.id - 1] + BOTTOM_PRESTRESS_TF[seg.id - 1]) * 1000 / A;
-                const fm_top = -(Meff_combined * 100000 / Stop);
-                const fm_bot = (Meff_combined * 100000 / Sbot);
-                const feff_top = faxial + fm_top;
-                const feff_bot = faxial + fm_bot;
+                const faxial = (P_top + P_bot) * 1000 / A;
+                const feff_top = faxial + (-(Meff_combined * 100000 / Stop));
+                const feff_bot = faxial + (Meff_combined * 100000 / Sbot);
 
-                const x = state.nodes[seg.id - 1]; // 節點位置(m) - 與梁上下緣應力表格一致
-                const M_DL_seg = (3.0 / 8.0) * w_DL_val * L * x - (w_DL_val / 2.0) * Math.pow(x, 2);
+                const M_DL = (3 / 8) * w_DL_val * L * nodeX - (w_DL_val / 2) * Math.pow(nodeX, 2);
+                const M_LL = ((3 / 8) * w_LL_val * L * nodeX - (w_LL_val / 2) * Math.pow(nodeX, 2)) * ll_factors;
 
-                const term_LL_seg = (3.0 / 8.0) * w_LL_val * L * x - (w_LL_val / 2.0) * Math.pow(x, 2);
-                const M_LL_seg = term_LL_seg * ll_factors;
-                const fDL_top = (M_DL_seg * 100000 / Stop);
-                const fDL_bot = -(M_DL_seg * 100000 / Sbot);
-                const fLL_top = (M_LL_seg * 100000 / Stop);
-                const fLL_bot = -(M_LL_seg * 100000 / Sbot);
+                const fDL_top = (M_DL * 100000 / Stop);
+                const fDL_bot = -(M_DL * 100000 / Sbot);
+                const fLL_top = (M_LL * 100000 / Stop);
+                const fLL_bot = -(M_LL * 100000 / Sbot);
 
-                // 總應力 = 有效預力應力 + 梁自重應力 + 車輛載重應力
                 const ftotal_top = feff_top + fDL_top + fLL_top;
                 const ftotal_bot = feff_bot + fDL_bot + fLL_bot;
 
-                const check_top = (ftotal_top >= allowable_tension && ftotal_top <= allowable_compression) ? 'OK' : 'NG';
-                const check_bot = (ftotal_bot >= allowable_tension && ftotal_bot <= allowable_compression) ? 'OK' : 'NG';
+                // 存儲數據供加固階段(Tab 5)使用
+                state.totalStressData[nodeNum] = { ftotal_top, ftotal_bot };
+
+                const check_top = (ftotal_top >= limit_tens && ftotal_top <= limit_comp) ? 'OK' : 'NG';
+                const check_bot = (ftotal_bot >= limit_tens && ftotal_bot <= limit_comp) ? 'OK' : 'NG';
 
                 const tr = document.createElement('tr');
-                if (seg.type === 'special') tr.className = 'bg-yellow-50';
+                if (nodeNum === 1) tr.className = 'bg-amber-50';
+                if (nodeNum === 30) tr.className = 'bg-cyan-50';
 
                 tr.innerHTML = `
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">N${seg.id}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fLL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fLL_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-amber-100">${ftotal_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-amber-100">${ftotal_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_top === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_top}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_bot === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_bot}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold">N${nodeNum}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${feff_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${feff_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fDL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fDL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fLL_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right">${fLL_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold bg-amber-100">${ftotal_top.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-right font-bold bg-amber-100">${ftotal_bot.toFixed(2)}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_top === 'OK' ? 'text-green-600' : 'text-red-600'}">${check_top}</td>
+                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_bot === 'OK' ? 'text-green-600' : 'text-red-600'}">${check_bot}</td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            // === 新增 N30 行 ===
-            const n30_nodeId = 5; // N30 使用斷面5
-            const n30_section = BEAM_SECTIONS.find(s => s.id === n30_nodeId);
-
-            if (n30_section) {
-                const A = n30_section.Area;
-                const I_zz = n30_section.I;
-                const Y_top = n30_section.Y_top;
-                const Y_bot = n30_section.Y_bot;
-
-                // 計算有效預力應力（與梁上下緣應力表格一致）
-                const ep_eff = Y_bot - 12.5;
-                const ep_eff_top = Y_top - 12.5;
-                const Meff = (BOTTOM_PRESTRESS_TF[29] * ep_eff) / 100;
-                const Meff_top = (TOP_PRESTRESS_TF[29] * ep_eff_top * -1) / 100;
-                const Meff_combined = (BOTTOM_PRESTRESS_TF[29] * ep_eff) / 100 + (TOP_PRESTRESS_TF[29] * ep_eff_top * -1) / 100;
-
-                const Stop = I_zz / Y_top;
-                const Sbot = I_zz / Y_bot;
-                const faxial = (TOP_PRESTRESS_TF[29] + BOTTOM_PRESTRESS_TF[29]) * 1000 / A;
-                const fm_top = -(Meff_combined * 100000 / Stop);
-                const fm_bot = (Meff_combined * 100000 / Sbot);
-                const feff_top = faxial + fm_top;
-                const feff_bot = faxial + fm_bot;
-
-                const x = state.nodes[29]; // N30 position
-                const M_DL_seg = (3.0 / 8.0) * w_DL_val * L * x - (w_DL_val / 2.0) * Math.pow(x, 2);
-                const term_LL_seg = (3.0 / 8.0) * w_LL_val * L * x - (w_LL_val / 2.0) * Math.pow(x, 2);
-                const M_LL_seg = term_LL_seg * ll_factors;
-                const fDL_top = (M_DL_seg * 100000 / Stop);
-                const fDL_bot = -(M_DL_seg * 100000 / Sbot);
-                const fLL_top = (M_LL_seg * 100000 / Stop);
-                const fLL_bot = -(M_LL_seg * 100000 / Sbot);
-
-                // 總應力 = 有效預力應力 + 梁自重應力 + 車輛載重應力
-                const ftotal_top = feff_top + fDL_top + fLL_top;
-                const ftotal_bot = feff_bot + fDL_bot + fLL_bot;
-
-                const check_top = (ftotal_top >= allowable_tension && ftotal_top <= allowable_compression) ? 'OK' : 'NG';
-                const check_bot = (ftotal_bot >= allowable_tension && ftotal_bot <= allowable_compression) ? 'OK' : 'NG';
-
-                const trN30 = document.createElement('tr');
-                trN30.className = 'bg-cyan-50';
-                trN30.innerHTML = `
-                    <td class="border border-slate-300 px-2 py-2 text-center font-semibold text-cyan-700">N30</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${feff_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fDL_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fLL_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-mono">${fLL_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-cyan-100">${ftotal_top.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-right font-bold font-mono bg-cyan-100">${ftotal_bot.toFixed(2)}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_top === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_top}</td>
-                    <td class="border border-slate-300 px-2 py-2 text-center font-bold ${check_bot === 'OK' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}">${check_bot}</td>
-                `;
-                tbody.appendChild(trN30);
-            }
         }
 
         // === 分頁2與分頁4雙向同步函數 ===
@@ -2716,210 +2552,37 @@
             const allowable_compression = 210.00;
             const allowable_tension = -14.97;
 
-            // 1. Get Tab 4 Data Points (Total Stress)
-            // Need to recalculate or access pre-calculated data?
-            // Since we don't store per-segment total stress in state, we re-calc.
-
-            const prestress_tf = INTERNAL_PRESTRESS_TF;
-            const L = state.span;
-
-            // Loads
-            const w_self = 35.94;
-            const w_add = parseFloat(document.getElementById('dl-additional').value) || 0;
-            const w_DL = (w_self + w_add) * 8 / (L * L) * state.M_DL / (w_self + w_add); // Just use M_DL from state
-            // Better: M_DL in state is Total Moment.
-            // Segment Moment M(x) calc:
-            // M_DL(x) = M_DL_total * 4 * (x/L) * (1 - x/L) ? Parabolic
-            // Or just re-use formula: w * x/2 * (L-x)
-
-            const w_total_dl = (state.M_DL * 8) / (L * L); // deduce w from M_DL
-            const w_total_ll = (state.M_LL * 8) / (L * L); // deduce w from M_LL
-
-            // 2. Get Tab 5 Data Points (Ext Effective Stress)
-            // Use same logic as renderTable3
-
-            // External Force Prep
-            const blocks = state.extGeometry.deviationBlocks.blocks;
-            const count = state.extGeometry.deviationBlocks.count;
-            const b1_x = blocks[0].x;
-            const b1_seg = state.segments.find(s => b1_x >= s.startX && b1_x < s.endX);
-            const b1_id = b1_seg ? b1_seg.id : -1;
-            let b2_id = -1;
-            if (count === 2) {
-                const b2_x = blocks[1].x;
-                const b2_seg = state.segments.find(s => b2_x >= s.startX && b2_x < s.endX);
-                b2_id = b2_seg ? b2_seg.id : -1;
+            // 確保已計算總應力數據和外置有效應力數據
+            if (!state.totalStressData || Object.keys(state.totalStressData).length === 0) {
+                return;
+            }
+            if (!state.extEffectiveStress || Object.keys(state.extEffectiveStress).length === 0) {
+                return;
             }
 
-            const getUExtY = (x) => {
-                const ancSlideY = state.extGeometry.anchorage.sliding.y;
-                const ancHingeY = state.extGeometry.anchorage.hinged.y;
-                const b_y = 278;
-                if (x <= b1_x) return b1_x === 0 ? ancSlideY : ancSlideY + (b_y - ancSlideY) * (x / b1_x);
-                if (count === 2) {
-                    const b2_x = blocks[1].x;
-                    if (x <= b2_x) return 278;
-                    if (x >= 56.5) return ancHingeY;
-                    return b_y + (ancHingeY - b_y) * ((x - b2_x) / (56.5 - b2_x));
-                } else {
-                    if (x >= 56.5) return ancHingeY;
-                    return b_y + (ancHingeY - b_y) * ((x - b1_x) / (56.5 - b1_x));
-                }
-            };
+            // 迴圈遍歷所有節點 N1~N30
+            for (let nodeNum = 1; nodeNum <= 30; nodeNum++) {
+                const totalStress = state.totalStressData[nodeNum];
+                const extStress = state.extEffectiveStress[nodeNum];
 
-            const getUExtForce = (segId) => {
-                const P = state.extGeometry.forceTf;
-                const n1_ax = state.extResults.n1_axial || 0;
-                const n30_ax = state.extResults.n30_axial || 0;
-                if (segId === 0) return n1_ax;
-                if (segId <= b1_id) return n1_ax;
-                if (count === 2) {
-                    return (segId < b2_id) ? P : n30_ax;
-                }
-                return n30_ax;
+                if (!totalStress || !extStress) continue;
+
+                const int_ftotal_top = totalStress.ftotal_top;
+                const int_ftotal_bot = totalStress.ftotal_bot;
+
+                const ext_feff_top = extStress.feff_top;
+                const ext_feff_bot = extStress.feff_bot;
+
+                createVerifyRow(nodeNum, int_ftotal_top, int_ftotal_bot, ext_feff_top, ext_feff_bot);
             }
-
-            // Include Seg #0 logic
-            const allSegs = [...state.segments];
-            // Add pseudo-segment 0 for looping if needed, or just handle #0 separate
-
-            // Defined Nodes Iteration? No, match table 3 / 4 rows
-            // Table should range #0 to #29
-
-            // --- Row #0 ---
-            {
-                // Tab 4 (#0)
-                const nodeId = 3; // Node 3 for Seg 0? Table 4 says Node 3
-                // Actually Tab 4 renderStressVerifyTable Seg 0 uses getSegmentNode(1) -> Node 3
-                const sec = BEAM_SECTIONS.find(s => s.id === 3);
-
-                let int_ftotal_top = 0, int_ftotal_bot = 0;
-                let ext_feff_top = 0, ext_feff_bot = 0;
-
-                // Recalculate #0 Internal
-                if (sec) {
-                    const A = sec.Area; const I = sec.I; const Yt = sec.Y_top; const Yb = sec.Y_bot;
-                    const ep = Yb - 12.5;
-                    const M = (prestress_tf[0] * ep) / 100;
-                    const Stop = I / Yt; const Sbot = I / Yb;
-                    const fa = prestress_tf[0] * 1000 / A;
-                    const fmt = (M > 0 ? -1 : 1) * (Math.abs(M) * 100000 / Stop);
-                    const fmb = (M * 100000 / Sbot);
-                    const feff_t = fa + fmt;
-                    const feff_b = fa + fmb;
-                    // Loads at x=0 are 0
-                    int_ftotal_top = feff_t;
-                    int_ftotal_bot = feff_b;
-                }
-
-                // Recalculate #0 External
-                {
-                    const f0 = getUExtForce(0);
-                    const pos0 = state.extGeometry.anchorage.sliding.y;
-                    const ep_ext = pos0 - sec.Y_top;
-                    const meff = (f0 * ep_ext) / 100;
-                    const fa_ext = (f0 * 1000) / sec.Area;
-
-                    const Stop = sec.I / sec.Y_top;
-                    const Sbot = sec.I / sec.Y_bot;
-
-                    // fm_top: Meff/Stop * (-1 if Meff>0? No, definition: -M/S)
-                    // If Meff (Force*ep) is (+), Moment is (+). Top Comp is (+).
-                    // Formula: sigma = -My/I. 
-                    // My convention: Comp (+).
-                    // Positive Moment => Top Comp (+).
-                    // Wait, in previous code: fm_top = (Meff > 0) ? -(...) : (...) -> This implies Meff>0 gives Tension(-).
-                    // Let's check Tab 4 Logic:
-                    // const fm_top = (Meff > 0) ? -(Meff * 100000 / Stop) : (Meff * 100000 / Stop);
-                    // If Meff (+) (Sagging), Top should be Comp (+).
-                    // Current code says Meff>0 -> Negative result. Negative is Tension?
-                    // Verify Limit: Tension -14.97. 
-                    // So Code treats (-) as Tension.
-                    // Meff (+) -> Sagging -> Top Compression (+).
-                    // Why does code use -(...)?
-                    // PRESTRESS Moment is Hogging (usually).
-                    // Prestress force at bottom -> Hogging Moment (M < 0).
-                    // Meff calc: Force * ep. ep = Ybot - 12.5 (positive). So Meff is Positive?
-                    // If Meff is positive representing Prestress Moment, it should be Hogging?
-                    // Let's stick to Validated Code Logic in renderTable3:
-                    // const fm_top0 = (Stop !== 0) ? -(meff0 * 100000 / Stop) : 0;
-
-                    const fm_t = -(meff * 100000 / Stop);
-                    const fm_b = (meff * 100000 / Sbot);
-
-                    ext_feff_top = fa_ext + fm_t;
-                    ext_feff_bot = fa_ext + fm_b;
-                }
-
-                createVerifyRow(0, int_ftotal_top, int_ftotal_bot, ext_feff_top, ext_feff_bot);
-            }
-
-            // --- Rows #1~#29 ---
-            state.segments.forEach(seg => {
-                const x = seg.endX;
-                const nodeId = getSegmentNode(seg.id);
-                const sec = BEAM_SECTIONS.find(s => s.id === nodeId);
-                if (!sec) return;
-
-                // Internal Total
-                let int_tot_t = 0, int_tot_b = 0;
-                {
-                    const A = sec.Area; const I = sec.I; const Yt = sec.Y_top; const Yb = sec.Y_bot;
-                    const ep = Yb - 12.5;
-                    const M_p = (prestress_tf[seg.id - 1] * ep) / 100;
-                    const Stop = I / Yt; const Sbot = I / Yb;
-                    const fa = prestress_tf[seg.id - 1] * 1000 / A;
-                    const fmt = (M_p > 0 ? -1 : 1) * (Math.abs(M_p) * 100000 / Stop);
-                    const fmb = (M_p * 100000 / Sbot);
-                    const feff_t = fa + fmt;
-                    const feff_b = fa + fmb;
-
-                    const M_dl = w_total_dl * (x / 2) * (L - x);
-                    const M_ll = w_total_ll * (x / 2) * (L - x);
-
-                    // Loads Moment is Sagging (+). Top Comp (+), Bot Tens (-).
-                    // Code Tab 4: 
-                    // fDL_top = (M * / Stop). Positive. Correct.
-                    // fDL_bot = -(M * / Sbot). Negative. Correct.
-
-                    const fload_t = ((M_dl + M_ll) * 100000 / Stop);
-                    const fload_b = -((M_dl + M_ll) * 100000 / Sbot);
-
-                    int_tot_t = feff_t + fload_t;
-                    int_tot_b = feff_b + fload_b;
-                }
-
-                // External
-                let ext_eff_t = 0, ext_eff_b = 0;
-                {
-                    const midX = seg.startX + seg.length / 2;
-                    const pos = (seg.id === 29) ? state.extGeometry.anchorage.hinged.y : getUExtY(midX); // use midX for avg depth? or endX?
-                    // renderTable3 uses getCableY(midX). 
-                    // Let's match renderTable3 exactly.
-
-                    const force = getUExtForce(seg.id);
-                    const ep_ext = pos - sec.Y_top;
-                    const meff = (force * ep_ext) / 100;
-                    const fa_ext = (force * 1000) / sec.Area;
-                    const Stop = sec.I / sec.Y_top;
-                    const Sbot = sec.I / sec.Y_bot;
-
-                    const fm_t = -(meff * 100000 / Stop);
-                    const fm_b = (meff * 100000 / Sbot);
-
-                    ext_eff_t = fa_ext + fm_t;
-                    ext_eff_b = fa_ext + fm_b;
-                }
-
-                createVerifyRow(seg.id, int_tot_t, int_tot_b, ext_eff_t, ext_eff_b, seg.type);
-            });
         }
 
-        function createVerifyRow(id, t4_top, t4_bot, t5_top, t5_bot, type = 'standard') {
+        function createVerifyRow(nodeNum, t4_top, t4_bot, t5_top, t5_bot, type = 'standard') {
             const tbody = document.getElementById('strengtheningVerifyTableBody');
             const tr = document.createElement('tr');
             if (type === 'special') tr.className = 'bg-yellow-50';
-            if (id === 0) tr.className = 'bg-amber-50';
+            if (nodeNum === 1) tr.className = 'bg-amber-50';
+            if (nodeNum === 30) tr.className = 'bg-cyan-50';
 
             const str_top = t4_top + t5_top;
             const str_bot = t4_bot + t5_bot;
@@ -2928,7 +2591,7 @@
             const check_bot = (str_bot >= -14.97 && str_bot <= 210.00) ? 'OK' : 'NG';
 
             tr.innerHTML = `
-                <td class="p-2 border border-slate-200 text-center font-bold text-slate-700">#${id}</td>
+                <td class="p-2 border border-slate-200 text-center font-bold text-slate-700">N${nodeNum}</td>
                 <td class="p-2 border border-slate-200 text-right font-mono text-slate-600">${t4_top.toFixed(2)}</td>
                 <td class="p-2 border border-slate-200 text-right font-mono text-slate-600">${t4_bot.toFixed(2)}</td>
                 <td class="p-2 border border-amber-100 text-right font-mono text-amber-700 bg-amber-50">${t5_top.toFixed(2)}</td>
@@ -3209,15 +2872,13 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            // 1. Identify Blocks' Segments
             const blocks = state.extGeometry.deviationBlocks.blocks;
             const count = state.extGeometry.deviationBlocks.count;
             const b1_x = blocks[0].x;
 
-            // Find segment containing b1_x (strictly: startX <= b1_x < endX)
+            // 找出轉向塊所在的節段 ID
             const b1_seg = state.segments.find(s => b1_x >= s.startX && b1_x < s.endX);
             const b1_id = b1_seg ? b1_seg.id : -1;
-
             let b2_id = -1;
             if (count === 2) {
                 const b2_x = blocks[1].x;
@@ -3225,177 +2886,90 @@
                 b2_id = b2_seg ? b2_seg.id : -1;
             }
 
-            // Helper: Y position (cm from top)
+            if (!state.extEffectiveStress) state.extEffectiveStress = {};
+            state.extEffectiveStress = {};
+
+            // 鋼腱高度計算輔助 (cm from top)
             const getCableY = (x) => {
                 const ancSlideY = state.extGeometry.anchorage.sliding.y;
                 const ancHingeY = state.extGeometry.anchorage.hinged.y;
-                const b1_y = 278; // cm
-
+                const b1_y = 278;
                 if (x <= b1_x) {
-                    if (b1_x === 0) return ancSlideY;
-                    return ancSlideY + (b1_y - ancSlideY) * (x / b1_x);
+                    return b1_x === 0 ? ancSlideY : ancSlideY + (b1_y - ancSlideY) * (x / b1_x);
                 }
-
                 if (count === 2) {
                     const b2_x = blocks[1].x;
-                    const b2_y = 278;
-                    if (x <= b2_x) return 278; // Horizontal between blocks
-                    if (x >= 56.5) return ancHingeY;
-                    return b2_y + (ancHingeY - b2_y) * ((x - b2_x) / (56.5 - b2_x));
+                    if (x <= b2_x) return 278;
+                    return 278 + (ancHingeY - 278) * ((x - b2_x) / (56.5 - b2_x));
                 } else {
-                    if (x >= 56.5) return ancHingeY;
                     return b1_y + (ancHingeY - b1_y) * ((x - b1_x) / (56.5 - b1_x));
                 }
             };
 
-            // Helper: Cable Force (tf) based on Segment ID
-            const getCableForce = (segId) => {
+            // 鋼腱水平力計算輔助 (tf)
+            const getCableForce = (nodeIdx) => {
                 const P = state.extGeometry.forceTf;
                 const n1_ax = state.extResults.n1_axial || 0;
                 const n30_ax = state.extResults.n30_axial || 0;
-
-                // Seg #0 is treated as part of Range 1
-                if (segId === 0) return n1_ax;
-
-                // Range 1: N1 ~ Block 1 (Inclusive of Block 1 segment)
-                if (segId <= b1_id) return n1_ax;
-
-                if (count === 2) {
-                    // Range 2: Between B1 and B2
-                    if (segId < b2_id) return P;
-                    return n30_ax;
-                } else {
-                    return n30_ax;
-                }
+                const x = state.nodes[nodeIdx];
+                if (x <= b1_x) return n1_ax;
+                if (count === 2 && x <= blocks[1].x) return P;
+                return n30_ax;
             };
 
-            // 1. Row #0 (x=0) used for Node 1 Baseline - REMOVED
+            // === 核心修正：遍歷所有節點 N1 ~ N30 ===
+            state.nodes.forEach((nodeX, index) => {
+                const nodeNum = index + 1;
+                const force = getCableForce(index);
+                const pos = getCableY(nodeX);
 
-            // 2. Rows #1 ~ #29
-            // 2. Rows #1 ~ #29
-            state.segments.forEach(seg => {
+                // 取得斷面特性 (N1用#1, N30用#29, 其餘對應)
+                let segIdForSection = nodeNum === 30 ? 29 : nodeNum;
+                const sectionId = getSegmentNode(segIdForSection);
+                const sec = BEAM_SECTIONS.find(s => s.id === sectionId);
+
+                if (!sec) return;
+
+                // 計算應力
+                const ep_ext = pos - sec.Y_top;
+                const meff = (force * ep_ext) / 100;
+                const faxial = (force * 1000) / sec.Area;
+                const Stop = sec.I / sec.Y_top;
+                const Sbot = sec.I / sec.Y_bot;
+                const fm_top = -(meff * 100000 / Stop);
+                const fm_bot = (meff * 100000 / Sbot);
+                const feff_top = fm_top + faxial;
+                const feff_bot = fm_bot + faxial;
+
+                // 儲存數據供 Tab 5 連動使用
+                state.extEffectiveStress[nodeNum] = { feff_top, feff_bot };
+
+                // 建立表格行
                 const tr = document.createElement('tr');
 
-                // Determine Row Style & Label
-                let rowClass = seg.type === 'special' ? 'bg-blue-50' : '';
-                let idLabel = `#${seg.id}`;
-
-                if (seg.id === b1_id) {
-                    rowClass = 'bg-orange-100 border-l-4 border-orange-500';
-                    idLabel += ' <span class="text-xs text-orange-700 block font-normal">(轉向塊1)</span>';
-                } else if (seg.id === b2_id) {
-                    rowClass = 'bg-orange-100 border-l-4 border-orange-500';
-                    idLabel += ' <span class="text-xs text-orange-700 block font-normal">(轉向塊2)</span>';
-                }
-
-                tr.className = rowClass;
-
-                const force = getCableForce(seg.id);
-                // Use node position X (start of segment) for cable Y position
-                const nodeX = state.nodes[seg.id - 1]; // Node position
-                const pos = getCableY(nodeX); // Get Y position at node X
-
-                // Props
-                const nodeId = getSegmentNode(seg.id);
-                const sec = BEAM_SECTIONS.find(s => s.id === nodeId);
-
-                const y_top = sec ? sec.Y_top : 0;
-                // const y_bot = sec ? sec.Y_bot : 0;
-                const area = sec ? sec.Area : 0;
-                const I_val = sec ? sec.I : 0;
-
-                const ep_ext = pos - y_top;
-                const meff = (force * ep_ext) / 100;
-
-                const faxial = area > 0 ? (force * 1000) / area : 0;
-
-                // Effective Stress Calc
-                const Stop = (y_top > 0) ? I_val / y_top : 0;
-                const Sbot = (sec && sec.Y_bot) ? I_val / sec.Y_bot : 0; // Sbot Positive
-
-                const faxial_calc = faxial; // Comp is Positive
-
-                const fm_top = (Stop !== 0) ? -(meff * 100000 / Stop) : 0;
-                const fm_bot = (Sbot !== 0) ? (meff * 100000 / Sbot) : 0;
-
-                const feff_top = fm_top + faxial_calc;
-                const feff_bot = fm_bot + faxial_calc;
-
-                // Get node position (distance from start)
-                const nodePos = state.nodes[seg.id - 1]; // N1~N29 positions
+                // 特殊行顏色處理
+                if (nodeNum === 1) tr.className = 'bg-amber-50 font-bold border-l-4 border-amber-500';
+                else if (nodeNum === 30) tr.className = 'bg-cyan-50 font-bold border-l-4 border-blue-500';
+                else if (nodeNum - 1 === b1_id || (count === 2 && nodeNum - 1 === b2_id)) tr.className = 'bg-orange-50';
 
                 tr.innerHTML = `
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center font-mono align-middle">N${seg.id}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 font-bold text-center align-middle">${idLabel}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center align-middle">${nodeId}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-500 text-xs text-center align-middle">${seg.length.toFixed(2)}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center align-middle font-mono">${nodePos.toFixed(2)}</td>
-                    <td class="p-2 border-r border-amber-200 text-amber-700 font-bold text-center align-middle">${force.toFixed(2)}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 font-mono text-center align-middle">${pos.toFixed(2)}</td>
-                    <td class="p-2 border-r border-green-50 text-green-700 font-bold text-center align-middle">${(ep_ext * -1).toFixed(2)}</td>
-                    <td class="p-2 border-r border-blue-100 text-blue-700 font-bold text-center align-middle" style="color: ${meff >= 0 ? '#2563eb' : '#dc2626'}">${(meff * -1).toFixed(2)}</td>
-                    <td class="p-2 border-r border-cyan-50 text-cyan-700 font-bold text-center align-middle" style="color: ${fm_top >= 0 ? '#2563eb' : '#dc2626'}">${fm_top.toFixed(2)}</td>
-                    <td class="p-2 border-r border-cyan-100 text-cyan-900 font-bold text-center align-middle" style="color: ${fm_bot >= 0 ? '#2563eb' : '#dc2626'}">${fm_bot.toFixed(2)}</td>
-                    <td class="p-2 border-r border-purple-50 text-purple-700 font-bold text-center align-middle">${faxial.toFixed(2)}</td>
-                    <td class="p-2 border-r border-indigo-50 text-indigo-700 font-bold text-center align-middle" style="color: ${feff_top >= 0 ? '#2563eb' : '#dc2626'}">${feff_top.toFixed(2)}</td>
-                    <td class="p-2 text-indigo-900 font-bold text-center align-middle" style="color: ${feff_bot >= 0 ? '#2563eb' : '#dc2626'}">${feff_bot.toFixed(2)}</td>
-                `;
+            <td class="p-2 border-r border-slate-200 text-center font-mono">N${nodeNum}</td>
+            <td class="p-2 border-r border-slate-200 text-slate-500 text-xs">${nodeNum <= 29 ? '#' + nodeNum : '-'}</td>
+            <td class="p-2 border-r border-slate-200 text-purple-600">${sectionId}</td>
+            <td class="p-2 border-r border-slate-200 text-slate-500 text-xs">${nodeNum <= 29 ? state.segments[nodeNum - 1].length.toFixed(2) : '-'}</td>
+            <td class="p-2 border-r border-slate-200 font-mono">${nodeX.toFixed(2)}</td>
+            <td class="p-2 border-r border-amber-200 text-amber-700 font-bold">${force.toFixed(2)}</td>
+            <td class="p-2 border-r border-slate-200 text-slate-700 font-mono">${pos.toFixed(2)}</td>
+            <td class="p-2 border-r border-green-50 text-green-700">${(ep_ext * -1).toFixed(2)}</td>
+            <td class="p-2 border-r border-blue-100 font-bold" style="color: ${meff >= 0 ? '#2563eb' : '#dc2626'}">${(meff * -1).toFixed(2)}</td>
+            <td class="p-2 border-r border-cyan-50 font-mono">${fm_top.toFixed(2)}</td>
+            <td class="p-2 border-r border-cyan-100 font-mono">${fm_bot.toFixed(2)}</td>
+            <td class="p-2 border-r border-purple-50 font-mono">${faxial.toFixed(2)}</td>
+            <td class="p-2 border-r border-indigo-50 font-bold text-indigo-700">${feff_top.toFixed(2)}</td>
+            <td class="p-2 font-bold text-indigo-900">${feff_bot.toFixed(2)}</td>
+        `;
                 tbody.appendChild(tr);
             });
-
-            // Add N30 Special Row (Empty, representing section 5)
-            {
-                const tr30 = document.createElement('tr');
-                tr30.className = 'bg-amber-100 font-bold border-l-4 border-amber-500';
-
-                // N30 position is at the hinged end
-                const n30Pos = state.nodes[29]; // x = 56.5
-                
-                // N30 calculations
-                const n30Force = state.extResults.n30_axial || 0; // External force at N30 (tf)
-                const n30PosY = state.extGeometry.anchorage.hinged.y; // Position from top (cm)
-                
-                // Get section 5 properties
-                const n30Section = BEAM_SECTIONS.find(s => s.id === 5);
-                const n30YTop = n30Section ? n30Section.Y_top : 0;
-                const n30YBot = n30Section ? n30Section.Y_bot : 0;
-                const n30Area = n30Section ? n30Section.Area : 0;
-                const n30I = n30Section ? n30Section.I : 0;
-                
-                // Calculate moment and stresses
-                const n30EpExt = n30PosY - n30YTop; // Eccentric moment (cm)
-                const n30Meff = (n30Force * n30EpExt) / 100; // Effective moment (tf-m)
-                
-                const n30Stop = (n30YTop > 0) ? n30I / n30YTop : 0; // Section modulus top
-                const n30Sbot = (n30YBot > 0) ? n30I / n30YBot : 0; // Section modulus bot
-                
-                // Cable stresses
-                const n30FmTop = (n30Stop !== 0) ? -(n30Meff * 100000 / n30Stop) : 0; // Bending stress top
-                const n30FmBot = (n30Sbot !== 0) ? (n30Meff * 100000 / n30Sbot) : 0; // Bending stress bot
-                const n30Faxial = (n30Area > 0) ? (n30Force * 1000) / n30Area : 0; // Axial stress
-                
-                // Total effective stresses
-                const n30FeffTop = n30FmTop + n30Faxial;
-                const n30FeffBot = n30FmBot + n30Faxial;
-
-                tr30.innerHTML = `
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center font-mono align-middle">N30</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-500 text-xs text-center align-middle">-</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center align-middle">5</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-500 text-xs text-center align-middle">-</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 text-center align-middle font-mono">${n30Pos.toFixed(2)}</td>
-                    <td class="p-2 border-r border-amber-200 text-amber-700 font-bold text-center align-middle">${n30Force.toFixed(2)}</td>
-                    <td class="p-2 border-r border-slate-200 text-slate-700 font-mono text-center align-middle">${n30PosY.toFixed(2)}</td>
-                    <td class="p-2 border-r border-green-50 text-green-700 font-bold text-center align-middle">${(n30EpExt * -1).toFixed(2)}</td>
-                    <td class="p-2 border-r border-blue-100 text-blue-700 font-bold text-center align-middle" style="color: ${n30Meff >= 0 ? '#2563eb' : '#dc2626'}">${(n30Meff * -1).toFixed(2)}</td>
-                    <td class="p-2 border-r border-cyan-50 text-cyan-700 font-bold text-center align-middle" style="color: ${n30FmTop >= 0 ? '#2563eb' : '#dc2626'}">${n30FmTop.toFixed(2)}</td>
-                    <td class="p-2 border-r border-cyan-100 text-cyan-900 font-bold text-center align-middle" style="color: ${n30FmBot >= 0 ? '#2563eb' : '#dc2626'}">${n30FmBot.toFixed(2)}</td>
-                    <td class="p-2 border-r border-purple-50 text-purple-700 font-bold text-center align-middle">${n30Faxial.toFixed(2)}</td>
-                    <td class="p-2 border-r border-indigo-50 text-indigo-700 font-bold text-center align-middle" style="color: ${n30FeffTop >= 0 ? '#2563eb' : '#dc2626'}">${n30FeffTop.toFixed(2)}</td>
-                    <td class="p-2 text-indigo-900 font-bold text-center align-middle" style="color: ${n30FeffBot >= 0 ? '#2563eb' : '#dc2626'}">${n30FeffBot.toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr30);
-            }
         }
 
 
