@@ -785,12 +785,14 @@
                                         <tr class="bg-slate-100">
                                             <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
                                                 rowspan="2">節點 (Node)</th>
-                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
-                                                colspan="2">有效預力應力</th>
-                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
-                                                colspan="2">梁自重應力</th>
-                                            <th class="border border-slate-300 px-2 py-2 text-center font-semibold"
-                                                colspan="2">車輛載重應力</th>
+                                            <th colspan="2"
+                                                class="p-2 border border-slate-300 text-center font-semibold">有效預力應力
+                                            </th>
+                                            <th colspan="2"
+                                                class="p-2 border border-slate-300 text-center font-semibold">梁自重應力</th>
+                                            <th colspan="2"
+                                                class="p-2 border border-slate-300 text-center font-semibold">車輛載重應力
+                                            </th>
                                             <th class="border border-slate-300 px-2 py-2 text-center font-semibold bg-amber-50"
                                                 colspan="2">總應力</th>
                                             <th class="border border-slate-300 px-2 py-2 text-center font-semibold bg-green-50"
@@ -1306,6 +1308,29 @@
                         </div>
 
                         <!-- Table will be rebuilt here -->
+                        <div class="overflow-hidden">
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">
+                                各節點預力數據表 (彎矩及剪力承載力)</h3>
+                            <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-200 rounded">
+                                <table class="w-full data-table">
+                                    <thead class="sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th class="bg-slate-100">節點 (Node)</th>
+                                            <th class="bg-slate-100">斷面</th>
+                                            <th class="bg-slate-50 text-slate-700">底版鋼腱偏心矩 ep,eff (cm)</th>
+                                            <th class="bg-slate-50 text-slate-700">頂版鋼腱偏心矩 ep,eff_top (cm)</th>
+                                            <th class="bg-blue-50 text-blue-700">頂版預力 (tf)</th>
+                                            <th class="bg-blue-100 text-blue-800">頂版鋼腱有效面積 (cm²)</th>
+                                            <th class="bg-green-50 text-green-700">底版預力 (tf)</th>
+                                            <th class="bg-green-100 text-green-800">底版鋼腱有效面積 (cm²)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="nodeCapacityTableBody">
+                                        <!-- Generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
                     </div>
                 </div> <!-- End of Subtab 2 -->
@@ -1327,12 +1352,14 @@
 
         // 節段對應節點對應表
         const SEGMENT_NODE_MAP = {
-            1: 3, 2: 2,
+            1: 3,
+            2: 2,
             // 3~27 對應到 1
             3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1, 11: 1, 12: 1,
             13: 1, 14: 1, 15: 1, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1,
             23: 1, 24: 1, 25: 1, 26: 1, 27: 1,
-            28: 4, 29: 5
+            28: 4,
+            29: 5, 30: 5
         };
 
         // 頂版預力和底版預力資料 (tf) - 對應節點 N1~N30
@@ -1442,10 +1469,11 @@
 
         // --- Init ---
         function init() {
+            renderSectionInfo(); // Load section info first
             generateSegments();
             addListeners();
             updateCalculations();
-            renderSectionInfo(); // Load section info on init
+
             // Initial Draw
             drawProfile(1, false); // Tab 1: No Ext (基本資訊)
             drawProfile(3, false); // Tab 3: Basic profile (預力配置)
@@ -1510,6 +1538,7 @@
                     renderMomentChart(); // Render moment chart
                     renderShearChart(); // Render shear chart
                     renderRequiredMomentTable();
+                    renderNodeCapacityTable(); // Render the new table
                 }, 400);
             }
 
@@ -1825,7 +1854,7 @@
 
             // 3. Deviation Blocks Lift
             // Block 1 Lift
-            // Component from Seg 1: P * (dy1 / L1). This is Downward pull by cable on Anchor. 
+            // Component from Seg 1: P * (dy1 / L1). This is Downward pull by cable on Anchor.
             // On Block, Cable pulls UP towards Anchor. Vertical Comp = P * (b1_y - n1_y) / L1 ?
             // dy1 = b1_y - n1_y. So P * dy1/L1 is correct magnitude.
             // Wait, dy1 is positive (down). Lift should be Up.
@@ -2057,7 +2086,6 @@
                 const ep_eff = section.Y_bot - 12.5;
                 const ep_eff_top = section.Y_top - 12.5;
 
-                // 預力計算
                 const P_top = TOP_PRESTRESS_TF[index];
                 const P_bot = BOTTOM_PRESTRESS_TF[index];
 
@@ -2371,6 +2399,7 @@
             }
             if (state.currentTab === 6) {
                 renderRequiredMomentTable();
+                renderNodeCapacityTable(); // Also update this table
             }
         }
 
@@ -2462,6 +2491,7 @@
             }
             if (state.currentTab === 6) {
                 renderRequiredMomentTable();
+                renderNodeCapacityTable(); // Also update this table
             }
         }
 
@@ -2563,6 +2593,7 @@
             renderStressCalcTable(); // 梁上下緣應力計算表格
             renderStressVerifyTable(); // 壓張應力檢核表格
             renderStrengtheningVerifyTable(); // 加固應力檢核表格
+            renderNodeCapacityTable(); // Render the new table
         }
 
         function renderStrengtheningVerifyTable() {
@@ -3241,6 +3272,55 @@
         }
 
 
+
+
+        // 各節點預力數據表格生成函數 (彎矩及剪力承載力表格)
+        function renderNodeCapacityTable() {
+            const tbody = document.getElementById('nodeCapacityTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            // Iterate through all 30 nodes
+            state.nodes.forEach((nodeX, index) => {
+                const nodeNum = index + 1;
+
+                // Determine section ID based on node position using helper
+                const sectionId = getSegmentNode(nodeNum);
+                const sectionData = BEAM_SECTIONS.find(s => s.id === sectionId) || BEAM_SECTIONS[0];
+
+                // Calculate eccentricities (Same logic as Tab 3)
+                const ep_eff = sectionData.Y_bot - 12.5;
+                const ep_eff_top = sectionData.Y_top - 12.5;
+
+                // Get prestress values from Global Arrays (Linked to Tab 3)
+                const P_top = TOP_PRESTRESS_TF[index] || 0;
+                const P_bot = BOTTOM_PRESTRESS_TF[index] || 0;
+
+                // Calculate effective tendon area: Force (tf) * 1000 / 13000 (kgf/cm2)
+                const As_eff_top = (P_top * 1000) / 13000;
+                const As_eff_bot = (P_bot * 1000) / 13000;
+
+                const tr = document.createElement('tr');
+
+                // Special row colors for N1 and N30
+                if (nodeNum === 1) tr.className = 'bg-amber-50 font-bold border-l-4 border-amber-500';
+                else if (nodeNum === 30) tr.className = 'bg-cyan-50 font-bold border-l-4 border-blue-500';
+
+                tr.innerHTML = `
+                    <td class="p-2 border-r border-slate-200 text-center font-mono">N${nodeNum}</td>
+                    <td class="p-2 border-r border-slate-200 text-center text-purple-600">${sectionId}</td>
+                    <td class="p-2 border-r border-slate-200 text-right font-mono text-slate-700">${ep_eff.toFixed(2)}</td>
+                    <td class="p-2 border-r border-slate-200 text-right font-mono text-slate-700">${ep_eff_top.toFixed(2)}</td>
+                    <td class="p-2 border-r border-slate-200 text-right font-mono text-blue-700">${P_top.toFixed(2)}</td>
+                    <td class="p-2 border-r border-slate-200 text-right font-mono text-blue-800 bg-blue-50">${As_eff_top.toFixed(2)}</td>
+                    <td class="p-2 border-r border-slate-200 text-right font-mono text-green-700">${P_bot.toFixed(2)}</td>
+                    <td class="p-2 text-right font-mono text-green-800 bg-green-50">${As_eff_bot.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+
         // 所需撓曲強度表格生成函數
         function renderRequiredMomentTable() {
             const tbody = document.getElementById('requiredMomentTableBody');
@@ -3381,7 +3461,9 @@
                     }
                 });
             }
-        } init();
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 
