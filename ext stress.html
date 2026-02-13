@@ -1236,7 +1236,7 @@
                         <button onclick="switchSubTab(6, 1)" id="subtab-btn-6-1"
                             class="py-2 px-4 text-sm font-medium border-b-2 text-slate-600 border-transparent hover:text-slate-800 focus:outline-none transition-colors">所需彎矩及剪力強度</button>
                         <button onclick="switchSubTab(6, 2)" id="subtab-btn-6-2"
-                            class="py-2 px-4 text-sm font-medium border-b-2 text-blue-600 border-blue-600 focus:outline-none transition-colors">設計彎矩及剪力強度</button>
+                            class="py-2 px-4 text-sm font-medium border-b-2 text-blue-600 border-blue-600 focus:outline-none transition-colors">彎矩及剪力承載力</button>
                     </div>
 
                     <!-- Sub Tab 1: Required Flexural Strength -->
@@ -1250,7 +1250,7 @@
                                     <div class="flex items-center space-x-2">
                                         <input type="number" id="dead-load-factor" value="1.3" step="0.1" min="0"
                                             class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
-                                            oninput="renderRequiredMomentTable()">
+                                            oninput="renderRequiredMomentTable(); renderMomentChart(); renderShearChart();">
                                     </div>
                                 </div>
                                 <div class="bg-white p-3 rounded">
@@ -1258,7 +1258,7 @@
                                     <div class="flex items-center space-x-2">
                                         <input type="number" id="live-load-factor" value="2.171" step="0.001" min="0"
                                             class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
-                                            oninput="renderRequiredMomentTable()">
+                                            oninput="renderRequiredMomentTable(); renderMomentChart(); renderShearChart();">
                                     </div>
                                 </div>
                             </div>
@@ -1305,40 +1305,8 @@
                         <div> <!-- Wrapper for Chart to match previous structure -->
                         </div>
 
-                        <!-- Data Table -->
-                        <div class="overflow-hidden">
-                            <div class="flex justify-between items-end mb-2">
-                                <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">各節段預力數據表
-                                </h3>
-                                <div class="text-right">
-                                    <div class="text-xs text-slate-500 mb-1">每股(12x15.5mm)鋼腱面積=16.6404cm²</div>
-                                    <span class="text-xs text-slate-400" id="tableUnitLabel1">單位: tf, cm, cm,
-                                        tf·m</span>
-                                </div>
-                            </div>
-                            <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-200 rounded">
-                                <table class="w-full data-table">
-                                    <thead class="sticky top-0 z-10 shadow-sm">
-                                        <tr>
-                                            <th rowspan="2" class="bg-slate-100">節段 #</th>
-                                            <th rowspan="2" class="bg-slate-100">斷面</th>
-                                            <th rowspan="2" class="bg-slate-100">長度 (m)</th>
-                                            <th colspan="4" class="bg-slate-200 border-b border-white">原橋體內預力 (Internal)
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th class="bg-blue-50 text-blue-700">預力值 (tf)</th>
-                                            <th class="bg-slate-50 text-slate-700">預力鋼腱股數 (Np)</th>
-                                            <th class="bg-orange-50 text-orange-700">應力塊深度 (cm)</th>
-                                            <th class="bg-green-50 text-green-700">彎矩承載力 (tf·m)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="stressTableBody">
-                                        <!-- Generated -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <!-- Table will be rebuilt here -->
+
                     </div>
                 </div> <!-- End of Subtab 2 -->
 
@@ -3112,11 +3080,11 @@
                     type: 'line',
                     label: '設計彎矩 (tf·m)',
                     data: data,
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    borderColor: '#4ade80',
+                    backgroundColor: 'rgba(74, 222, 128, 0.2)',
                     borderWidth: 2,
                     pointRadius: 3,
-                    pointBackgroundColor: '#f59e0b',
+                    pointBackgroundColor: '#4ade80',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 1,
                     tension: 0.4,
@@ -3209,11 +3177,11 @@
                     type: 'line',
                     label: '設計剪力 (tf)',
                     data: data,
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    borderColor: '#f9a8d4',
+                    backgroundColor: 'rgba(249, 168, 212, 0.2)',
                     borderWidth: 2,
                     pointRadius: 3,
-                    pointBackgroundColor: '#f59e0b',
+                    pointBackgroundColor: '#f9a8d4',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 1,
                     tension: 0.4,
