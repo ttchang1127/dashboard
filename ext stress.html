@@ -284,7 +284,7 @@
                 </button>
                 <button onclick="switchTab(6)" id="tab-btn-6" class="tab-btn tab-inactive">
                     <span class="flex items-center">
-                        <span>撓曲強度檢核</span>
+                        <span>彎矩及剪力強度檢核</span>
                     </span>
                 </button>
             </div>
@@ -1209,34 +1209,81 @@
 
                     </div>
 
-                    <!-- Bending Moment Capacity Chart (Moved Here) -->
+                    <!-- Moment and Shear Force Charts (Moved Here) -->
                     <div class="mt-6">
-                        <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">
-                            各節段預力造成的彎矩承載力 (tf·m)</h3>
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">
+                                各節點彎矩及剪力圖</h3>
+                            <div class="flex gap-2">
+                                <button onclick="switchChart('moment')" id="chart-btn-moment"
+                                    class="px-4 py-1.5 text-sm font-medium rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                                    彎矩圖
+                                </button>
+                                <button onclick="switchChart('shear')" id="chart-btn-shear"
+                                    class="px-4 py-1.5 text-sm font-medium rounded bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors">
+                                    剪力圖
+                                </button>
+                            </div>
+                        </div>
                         <div class="bg-white border border-slate-200 rounded p-4">
-                            <canvas id="bendingMomentChart" style="max-height: 300px;"></canvas>
+                            <canvas id="momentChart" style="max-height: 300px;"></canvas>
+                            <canvas id="shearChart" style="max-height: 300px; display: none;"></canvas>
                         </div>
                     </div>
 
                     <!-- Sub Tab Navigation -->
                     <div class="flex border-b border-slate-200 mb-4 mt-2">
                         <button onclick="switchSubTab(6, 1)" id="subtab-btn-6-1"
-                            class="py-2 px-4 text-sm font-medium border-b-2 text-slate-600 border-transparent hover:text-slate-800 focus:outline-none transition-colors">所需撓曲強度</button>
+                            class="py-2 px-4 text-sm font-medium border-b-2 text-slate-600 border-transparent hover:text-slate-800 focus:outline-none transition-colors">所需彎矩及剪力強度</button>
                         <button onclick="switchSubTab(6, 2)" id="subtab-btn-6-2"
-                            class="py-2 px-4 text-sm font-medium border-b-2 text-blue-600 border-blue-600 focus:outline-none transition-colors">設計撓曲強度</button>
+                            class="py-2 px-4 text-sm font-medium border-b-2 text-blue-600 border-blue-600 focus:outline-none transition-colors">設計彎矩及剪力強度</button>
                     </div>
 
                     <!-- Sub Tab 1: Required Flexural Strength -->
                     <div id="subtab-content-6-1" class="subtab-content hidden space-y-6">
+                        <!-- Load Factor Inputs -->
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                            <h4 class="text-sm font-bold text-blue-900 mb-3">載重係數設定</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white p-3 rounded">
+                                    <label class="block text-xs font-bold text-slate-600 mb-2">靜載重係數</label>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="number" id="dead-load-factor" value="1.3" step="0.1" min="0"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
+                                            oninput="renderRequiredMomentTable()">
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <label class="block text-xs font-bold text-slate-600 mb-2">設計車輛載重係數</label>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="number" id="live-load-factor" value="2.171" step="0.001" min="0"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
+                                            oninput="renderRequiredMomentTable()">
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-3">* 依據橋梁設計規範表3.3</p>
+                        </div>
                         <div class="overflow-hidden">
                             <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">
-                                橋梁各節段設計彎矩值 (tf·m)</h3>
+                                橋梁各節點設計彎矩及剪力表格</h3>
                             <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-slate-200 rounded">
                                 <table class="w-full data-table">
                                     <thead class="sticky top-0 z-10 shadow-sm">
                                         <tr>
-                                            <th class="bg-slate-100 p-2 border-b border-white">節段 #</th>
-                                            <th class="bg-slate-100 p-2 border-b border-white">設計彎矩 (tf·m)</th>
+                                            <th class="bg-slate-100 p-2 border-b border-white">節點 (Node)</th>
+                                            <th class="bg-green-50 text-green-700 p-2 border-b border-white">靜載重彎矩
+                                                (tf·m)<br><span class="text-[10px] font-normal">(與分頁2連動)</span></th>
+                                            <th class="bg-green-100 text-green-700 p-2 border-b border-white">靜載重剪力
+                                                (tf)<br><span class="text-[10px] font-normal">(與分頁2連動)</span></th>
+                                            <th class="bg-blue-50 text-blue-700 p-2 border-b border-white">設計車輛載重彎矩
+                                                (tf·m)<br><span class="text-[10px] font-normal">(與分頁2連動)</span></th>
+                                            <th class="bg-blue-100 text-blue-700 p-2 border-b border-white">設計車輛載重剪力
+                                                (tf)<br><span class="text-[10px] font-normal">(與分頁2連動)</span></th>
+                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">設計彎矩 (tf·m)
+                                            </th>
+                                            <th class="bg-amber-100 text-amber-700 p-2 border-b border-white">設計剪力 (tf)
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody id="requiredMomentTableBody">
@@ -1245,8 +1292,10 @@
                                 </table>
                             </div>
                             <p class="text-xs text-slate-500 mt-2">
-                                * 計算公式: 設計彎矩 = 1.3 × 靜載重彎矩 + 2.17 × 車輛載重彎矩<br>
-                                * 靜載重與車輛載重彎矩數值與分頁2連動
+                                * 計算公式:<br>
+                                　設計彎矩 = 靜載重係數 × 靜載重彎矩 + 設計車輛載重係數 × 設計車輛載重彎矩<br>
+                                　設計剪力 = 靜載重係數 × 靜載重剪力 + 設計車輛載重係數 × 設計車輛載重剪力<br>
+                                * 靜載重與設計車輛載重彎矩及剪力數值與分頁2連動
                             </p>
                         </div>
                     </div>
@@ -1272,7 +1321,7 @@
                                     <thead class="sticky top-0 z-10 shadow-sm">
                                         <tr>
                                             <th rowspan="2" class="bg-slate-100">節段 #</th>
-                                            <th rowspan="2" class="bg-slate-100">節點</th>
+                                            <th rowspan="2" class="bg-slate-100">斷面</th>
                                             <th rowspan="2" class="bg-slate-100">長度 (m)</th>
                                             <th colspan="4" class="bg-slate-200 border-b border-white">原橋體內預力 (Internal)
                                             </th>
@@ -1490,6 +1539,8 @@
             if (tabId === 6) {
                 setTimeout(() => {
                     drawProfile(1, false); // Canvas 1
+                    renderMomentChart(); // Render moment chart
+                    renderShearChart(); // Render shear chart
                     renderRequiredMomentTable();
                 }, 400);
             }
@@ -2130,6 +2181,9 @@
                 const P_top = TOP_PRESTRESS_TF[index];
                 const P_bot = BOTTOM_PRESTRESS_TF[index];
                 const Meff_combined = (P_bot * (section.Y_bot - 12.5) / 100) + (P_top * (section.Y_top - 12.5) * -1 / 100);
+
+
+
 
                 const faxial = (P_top + P_bot) * 1000 / A;
                 const feff_top = faxial + (-(Meff_combined * 100000 / Stop));
@@ -2999,13 +3053,295 @@
             });
         }
 
+
+
+        // Chart instances for moment and shear charts
+        let momentChartInst = null;
+        let shearChartInst = null;
+
+        // Switch between moment and shear charts
+        function switchChart(chartType) {
+            const momentCanvas = document.getElementById('momentChart');
+            const shearCanvas = document.getElementById('shearChart');
+            const momentBtn = document.getElementById('chart-btn-moment');
+            const shearBtn = document.getElementById('chart-btn-shear');
+
+            if (chartType === 'moment') {
+                momentCanvas.style.display = 'block';
+                shearCanvas.style.display = 'none';
+                momentBtn.className = 'px-4 py-1.5 text-sm font-medium rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors';
+                shearBtn.className = 'px-4 py-1.5 text-sm font-medium rounded bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors';
+            } else {
+                momentCanvas.style.display = 'none';
+                shearCanvas.style.display = 'block';
+                momentBtn.className = 'px-4 py-1.5 text-sm font-medium rounded bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors';
+                shearBtn.className = 'px-4 py-1.5 text-sm font-medium rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors';
+            }
+        }
+
+        // Render moment chart (design moment from table)
+        function renderMomentChart() {
+            const ctx = document.getElementById('momentChart');
+            if (!ctx) return;
+
+            const L = state.span;
+            const w_DL_val = 35.94 + (parseFloat(document.getElementById('dl-additional').value) || 0);
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
+            const im = parseFloat(document.getElementById('ll-impact-slider').value);
+            const ol = parseFloat(document.getElementById('ll-overload-slider').value);
+            const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
+            const w_LL_val = lanes * 0.96;
+            const ll_factors = (1 + im) * (1 + ol) * reduction;
+            const deadLoadFactor = parseFloat(document.getElementById('dead-load-factor')?.value || 1.3);
+            const liveLoadFactor = parseFloat(document.getElementById('live-load-factor')?.value || 2.171);
+
+            // Generate labels for N1~N30 (30 nodes)
+            const labels = state.nodes.map((_, index) => `N${index + 1}`);
+
+            // Calculate design moment for each node
+            const data = state.nodes.map((nodeX, index) => {
+                const M_DL = (3 / 8) * w_DL_val * L * nodeX - (w_DL_val / 2) * Math.pow(nodeX, 2);
+                const M_LL = ((3 / 8) * w_LL_val * L * nodeX - (w_LL_val / 2) * Math.pow(nodeX, 2)) * ll_factors;
+                const M_design = deadLoadFactor * M_DL + liveLoadFactor * M_LL;
+                return M_design;
+            });
+
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    type: 'line',
+                    label: '設計彎矩 (tf·m)',
+                    data: data,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#f59e0b',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1,
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
+
+            if (momentChartInst) {
+                momentChartInst.data = chartData;
+                momentChartInst.update();
+            } else {
+                momentChartInst = new Chart(ctx, {
+                    type: 'line',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: '節點 (Node)',
+                                    font: { size: 12, weight: 'bold' }
+                                },
+                                grid: { display: true, color: 'rgba(203, 213, 225, 0.2)' }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '設計彎矩 (tf·m)',
+                                    font: { size: 12, weight: 'bold' }
+                                },
+                                beginAtZero: true,
+                                grid: { color: 'rgba(203, 213, 225, 0.3)' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                                padding: 12,
+                                titleFont: { size: 12, weight: 'bold' },
+                                bodyFont: { size: 11 },
+                                callbacks: {
+                                    label: (context) => {
+                                        return `設計彎矩: ${context.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tf·m`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Render shear chart (design shear from table)
+        function renderShearChart() {
+            const ctx = document.getElementById('shearChart');
+            if (!ctx) return;
+
+            const L = state.span;
+            const w_DL_val = 35.94 + (parseFloat(document.getElementById('dl-additional').value) || 0);
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
+            const im = parseFloat(document.getElementById('ll-impact-slider').value);
+            const ol = parseFloat(document.getElementById('ll-overload-slider').value);
+            const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
+            const w_LL_val = lanes * 0.96;
+            const ll_factors = (1 + im) * (1 + ol) * reduction;
+            const deadLoadFactor = parseFloat(document.getElementById('dead-load-factor')?.value || 1.3);
+            const liveLoadFactor = parseFloat(document.getElementById('live-load-factor')?.value || 2.171);
+
+            // Generate labels for N1~N30 (30 nodes)
+            const labels = state.nodes.map((_, index) => `N${index + 1}`);
+
+            // Calculate design shear for each node
+            const data = state.nodes.map((nodeX, index) => {
+                const V_DL = (3 / 8) * w_DL_val * L - w_DL_val * nodeX;
+                const V_LL = ((3 / 8) * w_LL_val * L - w_LL_val * nodeX) * ll_factors;
+                const V_design = deadLoadFactor * V_DL + liveLoadFactor * V_LL;
+                return V_design;
+            });
+
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    type: 'line',
+                    label: '設計剪力 (tf)',
+                    data: data,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#f59e0b',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1,
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
+
+            if (shearChartInst) {
+                shearChartInst.data = chartData;
+                shearChartInst.update();
+            } else {
+                shearChartInst = new Chart(ctx, {
+                    type: 'line',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: '節點 (Node)',
+                                    font: { size: 12, weight: 'bold' }
+                                },
+                                grid: { display: true, color: 'rgba(203, 213, 225, 0.2)' }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '設計剪力 (tf)',
+                                    font: { size: 12, weight: 'bold' }
+                                },
+                                grid: { color: 'rgba(203, 213, 225, 0.3)' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                                padding: 12,
+                                titleFont: { size: 12, weight: 'bold' },
+                                bodyFont: { size: 11 },
+                                callbacks: {
+                                    label: (context) => {
+                                        return `設計剪力: ${context.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tf`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+
+        // 所需撓曲強度表格生成函數
+        function renderRequiredMomentTable() {
+            const tbody = document.getElementById('requiredMomentTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const L = state.span;
+            const w_DL_val = 35.94 + (parseFloat(document.getElementById('dl-additional').value) || 0);
+            const lanes = parseInt(document.getElementById('ll-lanes-slider').value);
+            const im = parseFloat(document.getElementById('ll-impact-slider').value);
+            const ol = parseFloat(document.getElementById('ll-overload-slider').value);
+            const reduction = parseFloat(document.getElementById('ll-reduction-select').value);
+            const w_LL_val = lanes * 0.96;
+            const ll_factors = (1 + im) * (1 + ol) * reduction;
+
+            // Get load factors
+            const deadLoadFactor = parseFloat(document.getElementById('dead-load-factor')?.value || 1.3);
+            const liveLoadFactor = parseFloat(document.getElementById('live-load-factor')?.value || 2.171);
+
+            // Iterate through all 30 nodes
+            state.nodes.forEach((nodeX, index) => {
+                const nodeNum = index + 1;
+
+                // Calculate dead load moment at this node
+                const M_DL = (3 / 8) * w_DL_val * L * nodeX - (w_DL_val / 2) * Math.pow(nodeX, 2);
+
+                // Calculate design vehicle load moment at this node
+                const M_LL = ((3 / 8) * w_LL_val * L * nodeX - (w_LL_val / 2) * Math.pow(nodeX, 2)) * ll_factors;
+
+                // Calculate dead load shear force: V_DL(x) = 3/8*w_DL*L - w_DL*x
+                const V_DL = (3 / 8) * w_DL_val * L - w_DL_val * nodeX;
+
+                // Calculate design vehicle load shear force: V_LL(x) = [3/8*w_LL*L - w_LL*x] * factors
+                const V_LL = ((3 / 8) * w_LL_val * L - w_LL_val * nodeX) * ll_factors;
+
+                // Calculate design moment and shear
+                const M_design = deadLoadFactor * M_DL + liveLoadFactor * M_LL;
+                const V_design = deadLoadFactor * V_DL + liveLoadFactor * V_LL;
+
+                const tr = document.createElement('tr');
+                if (nodeNum === 1) tr.className = 'bg-amber-50';
+                if (nodeNum === 30) tr.className = 'bg-cyan-50';
+
+                tr.innerHTML = `
+                    <td class="p-2 border-r border-white text-center font-mono">N${nodeNum}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-green-700">${M_DL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-green-700">${V_DL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-blue-700">${M_LL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-blue-700">${V_LL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="p-2 border-r border-white text-right font-mono font-bold text-amber-700">${M_design.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="p-2 text-right font-mono font-bold text-amber-700">${V_design.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         function renderBendingMomentChart() {
             const ctx = document.getElementById('bendingMomentChart');
             if (!ctx) return;
 
-            const labels = state.segments.map(s => `#${s.id}`);
-            const data = state.segments.map(s => {
-                const stressData = STRESS_BLOCK_DATA[s.id] || { Mn: 0 };
+            // Generate labels for N1~N30 (30 nodes)
+            const labels = state.nodes.map((_, index) => `N${index + 1}`);
+
+            // Generate data for each node (map segment data to nodes)
+            const data = state.nodes.map((_, index) => {
+                const nodeNum = index + 1;
+                // N1 uses segment #1 data, N2-N29 use corresponding segment, N30 uses segment #29
+                const segId = nodeNum <= 29 ? nodeNum : 29;
+                const stressData = STRESS_BLOCK_DATA[segId] || { Mn: 0 };
                 return stressData.Mn;
             });
 
@@ -3042,7 +3378,7 @@
                             x: {
                                 title: {
                                     display: true,
-                                    text: '橋梁縱向節段 (Segment)',
+                                    text: '節點 (Node)',
                                     font: { size: 12, weight: 'bold' }
                                 },
                                 grid: { display: true, color: 'rgba(203, 213, 225, 0.2)' }
