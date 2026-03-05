@@ -47,6 +47,21 @@
   .tab-pane{ display:none; } .tab-pane.active{ display:block; }
   .main-tab-btn{ padding:8px 22px; border-radius:8px; font-size:.9rem; font-weight:700; cursor:pointer; border:2px solid #4a5568; background:white; color:#4a5568; transition:all .18s; letter-spacing:.03em; }
   .main-tab-active{ background:#1a202c; color:white; border-color:#1a202c; }
+  /* Case list */
+  .case-row{ display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:6px; font-size:.78rem; background:white; transition:background .12s; }
+  .case-row:hover{ background:#f7fafc; }
+  .case-row.case-active{ border-color:#4a5568; background:#f7fafc; }
+  .case-swatch{ width:14px; height:14px; border-radius:50%; flex-shrink:0; border:2px solid rgba(0,0,0,.15); }
+  .case-label{ flex:1; font-family:'Courier New',monospace; font-size:.75rem; color:#2d3748; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .case-badge{ font-size:.68rem; font-family:'Courier New',monospace; background:#edf2f7; color:#4a5568; padding:1px 5px; border-radius:4px; white-space:nowrap; }
+  .case-btn{ padding:2px 8px; border-radius:4px; font-size:.72rem; font-weight:600; cursor:pointer; border:1px solid; transition:all .12s; }
+  .case-btn-edit{ background:#ebf8ff; color:#2b6cb0; border-color:#90cdf4; }
+  .case-btn-del{ background:#fff5f5; color:#c53030; border-color:#fc8181; }
+  .case-vis-toggle{ cursor:pointer; width:16px; height:16px; flex-shrink:0; }
+  .add-btn{ padding:8px 18px; border-radius:8px; font-size:.84rem; font-weight:700; cursor:pointer; background:#1a202c; color:white; border:none; transition:all .15s; }
+  .add-btn:hover{ background:#4a5568; }
+  .add-btn:disabled{ background:#a0aec0; cursor:not-allowed; }
+  .preview-badge{ display:inline-block; padding:2px 8px; border-radius:5px; font-size:.7rem; font-weight:700; letter-spacing:.05em; }
 </style>
 </head>
 <body class="text-gray-800 min-h-screen">
@@ -141,8 +156,41 @@
             </div>
             <input type="range" id="theta" min="-90" max="90" value="0" step="0.5" oninput="draw()">
           </div>
+          <hr class="border-gray-200">
+          <div class="flex items-center gap-2 flex-wrap">
+            <label class="font-medium text-sm text-gray-600 flex-shrink-0">工況名稱：</label>
+            <input type="text" id="case-name" placeholder="工況 1" maxlength="20"
+              style="flex:1;min-width:80px;font-size:.82rem;padding:4px 8px;border:1px solid #cbd5e0;border-radius:6px;outline:none;"
+              onfocus="this.style.borderColor='#4a5568'" onblur="this.style.borderColor='#cbd5e0'">
+            <label style="font-size:.82rem;color:#4a5568;font-weight:600;flex-shrink:0">顏色：</label>
+            <input type="color" id="case-color" value="#e53e3e"
+              style="width:32px;height:28px;border:none;border-radius:5px;cursor:pointer;padding:1px;background:transparent;">
+            <button class="add-btn" onclick="addCase()" id="add-btn">＋ 加入清單</button>
+          </div>
+          <!-- Preset color swatches -->
+          <div class="flex gap-1 flex-wrap mt-1" id="color-presets"></div>
+          <div id="case-limit-msg" style="display:none;font-size:.72rem;color:#c53030;text-align:center;">已達上限（8組），請先刪除再新增</div>
         </div>
       </div>
+      <!-- Case list card -->
+      <div class="card p-4" id="case-list-card">
+        <div class="flex items-center justify-between mb-2">
+          <div class="section-title" style="margin-bottom:0;border:none;padding:0">工況清單 <span id="case-count" style="font-weight:400;color:#a0aec0;font-size:.7rem">（0 / 8）</span></div>
+          <button onclick="clearAllCases()" style="font-size:.7rem;color:#a0aec0;cursor:pointer;background:none;border:none;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='#c53030'" onmouseout="this.style.color='#a0aec0'">清除全部</button>
+        </div>
+        <div id="case-list-empty" class="text-center text-gray-400 text-xs py-3 font-mono">尚無工況，按「＋ 加入清單」新增</div>
+        <div id="case-list-items"></div>
+        <div id="case-legend" class="mt-2" style="display:none">
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="text-xs text-gray-400 font-mono">— 虛線圓 = 清單工況　— 實線圓 = 目前輸入</div>
+            <button id="toggle-preview-btn" onclick="togglePreviewCircle()"
+              style="padding:2px 10px;border-radius:5px;font-size:.72rem;font-weight:700;cursor:pointer;border:1px solid #4a5568;background:#1a202c;color:white;transition:all .15s;">
+              👁 隱藏預覽圓
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="card p-5 flex-grow">
         <div class="section-title">計算結果一覽</div>
         <table class="w-full coord-table">
@@ -417,11 +465,29 @@ const mCtx = MC.getContext('2d');
 const coordDisp = document.getElementById('coordDisp');
 let DPR=window.devicePixelRatio||1, SC=1, MCX=0, MCY=0;
 
+// ── Case list data (declare early so draw() can reference it) ──
+const CASE_COLORS = ['#e53e3e','#dd6b20','#38a169','#3182ce','#805ad5','#d53f8c','#319795','#b7791f'];
+let stressCases = [];
+let caseCounter = 0;
+let showPreviewCircle = true;
+
+function togglePreviewCircle(){
+  showPreviewCircle = !showPreviewCircle;
+  const btn = document.getElementById('toggle-preview-btn');
+  if(btn){
+    btn.textContent = showPreviewCircle ? '👁 隱藏預覽圓' : '🚫 顯示預覽圓';
+    btn.style.background  = showPreviewCircle ? '#1a202c' : '#e2e8f0';
+    btn.style.color       = showPreviewCircle ? 'white'   : '#4a5568';
+    btn.style.borderColor = showPreviewCircle ? '#4a5568' : '#cbd5e0';
+  }
+  draw();
+}
+
 function setupCanvas(){
   const sz = MC.parentElement.clientWidth;
   MC.width=sz*DPR; MC.height=sz*DPR;
   MC.style.width=sz+'px'; MC.style.height=sz+'px';
-  mCtx.scale(DPR,DPR);
+  mCtx.setTransform(DPR,0,0,DPR,0,0);  // reset + scale, avoids cumulative scale
   draw();
 }
 
@@ -478,7 +544,7 @@ function draw(){
   buildSteps(sx,sy,txy,theta,savg,R,s1,s2,tp,ts,sxp,syp,txyp);
 
   // Mohr's circle
-  drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp);
+  drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp,stressCases);
 
   // Elements
   const e0=document.getElementById('elem0');
@@ -543,9 +609,19 @@ sin 2θ = ${Math.sin(2*rad).toFixed(5)}
 // ── Mohr's Circle Drawing ─────────────────────────────────
 // Taiwan convention: τ axis DOWNWARD positive
 // Point A = (σx, +τxy) → if τxy>0, A is BELOW the σ-axis on canvas
-function drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp){
+function drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp,extraCases){
   const pad=58;
-  const range=Math.max(Math.abs(s1),Math.abs(s2),R,10)*1.38+15;
+  // Include extra cases in range calculation
+  let rangeMax = Math.max(Math.abs(s1),Math.abs(s2),R,10);
+  if(extraCases && extraCases.length){
+    extraCases.forEach(c=>{
+      if(!c.visible) return;
+      const cr = Math.sqrt(((c.sx-c.sy)/2)**2+c.txy**2);
+      const cavg=(c.sx+c.sy)/2;
+      rangeMax = Math.max(rangeMax,Math.abs(cavg+cr),Math.abs(cavg-cr),cr);
+    });
+  }
+  const range = rangeMax*1.38+15;
   SC=Math.min((W/2-pad)/range,(H/2-pad)/range);
   MCX=W/2; MCY=H/2;
 
@@ -592,6 +668,9 @@ function drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp){
   }
   mCtx.fillStyle = '#a0aec0'; mCtx.textAlign = 'center'; mCtx.fillText('0', MCX+8, MCY+15);
 
+  // ── Current (preview) circle — toggle with showPreviewCircle ──
+  if(showPreviewCircle){
+
   // Circle glow + stroke
   mCtx.beginPath(); mCtx.arc(circX, MCY, R*SC, 0, 2*Math.PI);
   mCtx.strokeStyle = '#e2e8f0'; mCtx.lineWidth = 8; mCtx.stroke();
@@ -616,7 +695,6 @@ function drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp){
   mDot(px(s1), MCY, 7, '#c53030'); mDot(px(s2), MCY, 7, '#c53030');
   mLbl(px(s1), MCY+16, 'σ₁', '#c53030', 'center');
   mLbl(px(s2), MCY+16, 'σ₂', '#c53030', 'center');
-
   // τmax points (top = +τmax, bottom = −τmax)
   mDot(circX, py(R),  6, '#b7791f');   // τ = +R → above σ-axis (upward positive)
   mDot(circX, py(-R), 6, '#b7791f');   // τ = −R → below σ-axis
@@ -631,6 +709,52 @@ function drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp){
 
   // σavg label (above circle top)
   mLbl(circX, py(R) - 14, 'σavg', '#718096', 'center');
+
+  // ── Pole Point (平面原點) ───────────────────────────────────────────────────
+  // Pole = intersection of horizontal line through A with the circle (on A's side)
+  // Horizontal through A: canvas y = pAy  →  (σ_pole - savg)² + τxy² = R²
+  // σ_pole = savg ± √(R² - τxy²)
+  const poleDy = pAy - MCY;             // canvas dy of A from centre (= -txy*SC for τ-up)
+  const poleDxSq = (R*SC)*(R*SC) - poleDy*poleDy;
+  if(poleDxSq >= 0){
+    const poleDx  = Math.sqrt(poleDxSq);
+    const poleX1  = circX + poleDx, poleX2 = circX - poleDx;
+    // Choose intersection on same x-side as A relative to centre
+    const poleX   = (Math.abs(poleX1-pAx) <= Math.abs(poleX2-pAx)) ? poleX1 : poleX2;
+    const poleY   = pAy;   // same canvas y as A
+
+    // Dashed horizontal line: A → Pole
+    mCtx.beginPath(); mCtx.moveTo(pAx, pAy); mCtx.lineTo(poleX, poleY);
+    mCtx.strokeStyle = '#6b46c1'; mCtx.lineWidth = 1.2;
+    mCtx.setLineDash([5,3]); mCtx.globalAlpha = 0.7; mCtx.stroke();
+    mCtx.setLineDash([]); mCtx.globalAlpha = 1;
+
+    // Pole dot — diamond
+    mCtx.save();
+    mCtx.translate(poleX, poleY);
+    mCtx.rotate(Math.PI/4);
+    mCtx.fillStyle = '#6b46c1'; mCtx.globalAlpha = 0.95;
+    mCtx.fillRect(-5.5, -5.5, 11, 11);
+    mCtx.globalAlpha = 1;
+    mCtx.restore();
+    // Glow ring
+    mCtx.beginPath(); mCtx.arc(poleX, poleY, 9, 0, 2*Math.PI);
+    mCtx.fillStyle = '#6b46c1'; mCtx.globalAlpha = 0.1; mCtx.fill(); mCtx.globalAlpha = 1;
+
+    // Pole label
+    const poleLblX = poleX + (poleX > circX ? 8 : -8);
+    mLbl(poleLblX, poleY - 10, '極點', '#6b46c1', poleX > circX ? 'left' : 'right');
+
+    // Line: Pole → σ₁ (solid, shows σ₁ direction)
+    mCtx.beginPath(); mCtx.moveTo(poleX, poleY); mCtx.lineTo(px(s1), MCY);
+    mCtx.strokeStyle = '#c53030'; mCtx.lineWidth = 1.8; mCtx.globalAlpha = 0.8; mCtx.stroke(); mCtx.globalAlpha = 1;
+
+    // Line: Pole → σ₂ (dashed, shows σ₂ direction)
+    mCtx.beginPath(); mCtx.moveTo(poleX, poleY); mCtx.lineTo(px(s2), MCY);
+    mCtx.strokeStyle = '#2b6cb0'; mCtx.lineWidth = 1.4;
+    mCtx.setLineDash([4,3]); mCtx.globalAlpha = 0.65; mCtx.stroke();
+    mCtx.setLineDash([]); mCtx.globalAlpha = 1;
+  }
 
   // ── Theta rotation on Mohr's circle ──
   // τ upward convention: A = (σx, +τxy), angle measured CCW from +σ axis (standard math)
@@ -674,6 +798,114 @@ function drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp){
   mDot(rPx,  rPy,  6, '#276749');
   mDot(rPx2, rPy2, 4, '#276749');
   mLbl(rPx+8, rPy, "P(σx', τx'y')", '#276749', 'left');
+
+  } // end showPreviewCircle
+
+  // ── Draw saved case circles (dashed, behind current) ──────────────────────
+  if(extraCases && extraCases.length){
+    extraCases.forEach((c, i)=>{
+      if(!c.visible) return;
+      const cr    = Math.sqrt(((c.sx-c.sy)/2)**2+c.txy**2);
+      const cavg  = (c.sx+c.sy)/2;
+      const cpx   = s => MCX + s*SC;
+      const cpy   = t => MCY - t*SC;
+      const ccircX= cpx(cavg);
+      const cs1   = cavg+cr, cs2 = cavg-cr;
+
+      // θ_p: principal stress angle (CCW positive, Taiwan convention)
+      const ctp_rad = 0.5 * Math.atan2(c.txy, (c.sx-c.sy)/2);
+      const ctp_deg = ctp_rad * 180 / Math.PI;
+
+      // Point A in canvas coords (τ upward = canvas y decreases)
+      const pAcx = cpx(c.sx), pAcy = cpy(c.txy);
+      // Canvas angle of A from circle centre
+      const angA_c = Math.atan2(pAcy - MCY, pAcx - ccircX);
+      // σ₁ is at canvas angle = angA_c + 2*θ_p (same formula as current circle)
+      const ang1_c  = angA_c + 2 * ctp_rad;
+      // σ₂ is diametrically opposite
+      const ang2_c  = ang1_c + Math.PI;
+
+      // Dashed circle
+      mCtx.beginPath(); mCtx.arc(ccircX, MCY, cr*SC, 0, 2*Math.PI);
+      mCtx.strokeStyle = c.color; mCtx.lineWidth = 2.2;
+      mCtx.setLineDash([6,4]); mCtx.globalAlpha = 0.85; mCtx.stroke();
+      mCtx.setLineDash([]); mCtx.globalAlpha = 1;
+
+      // σ₁, σ₂ dots on σ-axis
+      mCtx.beginPath(); mCtx.arc(cpx(cs1), MCY, 5, 0, 2*Math.PI);
+      mCtx.fillStyle = c.color; mCtx.globalAlpha = 0.9; mCtx.fill(); mCtx.globalAlpha = 1;
+      mCtx.beginPath(); mCtx.arc(cpx(cs2), MCY, 5, 0, 2*Math.PI);
+      mCtx.fillStyle = c.color; mCtx.globalAlpha = 0.9; mCtx.fill(); mCtx.globalAlpha = 1;
+
+      // σ₁, σ₂ value labels
+      mCtx.fillStyle = c.color; mCtx.font = '9px Courier New,monospace';
+      mCtx.textAlign = 'center'; mCtx.globalAlpha = 0.85;
+      mCtx.fillText(cs1.toFixed(1), cpx(cs1), MCY + 18);
+      mCtx.fillText(cs2.toFixed(1), cpx(cs2), MCY + 18);
+      mCtx.globalAlpha = 1;
+
+      // Point A dot
+      mCtx.beginPath(); mCtx.arc(pAcx, pAcy, 4, 0, 2*Math.PI);
+      mCtx.fillStyle = c.color; mCtx.globalAlpha = 0.8; mCtx.fill(); mCtx.globalAlpha = 1;
+
+      // ── Pole Point for this case ──
+      // Pole is found by drawing a horizontal line through A; it intersects the circle
+      // at the point where τ = τxy (same τ as A), on the same side as A's σ.
+      // Two intersections: solve (σ - cavg)² + τxy² = cr²  → σ = cavg ± √(cr²-τxy²)
+      // Pole is the one closer to c.sx (same half of circle as A)
+      const cPoleY = pAcy;  // same canvas y as A (horizontal line through A)
+      const cdSq = cr*SC*cr*SC - (pAcy - MCY)*(pAcy - MCY);
+      if(cdSq >= 0){
+        const cPoleX1 = ccircX + Math.sqrt(cdSq);
+        const cPoleX2 = ccircX - Math.sqrt(cdSq);
+        // Choose the pole on same side as A relative to circle centre
+        const cPoleX = (Math.abs(cPoleX1 - pAcx) <= Math.abs(cPoleX2 - pAcx)) ? cPoleX1 : cPoleX2;
+
+        // Draw dashed horizontal line from A to Pole
+        mCtx.beginPath(); mCtx.moveTo(pAcx, pAcy); mCtx.lineTo(cPoleX, cPoleY);
+        mCtx.strokeStyle = c.color; mCtx.lineWidth = 1;
+        mCtx.setLineDash([4,3]); mCtx.globalAlpha = 0.6; mCtx.stroke();
+        mCtx.setLineDash([]); mCtx.globalAlpha = 1;
+
+        // Draw Pole dot (diamond shape)
+        mCtx.save();
+        mCtx.translate(cPoleX, cPoleY);
+        mCtx.rotate(Math.PI/4);
+        mCtx.fillStyle = c.color; mCtx.globalAlpha = 0.95;
+        mCtx.fillRect(-5, -5, 10, 10);
+        mCtx.globalAlpha = 1;
+        mCtx.restore();
+        mCtx.strokeStyle = c.color; mCtx.lineWidth = 1.2;
+        mCtx.strokeRect = undefined;  // skip
+
+        // Pole label
+        mCtx.fillStyle = c.color; mCtx.font = 'bold 9px Inter,sans-serif';
+        mCtx.textAlign = cPoleX > ccircX ? 'left' : 'right';
+        mCtx.globalAlpha = 0.9;
+        mCtx.fillText('P極', cPoleX + (cPoleX > ccircX ? 5 : -5), cPoleY - 6);
+        mCtx.globalAlpha = 1;
+
+        // Line from Pole to σ₁ point on σ-axis → shows σ₁ direction
+        const cs1x = cpx(cs1), cs1y = MCY;
+        mCtx.beginPath(); mCtx.moveTo(cPoleX, cPoleY); mCtx.lineTo(cs1x, cs1y);
+        mCtx.strokeStyle = c.color; mCtx.lineWidth = 1.5;
+        mCtx.globalAlpha = 0.75; mCtx.stroke(); mCtx.globalAlpha = 1;
+
+        // Line from Pole to σ₂ point on σ-axis → shows σ₂ direction
+        const cs2x = cpx(cs2), cs2y = MCY;
+        mCtx.beginPath(); mCtx.moveTo(cPoleX, cPoleY); mCtx.lineTo(cs2x, cs2y);
+        mCtx.strokeStyle = c.color; mCtx.lineWidth = 1; mCtx.setLineDash([3,3]);
+        mCtx.globalAlpha = 0.55; mCtx.stroke();
+        mCtx.setLineDash([]); mCtx.globalAlpha = 1;
+      }
+
+      // Case name label above circle top
+      mCtx.fillStyle = c.color; mCtx.font = 'bold 10px Inter,sans-serif';
+      mCtx.textAlign = 'center'; mCtx.globalAlpha = 0.9;
+      mCtx.fillText(c.name, ccircX, cpy(cr) - 8);
+      mCtx.globalAlpha = 1;
+    });
+  }
 }
 
 // ── Stress Element Drawing ────────────────────────────────
@@ -818,6 +1050,7 @@ MC.addEventListener('mousemove',e=>{
 MC.addEventListener('mouseleave',()=>{ coordDisp.textContent='σ: 0 | τ: 0'; });
 
 window.addEventListener('load',setupCanvas);
+window.addEventListener('load',updateColorPresets);
 window.addEventListener('resize',setupCanvas);
 draw();
 
@@ -1103,6 +1336,129 @@ SC_canvas.addEventListener('mouseleave',()=>{ snCoordDisp.textContent='ε: 0 | �
 window.addEventListener('resize', setupStrainCanvas);
 // Initial strain draw after page load
 window.addEventListener('load', ()=>{ setTimeout(()=>{ setupStrainCanvas(); drawStrain(); }, 300); });
+
+
+
+
+// ══════════════════════════════════════════════════════
+// ── MULTI-CASE MANAGEMENT ─────────────────────────────
+// ══════════════════════════════════════════════════════
+
+function addCase(){
+  if(stressCases.length >= 8){
+    document.getElementById('case-limit-msg').style.display='block';
+    return;
+  }
+  document.getElementById('case-limit-msg').style.display='none';
+  const sx  = parseFloat(document.getElementById('sx').value)  || 0;
+  const sy  = parseFloat(document.getElementById('sy').value)  || 0;
+  const txy = parseFloat(document.getElementById('txy').value) || 0;
+  const savg= (sx+sy)/2;
+  const R   = Math.sqrt(((sx-sy)/2)**2+txy**2);
+  const s1  = savg+R, s2 = savg-R;
+  caseCounter++;
+  const nameInput = document.getElementById('case-name').value.trim();
+  const name = nameInput || `工況 ${caseCounter}`;
+  const colorPicker = document.getElementById('case-color');
+  const color = colorPicker ? colorPicker.value : CASE_COLORS[(stressCases.length) % CASE_COLORS.length];
+  // Auto-advance picker to next preset for convenience
+  const nextPreset = CASE_COLORS[(stressCases.length + 1) % CASE_COLORS.length];
+  if(colorPicker) colorPicker.value = nextPreset;
+  updateColorPresets();
+  stressCases.push({ id: caseCounter, name, sx, sy, txy, savg, R, s1, s2, color, visible: true });
+  document.getElementById('case-name').value = '';
+  renderCaseList();
+  draw();
+}
+
+function deleteCase(id){
+  stressCases = stressCases.filter(c => c.id !== id);
+  renderCaseList();
+  draw();
+}
+
+function toggleCaseVisible(id){
+  const c = stressCases.find(c => c.id === id);
+  if(c) c.visible = !c.visible;
+  renderCaseList();
+  draw();
+}
+
+function loadCase(id){
+  const c = stressCases.find(c => c.id === id);
+  if(!c) return;
+  document.getElementById('sx').value  = c.sx;
+  document.getElementById('sy').value  = c.sy;
+  document.getElementById('txy').value = c.txy;
+  document.getElementById('sxr').value  = c.sx;
+  document.getElementById('syr').value  = c.sy;
+  document.getElementById('txyr').value = c.txy;
+  document.getElementById('case-name').value = c.name+' (複製)';
+  draw();
+}
+
+function clearAllCases(){
+  if(stressCases.length === 0) return;
+  if(!confirm('確定要清除所有工況嗎？')) return;
+  stressCases = [];
+  renderCaseList();
+  draw();
+}
+
+function changeCaseColor(id, color){
+  const c = stressCases.find(c => c.id === id);
+  if(c){ c.color = color; renderCaseList(); draw(); }
+}
+
+function updateColorPresets(){
+  const container = document.getElementById('color-presets');
+  if(!container) return;
+  const picker = document.getElementById('case-color');
+  container.innerHTML = CASE_COLORS.map(col =>
+    `<div onclick="document.getElementById('case-color').value='${col}';updateColorPresets()"
+      title="${col}"
+      style="width:18px;height:18px;border-radius:4px;cursor:pointer;background:${col};
+             border:2px solid ${picker && picker.value===col ? '#1a202c' : 'transparent'};
+             transition:transform .1s;flex-shrink:0"
+      onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    </div>`
+  ).join('');
+}
+
+function renderCaseList(){
+  const count = stressCases.length;
+  document.getElementById('case-count').textContent = `（${count} / 8）`;
+  document.getElementById('add-btn').disabled = count >= 8;
+  document.getElementById('case-limit-msg').style.display = count >= 8 ? 'block' : 'none';
+
+  const emptyEl = document.getElementById('case-list-empty');
+  const itemsEl = document.getElementById('case-list-items');
+  const legendEl= document.getElementById('case-legend');
+
+  if(count === 0){
+    emptyEl.style.display = 'block';
+    itemsEl.innerHTML = '';
+    legendEl.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  legendEl.style.display = 'block';
+
+  itemsEl.innerHTML = stressCases.map(c => {
+    const opacity = c.visible ? '1' : '0.4';
+    const eyeIcon = c.visible ? '👁' : '🚫';
+    return `<div class="case-row" style="opacity:${opacity}" id="caserow-${c.id}">
+      <input type="color" value="${c.color}" title="點擊更改顏色" style="width:18px;height:18px;border:none;border-radius:50%;cursor:pointer;padding:0;background:transparent;flex-shrink:0;" onchange="changeCaseColor(${c.id}, this.value)">
+      <div class="case-label" title="${c.name}">${c.name}</div>
+      <span class="case-badge">σ₁=${c.s1.toFixed(1)}</span>
+      <span class="case-badge">σ₂=${c.s2.toFixed(1)}</span>
+      <span class="case-badge">R=${c.R.toFixed(1)}</span>
+      <button class="case-btn" style="background:none;border:none;cursor:pointer;font-size:.85rem;padding:2px 4px" title="${c.visible?'隱藏':'顯示'}" onclick="toggleCaseVisible(${c.id})">${eyeIcon}</button>
+      <button class="case-btn case-btn-edit" onclick="loadCase(${c.id})" title="載入至輸入欄">載入</button>
+      <button class="case-btn case-btn-del" onclick="deleteCase(${c.id})" title="刪除">✕</button>
+    </div>`;
+  }).join('');
+}
 
 </script>
 </body>
