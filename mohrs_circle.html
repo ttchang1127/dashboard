@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>摩爾圓平面應力分析</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family:'Inter','Noto Sans TC',sans-serif; -webkit-font-smoothing:antialiased; background:linear-gradient(135deg,#f5f5f5 0%,#e0e0e0 100%); }
+  .header-gradient{ background:linear-gradient(120deg,#4a5568 0%,#1a202c 100%); }
+  .card{ background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.08); border:1px solid #e2e8f0; }
+  canvas{ display:block; }
+  #mohrCanvas{ background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.08); }
+  #strainCanvas{ background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.08); }
+  .param-display{ display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:10px; margin-top:14px; background:rgba(0,0,0,.15); border-radius:12px; padding:12px; }
+  .param-box{ background:rgba(0,0,0,.25); padding:9px; border-radius:8px; text-align:center; }
+  .param-title{ font-size:.72rem; font-weight:600; color:#a0aec0; margin-bottom:3px; }
+  .param-value{ font-size:1.1rem; font-weight:900; font-family:'Courier New',monospace; color:#fff; }
+  .pv-red{color:#fc8181;} .pv-gold{color:#f6e05e;} .pv-green{color:#68d391;} .pv-blue{color:#90cdf4;}
+  .check-panel{ font-family:'Courier New',monospace; font-size:.74rem; background:rgba(0,0,0,.18); border-radius:10px; padding:10px; flex:1; min-width:185px; }
+  .check-panel h4{ color:#fff; font-weight:700; font-size:.79rem; margin-bottom:6px; text-align:center; }
+  .check-row{ display:flex; justify-content:space-between; color:#a0aec0; margin-bottom:2px; }
+  .check-value{ font-weight:700; color:#fff; }
+  input[type="range"]{ display:block; width:80%; margin:0 auto; height:6px; border-radius:4px; appearance:none; background:#e2e8f0; cursor:pointer; accent-color:#4a5568; }
+  input[type="number"]{ width:6rem; text-align:right; font-family:'Courier New',monospace; font-size:.82rem; background:#f7fafc; padding:3px 5px; border-radius:5px; border:1px solid #cbd5e0; color:#1a202c; outline:none; }
+  input[type="number"]:focus{ border-color:#4a5568; box-shadow:0 0 0 2px rgba(74,85,104,.2); }
+  input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; }
+  .slider-label{ display:flex; justify-content:space-between; align-items:center; font-size:.85rem; color:#4b5563; }
+  .tag{ padding:2px 7px; border-radius:5px; font-family:'Courier New',monospace; font-size:.82rem; display:inline-flex; align-items:center; gap:3px; }
+  .tag-blue{ background:#ebf8ff; color:#2b6cb0; border:1px solid #90cdf4; }
+  .tag-red{ background:#fff5f5; color:#c53030; border:1px solid #fc8181; }
+  .tag-green{ background:#f0fff4; color:#276749; border:1px solid #9ae6b4; }
+  .section-title{ font-size:.63rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:#718096; border-bottom:1px solid #e2e8f0; padding-bottom:5px; margin-bottom:9px; }
+  .formula-block{ background:#f8fafc; border-left:3px solid #4a5568; border-radius:0 5px 5px 0; padding:7px 11px; margin:5px 0; font-family:'Courier New',monospace; font-size:.76rem; color:#1a202c; white-space:pre-wrap; }
+  .formula-block.red{ border-color:#c53030; background:#fff5f5; }
+  .formula-block.gold{ border-color:#b7791f; background:#fffbf0; }
+  .formula-block.green{ border-color:#276749; background:#f0fff4; }
+  .formula-block.blue{ border-color:#2b6cb0; background:#ebf8ff; }
+  .step-row{ display:flex; align-items:flex-start; gap:6px; margin-bottom:9px; }
+  .step-num{ display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; background:#4a5568; color:white; font-size:.67rem; font-weight:700; flex-shrink:0; margin-top:1px; }
+  .note-box{ background:#fffde7; border:1px solid #f6e05e; border-radius:6px; padding:8px 12px; font-size:.74rem; color:#744210; margin-top:8px; }
+  .coord-table td{ padding:4px 7px; font-family:'Courier New',monospace; font-size:.76rem; }
+  .tab-btn{ padding:5px 13px; border-radius:6px; font-size:.79rem; font-weight:600; cursor:pointer; border:1px solid #e2e8f0; background:#f7fafc; color:#4a5568; transition:all .15s; }
+  .tab-btn.active{ background:#4a5568; color:white; border-color:#4a5568; }
+  .tab-pane{ display:none; } .tab-pane.active{ display:block; }
+  .main-tab-btn{ padding:8px 22px; border-radius:8px; font-size:.9rem; font-weight:700; cursor:pointer; border:2px solid #4a5568; background:white; color:#4a5568; transition:all .18s; letter-spacing:.03em; }
+  .main-tab-active{ background:#1a202c; color:white; border-color:#1a202c; }
+</style>
+</head>
+<body class="text-gray-800 min-h-screen">
+<div class="container mx-auto p-4 md:p-6 max-w-7xl">
+
+  <!-- Main Title -->
+  <div class="text-center mb-4">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 tracking-wide">莫爾圓分析</h1>
+    <p class="text-gray-500 mt-1 font-mono text-xs tracking-widest">MOHR'S CIRCLE ANALYSIS</p>
+  </div>
+
+  <!-- Top-level tabs -->
+  <div class="flex gap-2 mb-5">
+    <button id="main-tab-stress" class="main-tab-btn main-tab-active" onclick="switchMainTab('stress',this)">⬜ 應力分析</button>
+    <button id="main-tab-strain" class="main-tab-btn" onclick="switchMainTab('strain',this)">◇ 應變分析</button>
+  </div>
+
+  <!-- ══ 應力分析 pane ══ -->
+  <div id="pane-stress">
+
+  <!-- Header -->
+  <header class="text-center mb-5 p-5 rounded-xl header-gradient text-white">
+    <h2 class="text-xl md:text-2xl font-bold">平面應力分析</h2>
+    <p class="text-gray-400 mt-1 font-mono text-xs tracking-widest">MOHR'S CIRCLE · PLANE STRESS ANALYSIS</p>
+    <div class="param-display">
+      <div class="param-box"><div class="param-title">σ₁ 最大主應力</div><div id="h-s1" class="param-value pv-red">—</div></div>
+      <div class="param-box"><div class="param-title">σ₂ 最小主應力</div><div id="h-s2" class="param-value pv-red">—</div></div>
+      <div class="param-box"><div class="param-title">τ_max = R</div><div id="h-tmax" class="param-value pv-gold">—</div></div>
+      <div class="param-box"><div class="param-title">σ_avg 圓心</div><div id="h-savg" class="param-value">—</div></div>
+      <div class="param-box"><div class="param-title">θ_p 主應力角</div><div id="h-tp" class="param-value pv-green">—</div></div>
+      <div class="param-box"><div class="param-title">θ_s 最大剪應力角</div><div id="h-ts" class="param-value pv-blue">—</div></div>
+    </div>
+    <div class="flex justify-center items-start gap-3 flex-wrap mt-4">
+      <div class="check-panel">
+        <h4>正負號慣例（台灣教科書）</h4>
+        <div class="check-row"><span>σ 拉伸</span><span class="check-value pv-red">正 (+)</span></div>
+        <div class="check-row"><span>τ_xy (+x面, +y向)</span><span class="check-value pv-red">正 (+)</span></div>
+        <div class="check-row"><span>摩爾圓 τ 軸</span><span class="check-value pv-green">向上為正</span></div>
+        <div class="check-row"><span>θ 逆時針旋轉</span><span class="check-value pv-green">正 (+)</span></div>
+      </div>
+      <div class="check-panel">
+        <h4 id="chk-title">旋轉角應力 θ = 0.0°</h4>
+        <div class="check-row"><span>σ_x'</span><span id="chk-sxp" class="check-value">—</span></div>
+        <div class="check-row"><span>σ_y'</span><span id="chk-syp" class="check-value">—</span></div>
+        <div class="check-row"><span>τ_x'y'</span><span id="chk-txyp" class="check-value">—</span></div>
+      </div>
+      <div class="check-panel">
+        <h4>主應力驗核</h4>
+        <div class="check-row"><span>σ₁ − σ₂</span><span id="chk-diff" class="check-value">—</span></div>
+        <div class="check-row"><span>= 2R</span><span id="chk-2R" class="check-value">—</span></div>
+        <div class="check-row"><span>σ₁+σ₂ = σx+σy</span><span id="chk-sum" class="check-value">—</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Row 1: Mohr + Controls -->
+  <div class="flex flex-col lg:flex-row gap-5 mb-5">
+    <div class="w-full lg:w-3/5 relative" style="aspect-ratio:1/1">
+      <canvas id="mohrCanvas"></canvas>
+      <div id="coordDisp" class="absolute top-3 right-3 bg-black/70 text-white px-3 py-1 rounded-lg text-xs font-mono">σ: 0 | τ: 0</div>
+    </div>
+    <div class="w-full lg:w-2/5 flex flex-col gap-4">
+      <div class="card p-5">
+        <div class="section-title">應力輸入</div>
+        <div class="space-y-4">
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium">σ<sub>x</sub> — X方向正應力</label>
+              <span class="tag tag-blue"><input type="number" id="sx" value="80" step="1" oninput="syncS('sx','sxr');draw()"> MPa</span>
+            </div>
+            <input type="range" id="sxr" min="-200" max="200" value="80" step="1" oninput="syncR('sxr','sx');draw()">
+          </div>
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium">σ<sub>y</sub> — Y方向正應力</label>
+              <span class="tag tag-blue"><input type="number" id="sy" value="-40" step="1" oninput="syncS('sy','syr');draw()"> MPa</span>
+            </div>
+            <input type="range" id="syr" min="-200" max="200" value="-40" step="1" oninput="syncR('syr','sy');draw()">
+          </div>
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium">τ<sub>xy</sub> — 剪應力（+x面+y向為正）</label>
+              <span class="tag tag-red"><input type="number" id="txy" value="50" step="1" oninput="syncS('txy','txyr');draw()"> MPa</span>
+            </div>
+            <input type="range" id="txyr" min="-200" max="200" value="50" step="1" oninput="syncR('txyr','txy');draw()">
+          </div>
+          <hr class="border-gray-200">
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium">旋轉角 θ（逆時針為正）</label>
+              <span id="theta-tag" class="tag tag-green">0.0°</span>
+            </div>
+            <input type="range" id="theta" min="-90" max="90" value="0" step="0.5" oninput="draw()">
+          </div>
+        </div>
+      </div>
+      <div class="card p-5 flex-grow">
+        <div class="section-title">計算結果一覽</div>
+        <table class="w-full coord-table">
+          <thead class="bg-gray-100">
+            <tr><td class="font-semibold text-gray-600 py-1">項目</td><td class="font-semibold text-gray-600 py-1">數值</td></tr>
+          </thead>
+          <tbody>
+            <tr class="border-b"><td class="font-bold text-red-700">σ₁  最大主應力</td><td id="r-s1"></td></tr>
+            <tr class="border-b"><td class="font-bold text-red-700">σ₂  最小主應力</td><td id="r-s2"></td></tr>
+            <tr class="border-b"><td class="font-bold" style="color:#b7791f">τ_max 最大剪應力</td><td id="r-tmax"></td></tr>
+            <tr class="border-b"><td class="font-bold text-gray-700">σ_avg 平均正應力</td><td id="r-savg"></td></tr>
+            <tr class="border-b"><td class="font-bold text-green-700">θ_p  主應力角</td><td id="r-tp"></td></tr>
+            <tr class="border-b"><td class="font-bold text-green-700">θ_s  最大剪應力角</td><td id="r-ts"></td></tr>
+            <tr class="border-b bg-blue-50"><td class="font-bold text-blue-700" id="lbl-sxp">σ_x'</td><td id="r-sxp"></td></tr>
+            <tr class="border-b bg-blue-50"><td class="font-bold text-blue-700" id="lbl-syp">σ_y'</td><td id="r-syp"></td></tr>
+            <tr class="bg-red-50"><td class="font-bold text-red-700" id="lbl-txyp">τ_x'y'</td><td id="r-txyp"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Tabs -->
+  <div class="card p-5 mb-5">
+    <div class="flex gap-2 mb-4 flex-wrap">
+      <button class="tab-btn active" onclick="switchTab('tab-formula',this)">📐 計算公式與推導過程</button>
+      <button class="tab-btn" onclick="switchTab('tab-element',this)">🟦 應力元素圖</button>
+    </div>
+
+    <!-- Formula tab -->
+    <div id="tab-formula" class="tab-pane active">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- General formulas -->
+        <div>
+          <div class="section-title">平面應力轉換公式（一般式）</div>
+          <div class="step-row"><span class="step-num">1</span>
+            <div><div class="font-semibold text-gray-700 mb-1 text-sm">平均正應力（摩爾圓圓心）</div>
+            <div class="formula-block">σ_avg = (σx + σy) / 2</div></div></div>
+          <div class="step-row"><span class="step-num">2</span>
+            <div><div class="font-semibold text-gray-700 mb-1 text-sm">摩爾圓半徑 R = τ_max</div>
+            <div class="formula-block gold">R = √[ ((σx − σy)/2)² + τxy² ]</div></div></div>
+          <div class="step-row"><span class="step-num">3</span>
+            <div><div class="font-semibold text-gray-700 mb-1 text-sm">主應力</div>
+            <div class="formula-block red">σ₁ = σ_avg + R  （最大主應力）
+σ₂ = σ_avg − R  （最小主應力）</div></div></div>
+          <div class="step-row"><span class="step-num">4</span>
+            <div><div class="font-semibold text-gray-700 mb-1 text-sm">主應力角 θ_p（逆時針為正）</div>
+            <div class="formula-block green">tan(2θ_p) = τxy / ((σx − σy)/2)
+θ_p = ½ arctan( 2τxy / (σx − σy) )
+θ_s = θ_p − 45°  （最大剪應力角）</div></div></div>
+          <div class="step-row"><span class="step-num">5</span>
+            <div><div class="font-semibold text-gray-700 mb-1 text-sm">任意角 θ 的應力轉換</div>
+            <div class="formula-block blue">σ_x'  = σ_avg + ((σx−σy)/2)·cos2θ + τxy·sin2θ
+σ_y'  = σ_avg − ((σx−σy)/2)·cos2θ − τxy·sin2θ
+τ_x'y' = −((σx−σy)/2)·sin2θ + τxy·cos2θ</div></div></div>
+          <div class="note-box">
+            <b>台灣慣例說明：</b><br>
+            • 摩爾圓 τ 軸<b>向上為正</b>：點 A = (σx, +τxy) 在圓的<b>上半</b>（若 τxy &gt; 0）<br>
+            • 逆時針旋轉 θ → 在摩爾圓上也<b>逆時針</b>旋轉 2θ<br>
+            • 主應力面上剪應力為零（τ = 0）<br>
+            • σ₁ + σ₂ = σx + σy（應力不變量）
+          </div>
+        </div>
+        <!-- Step-by-step -->
+        <div>
+          <div class="section-title">代入數值逐步計算</div>
+          <div id="calc-steps"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Element tab -->
+    <div id="tab-element" class="tab-pane">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="flex flex-col items-center">
+          <div class="section-title w-full text-center">原始應力狀態（θ = 0°）</div>
+          <canvas id="elem0" width="360" height="320"></canvas>
+          <div class="text-xs text-gray-500 font-mono mt-2 text-center">正應力：紅色  剪應力：藍色<br>箭頭向外 = 正（拉伸）；τ +x面+y向為正</div>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="section-title w-full text-center" id="elem-t-title">旋轉後應力狀態（θ = 0.0°）</div>
+          <canvas id="elemT" width="360" height="320"></canvas>
+          <div id="elem-t-label" class="text-xs text-gray-500 font-mono mt-2 text-center"></div>
+        </div>
+      </div>
+      <div class="note-box mt-4">
+        <b>應力元素慣例：</b>
+        &nbsp;紅色箭頭 = 正應力（向外為拉伸+，向內為壓縮−）；
+        藍色箭頭 = 剪應力（+x面→+y方向為正，依力矩互補原則）。
+        箭頭長度與應力數值大小成比例。
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /pane-stress -->
+
+  <!-- ══ 應變分析 pane ══ -->
+  <div id="pane-strain" style="display:none">
+
+    <!-- Strain Header -->
+    <header class="text-center mb-5 p-5 rounded-xl header-gradient text-white">
+      <h2 class="text-xl md:text-2xl font-bold">平面應變分析</h2>
+      <p class="text-gray-400 mt-1 font-mono text-xs tracking-widest">MOHR'S CIRCLE · PLANE STRAIN ANALYSIS</p>
+      <div class="param-display" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">
+        <div class="param-box"><div class="param-title">ε₁ 最大主應變</div><div id="sn-e1" class="param-value pv-red">—</div></div>
+        <div class="param-box"><div class="param-title">ε₂ 最小主應變</div><div id="sn-e2" class="param-value pv-red">—</div></div>
+        <div class="param-box"><div class="param-title">γ_max/2 最大剪應變</div><div id="sn-gmax" class="param-value pv-gold">—</div></div>
+        <div class="param-box"><div class="param-title">ε_avg 圓心</div><div id="sn-eavg" class="param-value">—</div></div>
+        <div class="param-box"><div class="param-title">θ_p 主應變角</div><div id="sn-tp" class="param-value pv-green">—</div></div>
+        <div class="param-box"><div class="param-title">θ_s 最大剪應變角</div><div id="sn-ts" class="param-value pv-blue">—</div></div>
+      </div>
+      <div class="flex justify-center items-start gap-3 flex-wrap mt-4">
+        <div class="check-panel">
+          <h4>正負號慣例</h4>
+          <div class="check-row"><span>ε 伸長</span><span class="check-value pv-red">正 (+)</span></div>
+          <div class="check-row"><span>γ_xy (+x面+y向)</span><span class="check-value pv-red">正 (+)</span></div>
+          <div class="check-row"><span>摩爾圓 γ/2 軸</span><span class="check-value pv-green">向上為正</span></div>
+          <div class="check-row"><span>θ 逆時針旋轉</span><span class="check-value pv-green">正 (+)</span></div>
+        </div>
+        <div class="check-panel">
+          <h4 id="sn-chk-title">旋轉角應變 θ = 0.0°</h4>
+          <div class="check-row"><span>ε_x'</span><span id="sn-chk-exp" class="check-value">—</span></div>
+          <div class="check-row"><span>ε_y'</span><span id="sn-chk-eyp" class="check-value">—</span></div>
+          <div class="check-row"><span>γ_x'y'/2</span><span id="sn-chk-gxyp" class="check-value">—</span></div>
+        </div>
+        <div class="check-panel">
+          <h4>主應變驗核</h4>
+          <div class="check-row"><span>ε₁ − ε₂</span><span id="sn-chk-diff" class="check-value">—</span></div>
+          <div class="check-row"><span>= γ_max</span><span id="sn-chk-gmax2" class="check-value">—</span></div>
+          <div class="check-row"><span>ε₁+ε₂ = εx+εy</span><span id="sn-chk-sum" class="check-value">—</span></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Linkage toggle + inputs -->
+    <div class="card p-5 mb-5">
+      <div class="flex items-center gap-4 flex-wrap">
+        <span class="font-semibold text-gray-700 text-sm">與應力分析輸入值連動：</span>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="strainLink" id="link-yes" value="yes" onchange="onLinkChange()" checked>
+          <span class="text-sm font-medium text-gray-700">是（依材料參數自動換算）</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="strainLink" id="link-no" value="no" onchange="onLinkChange()">
+          <span class="text-sm font-medium text-gray-700">否（手動輸入應變值）</span>
+        </label>
+      </div>
+
+      <!-- Linked mode: material params -->
+      <div id="strain-linked-inputs" class="mt-4 pt-4 border-t border-gray-200">
+        <div class="text-xs text-gray-500 mb-3 font-mono">由應力值透過廣義虎克定律換算：ε = σ/E − ν·σ_other/E；γ = τ/G</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium text-sm">彈性模數 E</label>
+              <span class="tag tag-blue"><input type="number" id="sn-E" value="200" step="1" min="1" oninput="drawStrain()"> GPa</span>
+            </div>
+            <input type="range" id="sn-Er" min="50" max="500" value="200" step="1" oninput="document.getElementById('sn-E').value=this.value;drawStrain()">
+          </div>
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium text-sm">泊松比 ν</label>
+              <span class="tag tag-blue"><input type="number" id="sn-nu" value="0.3" step="0.01" min="0" max="0.499" oninput="drawStrain()"></span>
+            </div>
+            <input type="range" id="sn-nur" min="0" max="0.49" value="0.3" step="0.01" oninput="document.getElementById('sn-nu').value=parseFloat(this.value).toFixed(2);drawStrain()">
+          </div>
+          <div class="flex items-center">
+            <div class="formula-block blue" style="font-size:.72rem;margin:0;flex:1">G = E / (2(1+ν))<br>= <span id="sn-G-val">—</span> GPa</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Independent mode: manual strain inputs -->
+      <div id="strain-manual-inputs" class="mt-4 pt-4 border-t border-gray-200" style="display:none">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium text-sm">ε<sub>x</sub> — X方向正應變</label>
+              <span class="tag tag-blue"><input type="number" id="sn-ex" value="400" step="1" oninput="syncS('sn-ex','sn-exr');drawStrain()"> με</span>
+            </div>
+            <input type="range" id="sn-exr" min="-2000" max="2000" value="400" step="1" oninput="syncR('sn-exr','sn-ex');drawStrain()">
+          </div>
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium text-sm">ε<sub>y</sub> — Y方向正應變</label>
+              <span class="tag tag-blue"><input type="number" id="sn-ey" value="-200" step="1" oninput="syncS('sn-ey','sn-eyr');drawStrain()"> με</span>
+            </div>
+            <input type="range" id="sn-eyr" min="-2000" max="2000" value="-200" step="1" oninput="syncR('sn-eyr','sn-ey');drawStrain()">
+          </div>
+          <div>
+            <div class="slider-label mb-2 px-1">
+              <label class="font-medium text-sm">γ<sub>xy</sub> — 剪應變</label>
+              <span class="tag tag-red"><input type="number" id="sn-gxy" value="300" step="1" oninput="syncS('sn-gxy','sn-gxyr');drawStrain()"> με</span>
+            </div>
+            <input type="range" id="sn-gxyr" min="-2000" max="2000" value="300" step="1" oninput="syncR('sn-gxyr','sn-gxy');drawStrain()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Theta for strain -->
+      <div class="mt-4 pt-3 border-t border-gray-100">
+        <div class="slider-label mb-2 px-1">
+          <label class="font-medium text-sm">旋轉角度 θ（逆時針為正）</label>
+          <span id="sn-theta-tag" class="tag tag-green">0.0°</span>
+        </div>
+        <input type="range" id="sn-theta" min="-90" max="90" value="0" step="0.5" oninput="drawStrain()">
+      </div>
+    </div>
+
+    <!-- Strain Mohr canvas + results -->
+    <div class="flex flex-col lg:flex-row gap-5 mb-5">
+      <div class="w-full lg:w-3/5 relative" style="aspect-ratio:1/1">
+        <canvas id="strainCanvas"></canvas>
+        <div id="sn-coordDisp" class="absolute top-3 right-3 bg-black/70 text-white px-3 py-1 rounded-lg text-xs font-mono">ε: 0 | γ/2: 0</div>
+      </div>
+      <div class="w-full lg:w-2/5 flex flex-col gap-4">
+        <div class="card p-5 flex-grow">
+          <div class="section-title">應變計算結果</div>
+          <table class="w-full coord-table">
+            <thead class="bg-gray-100">
+              <tr><td class="font-semibold text-gray-600 py-1">項目</td><td class="font-semibold text-gray-600 py-1">數值</td></tr>
+            </thead>
+            <tbody>
+              <tr class="border-b"><td class="font-bold text-red-700">ε₁  最大主應變</td><td id="sn-r-e1"></td></tr>
+              <tr class="border-b"><td class="font-bold text-red-700">ε₂  最小主應變</td><td id="sn-r-e2"></td></tr>
+              <tr class="border-b"><td class="font-bold" style="color:#b7791f">γ_max 最大剪應變</td><td id="sn-r-gmax"></td></tr>
+              <tr class="border-b"><td class="font-bold text-gray-700">ε_avg 平均正應變</td><td id="sn-r-eavg"></td></tr>
+              <tr class="border-b"><td class="font-bold text-green-700">θ_p  主應變角</td><td id="sn-r-tp"></td></tr>
+              <tr class="border-b"><td class="font-bold text-green-700">θ_s  最大剪應變角</td><td id="sn-r-ts"></td></tr>
+              <tr class="border-b bg-blue-50"><td class="font-bold text-blue-700" id="sn-lbl-exp">ε_x'</td><td id="sn-r-exp"></td></tr>
+              <tr class="border-b bg-blue-50"><td class="font-bold text-blue-700" id="sn-lbl-eyp">ε_y'</td><td id="sn-r-eyp"></td></tr>
+              <tr class="bg-red-50"><td class="font-bold text-red-700" id="sn-lbl-gxyp">γ_x'y'/2</td><td id="sn-r-gxyp"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Calc steps -->
+        <div class="card p-5">
+          <div class="section-title">逐步計算過程</div>
+          <div id="sn-calc-steps" style="font-size:.74rem"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pane-strain -->
+
+</div><!-- /container -->
+
+<script>
+// ── Helpers ──────────────────────────────────────────────
+function syncS(n,r){ document.getElementById(r).value=document.getElementById(n).value; }
+function syncR(r,n){ document.getElementById(n).value=document.getElementById(r).value; }
+function fmtN(v){ return (v>=0?'+':'')+v.toFixed(3)+' MPa'; }
+function fmtD(v){ return (v>=0?'+':'')+v.toFixed(2)+'°'; }
+function p3(v){ return (v>=0?'+':'')+v.toFixed(3); }
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active'); btn.classList.add('active');
+}
+function switchMainTab(name, btn){
+  document.getElementById('pane-stress').style.display = name==='stress'?'block':'none';
+  document.getElementById('pane-strain').style.display = name==='strain'?'block':'none';
+  document.querySelectorAll('.main-tab-btn').forEach(b=>b.classList.remove('main-tab-active'));
+  btn.classList.add('main-tab-active');
+  if(name==='stress'){ setTimeout(setupCanvas, 50); }
+  if(name==='strain'){ setTimeout(()=>{ setupStrainCanvas(); drawStrain(); }, 50); }
+}
+
+// ── Canvas ───────────────────────────────────────────────
+const MC = document.getElementById('mohrCanvas');
+const mCtx = MC.getContext('2d');
+const coordDisp = document.getElementById('coordDisp');
+let DPR=window.devicePixelRatio||1, SC=1, MCX=0, MCY=0;
+
+function setupCanvas(){
+  const sz = MC.parentElement.clientWidth;
+  MC.width=sz*DPR; MC.height=sz*DPR;
+  MC.style.width=sz+'px'; MC.style.height=sz+'px';
+  mCtx.scale(DPR,DPR);
+  draw();
+}
+
+function draw(){
+  const W=MC.clientWidth, H=MC.clientHeight;
+  mCtx.clearRect(0,0,W,H);
+
+  const sx    = parseFloat(document.getElementById('sx').value)||0;
+  const sy    = parseFloat(document.getElementById('sy').value)||0;
+  const txy   = parseFloat(document.getElementById('txy').value)||0;
+  const theta = parseFloat(document.getElementById('theta').value)||0;
+
+  // Compute
+  const savg=(sx+sy)/2;
+  const R   =Math.sqrt(((sx-sy)/2)**2+txy**2);
+  const s1  =savg+R, s2=savg-R;
+  const tp  =0.5*Math.atan2(txy,(sx-sy)/2)*180/Math.PI;
+  const ts  =tp-45;
+  const rad =theta*Math.PI/180;
+  const sxp = savg+((sx-sy)/2)*Math.cos(2*rad)+txy*Math.sin(2*rad);
+  const syp = savg-((sx-sy)/2)*Math.cos(2*rad)-txy*Math.sin(2*rad);
+  const txyp=-((sx-sy)/2)*Math.sin(2*rad)+txy*Math.cos(2*rad);
+
+  // Header
+  document.getElementById('h-s1').textContent  =s1.toFixed(3)+' MPa';
+  document.getElementById('h-s2').textContent  =s2.toFixed(3)+' MPa';
+  document.getElementById('h-tmax').textContent=R.toFixed(3)+' MPa';
+  document.getElementById('h-savg').textContent=savg.toFixed(3)+' MPa';
+  document.getElementById('h-tp').textContent  =tp.toFixed(2)+'°';
+  document.getElementById('h-ts').textContent  =ts.toFixed(2)+'°';
+  document.getElementById('chk-title').textContent=`旋轉角應力 θ = ${theta.toFixed(1)}°`;
+  document.getElementById('chk-sxp').textContent =sxp.toFixed(3)+' MPa';
+  document.getElementById('chk-syp').textContent =syp.toFixed(3)+' MPa';
+  document.getElementById('chk-txyp').textContent=txyp.toFixed(3)+' MPa';
+  document.getElementById('chk-diff').textContent=(s1-s2).toFixed(3)+' MPa';
+  document.getElementById('chk-2R').textContent  =(2*R).toFixed(3)+' MPa';
+  document.getElementById('chk-sum').textContent =(s1+s2).toFixed(3)+' = '+(sx+sy).toFixed(3);
+  document.getElementById('theta-tag').textContent=`θ = ${theta.toFixed(1)}°`;
+  // Table
+  document.getElementById('r-s1').textContent  =fmtN(s1);
+  document.getElementById('r-s2').textContent  =fmtN(s2);
+  document.getElementById('r-tmax').textContent=fmtN(R);
+  document.getElementById('r-savg').textContent=fmtN(savg);
+  document.getElementById('r-tp').textContent  =fmtD(tp);
+  document.getElementById('r-ts').textContent  =fmtD(ts);
+  document.getElementById('r-sxp').textContent =fmtN(sxp);
+  document.getElementById('r-syp').textContent =fmtN(syp);
+  document.getElementById('r-txyp').textContent=fmtN(txyp);
+  document.getElementById('lbl-sxp').textContent =`σ_x' (θ=${theta.toFixed(1)}°)`;
+  document.getElementById('lbl-syp').textContent =`σ_y' (θ=${theta.toFixed(1)}°)`;
+  document.getElementById('lbl-txyp').textContent=`τ_x'y' (θ=${theta.toFixed(1)}°)`;
+
+  // Calc steps
+  buildSteps(sx,sy,txy,theta,savg,R,s1,s2,tp,ts,sxp,syp,txyp);
+
+  // Mohr's circle
+  drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp);
+
+  // Elements
+  const e0=document.getElementById('elem0');
+  const eT=document.getElementById('elemT');
+  drawElem(e0.getContext('2d'),e0.width,e0.height,sx,sy,txy,0);
+  drawElem(eT.getContext('2d'),eT.width,eT.height,sxp,syp,txyp,theta);
+  document.getElementById('elem-t-title').textContent=`旋轉後應力狀態（θ = ${theta.toFixed(1)}°）`;
+  document.getElementById('elem-t-label').textContent=`σx'=${sxp.toFixed(2)}, σy'=${syp.toFixed(2)}, τx'y'=${txyp.toFixed(2)} MPa`;
+}
+
+// ── Calculation steps ─────────────────────────────────────
+function buildSteps(sx,sy,txy,theta,savg,R,s1,s2,tp,ts,sxp,syp,txyp){
+  const rad=theta*Math.PI/180;
+  const half=(sx-sy)/2;
+  document.getElementById('calc-steps').innerHTML=`
+<div class="formula-block">❶ 平均正應力
+σ_avg = (σx + σy) / 2
+      = (${p3(sx)} + ${p3(sy)}) / 2
+      = <b style="color:#2b6cb0">${savg.toFixed(3)} MPa</b></div>
+
+<div class="formula-block gold">❷ 半差 & 半徑 R
+(σx−σy)/2 = (${p3(sx)} − ${p3(sy)}) / 2
+           = ${half.toFixed(3)} MPa
+
+R = √[ (${half.toFixed(3)})² + (${p3(txy)})² ]
+  = √[ ${(half**2).toFixed(3)} + ${(txy**2).toFixed(3)} ]
+  = √${(half**2+txy**2).toFixed(3)}
+  = <b style="color:#b7791f">${R.toFixed(3)} MPa</b></div>
+
+<div class="formula-block red">❸ 主應力
+σ₁ = σ_avg + R = ${savg.toFixed(3)} + ${R.toFixed(3)} = <b>${s1.toFixed(3)} MPa</b>
+σ₂ = σ_avg − R = ${savg.toFixed(3)} − ${R.toFixed(3)} = <b>${s2.toFixed(3)} MPa</b></div>
+
+<div class="formula-block green">❹ 主應力角（逆時針為正）
+tan(2θ_p) = τxy / ((σx−σy)/2)
+           = ${p3(txy)} / ${half.toFixed(3)}
+           = ${half===0?'∞':(txy/half).toFixed(4)}
+
+2θ_p = arctan(${half===0?'∞':(txy/half).toFixed(4)})
+     = ${(tp*2).toFixed(3)}°
+θ_p  = <b>${tp.toFixed(3)}°</b>
+θ_s  = θ_p − 45° = <b>${ts.toFixed(3)}°</b></div>
+
+<div class="formula-block blue">❺ θ = ${theta.toFixed(1)}° 的應力轉換
+2θ = ${(theta*2).toFixed(2)}°
+cos 2θ = ${Math.cos(2*rad).toFixed(5)}
+sin 2θ = ${Math.sin(2*rad).toFixed(5)}
+
+σ_x' = ${savg.toFixed(3)} + (${half.toFixed(3)})×(${Math.cos(2*rad).toFixed(4)})
+       + (${p3(txy)})×(${Math.sin(2*rad).toFixed(4)})
+     = <b>${sxp.toFixed(3)} MPa</b>
+
+σ_y' = ${savg.toFixed(3)} − (${half.toFixed(3)})×(${Math.cos(2*rad).toFixed(4)})
+       − (${p3(txy)})×(${Math.sin(2*rad).toFixed(4)})
+     = <b>${syp.toFixed(3)} MPa</b>
+
+τ_x'y' = −(${half.toFixed(3)})×(${Math.sin(2*rad).toFixed(4)})
+         + (${p3(txy)})×(${Math.cos(2*rad).toFixed(4)})
+       = <b>${txyp.toFixed(3)} MPa</b></div>`;
+}
+
+// ── Mohr's Circle Drawing ─────────────────────────────────
+// Taiwan convention: τ axis DOWNWARD positive
+// Point A = (σx, +τxy) → if τxy>0, A is BELOW the σ-axis on canvas
+function drawMohr(W,H,sx,sy,txy,theta,savg,R,s1,s2,tp,sxp,syp,txyp){
+  const pad=58;
+  const range=Math.max(Math.abs(s1),Math.abs(s2),R,10)*1.38+15;
+  SC=Math.min((W/2-pad)/range,(H/2-pad)/range);
+  MCX=W/2; MCY=H/2;
+
+  // σ → x (right), τ → y (UP = positive, standard Taiwan textbook convention)
+  // Canvas y-axis is DOWN, so τ positive → canvas y DECREASES (upward)
+  const px = s => MCX + s * SC;
+  const py = t => MCY - t * SC;   // τ positive → UPWARD on canvas
+  const circX = px(savg);
+
+  // Grid
+  const step = Math.max(10, Math.ceil(range/6/10)*10);
+  mCtx.strokeStyle = '#f0f0f0'; mCtx.lineWidth = 0.8;
+  mCtx.beginPath();
+  for(let v = -Math.ceil(range/step)*step; v <= Math.ceil(range/step)*step; v += step){
+    mCtx.moveTo(px(v), pad/2);  mCtx.lineTo(px(v), H-pad/2);
+    mCtx.moveTo(pad/2, py(v));  mCtx.lineTo(W-pad/2, py(v));
+  }
+  mCtx.stroke();
+
+  // Axes
+  mCtx.strokeStyle = '#718096'; mCtx.lineWidth = 1.2;
+  mCtx.beginPath();
+  mCtx.moveTo(pad/2, MCY);     mCtx.lineTo(W-pad/2+12, MCY);   // σ axis →
+  mCtx.moveTo(MCX, H-pad/2);   mCtx.lineTo(MCX, pad/2-12);     // τ axis ↑
+  mCtx.stroke();
+  arrowTip(W-pad/2+12, MCY, 'r');   // σ axis arrowhead
+  arrowTip(MCX, pad/2-12, 'u');     // τ axis arrowhead (upward)
+
+  // Axis labels
+  mCtx.fillStyle = '#4a5568'; mCtx.font = '600 12px Inter,sans-serif'; mCtx.textAlign = 'center';
+  mCtx.fillText('σ (MPa)', W-pad/2+8, MCY+20);
+  mCtx.fillText('τ (MPa)', MCX+32, pad/2-4);
+
+  // τ convention note
+  mCtx.fillStyle = '#276749'; mCtx.font = 'bold 9px Inter,sans-serif'; mCtx.textAlign = 'left';
+  mCtx.fillText('▲ τ 向上為正', MCX+5, MCY-10);
+
+  // Tick labels
+  mCtx.font = '10px Courier New,monospace'; mCtx.fillStyle = '#a0aec0';
+  for(let v = -Math.ceil(range/step)*step; v <= Math.ceil(range/step)*step; v += step){
+    if(v === 0) continue;
+    mCtx.textAlign = 'center'; mCtx.fillText(v, px(v), MCY+15);
+    mCtx.textAlign = 'right';  mCtx.fillText(v, MCX-5, py(v)+4);
+  }
+  mCtx.fillStyle = '#a0aec0'; mCtx.textAlign = 'center'; mCtx.fillText('0', MCX+8, MCY+15);
+
+  // Circle glow + stroke
+  mCtx.beginPath(); mCtx.arc(circX, MCY, R*SC, 0, 2*Math.PI);
+  mCtx.strokeStyle = '#e2e8f0'; mCtx.lineWidth = 8; mCtx.stroke();
+  mCtx.beginPath(); mCtx.arc(circX, MCY, R*SC, 0, 2*Math.PI);
+  mCtx.strokeStyle = '#4a5568'; mCtx.lineWidth = 2; mCtx.stroke();
+
+  // σ1–σ2 dashed line on σ-axis
+  mCtx.beginPath(); mCtx.moveTo(px(s2), MCY); mCtx.lineTo(px(s1), MCY);
+  mCtx.strokeStyle = '#c53030'; mCtx.lineWidth = 1; mCtx.setLineDash([4,4]); mCtx.stroke(); mCtx.setLineDash([]);
+
+  // Diameter line A–B
+  // τ upward positive: A = (σx, +τxy) → if τxy>0, A is ABOVE σ-axis (py = MCY - txy*SC)
+  const pAx = px(sx),  pAy = py(txy);   // A: (σx, +τxy) — above axis when τxy>0
+  const pBx = px(sy),  pBy = py(-txy);  // B: (σy, −τxy) — below axis when τxy>0
+  mCtx.beginPath(); mCtx.moveTo(pAx, pAy); mCtx.lineTo(pBx, pBy);
+  mCtx.strokeStyle = '#90cdf4'; mCtx.lineWidth = 1; mCtx.setLineDash([4,4]); mCtx.stroke(); mCtx.setLineDash([]);
+
+  // Centre dot
+  mDot(circX, MCY, 4, '#718096');
+
+  // σ1, σ2 on σ-axis
+  mDot(px(s1), MCY, 7, '#c53030'); mDot(px(s2), MCY, 7, '#c53030');
+  mLbl(px(s1), MCY+16, 'σ₁', '#c53030', 'center');
+  mLbl(px(s2), MCY+16, 'σ₂', '#c53030', 'center');
+
+  // τmax points (top = +τmax, bottom = −τmax)
+  mDot(circX, py(R),  6, '#b7791f');   // τ = +R → above σ-axis (upward positive)
+  mDot(circX, py(-R), 6, '#b7791f');   // τ = −R → below σ-axis
+  mLbl(circX+9, py(R)-6,  '+τmax', '#b7791f', 'left');
+  mLbl(circX+9, py(-R)+14, '−τmax', '#b7791f', 'left');
+
+  // Points A and B
+  mDot(pAx, pAy, 6, '#2b6cb0');
+  mLbl(pAx+9, pAy + (txy>=0 ? -8 : 14), 'A(σx, +τxy)', '#2b6cb0', 'left');
+  mDot(pBx, pBy, 6, '#2b6cb0');
+  mLbl(pBx-9, pBy + (txy>=0 ? 14 : -8), 'B(σy, −τxy)', '#2b6cb0', 'right');
+
+  // σavg label (above circle top)
+  mLbl(circX, py(R) - 14, 'σavg', '#718096', 'center');
+
+  // ── Theta rotation on Mohr's circle ──
+  // τ upward convention: A = (σx, +τxy), angle measured CCW from +σ axis (standard math)
+  // In canvas (y-down, τ-up): angle of A from circle centre in canvas coords:
+  //   canvas_angle = atan2(pAy - MCY, pAx - circX)
+  //   Since py(t) = MCY - t*SC, point above axis has negative canvas dy → negative canvas angle
+  // Real CCW rotation θ in physical space → on Mohr's circle with τ-up: also CCW by 2θ
+  // In canvas coords (y inverted): CCW in math = CW in canvas, so canvas_angle INCREASES by 2θ
+  const angleA_c = Math.atan2(pAy - MCY, pAx - circX);
+  const angleP_c = angleA_c + 2 * theta * Math.PI / 180;  // CCW θ real → +2θ in canvas angle
+
+  const rPx  = circX + R*SC * Math.cos(angleP_c);
+  const rPy  = MCY   + R*SC * Math.sin(angleP_c);
+  const rPx2 = circX - R*SC * Math.cos(angleP_c);
+  const rPy2 = MCY   - R*SC * Math.sin(angleP_c);
+
+  if(Math.abs(theta) > 0.3){
+    const arcR = R*SC * 0.3;
+    // Draw arc from A towards P, CCW in canvas = anticlockwise=true when theta>0
+    mCtx.beginPath();
+    mCtx.arc(circX, MCY, arcR, angleA_c, angleP_c, theta < 0);
+    mCtx.strokeStyle = '#276749'; mCtx.lineWidth = 1.8;
+    mCtx.globalAlpha = 0.8; mCtx.stroke(); mCtx.globalAlpha = 1;
+    // 2θ label at arc midpoint
+    const midA = (angleA_c + angleP_c) / 2;
+    mCtx.fillStyle = '#276749'; mCtx.font = 'bold 10px Inter'; mCtx.textAlign = 'center';
+    mCtx.fillText('2θ', circX + arcR*1.65*Math.cos(midA), MCY + arcR*1.65*Math.sin(midA));
+  }
+
+  // Dashed radius line to P
+  mCtx.beginPath(); mCtx.moveTo(circX, MCY); mCtx.lineTo(rPx, rPy);
+  mCtx.strokeStyle = '#276749'; mCtx.lineWidth = 1;
+  mCtx.setLineDash([3,3]); mCtx.globalAlpha = 0.65; mCtx.stroke();
+  mCtx.globalAlpha = 1; mCtx.setLineDash([]);
+
+  // Diameter P–P'
+  mCtx.beginPath(); mCtx.moveTo(rPx, rPy); mCtx.lineTo(rPx2, rPy2);
+  mCtx.strokeStyle = '#276749'; mCtx.lineWidth = 0.8;
+  mCtx.globalAlpha = 0.35; mCtx.stroke(); mCtx.globalAlpha = 1;
+
+  mDot(rPx,  rPy,  6, '#276749');
+  mDot(rPx2, rPy2, 4, '#276749');
+  mLbl(rPx+8, rPy, "P(σx', τx'y')", '#276749', 'left');
+}
+
+// ── Stress Element Drawing ────────────────────────────────
+// Taiwan convention:
+//   σ tension (outward) = positive
+//   τxy > 0 : on +x face → points in +y (DOWNWARD on screen, canvas y-down)
+//             on -x face → points in -y (upward on screen) [couple]
+//             on +y face → points in +x (right) [couple]
+//             on -y face → points in -x (left)  [couple]
+// This creates a CLOCKWISE couple on the element when τxy > 0
+// (consistent with Beer & Johnston Taiwan convention)
+function drawElem(ctx,cw,ch,sxV,syV,txyV,thetaDeg){
+  ctx.clearRect(0,0,cw,ch);
+  const cx=cw/2, cy=ch/2;
+  const boxS=Math.min(cw,ch)*0.25;
+  const maxS=Math.max(Math.abs(sxV),Math.abs(syV),Math.abs(txyV),0.01);
+  const maxAr=boxS*0.85;
+
+  // Element fill + border
+  ctx.fillStyle='#edf2f7'; ctx.strokeStyle='#4a5568'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.rect(cx-boxS,cy-boxS,boxS*2,boxS*2); ctx.fill(); ctx.stroke();
+
+  // Axis labels outside element
+  ctx.fillStyle='#94a3b8'; ctx.font='bold 10px Inter';
+  ctx.textAlign='left';  ctx.fillText("x'", cx+boxS+4, cy+4);
+  ctx.textAlign='center'; ctx.fillText("y'", cx, cy-boxS-10);
+
+  // θ label top-left
+  ctx.fillStyle='#475569'; ctx.font='bold 10px Inter';
+  ctx.textAlign='left'; ctx.fillText(`θ = ${thetaDeg.toFixed(1)}°`, 6, 15);
+
+  // ── Normal stress σx : right face (+x) and left face (-x) ──
+  const sxAr=(Math.abs(sxV)/maxS)*maxAr;
+  if(Math.abs(sxV)>0.001){
+    if(sxV>0){
+      // Tension: arrows point OUTWARD from each face
+      arrowLine(ctx, cx+boxS, cy, cx+boxS+sxAr, cy, '#c53030'); // right → right
+      arrowLine(ctx, cx-boxS, cy, cx-boxS-sxAr, cy, '#c53030'); // left  → left
+    } else {
+      // Compression: arrows point INWARD toward face
+      arrowLine(ctx, cx+boxS+sxAr, cy, cx+boxS, cy, '#c53030'); // right: from outside → face
+      arrowLine(ctx, cx-boxS-sxAr, cy, cx-boxS, cy, '#c53030'); // left:  from outside → face
+    }
+    ctx.fillStyle='#c53030'; ctx.font='bold 10px Courier New,monospace';
+    ctx.textAlign='left';
+    const sxLabelX = cx+boxS + (sxV>0 ? sxAr : sxAr) + 7;
+    ctx.fillText(`σx'=${sxV.toFixed(1)}`, sxLabelX, cy-5);
+  }
+
+  // ── Normal stress σy : top face (+y) and bottom face (-y) ──
+  // Canvas y is DOWN, so "top face" = smaller y, "outward from top face" = upward = -y direction
+  const syAr=(Math.abs(syV)/maxS)*maxAr;
+  if(Math.abs(syV)>0.001){
+    if(syV>0){
+      // Tension: arrows outward
+      arrowLine(ctx, cx, cy-boxS, cx, cy-boxS-syAr, '#c53030'); // top face → up (canvas y-)
+      arrowLine(ctx, cx, cy+boxS, cx, cy+boxS+syAr, '#c53030'); // bottom face → down (canvas y+)
+    } else {
+      // Compression: arrows inward
+      arrowLine(ctx, cx, cy-boxS-syAr, cx, cy-boxS, '#c53030'); // from above → down toward face
+      arrowLine(ctx, cx, cy+boxS+syAr, cx, cy+boxS, '#c53030'); // from below → up toward face
+    }
+    ctx.fillStyle='#c53030'; ctx.font='bold 10px Courier New,monospace';
+    ctx.textAlign='center';
+    const syLabelY = cy-boxS - (syV>0 ? syAr : syAr) - 13;
+    ctx.fillText(`σy'=${syV.toFixed(1)}`, cx, syLabelY);
+  }
+
+  // ── Shear stress τxy ──
+  // Physical convention (Taiwan textbook, y-axis UP in engineering sense):
+  //   τxy > 0: +x face → +y direction (UPWARD on screen, canvas y-)
+  //            -x face → -y direction (DOWNWARD on screen, canvas y+)  [moment couple]
+  //            +y face → +x direction (RIGHTWARD)
+  //            -y face → -x direction (LEFTWARD)
+  // Canvas y is DOWN, so +y physics = -y canvas (upward on screen).
+  const tAr = (Math.abs(txyV) / maxS) * maxAr * 0.82;
+  if(Math.abs(txyV) > 0.001){
+    const s = Math.sign(txyV); // +1 or -1
+
+    // Right face (+x): +y physics = upward = canvas y DECREASES → dy = -s
+    arrowLine(ctx, cx+boxS, cy,      cx+boxS,    cy - s*tAr,  '#2b6cb0');
+    // Left  face (-x): -y physics = downward = canvas y INCREASES → dy = +s
+    arrowLine(ctx, cx-boxS, cy,      cx-boxS,    cy + s*tAr,  '#2b6cb0');
+    // Top face (+y, upper on screen = smaller canvas y): +x physics = rightward → dx = +s
+    arrowLine(ctx, cx,      cy-boxS, cx + s*tAr, cy-boxS,     '#2b6cb0');
+    // Bottom face (-y): -x physics = leftward → dx = -s
+    arrowLine(ctx, cx,      cy+boxS, cx - s*tAr, cy+boxS,     '#2b6cb0');
+
+    // Label
+    ctx.fillStyle = '#2b6cb0'; ctx.font = 'bold 10px Courier New,monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`τ=${txyV.toFixed(1)}`, cx+boxS+6, cy - s*tAr + (s>0 ? -4 : 12));
+  }
+
+  // Value summary bottom
+  ctx.fillStyle='#94a3b8'; ctx.font='9px Inter'; ctx.textAlign='center';
+  ctx.fillText('(MPa)', cx, ch-5);
+}
+
+// Arrow from (x1,y1) to (x2,y2) with arrowhead at end
+function arrowLine(ctx,x1,y1,x2,y2,col){
+  const dx=x2-x1, dy=y2-y1;
+  const len=Math.sqrt(dx*dx+dy*dy);
+  if(len<1) return;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+  ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.stroke();
+  const a=Math.atan2(dy,dx);
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-10*Math.cos(a-0.38), y2-10*Math.sin(a-0.38));
+  ctx.lineTo(x2-10*Math.cos(a+0.38), y2-10*Math.sin(a+0.38));
+  ctx.closePath(); ctx.fillStyle=col; ctx.fill();
+}
+
+// (legacy alias kept for safety)
+function drawNA(ctx,fx,fy,dx,dy,len,col){ arrowLine(ctx,fx,fy,fx+dx*len,fy+dy*len,col); }
+function drawSA(ctx,fx,fy,dx,dy,len,col,off){ arrowLine(ctx,fx,fy,fx+dx*len,fy+dy*len,col); }
+
+function mDot(x,y,r,col){
+  mCtx.beginPath(); mCtx.arc(x,y,r,0,2*Math.PI);
+  mCtx.fillStyle=col; mCtx.fill();
+  mCtx.beginPath(); mCtx.arc(x,y,r+4,0,2*Math.PI);
+  mCtx.fillStyle=col; mCtx.globalAlpha=0.12; mCtx.fill(); mCtx.globalAlpha=1;
+}
+function mLbl(x,y,t,col,align){
+  mCtx.fillStyle=col; mCtx.font='bold 11px Inter,sans-serif';
+  mCtx.textAlign=align||'left'; mCtx.fillText(t,x,y);
+}
+function arrowTip(x,y,d){
+  mCtx.fillStyle='#718096'; mCtx.beginPath();
+  if(d==='r'){ mCtx.moveTo(x,y); mCtx.lineTo(x-9,y-5); mCtx.lineTo(x-9,y+5); }
+  if(d==='u'){ mCtx.moveTo(x,y); mCtx.lineTo(x-5,y+9); mCtx.lineTo(x+5,y+9); }
+  mCtx.closePath(); mCtx.fill();
+}
+
+// Mouse coord
+MC.addEventListener('mousemove',e=>{
+  const r=MC.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  // τ upward positive: canvas y increases downward, so negate
+  coordDisp.textContent=`σ: ${((mx-MCX)/SC).toFixed(2)} | τ: ${((MCY-my)/SC).toFixed(2)}`;
+});
+MC.addEventListener('mouseleave',()=>{ coordDisp.textContent='σ: 0 | τ: 0'; });
+
+window.addEventListener('load',setupCanvas);
+window.addEventListener('resize',setupCanvas);
+draw();
+
+// When stress inputs change, sync strain if linked
+function onStressChange(){
+  draw();
+  if(document.getElementById('link-yes') &&
+     document.getElementById('link-yes').checked &&
+     document.getElementById('pane-strain').style.display !== 'none'){
+    drawStrain();
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// ── STRAIN ANALYSIS ───────────────────────────────────
+// ══════════════════════════════════════════════════════
+const SC_canvas = document.getElementById('strainCanvas');
+const sCtx = SC_canvas.getContext('2d');
+const snCoordDisp = document.getElementById('sn-coordDisp');
+let SN_SC=1, SN_CX=0, SN_CY=0;
+
+function setupStrainCanvas(){
+  if(!SC_canvas.parentElement) return;
+  const sz = SC_canvas.parentElement.clientWidth;
+  SC_canvas.width = sz * DPR; SC_canvas.height = sz * DPR;
+  SC_canvas.style.width = sz+'px'; SC_canvas.style.height = sz+'px';
+  sCtx.scale(DPR, DPR);
+  drawStrain();
+}
+
+function onLinkChange(){
+  const linked = document.getElementById('link-yes').checked;
+  document.getElementById('strain-linked-inputs').style.display = linked ? 'block' : 'none';
+  document.getElementById('strain-manual-inputs').style.display  = linked ? 'none'  : 'block';
+  drawStrain();
+}
+
+function getStrainInputs(){
+  const linked = document.getElementById('link-yes').checked;
+  let ex, ey, gxy; // in με (microstrain)
+
+  if(linked){
+    // Convert stress → strain via generalised Hooke's law (plane stress)
+    const sx  = parseFloat(document.getElementById('sx').value)  || 0; // MPa
+    const sy  = parseFloat(document.getElementById('sy').value)  || 0;
+    const txy = parseFloat(document.getElementById('txy').value) || 0;
+    const E   = parseFloat(document.getElementById('sn-E').value)  || 200; // GPa
+    const nu  = parseFloat(document.getElementById('sn-nu').value) || 0.3;
+    const G   = E / (2*(1+nu)); // GPa
+    // ε = σ/E - ν*σ_other/E  (σ in MPa, E in GPa → result in 10^-3, ×1000 to get με)
+    ex  = ((sx  - nu*sy)  / E) * 1000; // με
+    ey  = ((sy  - nu*sx)  / E) * 1000;
+    gxy = (txy / G) * 1000;            // γ = τ/G
+    // Update G display
+    document.getElementById('sn-G-val').textContent = G.toFixed(2);
+  } else {
+    ex  = parseFloat(document.getElementById('sn-ex').value)  || 0;
+    ey  = parseFloat(document.getElementById('sn-ey').value)  || 0;
+    gxy = parseFloat(document.getElementById('sn-gxy').value) || 0;
+  }
+  const theta = parseFloat(document.getElementById('sn-theta').value) || 0;
+  return { ex, ey, gxy, theta };
+}
+
+function fmtUE(v){ return (v>=0?'+':'')+v.toFixed(3)+' με'; }
+
+function drawStrain(){
+  const W = SC_canvas.clientWidth, H = SC_canvas.clientHeight;
+  if(!W||!H) return;
+  sCtx.clearRect(0,0,W,H);
+
+  const { ex, ey, gxy, theta } = getStrainInputs();
+  // Mohr's circle uses gxy/2 on the τ-axis (same convention as stress)
+  const eavg = (ex+ey)/2;
+  const R    = Math.sqrt(((ex-ey)/2)**2 + (gxy/2)**2);
+  const e1   = eavg+R, e2 = eavg-R;
+  const tp   = 0.5*Math.atan2(gxy/2,(ex-ey)/2)*180/Math.PI;
+  const ts   = tp-45;
+  const rad  = theta*Math.PI/180;
+  const exp_ =  eavg+((ex-ey)/2)*Math.cos(2*rad)+(gxy/2)*Math.sin(2*rad);
+  const eyp_ =  eavg-((ex-ey)/2)*Math.cos(2*rad)-(gxy/2)*Math.sin(2*rad);
+  const gxyp = -((ex-ey)/2)*Math.sin(2*rad)+(gxy/2)*Math.cos(2*rad); // this is γ/2
+
+  // ── Update header & table ──────────────────────────────
+  document.getElementById('sn-e1').textContent    = e1.toFixed(3)+' με';
+  document.getElementById('sn-e2').textContent    = e2.toFixed(3)+' με';
+  document.getElementById('sn-gmax').textContent  = R.toFixed(3)+' με';
+  document.getElementById('sn-eavg').textContent  = eavg.toFixed(3)+' με';
+  document.getElementById('sn-tp').textContent    = tp.toFixed(2)+'°';
+  document.getElementById('sn-ts').textContent    = ts.toFixed(2)+'°';
+
+  document.getElementById('sn-chk-title').textContent  = `旋轉角應變 θ = ${theta.toFixed(1)}°`;
+  document.getElementById('sn-chk-exp').textContent    = exp_.toFixed(3)+' με';
+  document.getElementById('sn-chk-eyp').textContent    = eyp_.toFixed(3)+' με';
+  document.getElementById('sn-chk-gxyp').textContent   = gxyp.toFixed(3)+' με';
+  document.getElementById('sn-chk-diff').textContent   = (e1-e2).toFixed(3)+' με';
+  document.getElementById('sn-chk-gmax2').textContent  = (2*R).toFixed(3)+' με';
+  document.getElementById('sn-chk-sum').textContent    = (e1+e2).toFixed(3)+' = '+(ex+ey).toFixed(3);
+  document.getElementById('sn-theta-tag').textContent  = `θ = ${theta.toFixed(1)}°`;
+
+  document.getElementById('sn-r-e1').textContent   = fmtUE(e1);
+  document.getElementById('sn-r-e2').textContent   = fmtUE(e2);
+  document.getElementById('sn-r-gmax').textContent = (2*R).toFixed(3)+' με';
+  document.getElementById('sn-r-eavg').textContent = fmtUE(eavg);
+  document.getElementById('sn-r-tp').textContent   = fmtD(tp);
+  document.getElementById('sn-r-ts').textContent   = fmtD(ts);
+  document.getElementById('sn-r-exp').textContent  = fmtUE(exp_);
+  document.getElementById('sn-r-eyp').textContent  = fmtUE(eyp_);
+  document.getElementById('sn-r-gxyp').textContent = fmtUE(gxyp);
+  document.getElementById('sn-lbl-exp').textContent  = `ε_x' (θ=${theta.toFixed(1)}°)`;
+  document.getElementById('sn-lbl-eyp').textContent  = `ε_y' (θ=${theta.toFixed(1)}°)`;
+  document.getElementById('sn-lbl-gxyp').textContent = `γ_x'y'/2 (θ=${theta.toFixed(1)}°)`;
+
+  // ── Calc steps ─────────────────────────────────────────
+  buildStrainSteps(ex, ey, gxy, theta, eavg, R, e1, e2, tp, ts, exp_, eyp_, gxyp);
+
+  // ── Draw Mohr's circle (strain) ────────────────────────
+  const pad   = 58;
+  const range = Math.max(Math.abs(e1),Math.abs(e2),R,10)*1.38+15;
+  SN_SC  = Math.min((W/2-pad)/range, (H/2-pad)/range);
+  SN_CX  = W/2; SN_CY = H/2;
+
+  const spx = s => SN_CX + s*SN_SC;
+  const spy = t => SN_CY - t*SN_SC;   // γ/2 upward positive
+  const circX = spx(eavg);
+
+  // Grid
+  const step = Math.max(50, Math.ceil(range/6/50)*50);
+  sCtx.strokeStyle='#f0f0f0'; sCtx.lineWidth=0.8;
+  sCtx.beginPath();
+  for(let v=-Math.ceil(range/step)*step;v<=Math.ceil(range/step)*step;v+=step){
+    sCtx.moveTo(spx(v),pad/2); sCtx.lineTo(spx(v),H-pad/2);
+    sCtx.moveTo(pad/2,spy(v)); sCtx.lineTo(W-pad/2,spy(v));
+  }
+  sCtx.stroke();
+
+  // Axes
+  sCtx.strokeStyle='#718096'; sCtx.lineWidth=1.2;
+  sCtx.beginPath();
+  sCtx.moveTo(pad/2,SN_CY); sCtx.lineTo(W-pad/2+12,SN_CY);
+  sCtx.moveTo(SN_CX,H-pad/2); sCtx.lineTo(SN_CX,pad/2-12);
+  sCtx.stroke();
+  sArrowTip(W-pad/2+12,SN_CY,'r'); sArrowTip(SN_CX,pad/2-12,'u');
+
+  sCtx.fillStyle='#4a5568'; sCtx.font='600 12px Inter,sans-serif'; sCtx.textAlign='center';
+  sCtx.fillText('ε (με)', W-pad/2+8, SN_CY+20);
+  sCtx.fillText('γ/2 (με)', SN_CX+38, pad/2-4);
+  sCtx.fillStyle='#276749'; sCtx.font='bold 9px Inter,sans-serif'; sCtx.textAlign='left';
+  sCtx.fillText('▲ γ/2 向上為正', SN_CX+5, SN_CY-10);
+
+  // Tick labels
+  sCtx.font='10px Courier New,monospace'; sCtx.fillStyle='#a0aec0';
+  for(let v=-Math.ceil(range/step)*step;v<=Math.ceil(range/step)*step;v+=step){
+    if(v===0) continue;
+    sCtx.textAlign='center'; sCtx.fillText(v, spx(v), SN_CY+15);
+    sCtx.textAlign='right';  sCtx.fillText(v, SN_CX-5, spy(v)+4);
+  }
+  sCtx.fillStyle='#a0aec0'; sCtx.textAlign='center'; sCtx.fillText('0',SN_CX+8,SN_CY+15);
+
+  // Circle
+  sCtx.beginPath(); sCtx.arc(circX,SN_CY,R*SN_SC,0,2*Math.PI);
+  sCtx.strokeStyle='#e2e8f0'; sCtx.lineWidth=8; sCtx.stroke();
+  sCtx.beginPath(); sCtx.arc(circX,SN_CY,R*SN_SC,0,2*Math.PI);
+  sCtx.strokeStyle='#4a5568'; sCtx.lineWidth=2; sCtx.stroke();
+
+  // ε1–ε2 dashed
+  sCtx.beginPath(); sCtx.moveTo(spx(e2),SN_CY); sCtx.lineTo(spx(e1),SN_CY);
+  sCtx.strokeStyle='#c53030'; sCtx.lineWidth=1; sCtx.setLineDash([4,4]); sCtx.stroke(); sCtx.setLineDash([]);
+
+  // Diameter A–B  A=(εx, +γxy/2) upward positive
+  const pAx=spx(ex), pAy=spy(gxy/2);
+  const pBx=spx(ey), pBy=spy(-gxy/2);
+  sCtx.beginPath(); sCtx.moveTo(pAx,pAy); sCtx.lineTo(pBx,pBy);
+  sCtx.strokeStyle='#90cdf4'; sCtx.lineWidth=1; sCtx.setLineDash([4,4]); sCtx.stroke(); sCtx.setLineDash([]);
+
+  // Centre
+  sDot(circX,SN_CY,4,'#718096');
+
+  // ε1, ε2
+  sDot(spx(e1),SN_CY,7,'#c53030'); sDot(spx(e2),SN_CY,7,'#c53030');
+  sLbl(spx(e1),SN_CY+16,'ε₁','#c53030','center');
+  sLbl(spx(e2),SN_CY+16,'ε₂','#c53030','center');
+
+  // γ/2 max points
+  sDot(circX,spy(R),6,'#b7791f');
+  sDot(circX,spy(-R),6,'#b7791f');
+  sLbl(circX+9,spy(R)-6,'+γmax/2','#b7791f','left');
+  sLbl(circX+9,spy(-R)+14,'−γmax/2','#b7791f','left');
+
+  // Points A, B
+  sDot(pAx,pAy,6,'#2b6cb0');
+  sLbl(pAx+9,pAy+(gxy>=0?-8:14),'A(εx, +γxy/2)','#2b6cb0','left');
+  sDot(pBx,pBy,6,'#2b6cb0');
+  sLbl(pBx-9,pBy+(gxy>=0?14:-8),'B(εy, −γxy/2)','#2b6cb0','right');
+  sLbl(circX,spy(R)-14,'εavg','#718096','center');
+
+  // Theta rotation
+  const angA = Math.atan2(pAy-SN_CY, pAx-circX);
+  const angP = angA + 2*theta*Math.PI/180;
+  const rPx  = circX+R*SN_SC*Math.cos(angP);
+  const rPy  = SN_CY+R*SN_SC*Math.sin(angP);
+  const rPx2 = circX-R*SN_SC*Math.cos(angP);
+  const rPy2 = SN_CY-R*SN_SC*Math.sin(angP);
+
+  if(Math.abs(theta)>0.3){
+    const arcR=R*SN_SC*0.3;
+    sCtx.beginPath(); sCtx.arc(circX,SN_CY,arcR,angA,angP,theta<0);
+    sCtx.strokeStyle='#276749'; sCtx.lineWidth=1.8;
+    sCtx.globalAlpha=0.8; sCtx.stroke(); sCtx.globalAlpha=1;
+    const mid=(angA+angP)/2;
+    sCtx.fillStyle='#276749'; sCtx.font='bold 10px Inter'; sCtx.textAlign='center';
+    sCtx.fillText('2θ',circX+arcR*1.65*Math.cos(mid),SN_CY+arcR*1.65*Math.sin(mid));
+  }
+  sCtx.beginPath(); sCtx.moveTo(circX,SN_CY); sCtx.lineTo(rPx,rPy);
+  sCtx.strokeStyle='#276749'; sCtx.lineWidth=1;
+  sCtx.setLineDash([3,3]); sCtx.globalAlpha=0.65; sCtx.stroke();
+  sCtx.globalAlpha=1; sCtx.setLineDash([]);
+  sCtx.beginPath(); sCtx.moveTo(rPx,rPy); sCtx.lineTo(rPx2,rPy2);
+  sCtx.strokeStyle='#276749'; sCtx.lineWidth=0.8;
+  sCtx.globalAlpha=0.35; sCtx.stroke(); sCtx.globalAlpha=1;
+  sDot(rPx,rPy,6,'#276749'); sDot(rPx2,rPy2,4,'#276749');
+  sLbl(rPx+8,rPy,"P(εx', γ/2)","#276749","left");
+}
+
+function buildStrainSteps(ex,ey,gxy,theta,eavg,R,e1,e2,tp,ts,exp_,eyp_,gxyp){
+  const rad=theta*Math.PI/180;
+  const half=(ex-ey)/2;
+  const linked = document.getElementById('link-yes').checked;
+  let header = '';
+  if(linked){
+    const sx  = parseFloat(document.getElementById('sx').value)||0;
+    const sy  = parseFloat(document.getElementById('sy').value)||0;
+    const txy = parseFloat(document.getElementById('txy').value)||0;
+    const E   = parseFloat(document.getElementById('sn-E').value)||200;
+    const nu  = parseFloat(document.getElementById('sn-nu').value)||0.3;
+    const G   = E/(2*(1+nu));
+    header = `<div class="formula-block blue">【連動換算】
+εx  = (σx − ν·σy)/E = (${sx.toFixed(1)} − ${nu}×${sy.toFixed(1)}) / ${E} GPa = ${ex.toFixed(3)} με
+εy  = (σy − ν·σx)/E = (${sy.toFixed(1)} − ${nu}×${sx.toFixed(1)}) / ${E} GPa = ${ey.toFixed(3)} με
+γxy = τxy / G        = ${txy.toFixed(1)} / ${G.toFixed(2)} GPa = ${gxy.toFixed(3)} με</div>`;
+  }
+  document.getElementById('sn-calc-steps').innerHTML = header + `
+<div class="formula-block">❶ ε_avg = (εx + εy) / 2
+       = (${ex.toFixed(3)} + ${ey.toFixed(3)}) / 2
+       = <b style="color:#2b6cb0">${eavg.toFixed(3)} με</b></div>
+<div class="formula-block gold">❷ R = √[ ((εx−εy)/2)² + (γxy/2)² ]
+     = √[ (${half.toFixed(3)})² + (${(gxy/2).toFixed(3)})² ]
+     = <b style="color:#b7791f">${R.toFixed(3)} με</b></div>
+<div class="formula-block red">❸ ε₁ = ${eavg.toFixed(3)} + ${R.toFixed(3)} = <b>${e1.toFixed(3)} με</b>
+   ε₂ = ${eavg.toFixed(3)} − ${R.toFixed(3)} = <b>${e2.toFixed(3)} με</b></div>
+<div class="formula-block green">❹ θ_p = ½ arctan(γxy/2 / ((εx−εy)/2))
+       = ½ arctan(${(gxy/2).toFixed(3)} / ${half.toFixed(3)})
+       = <b>${tp.toFixed(3)}°</b>
+   θ_s = θ_p − 45° = <b>${ts.toFixed(3)}°</b></div>
+<div class="formula-block blue">❺ θ = ${theta.toFixed(1)}° → 2θ = ${(theta*2).toFixed(2)}°
+   cos2θ=${Math.cos(2*rad).toFixed(5)}, sin2θ=${Math.sin(2*rad).toFixed(5)}
+   ε_x' = <b>${exp_.toFixed(3)} με</b>
+   ε_y' = <b>${eyp_.toFixed(3)} με</b>
+   γ_x'y'/2 = <b>${gxyp.toFixed(3)} με</b></div>`;
+}
+
+function sDot(x,y,r,col){
+  sCtx.beginPath(); sCtx.arc(x,y,r,0,2*Math.PI); sCtx.fillStyle=col; sCtx.fill();
+  sCtx.beginPath(); sCtx.arc(x,y,r+4,0,2*Math.PI); sCtx.fillStyle=col; sCtx.globalAlpha=0.12; sCtx.fill(); sCtx.globalAlpha=1;
+}
+function sLbl(x,y,t,col,align){ sCtx.fillStyle=col; sCtx.font='bold 11px Inter,sans-serif'; sCtx.textAlign=align||'left'; sCtx.fillText(t,x,y); }
+function sArrowTip(x,y,d){
+  sCtx.fillStyle='#718096'; sCtx.beginPath();
+  if(d==='r'){ sCtx.moveTo(x,y); sCtx.lineTo(x-9,y-5); sCtx.lineTo(x-9,y+5); }
+  if(d==='u'){ sCtx.moveTo(x,y); sCtx.lineTo(x-5,y+9); sCtx.lineTo(x+5,y+9); }
+  sCtx.closePath(); sCtx.fill();
+}
+
+// Mouse coord for strain canvas
+SC_canvas.addEventListener('mousemove',e=>{
+  const r=SC_canvas.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  snCoordDisp.textContent=`ε: ${((mx-SN_CX)/SN_SC).toFixed(1)} | γ/2: ${((SN_CY-my)/SN_SC).toFixed(1)}`;
+});
+SC_canvas.addEventListener('mouseleave',()=>{ snCoordDisp.textContent='ε: 0 | γ/2: 0'; });
+
+// ── Strain canvas resize handler ─────────────────────────
+window.addEventListener('resize', setupStrainCanvas);
+// Initial strain draw after page load
+window.addEventListener('load', ()=>{ setTimeout(()=>{ setupStrainCanvas(); drawStrain(); }, 300); });
+
+</script>
+</body>
+</html>
