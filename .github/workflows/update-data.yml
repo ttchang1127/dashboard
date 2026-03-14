@@ -1,15 +1,11 @@
 name: Update Dashboard Data
 
-# 權限設定：允許 workflow 寫入儲存庫內容
 permissions:
   contents: write
 
-# 觸發條件：
 on:
-  # 1. 每天的每個小時的第 5 分鐘自動執行一次
   schedule:
     - cron: '5 * * * *'
-  # 2. 允許您在 Actions 分頁手動觸發此工作流程
   workflow_dispatch:
 
 jobs:
@@ -17,19 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # 步驟 1: Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PA_TOKEN }}
 
-      # 步驟 2: 設定 Node.js 環境
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # 步驟 3: 執行 Node.js 腳本
       - name: Fetch data from Google Sheets and save to JSON
         run: |
           set -e
@@ -37,24 +30,17 @@ jobs:
             const https = require('https');
             const fs = require('fs');
 
-            // --- 組態設定 ---
             const SPREADSHEET_ID = '1GjhgGAUuI5g6rtOGiUceMLgeGy12sp93fNQlWKM-UGc';
             const API_KEY = process.env.GOOGLE_API_KEY;
 
-            // 人員資料工作表設定
-            const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:K200', file: 'personnelData.json' };
-
-            // 績效資料工作表設定（114年、115年分開命名）
+            const PERSONNEL_SHEET    = { name: '工作表3', range: 'E1:K200',  file: 'personnelData.json' };
             const PERFORMANCE_SHEET_114 = { name: '工作表2', range: 'B5:G6',   file: 'performanceData.json' };
             const PERFORMANCE_SHEET_115 = { name: '工作表2', range: 'B14:G16', file: '115performanceData.json' };
 
-            // 檢查 API 金鑰是否存在
             if (!API_KEY) {
               console.error('錯誤: 找不到 GOOGLE_API_KEY secret！');
               process.exit(1);
             }
-
-            // --- 核心函式 ---
 
             function fetchSheetData(sheetName, range) {
               return new Promise((resolve, reject) => {
@@ -122,7 +108,7 @@ jobs:
               console.log('🚀 開始從 Google Sheets 更新資料...');
               try {
                 const [personnelValues, perf114Values, perf115Values] = await Promise.all([
-                  fetchSheetData(PERSONNEL_SHEET.name, PERSONNEL_SHEET.range),
+                  fetchSheetData(PERSONNEL_SHEET.name,       PERSONNEL_SHEET.range),
                   fetchSheetData(PERFORMANCE_SHEET_114.name, PERFORMANCE_SHEET_114.range),
                   fetchSheetData(PERFORMANCE_SHEET_115.name, PERFORMANCE_SHEET_115.range)
                 ]);
@@ -143,40 +129,34 @@ jobs:
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
-      # 步驟 4: Commit 與 Push
       - name: Commit and push if there are changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # 1. 檢查是否有變動
           if [ -z "$(git status --porcelain)" ]; then
             echo "資料無變動，無需推送。"
             exit 0
           fi
 
-          # 2. 暫存變更 (以防 pull 時衝突)
           echo "偵測到資料變動，暫存本地變更..."
           git stash
 
-          # 3. 與遠端同步 (防止多人編輯衝突)
           echo "與遠端同步..."
           git pull --rebase
 
-          # 4. 恢復暫存
           if git stash list | grep -q 'stash@{0}'; then
             echo "重新套用本地變更..."
             git stash pop
           fi
 
-          # 5. 二次檢查變動
           if [ -z "$(git status --porcelain)" ]; then
             echo "與遠端同步後，發現資料內容無差異，無需推送。"
             exit 0
           fi
 
-          # 6. 提交並推送（新增 115performanceData.json）
           echo "提交並推送最終變更..."
-          git add personnelData.json performanceData.json 115performanceData.json
+          # ✅ 修正：改用萬用字元，確保所有 JSON 都被追蹤
+          git add *.json
           git commit -m "chore: 自動更新儀表板資料"
           git push
