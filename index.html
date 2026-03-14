@@ -27,7 +27,6 @@
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn-secondary { background-color: #6b7280; color: white; }
         .btn-secondary:hover:not(:disabled) { background-color: #4b5563; }
-        /* Modal styles */
         #person-modal.hidden { display: none; }
     </style>
 </head>
@@ -40,6 +39,8 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
+
+            <!-- 左欄：人員組織 -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
@@ -49,20 +50,46 @@
                 </div>
             </div>
 
+            <!-- 右欄 -->
             <div class="space-y-8">
+
+                <!-- 執行金額圖表 -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
-                     <div class="flex justify-between items-center mb-4">
-                          <h2 class="text-2xl font-bold text-gray-800">114年度執行金額</h2>
-                          <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
-                     </div>
-                     <div class="relative" style="height: 400px;">
-                          <canvas id="performanceChart"></canvas>
-                     </div>
-                     <div class="text-right mt-4 pr-2">
-                         <p id="total-amount" class="text-xl font-bold text-gray-800">總金額: 計算中...</p>
-                     </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-2xl font-bold text-gray-800">年度執行金額比較</h2>
+                        <button id="refresh-dashboard-btn" class="btn btn-secondary">重新整理</button>
+                    </div>
+
+                    <!-- 自訂圖例 -->
+                    <div class="flex items-center gap-6 mb-4 pl-1">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-4 h-4 rounded" style="background:rgba(99,179,237,0.85)"></span>
+                            <span class="text-sm font-medium text-gray-600">114 年度</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-4 h-4 rounded" style="background:rgba(251,146,60,0.85)"></span>
+                            <span class="text-sm font-medium text-gray-600">115 年度</span>
+                        </div>
+                    </div>
+
+                    <div class="relative" style="height: 400px;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+
+                    <!-- 兩年度小計 -->
+                    <div class="mt-4 grid grid-cols-2 gap-4">
+                        <div class="rounded-xl p-3 text-center" style="background:rgba(99,179,237,0.12)">
+                            <p class="text-xs font-semibold text-blue-500 mb-1">114 年度總金額</p>
+                            <p id="total-amount-114" class="text-lg font-bold text-gray-800">計算中...</p>
+                        </div>
+                        <div class="rounded-xl p-3 text-center" style="background:rgba(251,146,60,0.12)">
+                            <p class="text-xs font-semibold text-orange-500 mb-1">115 年度總金額</p>
+                            <p id="total-amount-115" class="text-lg font-bold text-gray-800">計算中...</p>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- 組別/證照統計 -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">組別/證照統計</h2>
                     <div class="overflow-x-auto">
@@ -83,10 +110,12 @@
                         </table>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
+    <!-- Modal -->
     <div id="person-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
         <div id="modal-content" class="relative mx-auto p-6 border w-full max-w-md shadow-lg rounded-2xl bg-white transform transition-all scale-95 opacity-0">
             <div class="flex justify-between items-start pb-3 border-b">
@@ -95,40 +124,39 @@
                     <p id="modal-role-group" class="text-sm text-gray-500 mt-1"></p>
                 </div>
                 <button id="modal-close-btn" class="p-1 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
                 </button>
             </div>
-            <div id="modal-details" class="mt-4 text-left space-y-4">
-            </div>
+            <div id="modal-details" class="mt-4 text-left space-y-4"></div>
         </div>
     </div>
 
-
     <script>
-        // --- GLOBAL VARIABLES & DOM REFERENCES ---
+        // --- GLOBAL VARIABLES ---
         let performanceChart = null;
-        const accordionContainer = document.getElementById('accordion-container');
-        const chartCanvas = document.getElementById('performanceChart');
+        const accordionContainer  = document.getElementById('accordion-container');
+        const chartCanvas         = document.getElementById('performanceChart');
         const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
-        const totalAmountEl = document.getElementById('total-amount');
-        const statsTableBody = document.getElementById('stats-table-body');
-        const personModal = document.getElementById('person-modal');
-        const modalContent = document.getElementById('modal-content');
-        const modalName = document.getElementById('modal-name');
-        const modalRoleGroup = document.getElementById('modal-role-group');
-        const modalDetails = document.getElementById('modal-details');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const totalAmount114El    = document.getElementById('total-amount-114');
+        const totalAmount115El    = document.getElementById('total-amount-115');
+        const statsTableBody      = document.getElementById('stats-table-body');
+        const personModal         = document.getElementById('person-modal');
+        const modalContent        = document.getElementById('modal-content');
+        const modalName           = document.getElementById('modal-name');
+        const modalRoleGroup      = document.getElementById('modal-role-group');
+        const modalDetails        = document.getElementById('modal-details');
+        const modalCloseBtn       = document.getElementById('modal-close-btn');
 
-        // --- 色彩參考 (用於圖表) ---
-        const groupColorMapping = [
-            { groupName: '孝智組', color: 'rgba(54, 162, 235, 0.6)', borderColor: 'rgba(54, 162, 235, 1)' },
-            { groupName: '囿任組', color: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)' },
-            { groupName: '鎧峻組', color: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)' },
-            { groupName: '巍耀組', color: 'rgba(255, 206, 86, 0.6)', borderColor: 'rgba(255, 206, 86, 1)' },
-            { groupName: '柏勛組', color: 'rgba(153, 102, 255, 0.6)', borderColor: 'rgba(153, 102, 255, 1)' }
-        ];
+        // --- 固定組順序 ---
+        const GROUP_ORDER_CHART = ['孝智組', '囿任組', '鎧峻組', '巍耀組', '柏勛組'];
 
-        // --- MODAL FUNCTIONS ---
+        // --- 色彩定義 ---
+        const COLOR_114 = { bg: 'rgba(99,179,237,0.80)',  border: 'rgba(49,130,206,1)' };
+        const COLOR_115 = { bg: 'rgba(251,146,60,0.80)',  border: 'rgba(234,88,12,1)'  };
+
+        // --- MODAL ---
         function showPersonDetailsModal(person) {
             modalName.textContent = person.name || 'N/A';
             modalRoleGroup.textContent = `${person.role || '組員'} / ${person.group || '無組別'}`;
@@ -137,7 +165,9 @@
             const certsHtml = hasValidCerts
                 ? `<ul class="space-y-2 list-inside">${certs.map(c => `
                     <li class="flex items-start">
-                        <svg class="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <svg class="w-5 h-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
                         <div>
                             <span class="font-medium text-gray-800">${c.name}</span>
                             <span class="block text-xs text-gray-500">有效期限: ${c.expiry || '未提供'}</span>
@@ -161,7 +191,7 @@
             setTimeout(() => personModal.classList.add('hidden'), 200);
         }
 
-        // --- UI RENDERING ---
+        // --- 人員組織手風琴 ---
         function buildAccordionUI(personnelData) {
             const filteredData = personnelData.filter(p => p.group && p.group !== '北分局');
             if (!filteredData.length) {
@@ -169,14 +199,15 @@
                 return;
             }
             const groupedData = filteredData.reduce((acc, person) => {
-                const group = person.group || "無組別";
+                const group = person.group || '無組別';
                 acc[group] = acc[group] || [];
                 acc[group].push(person);
                 return acc;
             }, {});
-            const groupOrder = ["副總經理", "鎧峻組", "巍耀組", "囿任組", "孝智組", "柏勛組", "無組別"];
+            const groupOrder = ['副總經理', '鎧峻組', '巍耀組', '囿任組', '孝智組', '柏勛組', '無組別'];
             accordionContainer.innerHTML = '';
             const hasCert = (person, keywords) => person.certificates?.some(cert => keywords.some(kw => cert.name.includes(kw)));
+
             groupOrder.forEach(groupName => {
                 const members = groupedData[groupName];
                 if (!members) return;
@@ -186,15 +217,19 @@
                 details.innerHTML = `
                     <summary class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition">
                         <span class="font-semibold text-gray-700">${groupName}</span>
-                        <span class="arrow text-gray-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                        <span class="arrow text-gray-500">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </span>
                     </summary>
                     <div class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         ${members.map(person => {
                             const isManager = person.role === '副理' || person.role === '副總經理';
                             const icons = [
-                                hasCert(person, ['技師']) ? `<span class="text-yellow-400 text-sm" title="技師">★</span>` : '',
-                                hasCert(person, ['品管']) ? `<span class="h-2.5 w-2.5 rounded-full bg-yellow-400" title="品管"></span>` : '',
-                                hasCert(person, ['職安', '職業安全', '業務主管']) ? `<span class="h-2.5 w-2.5 rounded-full bg-green-500" title="職安"></span>` : ''
+                                hasCert(person, ['技師'])                            ? `<span class="text-yellow-400 text-sm" title="技師">★</span>` : '',
+                                hasCert(person, ['品管'])                            ? `<span class="h-2.5 w-2.5 rounded-full bg-yellow-400" title="品管"></span>` : '',
+                                hasCert(person, ['職安', '職業安全', '業務主管'])    ? `<span class="h-2.5 w-2.5 rounded-full bg-green-500" title="職安"></span>` : ''
                             ].join('');
                             return `
                                 <div class="member-card p-3 border rounded-lg text-left relative transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 ${isManager ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}" data-person-id="${person.id}">
@@ -211,15 +246,16 @@
             });
         }
 
+        // --- 組別/證照統計表 ---
         function renderStatsTable(personnelData) {
-            const groups = ["孝智組", "囿任組", "鎧峻組", "巍耀組", "柏勛組"];
+            const groups = ['孝智組', '囿任組', '鎧峻組', '巍耀組', '柏勛組'];
             const certTypes = [
-                { name: '品管', keywords: ['品管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-400 ml-2"></span>' },
-                { name: '職安', keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500 ml-2"></span>' },
-                { name: '管挖', keywords: ['管挖'], icon: '' },
-                { name: '無人機', keywords: ['無人機'], icon: '' },
-                { name: '技師', keywords: ['技師'], icon: '<span class="inline-block text-yellow-400 text-sm ml-2">★</span>' },
-                { name: '工地主任', keywords: ['工地主任'], icon: '' }
+                { name: '品管',     keywords: ['品管'],                        icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-400 ml-2"></span>' },
+                { name: '職安',     keywords: ['職安', '職業安全', '業務主管'], icon: '<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500 ml-2"></span>' },
+                { name: '管挖',     keywords: ['管挖'],                        icon: '' },
+                { name: '無人機',   keywords: ['無人機'],                      icon: '' },
+                { name: '技師',     keywords: ['技師'],                        icon: '<span class="inline-block text-yellow-400 text-sm ml-2">★</span>' },
+                { name: '工地主任', keywords: ['工地主任'],                    icon: '' }
             ];
             const hasCert = (person, keywords) => person.certificates?.some(cert => keywords.some(kw => cert.name.includes(kw)));
             const stats = groups.reduce((acc, group) => {
@@ -233,21 +269,58 @@
                 };
                 return acc;
             }, {});
+
             let html = `<tr class="border-b border-gray-200 bg-gray-50">
                 <td class="p-3 font-medium text-gray-800">組人數</td>
                 ${groups.map(g => `<td class="p-3 text-center font-bold text-gray-900">${stats[g].memberCount}</td>`).join('')}
             </tr>`;
             certTypes.forEach(type => {
                 html += `<tr class="border-b border-gray-200 hover:bg-blue-50/50">
-                    <td class="p-3 font-medium text-gray-800 flex items-center">${type.name} ${type.icon}</td>
+                    <td class="p-3 font-medium text-gray-800 flex items-center">${type.name}${type.icon}</td>
                     ${groups.map(g => `<td class="p-3 text-center text-gray-700">${stats[g].certs[type.name]}</td>`).join('')}
                 </tr>`;
             });
             statsTableBody.innerHTML = html;
         }
 
-        function createOrUpdateChart(chartData) {
+        // --- 績效資料解析（依固定組順序對齊） ---
+        function parsePerformanceValues(values) {
+            if (!values || !Array.isArray(values) || values.length < 2) return [];
+            const [groupNames, groupAmounts] = values;
+            const map = {};
+            groupNames.forEach((name, i) => {
+                const raw = groupAmounts[i] || '0';
+                const amt = parseInt(String(raw).replace(/,/g, ''), 10);
+                map[name] = isNaN(amt) ? 0 : amt;
+            });
+            return GROUP_ORDER_CHART.map(name => ({ groupName: name, amount: map[name] ?? 0 }));
+        }
+
+        // --- 建立/更新雙年度分組長條圖 ---
+        function createOrUpdateChart(data114, data115) {
             const ctx = chartCanvas.getContext('2d');
+            const chartData = {
+                labels: GROUP_ORDER_CHART,
+                datasets: [
+                    {
+                        label: '114 年度',
+                        data: GROUP_ORDER_CHART.map(name => data114.find(d => d.groupName === name)?.amount ?? 0),
+                        backgroundColor: COLOR_114.bg,
+                        borderColor:     COLOR_114.border,
+                        borderWidth: 1,
+                        borderRadius: 5
+                    },
+                    {
+                        label: '115 年度',
+                        data: GROUP_ORDER_CHART.map(name => data115.find(d => d.groupName === name)?.amount ?? 0),
+                        backgroundColor: COLOR_115.bg,
+                        borderColor:     COLOR_115.border,
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }
+                ]
+            };
+
             if (performanceChart) {
                 performanceChart.data = chartData;
                 performanceChart.update();
@@ -259,87 +332,85 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         scales: {
+                            x: { stacked: false },
                             y: {
                                 beginAtZero: true,
+                                stacked: false,
                                 ticks: { callback: value => 'NT$ ' + value.toLocaleString() }
                             }
                         },
                         plugins: {
                             legend: { display: false },
-                            tooltip: { callbacks: { label: context => `NT$ ${context.parsed.y.toLocaleString()}` } }
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => `${ctx.dataset.label}：NT$ ${ctx.parsed.y.toLocaleString()}`
+                                }
+                            }
                         }
                     }
                 });
             }
         }
-        
-        function renderPerformanceChart(performanceData) {
-            const chartData = {
-                labels: performanceData.map(p => p.groupName),
-                datasets: [{
-                    label: '114年度已請領費用 (元)',
-                    data: performanceData.map(p => p.amount),
-                    backgroundColor: performanceData.map(p => groupColorMapping.find(m => m.groupName === p.groupName)?.color || 'rgba(201, 203, 207, 0.6)'),
-                    borderColor: performanceData.map(p => groupColorMapping.find(m => m.groupName === p.groupName)?.borderColor || 'rgba(201, 203, 207, 1)'),
-                    borderWidth: 1,
-                    borderRadius: 5
-                }]
-            };
-            createOrUpdateChart(chartData);
-            const totalAmount = performanceData.reduce((sum, item) => sum + item.amount, 0);
-            totalAmountEl.textContent = `總金額: ${totalAmount.toLocaleString()} 元`;
-        }
 
-        // --- MAIN DATA FETCHING LOGIC ---
+        // --- MAIN ---
         async function loadDashboardData() {
             refreshDashboardBtn.disabled = true;
             refreshDashboardBtn.textContent = '讀取中...';
-            totalAmountEl.textContent = '總金額: 計算中...';
+            totalAmount114El.textContent = '計算中...';
+            totalAmount115El.textContent = '計算中...';
             statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-gray-500">計算中...</td></tr>';
-            
-            const timestamp = new Date().getTime();
+
+            const ts = new Date().getTime();
             try {
-                const [personnelRes, performanceRes] = await Promise.all([
-                    fetch(`personnelData.json?t=${timestamp}`),
-                    fetch(`performanceData.json?t=${timestamp}`)
+                const [personnelRes, perf114Res, perf115Res] = await Promise.all([
+                    fetch(`personnelData.json?t=${ts}`),
+                    fetch(`performanceData.json?t=${ts}`),
+                    fetch(`115performanceData.json?t=${ts}`)
                 ]);
 
-                if (!personnelRes.ok) throw new Error(`找不到人員資料檔案 (personnelData.json)`);
+                // 人員資料
+                if (!personnelRes.ok) throw new Error('找不到人員資料檔案 (personnelData.json)');
                 const personnelData = await personnelRes.json();
-                // Assign a unique ID to each person for easier lookup
-                personnelData.forEach((p, index) => p.id = p.id || index);
+                personnelData.forEach((p, i) => p.id = p.id || i);
                 buildAccordionUI(personnelData);
                 renderStatsTable(personnelData);
-                
-                if (!performanceRes.ok) throw new Error(`找不到績效資料檔案 (performanceData.json)`);
-                const values = await performanceRes.json();
-                if (!values || !Array.isArray(values) || values.length < 2 || !Array.isArray(values[0]) || !Array.isArray(values[1])) {
-                    throw new Error("績效資料格式不符");
+
+                // 114 年績效
+                if (!perf114Res.ok) throw new Error('找不到 114 年績效資料 (performanceData.json)');
+                const raw114 = await perf114Res.json();
+                const data114 = parsePerformanceValues(raw114);
+
+                // 115 年績效（檔案不存在時以 0 填入，不 crash）
+                let data115 = GROUP_ORDER_CHART.map(name => ({ groupName: name, amount: 0 }));
+                if (perf115Res.ok) {
+                    const raw115 = await perf115Res.json();
+                    data115 = parsePerformanceValues(raw115);
+                } else {
+                    console.warn('115performanceData.json 尚未就緒，以 0 顯示');
                 }
-                
-                const [groupNames, groupAmounts] = values;
-                const performanceData = groupNames.map((groupName, index) => {
-                    const amountStr = groupAmounts[index] || "0";
-                    const amount = parseInt(String(amountStr).replace(/,/g, ''), 10);
-                    return { groupName, amount: isNaN(amount) ? 0 : amount };
-                });
-                renderPerformanceChart(performanceData);
+
+                // 繪圖
+                createOrUpdateChart(data114, data115);
+
+                // 小計
+                const sum114 = data114.reduce((s, d) => s + d.amount, 0);
+                const sum115 = data115.reduce((s, d) => s + d.amount, 0);
+                totalAmount114El.textContent = `${sum114.toLocaleString()} 元`;
+                totalAmount115El.textContent = `${sum115.toLocaleString()} 元`;
 
             } catch (error) {
-                console.error("讀取儀表板資料失敗:", error);
+                console.error('讀取儀表板資料失敗:', error);
                 accordionContainer.innerHTML = `<div class="text-center p-8 text-red-500">儀表板資料載入失敗。<br>${error.message}</div>`;
-                totalAmountEl.textContent = '總金額: 無法計算';
+                totalAmount114El.textContent = '無法計算';
+                totalAmount115El.textContent = '無法計算';
                 statsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-red-500">無法載入統計資料</td></tr>';
                 const ctx = chartCanvas.getContext('2d');
-                if (ctx) {
-                    if (performanceChart) performanceChart.destroy();
-                    performanceChart = null;
-                    ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
-                    ctx.font = "16px 'Noto Sans TC'";
-                    ctx.fillStyle = "red";
-                    ctx.textAlign = "center";
-                    ctx.fillText('無法載入圖表資料', chartCanvas.width / 2, 50);
-                }
+                if (performanceChart) { performanceChart.destroy(); performanceChart = null; }
+                ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
+                ctx.font = "16px 'Noto Sans TC'";
+                ctx.fillStyle = 'red';
+                ctx.textAlign = 'center';
+                ctx.fillText('無法載入圖表資料', chartCanvas.width / 2, 50);
             } finally {
                 refreshDashboardBtn.disabled = false;
                 refreshDashboardBtn.textContent = '重新整理';
@@ -350,9 +421,7 @@
         document.addEventListener('DOMContentLoaded', loadDashboardData);
         refreshDashboardBtn.addEventListener('click', loadDashboardData);
         modalCloseBtn.addEventListener('click', hidePersonDetailsModal);
-        personModal.addEventListener('click', (event) => {
-            if (event.target === personModal) hidePersonDetailsModal();
-        });
+        personModal.addEventListener('click', e => { if (e.target === personModal) hidePersonDetailsModal(); });
     </script>
 </body>
 </html>
