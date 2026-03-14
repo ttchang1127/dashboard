@@ -14,16 +14,13 @@ on:
 
 jobs:
   update-data:
-    # 修改點 1：建議改為 ubuntu-latest，使用 GitHub 免費雲端資源，既穩又不吃自己電腦效能
     runs-on: ubuntu-latest
     
     steps:
-      # 步驟 1: Checkout (關鍵修改)
+      # 步驟 1: Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # 修改點 2：使用 Personal Access Token (PAT)
-          # 這會讓 GitHub 認為是「您本人」在操作，進而觸發 Pages 的自動部署
           token: ${{ secrets.PA_TOKEN }}
 
       # 步驟 2: 設定 Node.js 環境
@@ -32,9 +29,10 @@ jobs:
         with:
           node-version: '18'
 
-      # 步驟 3: 執行 Node.js 腳本 (保持原樣)
+      # 步驟 3: 執行 Node.js 腳本
       - name: Fetch data from Google Sheets and save to JSON
         run: |
+          set -e
           node -e "
             const https = require('https');
             const fs = require('fs');
@@ -45,9 +43,10 @@ jobs:
 
             // 人員資料工作表設定
             const PERSONNEL_SHEET = { name: '工作表3', range: 'E1:K200', file: 'personnelData.json' };
-            // 績效資料工作表設定
-            const PERFORMANCE_SHEET = { name: '工作表2', range: 'B5:G6', file: 'performanceData.json' };
-            const PERFORMANCE_SHEET = { name: '工作表2', range: 'B14:G16', file: '115performanceData.json' };
+
+            // 績效資料工作表設定（114年、115年分開命名）
+            const PERFORMANCE_SHEET_114 = { name: '工作表2', range: 'B5:G6',   file: 'performanceData.json' };
+            const PERFORMANCE_SHEET_115 = { name: '工作表2', range: 'B14:G16', file: '115performanceData.json' };
 
             // 檢查 API 金鑰是否存在
             if (!API_KEY) {
@@ -80,7 +79,14 @@ jobs:
             }
 
             function processPersonnelData(values) {
-              const headerMapping = { '姓名': 'name', '組別': 'group', '職稱': 'role', '學歷': 'education', '證照': 'certificates', '年資': 'seniority' };
+              const headerMapping = {
+                '姓名': 'name',
+                '組別': 'group',
+                '職稱': 'role',
+                '學歷': 'education',
+                '證照': 'certificates',
+                '年資': 'seniority'
+              };
               const headers = values[0];
               const dataRows = values.slice(1);
 
@@ -91,7 +97,10 @@ jobs:
                   if (englishKey) {
                     const value = row[index] || '';
                     if (englishKey === 'certificates') {
-                      person[englishKey] = value.split(/[,、，\\s]+/).filter(cert => cert.trim() !== '' && cert.trim() !== '#N/A').map(certName => ({ name: certName.trim(), number: '' }));
+                      person[englishKey] = value
+                        .split(/[,、，\s]+/)
+                        .filter(cert => cert.trim() !== '' && cert.trim() !== '#N/A')
+                        .map(certName => ({ name: certName.trim(), number: '' }));
                     } else {
                       person[englishKey] = value.trim();
                     }
@@ -104,21 +113,23 @@ jobs:
               console.log(\`✅ 成功擷取資料並寫入 \${PERSONNEL_SHEET.file}\`);
             }
 
-            function processPerformanceData(values) {
-              fs.writeFileSync(PERFORMANCE_SHEET.file, JSON.stringify(values, null, 2), 'utf8');
-              console.log(\`✅ 成功擷取資料並寫入 \${PERFORMANCE_SHEET.file}\`);
+            function processPerformanceData(sheetConfig, values) {
+              fs.writeFileSync(sheetConfig.file, JSON.stringify(values, null, 2), 'utf8');
+              console.log(\`✅ 成功擷取資料並寫入 \${sheetConfig.file}\`);
             }
 
             async function main() {
               console.log('🚀 開始從 Google Sheets 更新資料...');
               try {
-                const [personnelValues, performanceValues] = await Promise.all([
+                const [personnelValues, perf114Values, perf115Values] = await Promise.all([
                   fetchSheetData(PERSONNEL_SHEET.name, PERSONNEL_SHEET.range),
-                  fetchSheetData(PERFORMANCE_SHEET.name, PERFORMANCE_SHEET.range)
+                  fetchSheetData(PERFORMANCE_SHEET_114.name, PERFORMANCE_SHEET_114.range),
+                  fetchSheetData(PERFORMANCE_SHEET_115.name, PERFORMANCE_SHEET_115.range)
                 ]);
-                
+
                 processPersonnelData(personnelValues);
-                processPerformanceData(performanceValues);
+                processPerformanceData(PERFORMANCE_SHEET_114, perf114Values);
+                processPerformanceData(PERFORMANCE_SHEET_115, perf115Values);
 
                 console.log('✨ 所有資料更新完成！');
               } catch (error) {
@@ -147,27 +158,25 @@ jobs:
           # 2. 暫存變更 (以防 pull 時衝突)
           echo "偵測到資料變動，暫存本地變更..."
           git stash
-          
+
           # 3. 與遠端同步 (防止多人編輯衝突)
           echo "與遠端同步..."
           git pull --rebase
-          
+
           # 4. 恢復暫存
           if git stash list | grep -q 'stash@{0}'; then
             echo "重新套用本地變更..."
             git stash pop
           fi
-          
+
           # 5. 二次檢查變動
           if [ -z "$(git status --porcelain)" ]; then
             echo "與遠端同步後，發現資料內容無差異，無需推送。"
             exit 0
           fi
-          
-          # 6. 推送
+
+          # 6. 提交並推送（新增 115performanceData.json）
           echo "提交並推送最終變更..."
-          git add personnelData.json performanceData.json
+          git add personnelData.json performanceData.json 115performanceData.json
           git commit -m "chore: 自動更新儀表板資料"
-          
-          # 因為上面的 Checkout 步驟已經用了 PA_TOKEN，這裡直接 push 就會自動帶入權限
           git push
