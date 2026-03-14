@@ -87,6 +87,12 @@
                             <p id="total-amount-115" class="text-lg font-bold text-gray-800">計算中...</p>
                         </div>
                     </div>
+
+                    <!-- 備註 -->
+                    <div class="mt-3 pl-1 space-y-1 border-t border-gray-100 pt-3">
+                        <p class="text-xs text-gray-400">＊ 114 年度各組協助執行（SC837、SC847、SD002）</p>
+                        <p class="text-xs text-gray-400">＊ 115 年度各組協助執行（SC837、SC847）</p>
+                    </div>
                 </div>
 
                 <!-- 組別/證照統計 -->
@@ -149,8 +155,8 @@
         const modalDetails        = document.getElementById('modal-details');
         const modalCloseBtn       = document.getElementById('modal-close-btn');
 
-        // --- 固定組順序 ---
-        const GROUP_ORDER_CHART = ['孝智組', '囿任組', '鎧峻組', '巍耀組', '柏勛組'];
+        // ★ 修改：加入「各組協助案件」
+        const GROUP_ORDER_CHART = ['孝智組', '囿任組', '鎧峻組', '巍耀組', '柏勛組', '各組協助案件'];
 
         // --- 色彩定義 ---
         const COLOR_114 = { bg: 'rgba(99,179,237,0.80)',  border: 'rgba(49,130,206,1)' };
@@ -283,7 +289,7 @@
             statsTableBody.innerHTML = html;
         }
 
-        // --- 績效資料解析（依固定組順序對齊） ---
+        // --- 績效資料解析 ---
         function parsePerformanceValues(values) {
             if (!values || !Array.isArray(values) || values.length < 2) return [];
             const [groupNames, groupAmounts] = values;
@@ -380,7 +386,7 @@
                 const raw114 = await perf114Res.json();
                 const data114 = parsePerformanceValues(raw114);
 
-                // 115 年績效（檔案不存在時以 0 填入，不 crash）
+                // 115 年績效
                 let data115 = GROUP_ORDER_CHART.map(name => ({ groupName: name, amount: 0 }));
                 if (perf115Res.ok) {
                     const raw115 = await perf115Res.json();
