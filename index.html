@@ -38,14 +38,14 @@
             <p class="text-gray-500 mt-2">整合人員資訊與年度執行績效 (資料由後端定時更新)</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-stretch">
 
             <!-- 左欄：人員組織 -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">人員組織</h2>
                 </div>
-                <div id="accordion-container" class="space-y-3 max-h-[80vh] overflow-y-auto custom-scrollbar pr-2">
+                <div id="accordion-container" class="space-y-3 overflow-y-auto custom-scrollbar pr-2 flex-1">
                     <div class="text-center p-8 text-gray-500">讀取資料中...</div>
                 </div>
             </div>
@@ -155,10 +155,8 @@
         const modalDetails        = document.getElementById('modal-details');
         const modalCloseBtn       = document.getElementById('modal-close-btn');
 
-        // ★ 修改：加入「各組協助案件」
         const GROUP_ORDER_CHART = ['孝智組', '囿任組', '鎧峻組', '巍耀組', '柏勛組', '各組協助案件'];
 
-        // --- 色彩定義 ---
         const COLOR_114 = { bg: 'rgba(99,179,237,0.80)',  border: 'rgba(49,130,206,1)' };
         const COLOR_115 = { bg: 'rgba(251,146,60,0.80)',  border: 'rgba(234,88,12,1)'  };
 
@@ -289,17 +287,25 @@
             statsTableBody.innerHTML = html;
         }
 
-        // --- 績效資料解析 ---
+        // ★ 修改：模糊比對，包含「各組協助案件」即算符合
         function parsePerformanceValues(values) {
             if (!values || !Array.isArray(values) || values.length < 2) return [];
             const [groupNames, groupAmounts] = values;
+
             const map = {};
             groupNames.forEach((name, i) => {
                 const raw = groupAmounts[i] || '0';
                 const amt = parseInt(String(raw).replace(/,/g, ''), 10);
-                map[name] = isNaN(amt) ? 0 : amt;
+                map[name.trim()] = isNaN(amt) ? 0 : amt;
             });
-            return GROUP_ORDER_CHART.map(name => ({ groupName: name, amount: map[name] ?? 0 }));
+
+            return GROUP_ORDER_CHART.map(chartName => {
+                // 先完全比對，找不到再用包含比對
+                const key =
+                    Object.keys(map).find(k => k === chartName) ||
+                    Object.keys(map).find(k => k.includes(chartName) || chartName.includes(k));
+                return { groupName: chartName, amount: key ? map[key] : 0 };
+            });
         }
 
         // --- 建立/更新雙年度分組長條圖 ---
@@ -374,19 +380,16 @@
                     fetch(`115performanceData.json?t=${ts}`)
                 ]);
 
-                // 人員資料
                 if (!personnelRes.ok) throw new Error('找不到人員資料檔案 (personnelData.json)');
                 const personnelData = await personnelRes.json();
                 personnelData.forEach((p, i) => p.id = p.id || i);
                 buildAccordionUI(personnelData);
                 renderStatsTable(personnelData);
 
-                // 114 年績效
                 if (!perf114Res.ok) throw new Error('找不到 114 年績效資料 (performanceData.json)');
                 const raw114 = await perf114Res.json();
                 const data114 = parsePerformanceValues(raw114);
 
-                // 115 年績效
                 let data115 = GROUP_ORDER_CHART.map(name => ({ groupName: name, amount: 0 }));
                 if (perf115Res.ok) {
                     const raw115 = await perf115Res.json();
@@ -395,10 +398,8 @@
                     console.warn('115performanceData.json 尚未就緒，以 0 顯示');
                 }
 
-                // 繪圖
                 createOrUpdateChart(data114, data115);
 
-                // 小計
                 const sum114 = data114.reduce((s, d) => s + d.amount, 0);
                 const sum115 = data115.reduce((s, d) => s + d.amount, 0);
                 totalAmount114El.textContent = `${sum114.toLocaleString()} 元`;
