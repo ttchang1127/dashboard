@@ -113,15 +113,14 @@ body{font-family:'Noto Sans TC',-apple-system,sans-serif;background:var(--bg);co
 .mc:hover .mx{opacity:1;color:#ef4444;}
 
 /* ── PANEL CARDS ── */
-.panel-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.panel-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;flex-shrink:0;}
 .ptitle{padding:9px 11px 8px;font-size:11px;font-weight:700;color:var(--text-light);letter-spacing:.3px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;transition:background .15s;}
 .ptitle:hover{background:#f8fafc;}
 .ptitle span.sub{font-size:10px;font-weight:400;flex:1;}
 .ptitle .ptgl{margin-left:auto;font-size:12px;color:var(--text-light);transition:transform .25s;flex-shrink:0;}
 .ptitle.open .ptgl{transform:rotate(180deg);}
-.panel-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s cubic-bezier(.4,0,.2,1);}
-.panel-body.open{grid-template-rows:1fr;}
-.panel-body>*{overflow:hidden;}
+.panel-body{overflow:hidden;height:0;transition:height .32s cubic-bezier(.4,0,.2,1);}
+.panel-body.open{height:auto;}
 
 /* ── MEMBER POOL ── */
 .member-pool{padding:6px 8px;display:flex;flex-direction:column;gap:2px;}
@@ -988,8 +987,21 @@ function _dG(){
 // ─────────────────────────────────────────
 function togPanel(titleEl){
   const body=titleEl.nextElementSibling;
-  const open=body.classList.toggle('open');
-  titleEl.classList.toggle('open',open);
+  const isOpen=body.classList.contains('open');
+  if(isOpen){
+    body.style.height=body.scrollHeight+'px';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{body.style.height='0';}));
+    body.classList.remove('open');
+  }else{
+    body.style.height='0';
+    body.classList.add('open');
+    const h=body.scrollHeight+'px';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      body.style.height=h;
+      body.addEventListener('transitionend',()=>{body.style.height='';},{once:true});
+    }));
+  }
+  titleEl.classList.toggle('open',!isOpen);
 }
 
 // ─────────────────────────────────────────
