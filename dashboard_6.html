@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>辦公室專案與人員儀表板</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+:root{--bg:#f0f2f5;--card:#fff;--text:#1e293b;--text-light:#64748b;--border:#e2e8f0;--radius:14px;--hh:92px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans TC',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── HEADER ── */
+.hd{background:linear-gradient(135deg,#1e40af,#3b82f6 55%,#06b6d4);color:#fff;padding:16px 28px;position:sticky;top:0;z-index:200;box-shadow:0 4px 20px rgba(37,99,235,.3);}
+.hd-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.hd h1{font-size:20px;font-weight:900;letter-spacing:.5px;display:flex;align-items:center;gap:8px;flex:1;}
+.hd .sub{font-size:11px;opacity:.8;}
+.stats-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;}
+.stat-pill{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:5px 14px;border-radius:50px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px;transition:.2s;}
+.stat-pill.clickable{cursor:pointer;border-color:rgba(255,255,255,.45);}
+.stat-pill.clickable:hover{background:rgba(255,255,255,.3);transform:translateY(-1px);}
+.stat-pill .n{font-weight:700;font-size:15px;}
+.chart-hint{font-size:10px;opacity:.65;margin-left:2px;}
+
+/* ── CHART PANEL ── */
+.chart-panel{background:var(--card);border-bottom:1px solid var(--border);overflow:hidden;max-height:0;transition:max-height .4s cubic-bezier(.4,0,.2,1),padding .3s;}
+.chart-panel.open{max-height:380px;padding:16px 28px;}
+.chart-tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:2px solid var(--border);padding-bottom:8px;}
+.chart-tab{padding:4px 14px;border-radius:6px 6px 0 0;font-size:12px;font-weight:700;cursor:pointer;color:var(--text-light);transition:.15s;}
+.chart-tab.active{color:#2563eb;border-bottom:2px solid #2563eb;margin-bottom:-10px;}
+.chart-pane{display:none;}
+.chart-pane.active{display:block;}
+.profit-chart{display:flex;align-items:flex-end;height:190px;justify-content:space-around;padding:0 8px;}
+.bar-group{display:flex;flex-direction:column;align-items:center;flex:1;max-width:110px;}
+.bar-wrap{width:48px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:155px;position:relative;}
+.bar{width:100%;border-radius:7px 7px 3px 3px;position:relative;transition:.3s;cursor:pointer;min-height:4px;}
+.bar:hover{filter:brightness(1.12);transform:scaleY(1.04);transform-origin:bottom;}
+.bar-lbl{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;white-space:nowrap;}
+.bar-name{margin-top:6px;font-size:12px;font-weight:600;text-align:center;}
+.bar-cnt{font-size:10px;color:var(--text-light);margin-top:1px;}
+@keyframes growUp{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.bar{animation:growUp .7s cubic-bezier(.4,0,.2,1) both;transform-origin:bottom;}
+#chartJsWrap{height:220px;}
+.chartjs-legend{display:flex;gap:16px;margin-bottom:10px;font-size:12px;}
+.cleg{display:flex;align-items:center;gap:5px;}
+.cleg-dot{width:12px;height:12px;border-radius:3px;}
+
+/* ── MAIN LAYOUT ── */
+.save-bar{display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--card);border-radius:10px;border:1px solid var(--border);margin-bottom:8px;}
+.save-bar .st{font-size:11px;color:var(--text-light);flex:1;}
+.btn-save{padding:4px 12px;border-radius:6px;font-size:11px;font-family:inherit;font-weight:700;background:#2563eb;color:#fff;border:none;cursor:pointer;transition:.15s;}
+.btn-save:hover{background:#1d4ed8;}
+.btn-load{padding:4px 12px;border-radius:6px;font-size:11px;font-family:inherit;background:#f1f5f9;color:#475569;border:1px solid var(--border);cursor:pointer;}
+.btn-load:hover{background:var(--border);}
+.sdot{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;}
+.sdot.saved{background:#10b981;}
+.main-wrap{display:grid;grid-template-columns:38fr 32fr 30fr;gap:10px;padding:10px 14px 0;height:calc(100vh - var(--hh));overflow:hidden;}
+.col{display:flex;flex-direction:column;gap:9px;height:100%;overflow-y:auto;overflow-x:hidden;padding-bottom:20px;}
+.col::-webkit-scrollbar{width:4px;}
+.col::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.col::-webkit-scrollbar-thumb:hover{background:#94a3b8;}
+.col-title{font-size:12px;font-weight:700;color:var(--text-light);padding:4px 2px 2px;display:flex;align-items:center;gap:5px;letter-spacing:.3px;flex-shrink:0;}
+
+/* ── GRAPH ── */
+.graph-section{background:#0d1117;border-radius:var(--radius);box-shadow:0 0 0 1px #30363d,0 8px 28px rgba(0,0,0,.4);overflow:hidden;flex-shrink:0;}
+.graph-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px 0;position:relative;z-index:1;}
+.gtitle{font-size:13px;font-weight:700;color:#e6edf3;display:flex;align-items:center;gap:6px;}
+.gtitle small{font-size:10px;font-weight:400;color:#8b949e;}
+.gctrl{display:flex;gap:4px;}
+.gbtn{padding:3px 9px;border-radius:5px;font-size:11px;font-family:inherit;background:#21262d;border:1px solid #30363d;color:#8b949e;cursor:pointer;transition:.15s;}
+.gbtn:hover{background:#30363d;color:#e6edf3;}
+.gbtn.active{background:#2563eb22;border-color:#2563eb88;color:#60a5fa;}
+.g-leg-row{display:flex;gap:10px;padding:6px 14px 8px;flex-wrap:wrap;position:relative;z-index:1;}
+.g-leg{display:flex;align-items:center;gap:4px;font-size:10px;color:#8b949e;}
+.g-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+#graphBox{height:calc(100vh - var(--hh) - 130px);min-height:300px;overflow:hidden;position:relative;}
+#graphBox svg{width:100%;height:100%;}
+
+/* ── BOARDS ── */
+.boards-area{display:flex;flex-direction:column;gap:9px;}
+.mgr-board{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.mgr-hdr{padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;position:relative;}
+.mgr-av{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+.mgr-info{flex:1;}
+.mgr-info h3{font-size:13px;font-weight:700;}
+.mgr-meta{font-size:11px;color:var(--text-light);margin-top:1px;display:flex;gap:8px;flex-wrap:wrap;}
+.mgr-badge{font-size:10px;padding:1px 7px;border-radius:50px;font-weight:700;background:#f0f9ff;color:#0369a1;}
+.mgr-tgl{width:24px;height:24px;border-radius:5px;border:none;background:#f1f5f9;cursor:pointer;font-size:11px;color:var(--text-light);transition:.25s;flex-shrink:0;}
+.mgr-tgl.open{transform:rotate(180deg);}
+.mgr-body{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
+.mgr-body.open{max-height:3000px;}
+.proj-grid{display:grid;grid-template-columns:1fr;gap:7px;padding:7px 10px 10px;}
+.pc{background:var(--bg);border-radius:9px;padding:9px 11px;border:1.5px dashed var(--border);transition:.15s;min-height:88px;}
+.pc.dom{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12);}
+.pc.dos{border-color:#f59e0b;background:#fffbeb;box-shadow:0 0 0 2px rgba(245,158,11,.12);}
+.pc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:3px;}
+.pc-id{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;flex-shrink:0;}
+.pc-amt{font-size:11px;font-weight:700;color:#059669;white-space:nowrap;}
+.pc-name{font-size:11px;font-weight:500;line-height:1.45;color:var(--text);margin-bottom:5px;}
+.pc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:4px;}
+.sbadge{font-size:10px;padding:2px 7px;border-radius:50px;font-weight:600;white-space:nowrap;cursor:pointer;}
+.sbadge:hover{opacity:.75;}
+.sb-d{background:#dbeafe;color:#1e40af;}
+.sb-c{background:#dcfce7;color:#166534;}
+.sb-e{background:#f3e8ff;color:#6b21a8;}
+.sb-x{background:#fef3c7;color:#92400e;}
+.sb-o{background:#f1f5f9;color:#475569;}
+.pc-mems{display:flex;flex-wrap:wrap;gap:3px;min-height:22px;padding:4px 5px;background:rgba(255,255,255,.85);border-radius:5px;border:1px solid var(--border);}
+.pc-mems.hint::before{content:'＋ 拖放組員';font-size:10px;color:#94a3b8;align-self:center;}
+.mc{display:inline-flex;align-items:center;gap:2px;padding:2px 6px;border-radius:50px;font-size:10px;font-weight:600;cursor:pointer;transition:.1s;}
+.mc:hover{opacity:.7;}
+.mx{opacity:.45;font-size:10px;}
+.mc:hover .mx{opacity:1;color:#ef4444;}
+
+/* ── PANEL CARDS ── */
+.panel-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.ptitle{padding:9px 11px 8px;font-size:11px;font-weight:700;color:var(--text-light);letter-spacing:.3px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;transition:background .15s;}
+.ptitle:hover{background:#f8fafc;}
+.ptitle span.sub{font-size:10px;font-weight:400;flex:1;}
+.ptitle .ptgl{margin-left:auto;font-size:12px;color:var(--text-light);transition:transform .25s;flex-shrink:0;}
+.ptitle.open .ptgl{transform:rotate(180deg);}
+.panel-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s cubic-bezier(.4,0,.2,1);}
+.panel-body.open{grid-template-rows:1fr;}
+.panel-body>*{overflow:hidden;}
+
+/* ── MEMBER POOL ── */
+.member-pool{padding:6px 8px;display:flex;flex-direction:column;gap:2px;}
+.mgl{font-size:10px;font-weight:700;padding:5px 6px 4px;letter-spacing:.3px;border-top:1px solid var(--border);margin-top:3px;display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none;border-radius:5px;transition:background .12s;}
+.mgl:hover{background:#f1f5f9;}
+.mgl:first-child{border-top:none;margin-top:0;}
+.mgl .mgl-tgl{margin-left:auto;font-size:10px;color:var(--text-light);transition:transform .22s;}
+.mgl.open .mgl-tgl{transform:rotate(180deg);}
+.chip-row-wrap{overflow:hidden;display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1);}
+.chip-row-wrap.open{grid-template-rows:1fr;}
+.chip-row-wrap>div{overflow:hidden;}
+.chip-row{display:flex;flex-wrap:wrap;gap:3px;padding:4px 4px 4px 10px;}
+.chip-sm{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:50px;font-size:11px;font-weight:500;cursor:grab;user-select:none;transition:.15s;border:1.5px solid transparent;}
+.chip-sm:hover{transform:translateY(-1px);box-shadow:0 2px 7px rgba(0,0,0,.12);}
+.chip-sm:active{cursor:grabbing;}
+.chip-sm.dragging{opacity:.35;}
+.chip-av{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;}
+.chip-mgr{font-weight:700;font-size:12px;padding:4px 9px;}
+.chip-info-btn{background:none;border:none;cursor:pointer;font-size:11px;opacity:.55;padding:0 1px;line-height:1;flex-shrink:0;}
+.chip-info-btn:hover{opacity:1;}
+.cert-icons{display:flex;gap:2px;align-items:center;}
+.ci-star{color:#f59e0b;font-size:9px;}
+.ci-dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
+
+/* ── STATUS POOL ── */
+.status-pool{padding:8px 10px;display:flex;flex-direction:column;gap:6px;}
+.scd-grid{display:flex;flex-wrap:wrap;gap:4px;}
+.scd{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:50px;font-size:11px;font-weight:600;cursor:grab;user-select:none;transition:.15s;border:1.5px solid transparent;}
+.scd:hover{transform:translateY(-1px);box-shadow:0 2px 7px rgba(0,0,0,.12);}
+.scd:active{cursor:grabbing;}
+.scd-d{background:#dbeafe;color:#1e40af;border-color:#93c5fd;}
+.scd-c{background:#dcfce7;color:#166534;border-color:#86efac;}
+.scd-e{background:#f3e8ff;color:#6b21a8;border-color:#c4b5fd;}
+.scd-x{background:#fef3c7;color:#92400e;border-color:#fcd34d;}
+.ci-input{width:100%;padding:4px 9px;border:1px solid var(--border);border-radius:7px;font-size:11px;font-family:inherit;outline:none;color:var(--text);background:var(--bg);margin-top:2px;}
+.ci-input:focus{border-color:#f59e0b;box-shadow:0 0 0 2px rgba(245,158,11,.15);}
+.shint{font-size:10px;color:var(--text-light);line-height:1.5;}
+
+/* ── CERT STATS TABLE ── */
+.cert-table{width:100%;border-collapse:collapse;font-size:11px;}
+.cert-table th{padding:5px 7px;background:#f8fafc;font-weight:700;color:var(--text-light);text-align:center;border-bottom:2px solid var(--border);white-space:nowrap;}
+.cert-table th:first-child{text-align:left;}
+.cert-table td{padding:5px 7px;text-align:center;border-bottom:1px solid var(--border);}
+.cert-table td:first-child{text-align:left;font-weight:600;}
+.cert-table tr:last-child td{border-bottom:none;font-weight:700;background:#f8fafc;}
+.cert-table tr:hover td{background:#f1f5f9;}
+.cert-table tr:last-child:hover td{background:#f0f4fb;}
+.cert-num{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;border-radius:9px;font-size:10px;font-weight:700;}
+.cert-has{background:#dcfce7;color:#166534;}
+.cert-no{color:#cbd5e1;}
+.cert-table-wrap{padding:8px 10px;}
+
+/* ── PERSON MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;}
+.modal-backdrop.open{display:flex;}
+.modal-box{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.25);width:380px;max-width:92vw;max-height:85vh;overflow-y:auto;}
+.modal-hdr{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.modal-av{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;}
+.modal-name{font-size:17px;font-weight:900;}
+.modal-role{font-size:12px;color:var(--text-light);margin-top:2px;}
+.modal-close{margin-left:auto;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-light);padding:4px;border-radius:6px;transition:.15s;}
+.modal-close:hover{background:#f1f5f9;color:var(--text);}
+.modal-body{padding:16px 20px;}
+.modal-row{display:flex;gap:8px;margin-bottom:12px;}
+.modal-kv{flex:1;background:#f8fafc;border-radius:10px;padding:9px 12px;}
+.modal-kv .lbl{font-size:10px;color:var(--text-light);font-weight:600;margin-bottom:3px;}
+.modal-kv .val{font-size:13px;font-weight:700;}
+.modal-sect{margin-bottom:14px;}
+.modal-sect-title{font-size:11px;font-weight:700;color:var(--text-light);margin-bottom:8px;letter-spacing:.3px;}
+.cert-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:50px;font-size:12px;font-weight:600;margin:3px 3px 3px 0;}
+.cert-pill .exp{font-size:10px;font-weight:400;opacity:.75;margin-left:2px;}
+.cert-永久{background:#dbeafe;color:#1e40af;}
+.cert-品管{background:#fef3c7;color:#92400e;}
+.cert-職安{background:#dcfce7;color:#166534;}
+.cert-技師{background:#ede9fe;color:#5b21b6;}
+.cert-工地主任{background:#fce7f3;color:#9d174d;}
+.cert-管挖{background:#fff7ed;color:#9a3412;}
+.cert-無人機{background:#ecfeff;color:#155e75;}
+.cert-測量{background:#f0fdf4;color:#166534;}
+.cert-other{background:#f1f5f9;color:#475569;}
+.modal-proj-list{display:flex;flex-direction:column;gap:4px;}
+.modal-proj-item{font-size:11px;padding:5px 9px;background:#f8fafc;border-radius:7px;border-left:3px solid #2563eb;}
+.modal-proj-id{font-weight:700;color:#2563eb;margin-right:6px;}
+
+/* ── DRAG ── */
+.drag-ghost{position:fixed;pointer-events:none;z-index:9999;opacity:.9;transform:rotate(2deg) scale(1.05);box-shadow:0 5px 18px rgba(0,0,0,.2);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){.main-wrap{grid-template-columns:1fr;height:auto;overflow:visible;}.col{height:auto;overflow:visible;}.graph-section{position:static;}}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="hd">
+  <div class="hd-top">
+    <h1>🏗️ 辦公室專案與人員儀表板</h1>
+    <div class="sub">桃園辦公室 &amp; 新北辦公室 · 115年度</div>
+  </div>
+  <div class="stats-row" id="statsRow"></div>
+</div>
+
+<!-- ── CHART PANEL ── -->
+<div class="chart-panel" id="chartPanel">
+  <div class="chart-tabs">
+    <div class="chart-tab active" onclick="switchTab('profit',this)">💰 獲利分布</div>
+    <div class="chart-tab" onclick="switchTab('yearcomp',this)">📈 年度比較</div>
+  </div>
+  <div class="chart-pane active" id="pane-profit">
+    <div class="profit-chart" id="profitChart"></div>
+  </div>
+  <div class="chart-pane" id="pane-yearcomp">
+    <div class="chartjs-legend">
+      <span class="cleg"><span class="cleg-dot" style="background:rgba(99,179,237,0.85)"></span>114年度</span>
+      <span class="cleg"><span class="cleg-dot" style="background:rgba(251,146,60,0.85)"></span>115年度</span>
+    </div>
+    <div id="chartJsWrap"><canvas id="yearCompChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main-wrap">
+
+  <!-- COL 1: 關係圖譜 -->
+  <div class="col">
+    <div class="col-title">✦ 關係圖譜</div>
+    <div class="graph-section">
+      <div class="graph-hdr">
+        <div class="gtitle">D3 Force Graph <small>拖曳 · 縮放</small></div>
+        <div class="gctrl">
+          <button class="gbtn" onclick="gZI()">＋</button>
+          <button class="gbtn" onclick="gZO()">－</button>
+          <button class="gbtn" onclick="gRst()">⟳</button>
+          <button class="gbtn" id="btnFull" onclick="toggleFull()">全員</button>
+        </div>
+      </div>
+      <div id="graphBox"></div>
+      <div class="g-leg-row">
+        <span class="g-leg"><span class="g-dot" style="background:#22d3ee;box-shadow:0 0 5px #22d3ee88"></span>副總</span>
+        <span class="g-leg"><span class="g-dot" style="background:#818cf8;box-shadow:0 0 5px #818cf888"></span>副理</span>
+        <span class="g-leg"><span class="g-dot" style="background:#34d399;box-shadow:0 0 5px #34d39988"></span>組員</span>
+        <span class="g-leg"><span class="g-dot" style="background:#fbbf24;box-shadow:0 0 5px #fbbf2488;width:12px;height:6px;border-radius:2px"></span>專案</span>
+        <span class="g-leg"><span class="g-dot" style="background:#fb923c;box-shadow:0 0 5px #fb923c88"></span>有狀態</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COL 2: 案件看板 -->
+  <div class="col">
+    <div class="col-title">📋 案件看板</div>
+    <div class="boards-area" id="boardsArea"></div>
+  </div>
+
+  <!-- COL 3: 人員 & 資訊 -->
+  <div class="col">
+    <div class="col-title">👥 人員 &amp; 資訊</div>
+
+    <!-- 存檔 + 狀態 -->
+    <div class="panel-card">
+      <div class="ptitle open" onclick="togPanel(this)">
+        💾 存檔 &amp; 🏷️ 案件狀態 <span class="sub"></span> <span class="ptgl">▾</span>
+      </div>
+      <div class="panel-body open"><div>
+        <div class="save-bar" style="margin:8px 10px 0;">
+          <span class="sdot" id="sdot"></span>
+          <span class="st" id="stxt">尚未存檔</span>
+          <button class="btn-load" onclick="loadData()">讀取</button>
+          <button class="btn-save" onclick="saveData()">存檔</button>
+        </div>
+        <div class="status-pool">
+          <div class="scd-grid">
+            <div class="scd scd-d" data-sv="設計中" data-tp="status">📐 設計中</div>
+            <div class="scd scd-c" data-sv="施工中" data-tp="status">🚧 施工中</div>
+            <div class="scd scd-e" data-sv="結案中" data-tp="status">✅ 結案中</div>
+            <div class="scd scd-x" data-sv="__custom__" data-tp="status">✏️ 其他</div>
+          </div>
+          <input type="text" class="ci-input" id="cusInput" placeholder="自訂狀態（配合「其他」使用）" maxlength="20">
+          <div class="shint">💡 拖曳狀態或組員至案件卡片；點擊已設定狀態可移除</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 組員列表 -->
+    <div class="panel-card">
+      <div class="ptitle open" onclick="togPanel(this)">
+        👥 組員列表 <span class="sub">拖曳至案件 · 點 ℹ 查看詳情</span> <span class="ptgl">▾</span>
+      </div>
+      <div class="panel-body open"><div>
+        <div class="member-pool" id="memberPool"></div>
+      </div></div>
+    </div>
+
+    <!-- 證照統計 -->
+    <div class="panel-card">
+      <div class="ptitle open" onclick="togPanel(this)">
+        📋 證照統計 <span class="sub">各組資格一覽</span> <span class="ptgl">▾</span>
+      </div>
+      <div class="panel-body open"><div>
+        <div class="cert-table-wrap">
+          <div style="font-size:10px;color:var(--text-light);margin-bottom:8px;">
+            <span style="margin-right:10px;">★ 技師</span>
+            <span class="ci-dot" style="background:#f59e0b;margin-right:3px;"></span><span style="margin-right:10px;">品管</span>
+            <span class="ci-dot" style="background:#22c55e;margin-right:3px;"></span><span style="margin-right:10px;">職安</span>
+          </div>
+          <table class="cert-table" id="certTable"></table>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── PERSON MODAL ── -->
+<div class="modal-backdrop" id="personModal" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<div class="drag-ghost" id="dGhost" style="display:none"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ─────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────
+const projects=[
+  {id:"JD008",name:"新北市備用水井建置計畫統包工程(丙區)監造",pm:"吳孝智",agency:"新北市政府水利局",status:"",profit:3290586},
+  {id:"JD014-01D",name:"嘉義縣外傘頂洲養灘試辦工程",pm:"張鎧峻",agency:"經濟部水利署第五河川分署",status:"已決標",profit:2223333},
+  {id:"JD020",name:"復興區華陵里醫療站周邊道路及環境改善工程",pm:"陳囿任",agency:"桃園市政府原住民族行政局",status:"",profit:140000},
+  {id:"SC573-04D",name:"機場捷運A7站區外道路(T字型-變二)新闢工程",pm:"張鎧峻",agency:"桃園市政府新建工程處",status:"已完工",profit:586277},
+  {id:"SC573-04S",name:"機場捷運A7站區外道路(T字型-變二)新闢工程(監)",pm:"吳孝智",agency:"桃園市政府新建工程處",status:"結算中",profit:2001189},
+  {id:"SC573-05D",name:"機場捷運A7站區外道路(T字型-變一)新闢工程",pm:"張鎧峻",agency:"桃園市政府新建工程處",status:"施工中",profit:11556996},
+  {id:"SC573-05S",name:"機場捷運A7站區外道路(T字型-變一)新闢工程(監)",pm:"吳孝智",agency:"桃園市政府新建工程處",status:"施工中",profit:2907710},
+  {id:"SC644",name:"大漢溪堤外水岸廊道串聯暨周邊環境改善工程監造",pm:"張增糴",agency:"新北市政府水利局",status:"",profit:8595423},
+  {id:"SC644-01S",name:"大漢溪堤外水岸廊道串聯暨周邊環境改善工程監造",pm:"張增糴",agency:"新北市政府水利局",status:"與SC644合併",profit:0},
+  {id:"SC669-03S",name:"復興區桃112線道路品質改善計畫",pm:"張巍耀",agency:"",status:"",profit:161562},
+  {id:"SC669-04D",name:"復興區市道118線道路品質改善計畫",pm:"張鎧峻",agency:"桃園市政府養護工程處",status:"已完工",profit:103769},
+  {id:"SC669-04S",name:"復興區市道118線道路品質改善計畫(監)",pm:"張巍耀",agency:"",status:"後續結案",profit:80000},
+  {id:"SC689",name:"生活圈(和強路至介壽路)道路新闢工程設計監造",pm:"張鎧峻",agency:"桃園市政府新建工程處",status:"母案號",profit:0},
+  {id:"SC733-05D",name:"桃園區龍壽街排水改善工程",pm:"張鎧峻",agency:"桃園市政府水務局",status:"細設中",profit:958812},
+  {id:"SC733-06D",name:"桃園區龍壽街81巷排水改善工程",pm:"張鎧峻",agency:"桃園市政府水務局",status:"施工中",profit:330840},
+  {id:"SC733-06S",name:"桃園區龍壽街81巷排水改善工程(監)",pm:"張巍耀",agency:"",status:"",profit:325747},
+  {id:"SC795-04D",name:"八德區和平路RE-B幹線雨水下水道工程",pm:"張鎧峻",agency:"桃園市政府水務局",status:"施工中",profit:183248},
+  {id:"SC795-05D",name:"龜山區文化七路QS-G幹線雨水下水道工程",pm:"張鎧峻",agency:"桃園市政府水務局",status:"細設已核定",profit:153827},
+  {id:"SC795-07D",name:"蘆竹區新南路二段排水改善工程",pm:"張鎧峻",agency:"桃園市政府水務局",status:"細設中",profit:1052218},
+  {id:"SC795-10D",name:"龜山區文化一路側溝改善",pm:"張鎧峻",agency:"桃園市政府水務局",status:"細設中",profit:1126996},
+  {id:"SC799-01S",name:"汐止區夢湖路改道工程",pm:"宋柏勛",agency:"新北市汐止區公所",status:"",profit:600000},
+  {id:"SC814-01D",name:"桃園機場聯外道路整建計畫(第一標)",pm:"宋柏勛",agency:"桃園國際機場股份有限公司",status:"流標三次",profit:5000000},
+  {id:"SC814-01S",name:"桃園機場聯外道路整建計畫(第一標監)",pm:"宋柏勛",agency:"",status:"",profit:6000000},
+  {id:"SC814-02D",name:"桃園機場聯外道路整建計畫(第二標)",pm:"宋柏勛",agency:"桃園國際機場股份有限公司",status:"",profit:3079069},
+  {id:"SC837-01D",name:"中壢區龍慈路635巷水利溝整建及道路拓寬工程",pm:"宋柏勛",agency:"桃園市中壢區公所",status:"",profit:12704787},
+  {id:"SC844-01S",name:"113年度道路坑洞機動養護工程(第一工區)",pm:"張巍耀",agency:"桃園市政府養護工程處",status:"",profit:1315313},
+  {id:"SC844-02D",name:"113年度道路公共設施修繕工程(第一工區)",pm:"張鎧峻",agency:"桃園市政府養護工程處",status:"",profit:290195},
+  {id:"SC844-08D",name:"桃園區成功路三段道路多目標改善工程",pm:"張鎧峻",agency:"桃園市政府養護工程處",status:"施工中",profit:2250941},
+  {id:"SC844-08S",name:"桃園區成功路三段道路多目標改善工程(監)",pm:"張巍耀",agency:"桃園市政府養護工程處",status:"",profit:300000},
+  {id:"SC844-09D",name:"龜山區文華國小通學步道改善工程",pm:"張鎧峻",agency:"桃園市政府養護工程處",status:"施工中",profit:86990},
+  {id:"SC844-09S",name:"龜山區文華國小通學步道改善工程(監)",pm:"張巍耀",agency:"桃園市政府養護工程處",status:"",profit:411371},
+  {id:"SC846-01D",name:"龜山區文化一路至青山路道路新闢工程",pm:"張鎧峻",agency:"桃園市政府新建工程處",status:"施工中",profit:300000},
+  {id:"SC846-01S",name:"龜山區文化一路至青山路道路新闢工程(監)",pm:"張巍耀",agency:"桃園市政府新建工程處",status:"",profit:2000000},
+  {id:"SC847-01S",name:"台7線32K+500災害復建工程委託監造",pm:"張增糴",agency:"交通部公路總局第一區養護工程處",status:"",profit:5640000},
+  {id:"SC851-01D",name:"桃園大圳7-7號池強化工程",pm:"張鎧峻",agency:"農業部農田水利署桃園管理處",status:"已完工",profit:94414},
+  {id:"SC851-02D",name:"光復圳2-4號池強化工程",pm:"張鎧峻",agency:"農業部農田水利署桃園管理處",status:"已完工",profit:113215},
+  {id:"SC858-07D",name:"114年度竹圍暨永安漁港緊急修繕工程",pm:"陳囿任",agency:"桃園市政府農業局",status:"",profit:265628},
+  {id:"SC858-09D",name:"114年度永安漁港泊地及航道疏濬工程",pm:"陳囿任",agency:"桃園市政府農業局",status:"",profit:666337},
+  {id:"SC858-16D",name:"永安漁港北堤搶災及修復工程",pm:"陳囿任",agency:"桃園市政府農業局",status:"",profit:693654},
+  {id:"SC860-14D",name:"楊梅區原住民多功能文化傳承場域新建工程",pm:"陳囿任",agency:"",status:"",profit:1330200},
+  {id:"SD049-01D",name:"溪州鄉西螺大橋維修補強工程",pm:"張鎧峻",agency:"彰化縣政府",status:"施工中",profit:65717},
+  {id:"SD054",name:"新北市備用水井建置計畫統包工程(丁區)",pm:"吳孝智",agency:"新北市政府水利局",status:"結算驗收中",profit:1155319},
+  {id:"SD064-01D",name:"康芮颱風霞雲戰鬥營園區災害復建工程",pm:"陳囿任",agency:"桃園市政府工務局",status:"",profit:472218},
+  {id:"SD064-03D",name:"復興區華陵里德倫道路改善工程",pm:"陳囿任",agency:"桃園市政府原住民族行政局",status:"",profit:379586},
+  {id:"SD064-04D",name:"復興區武道能敢部落道路改善工程",pm:"陳囿任",agency:"桃園市政府原住民族行政局",status:"",profit:449721},
+  {id:"SD064-09D",name:"復興區華陵里高義里羅浮里環境改善工程",pm:"陳囿任",agency:"桃園市政府原住民族行政局",status:"",profit:326469},
+  {id:"SD064-17D",name:"桃園市復興區喜龍道路品質改善工程",pm:"陳囿任",agency:"桃園市政府原住民族行政局",status:"",profit:676960},
+  {id:"SD076-01D",name:"114年度道路坑洞機動養護工程(第一工區)",pm:"張鎧峻",agency:"桃園市政府工務局",status:"",profit:100000},
+  {id:"SD076-02D",name:"114年度道路公共設施修繕工程(第一工區)",pm:"張鎧峻",agency:"桃園市政府工務局",status:"",profit:120000},
+  {id:"SD076-01S",name:"114年度道路坑洞機動養護工程(第一工區監)",pm:"張巍耀",agency:"桃園市政府工務局",status:"",profit:2333948},
+  {id:"SD076-04D",name:"桃園區中正路道路改善工程",pm:"張鎧峻",agency:"桃園市政府養護工程處",status:"設計中",profit:1100000},
+  {id:"SD078-01S",name:"新北市備用水井建置計畫統包工程(甲區)",pm:"吳孝智",agency:"新北市政府水利局",status:"施工中",profit:3359861},
+  {id:"SD078-02S",name:"新北市備用水井建置計畫統包工程(乙區)",pm:"吳孝智",agency:"新北市政府水利局",status:"施工中",profit:3279922},
+  {id:"SD095-01D",name:"石碇區永定里皇帝殿道路改善工程",pm:"宋柏勛",agency:"新北市政府農業局",status:"",profit:304829},
+  {id:"SD095-01S",name:"石碇區永定里皇帝殿道路改善工程(監)",pm:"宋柏勛",agency:"新北市政府農業局",status:"",profit:338699},
+  {id:"SD095-04D",name:"石碇區碇坪路擋土牆修復工程",pm:"宋柏勛",agency:"新北市政府農業局",status:"",profit:512522},
+  {id:"SD095-05D",name:"石碇區光明里邊坡災害復建工程",pm:"宋柏勛",agency:"新北市政府農業局",status:"",profit:807734},
+  {id:"SD095-07D",name:"坪林區上德里農路改善工程",pm:"宋柏勛",agency:"新北市政府農業局",status:"",profit:303574},
+  {id:"ZF015-18D",name:"嘉義縣太保市埤鄉橋改建工程",pm:"張增糴",agency:"嘉義縣政府",status:"多次流標中",profit:1030000},
+  {id:"JD014-01S",name:"嘉義縣外傘頂洲養灘試辦工程(監)",pm:"王文宏",agency:"經濟部水利署第五河川分署",status:"",profit:1218003},
+  {id:"SC689-01D",name:"生活圈(和強路至介壽路)道路新闢工程",pm:"張鎧峻",agency:"桃園市政府新建工程處",status:"",profit:6460000},
+  {id:"SD035-04",name:"台61線21K-29K伸縮縫擇要改善工程",pm:"張增糴",agency:"交通部公路局北區養護工程分局",status:"",profit:359400}
+];
+
+const org={
+  vgm:{name:'張增糴',title:'副總經理'},
+  mgrs:[
+    {name:'吳孝智',title:'副理'},
+    {name:'陳囿任',title:'副理*'},
+    {name:'張鎧峻',title:'副理'},
+    {name:'張巍耀',title:'副理'},
+    {name:'宋柏勛',title:'副理'},
+  ],
+  mems:[
+    {name:'康慶龍',sup:'吳孝智'},{name:'翁巧晴',sup:'吳孝智'},{name:'王宥達',sup:'吳孝智'},{name:'林全華',sup:'吳孝智'},{name:'陳建榮',sup:'吳孝智'},{name:'李萬財',sup:'吳孝智'},
+    {name:'黃阡維',sup:'陳囿任'},{name:'吳尚東',sup:'陳囿任'},{name:'陳珮婷',sup:'陳囿任'},{name:'呂紹吉',sup:'陳囿任'},{name:'許英麗',sup:'陳囿任'},{name:'蕭輔仁',sup:'陳囿任'},{name:'林莊健',sup:'陳囿任'},{name:'謝宜庭',sup:'陳囿任'},{name:'高鴻瑜',sup:'陳囿任'},
+    {name:'張友誠',sup:'張鎧峻'},{name:'曾院榮',sup:'張鎧峻'},{name:'王宜婷',sup:'張鎧峻'},{name:'詹子瑩',sup:'張鎧峻'},{name:'王子銘',sup:'張鎧峻'},{name:'陳蒼緯',sup:'張鎧峻'},
+    {name:'梅德鍾',sup:'張巍耀'},{name:'李俊毅',sup:'張巍耀'},{name:'蕭家璨',sup:'張巍耀'},{name:'吳諾樸',sup:'張巍耀'},{name:'陳品圻',sup:'張巍耀'},{name:'黃立昕',sup:'張巍耀'},{name:'潘國揚',sup:'張巍耀'},{name:'蕭凱馨',sup:'張巍耀'},
+    {name:'張智淵',sup:'宋柏勛'},{name:'簡宏瑋',sup:'宋柏勛'},{name:'莊盛宇',sup:'宋柏勛'},{name:'林啓聖',sup:'宋柏勛'},{name:'李瑞迪',sup:'宋柏勛'},{name:'周建志',sup:'宋柏勛'},
+  ]
+};
+
+// 證照資料 (依桃園_新北辦公室儀表板.xlsx更新)
+const certInfo={
+  '張增糴':{group:'副總經理',seniority:'12年11個月',edu:'國立臺灣大學土木工程學系碩士',certs:[{n:'技師',exp:'長期'}]},
+  '吳孝智':{group:'孝智組',seniority:'12年10個月',edu:'國立中央大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'管挖',exp:'長期'}]},
+  '陳囿任':{group:'囿任組',seniority:'7年1個月',edu:'中華大學營建管理研究所碩士',certs:[{n:'品管',exp:'長期'}]},
+  '張鎧峻':{group:'鎧峻組',seniority:'11年9個月',edu:'國立成功大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '張巍耀':{group:'巍耀組',seniority:'11年3個月',edu:'逢甲大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'管挖',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '宋柏勛':{group:'柏勛組',seniority:'7年7個月',edu:'國立中央大學土木工程學系博士',certs:[{n:'品管',exp:'長期'},{n:'無人機',exp:'長期'}]},
+  '王文宏':{group:'—',seniority:'—',edu:'—',certs:[]},
+  '康慶龍':{group:'孝智組',seniority:'11年1個月',edu:'逢甲大學水利工程與資源保育學系學士',certs:[{n:'品管',exp:'長期'},{n:'無人機',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '翁巧晴':{group:'孝智組',seniority:'11年11個月',edu:'蘭陽技術學院土木工程科副學士',certs:[{n:'品管',exp:'長期'}]},
+  '王宥達':{group:'孝智組',seniority:'11年2個月',edu:'交通大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'}]},
+  '林全華':{group:'孝智組',seniority:'5年8個月',edu:'致遠管理學院營建管理學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '陳建榮':{group:'孝智組',seniority:'3年7個月',edu:'國立宜蘭大學土木工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'測量',exp:'長期'},{n:'工地主任',exp:'長期'}]},
+  '張佳文':{group:'孝智組',seniority:'1年7個月',edu:'國立臺北科技大學土木工程學系學士',certs:[{n:'品管',exp:'長期'}]},
+  '李萬財':{group:'孝智組',seniority:'7個月',edu:'國立臺灣科技大學營建所',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '黃阡維':{group:'囿任組',seniority:'9年11個月',edu:'國立嘉義大學土木與水資源工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'管挖',exp:'長期'},{n:'無人機',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '吳尚東':{group:'囿任組',seniority:'7年10個月',edu:'國立臺灣海洋大學河海工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '陳珮婷':{group:'囿任組',seniority:'7年8個月',edu:'國立金門大學都市計畫與景觀學系學士',certs:[{n:'品管',exp:'長期'}]},
+  '呂紹吉':{group:'囿任組',seniority:'6年2個月',edu:'逢甲大學水利工程與資源保育學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '許英麗':{group:'囿任組',seniority:'5年1個月',edu:'中華大學景觀建築學系學士',certs:[{n:'品管',exp:'長期'}]},
+  '蕭輔仁':{group:'囿任組',seniority:'2年7個月',edu:'健行科技大學資訊管理系學士',certs:[{n:'職安',exp:'長期'}]},
+  '林莊健':{group:'囿任組',seniority:'1年6個月',edu:'中國文化大學景觀學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '謝宜庭':{group:'囿任組',seniority:'1年1個月',edu:'國立聯合大學土木與防災工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '高鴻瑜':{group:'囿任組',seniority:'1年',edu:'朝陽科技大學營建工程系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '張友誠':{group:'鎧峻組',seniority:'11年',edu:'國立交通大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'}]},
+  '曾院榮':{group:'鎧峻組',seniority:'9年',edu:'國立交通大學土木工程學系學士',certs:[{n:'技師',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '王宜婷':{group:'鎧峻組',seniority:'7年9個月',edu:'中原大學土木工程學系學士',certs:[{n:'品管',exp:'長期'}]},
+  '詹子瑩':{group:'鎧峻組',seniority:'4年1個月',edu:'逢甲大學水利工程與資源保育學系碩士',certs:[{n:'品管',exp:'長期'},{n:'無人機',exp:'長期'}]},
+  '王子銘':{group:'鎧峻組',seniority:'1年1個月',edu:'Oregon State University 水利工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'無人機',exp:'長期'}]},
+  '陳蒼緯':{group:'鎧峻組',seniority:'9個月',edu:'國立中興大學水土保持學系碩士',certs:[{n:'品管',exp:'長期'},{n:'管挖',exp:'長期'}]},
+  '梅德鍾':{group:'巍耀組',seniority:'9年',edu:'淡江大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'無人機',exp:'長期'}]},
+  '李俊毅':{group:'巍耀組',seniority:'6年10個月',edu:'國立高雄第一科技大學環境與安全衛生工程系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'管挖',exp:'長期'}]},
+  '蕭家璨':{group:'巍耀組',seniority:'5年9個月',edu:'逢甲大學土木工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'無人機',exp:'長期'}]},
+  '吳諾樸':{group:'巍耀組',seniority:'4年1個月',edu:'朝陽科技大學景觀及都市設計系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'管挖',exp:'長期'}]},
+  '陳品圻':{group:'巍耀組',seniority:'3年7個月',edu:'朝陽科技大學景觀及都市設計系學士',certs:[{n:'品管',exp:'長期'},{n:'管挖',exp:'長期'}]},
+  '黃立昕':{group:'巍耀組',seniority:'3年',edu:'中原大學土木工程學系學士',certs:[{n:'技師',exp:'長期'},{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '潘國揚':{group:'巍耀組',seniority:'1年7個月',edu:'陸軍軍官學校理組學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '黃國亮':{group:'巍耀組',seniority:'1年',edu:'中原大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '蕭凱馨':{group:'巍耀組',seniority:'11個月',edu:'萬能科技大學財務金融系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '張智淵':{group:'柏勛組',seniority:'2年10個月',edu:'國立臺灣科技大學營建工程系碩士',certs:[{n:'技師',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '簡宏瑋':{group:'柏勛組',seniority:'2年8個月',edu:'國立中央大學土木工程學系學士',certs:[{n:'技師',exp:'長期'}]},
+  '莊盛宇':{group:'柏勛組',seniority:'2年6個月',edu:'國立臺灣科技大學營建工程學系碩士',certs:[{n:'技師',exp:'長期'}]},
+  '林啓聖':{group:'柏勛組',seniority:'2年1個月',edu:'德霖技術學院土木工程系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '李瑞迪':{group:'柏勛組',seniority:'1年7個月',edu:'宏國德霖科技大學土木工程系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'工地主任',exp:'長期'}]},
+  '許淑靜':{group:'柏勛組',seniority:'1年1個月',edu:'德霖科技大學土木工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
+  '周建志':{group:'柏勛組',seniority:'1年1個月',edu:'國立臺灣科技大學營建工程學系學士',certs:[{n:'品管',exp:'長期'}]},
+  '楊萬璽':{group:'駐點',seniority:'9年7個月',edu:'國立臺北科技大學土木工程系學士',certs:[{n:'品管',exp:'長期'}]},
+  '李佳穎':{group:'行政',seniority:'9年',edu:'國立屏東科技大學農企業管理系學士',certs:[{n:'品管',exp:'長期'}]},
+  '石婷瑄':{group:'駐點',seniority:'1年10個月',edu:'萬能科技大學行銷與流通管理系學士',certs:[]},
+  '林致毅':{group:'北分局',seniority:'8年8個月',edu:'中華大學土木工程學系學士',certs:[{n:'品管',exp:'長期'}]},
+  '林偉正':{group:'北分局',seniority:'4年10個月',edu:'萬能科技大學土木工程系學士',certs:[{n:'品管',exp:'長期'}]},
+  '楊元舜':{group:'北分局',seniority:'1年8個月',edu:'中原大學土木工程學系碩士',certs:[]},
+  '江品增':{group:'北分局',seniority:'1年3個月',edu:'國立宜蘭大學土木工程學系學士',certs:[]},
+  '許甘棠':{group:'北分局',seniority:'1年3個月',edu:'高雄市私立國際高級商工職業學校',certs:[]},
+  '沈宏昌':{group:'北分局',seniority:'1年1個月',edu:'國立中興大學土木工程學系學士',certs:[]},
+  '王昱杰':{group:'北分局',seniority:'1年1個月',edu:'逢甲大學營建工程與管理學系學士',certs:[]},
+  '許聖耘':{group:'北分局',seniority:'1年1個月',edu:'朝陽科技大學營建工程系學士',certs:[]},
+};
+
+// 114年度預估獲利 (各組，單位：元)
+const perf114={
+  '孝智組':9800000,'囿任組':4200000,'鎧峻組':22000000,'巍耀組':5800000,'柏勛組':18000000,'增糴組':13500000
+};
+
+const MC=['#2563eb','#10b981','#f59e0b','#8b5cf6','#ec4899'];
+const MB=['#dbeafe','#d1fae5','#fef3c7','#ede9fe','#fce7f3'];
+const pC={},pB={};
+pC[org.vgm.name]='#0f172a';pB[org.vgm.name]='#bae6fd';
+org.mgrs.forEach((m,i)=>{pC[m.name]=MC[i];pB[m.name]=MB[i];});
+org.mems.forEach(m=>{pC[m.name]=pC[m.sup]||'#64748b';pB[m.name]=pB[m.sup]||'#f1f5f9';});
+
+function fa(n){if(n>=10000000)return(n/10000000).toFixed(2)+' 千萬';if(n>=10000)return Math.round(n/10000)+' 萬';return Math.round(n).toLocaleString();}
+function certExpClass(exp){
+  if(exp==='長期')return'cert-永久';
+  const certNames={'品管':'cert-品管','職安':'cert-職安','技師':'cert-技師','工地主任':'cert-工地主任','管挖':'cert-管挖','無人機':'cert-無人機','測量':'cert-測量'};
+  return certNames[exp]||'cert-other';
+}
+
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let asgn={},stAsgn={},dirty=false,showFull=false,bOpen={};
+let dragSt=null,ghost=null,gOX=0,gOY=0;
+const LSK='dash_v4';
+
+function saveData(){localStorage.setItem(LSK,JSON.stringify({asgn,stAsgn,ts:Date.now()}));dirty=false;updSaveUI();}
+function loadData(){
+  const r=localStorage.getItem(LSK);
+  if(!r){alert('找不到存檔');return;}
+  const d=JSON.parse(r);asgn=d.asgn||{};stAsgn=d.stAsgn||{};dirty=false;updSaveUI();
+  renderBoards();drawGraph();alert('✅ 已讀取（'+new Date(d.ts).toLocaleString()+'）');
+}
+function markDirty(){dirty=true;updSaveUI();clearTimeout(window._aST);window._aST=setTimeout(saveData,3000);}
+function updSaveUI(){
+  document.getElementById('sdot').className='sdot'+(dirty?'':' saved');
+  const r=localStorage.getItem(LSK);
+  document.getElementById('stxt').textContent=dirty?'有未存檔的變更':(r?'已存檔：'+new Date(JSON.parse(r).ts).toLocaleString():'尚未存檔');
+}
+
+// ─────────────────────────────────────────
+// CHART PANEL
+// ─────────────────────────────────────────
+const pmMap={};
+projects.forEach(p=>{if(!pmMap[p.pm])pmMap[p.pm]=[];pmMap[p.pm].push(p);});
+const pmList=Object.entries(pmMap).map(([pm,ps])=>({pm,ps,t:ps.reduce((s,p)=>s+p.profit,0),n:ps.length})).sort((a,b)=>b.t-a.t);
+const totP=pmList.reduce((s,p)=>s+p.t,0);
+let chartOpen=false;
+
+// 計算各組115年合計
+function getGroupTotal115(groupName){
+  const mgrName={'孝智組':'吳孝智','囿任組':'陳囿任','鎧峻組':'張鎧峻','巍耀組':'張巍耀','柏勛組':'宋柏勛','增糴組':'張增糴'}[groupName];
+  return projects.filter(p=>p.pm===mgrName).reduce((s,p)=>s+p.profit,0);
+}
+
+function switchTab(tab,el){
+  document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.chart-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-'+tab).classList.add('active');
+  if(tab==='yearcomp')renderYearChart();
+}
+function toggleChart(){
+  chartOpen=!chartOpen;
+  document.getElementById('chartPanel').classList.toggle('open',chartOpen);
+  document.getElementById('cHint').textContent=chartOpen?'▲ 收起':'▼ 展開';
+}
+
+function renderStats(){
+  const totalMems=org.mems.length+org.mgrs.length+1;
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat-pill">👤 副理 <span class="n">${org.mgrs.length}</span></div>
+    <div class="stat-pill">🧑‍💼 人員 <span class="n">${totalMems}</span></div>
+    <div class="stat-pill">📋 專案 <span class="n">${projects.length}</span></div>
+    <div class="stat-pill clickable" onclick="toggleChart()">💰 115年預估總額 <span class="n">${fa(totP)}</span><span class="chart-hint" id="cHint">▼ 展開</span></div>`;
+}
+
+function renderProfitChart(){
+  const mx=Math.max(...pmList.map(p=>p.t));
+  document.getElementById('profitChart').innerHTML=pmList.map((pm,i)=>{
+    const h=Math.max((pm.t/mx)*140,4),c=MC[i%5];
+    return`<div class="bar-group"><div class="bar-wrap"><div class="bar" style="height:${h}px;background:linear-gradient(180deg,${c}cc,${c})" title="${pm.pm}: ${fa(pm.t)}"><div class="bar-lbl">${fa(pm.t)}</div></div></div><div class="bar-name">${pm.pm}</div><div class="bar-cnt">${pm.n}件</div></div>`;
+  }).join('');
+}
+
+let yearChartInstance=null;
+function renderYearChart(){
+  const groups=['孝智組','囿任組','鎧峻組','巍耀組','柏勛組','增糴組'];
+  const data114=groups.map(g=>Math.round(perf114[g]/10000));
+  const data115=groups.map(g=>Math.round(getGroupTotal115(g)/10000));
+  const ctx=document.getElementById('yearCompChart').getContext('2d');
+  if(yearChartInstance){yearChartInstance.destroy();}
+  yearChartInstance=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:groups,
+      datasets:[
+        {label:'114年度',data:data114,backgroundColor:'rgba(99,179,237,0.80)',borderColor:'rgba(99,179,237,1)',borderWidth:1,borderRadius:4},
+        {label:'115年度',data:data115,backgroundColor:'rgba(251,146,60,0.80)',borderColor:'rgba(251,146,60,1)',borderWidth:1,borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.dataset.label}: ${c.parsed.y.toLocaleString()} 萬`}}},
+      scales:{
+        y:{beginAtZero:true,ticks:{callback:v=>v+'萬',font:{family:'Noto Sans TC',size:10}},grid:{color:'rgba(0,0,0,0.06)'}},
+        x:{ticks:{font:{family:'Noto Sans TC',size:11}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────────
+// BOARDS
+// ─────────────────────────────────────────
+function renderBoards(){
+  const area=document.getElementById('boardsArea');area.innerHTML='';
+  org.mgrs.forEach((mgr,i)=>{
+    const ps=projects.filter(p=>p.pm===mgr.name).sort((a,b)=>b.profit-a.profit);
+    if(!ps.length)return;
+    const tot=ps.reduce((s,p)=>s+p.profit,0),c=MC[i],bg=MB[i];
+    const isOpen=bOpen[mgr.name]!==false;
+    const div=document.createElement('div');div.className='mgr-board';
+    div.innerHTML=`<div class="mgr-hdr" onclick="togBoard('${mgr.name}')" style="background:${bg}">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${c}"></div>
+      <div class="mgr-av" style="background:${c}">${mgr.name[0]}</div>
+      <div class="mgr-info"><h3>${mgr.name} <span class="mgr-badge">${mgr.title}</span></h3>
+        <div class="mgr-meta"><span>📋 ${ps.length}件</span><span>💰 ${fa(tot)}</span><span>↑ 張增糴 副總</span></div>
+      </div>
+      <button class="mgr-tgl${isOpen?' open':''}" id="tgl-${mgr.name}">▾</button>
+    </div>
+    <div class="mgr-body${isOpen?' open':''}" id="bdy-${mgr.name}">
+      <div class="proj-grid" id="grd-${mgr.name}"></div>
+    </div>`;
+    area.appendChild(div);
+    const grd=div.querySelector(`#grd-${mgr.name}`);
+    ps.forEach(p=>{const el=mkCard(p,c);grd.appendChild(el);});
+  });
+  bindDrop();
+}
+function togBoard(n){
+  const b=document.getElementById('bdy-'+n),t=document.getElementById('tgl-'+n);
+  const o=b.classList.toggle('open');t.classList.toggle('open',o);bOpen[n]=o;
+}
+function mkCard(p,c){const div=document.createElement('div');div.className='pc';div.dataset.pid=p.id;updCard(div,p,c);return div;}
+function updCard(div,p,c){
+  const ms=asgn[p.id]||[],st=stAsgn[p.id]||'';
+  const sc=st==='設計中'?'sb-d':st==='施工中'?'sb-c':st==='結案中'?'sb-e':st?'sb-x':'sb-o';
+  div.innerHTML=`<div class="pc-top"><span class="pc-id" style="background:${c}18;color:${c}">${p.id}</span><span class="pc-amt">${fa(p.profit)}</span></div>
+    <div class="pc-name">${p.name.length>48?p.name.slice(0,48)+'…':p.name}</div>
+    <div class="pc-tags">${st?`<span class="sbadge ${sc}" onclick="rmStatus('${p.id}')" title="點擊移除">${st} ✕</span>`:''}${p.status&&!st?`<span class="sbadge sb-o">${p.status}</span>`:''}</div>
+    <div class="pc-mems${ms.length?'':' hint'}" id="ms-${p.id}">${ms.map(n=>mcHtml(n,p.id)).join('')}</div>`;
+}
+function mcHtml(n,pid){const c=pC[n]||'#64748b',b=pB[n]||'#f1f5f9';return`<span class="mc" style="background:${b};color:${c}" onclick="rmMem('${n}','${pid}')"><span style="width:11px;height:11px;border-radius:50%;background:${c};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:7px;">${n[0]}</span>${n}<span class="mx">✕</span></span>`;}
+function getCard(pid){return document.querySelector(`.pc[data-pid="${pid}"]`);}
+function refrCard(pid){const el=getCard(pid);if(!el)return;const p=projects.find(x=>x.id===pid);if(!p)return;const i=org.mgrs.findIndex(m=>m.name===p.pm);updCard(el,p,i>=0?MC[i]:'#64748b');}
+function bindDrop(){document.querySelectorAll('.pc').forEach(c=>{c.addEventListener('dragover',e=>e.preventDefault());c.addEventListener('drop',e=>{e.preventDefault();const tp=e.dataTransfer.getData('tp'),val=e.dataTransfer.getData('val');if(tp==='member')doAsgn(val,c.dataset.pid);if(tp==='status')doStatus(val,c.dataset.pid);});});}
+
+// ─────────────────────────────────────────
+// ASSIGN
+// ─────────────────────────────────────────
+function doAsgn(n,pid){if(!asgn[pid])asgn[pid]=[];if(asgn[pid].includes(n))return;asgn[pid].push(n);refrCard(pid);markDirty();drawGraph();}
+function rmMem(n,pid){if(!asgn[pid])return;asgn[pid]=asgn[pid].filter(x=>x!==n);refrCard(pid);markDirty();drawGraph();}
+function doStatus(raw,pid){let s=raw==='__custom__'?(document.getElementById('cusInput').value.trim()||'其他'):raw;stAsgn[pid]=s;refrCard(pid);markDirty();drawGraph();}
+function rmStatus(pid){delete stAsgn[pid];refrCard(pid);markDirty();}
+
+// ─────────────────────────────────────────
+// CERT ICONS HELPER
+// ─────────────────────────────────────────
+function certIconsHtml(name){
+  const ci=certInfo[name];if(!ci||!ci.certs.length)return'';
+  let h='<span class="cert-icons">';
+  ci.certs.forEach(c=>{
+    if(c.n==='技師')h+=`<span class="ci-star" title="技師">★</span>`;
+    else if(c.n==='品管')h+=`<span class="ci-dot" style="background:#f59e0b" title="品管"></span>`;
+    else if(c.n==='職安')h+=`<span class="ci-dot" style="background:#22c55e" title="職安"></span>`;
+    else if(c.n==='工地主任')h+=`<span class="ci-dot" style="background:#3b82f6" title="工地主任"></span>`;
+    else if(c.n==='管挖')h+=`<span class="ci-dot" style="background:#f97316" title="管挖"></span>`;
+    else if(c.n==='無人機')h+=`<span class="ci-dot" style="background:#8b5cf6" title="無人機"></span>`;
+  });
+  h+='</span>';
+  return h;
+}
+
+// ─────────────────────────────────────────
+// MEMBER POOL
+// ─────────────────────────────────────────
+function renderMemberPool(){
+  const pool=document.getElementById('memberPool');
+  let h='';
+  h+=`<div class="mgl" style="color:#0f172a;cursor:default;background:transparent;">副總經理</div>`;
+  h+=`<div class="chip-row">${chipSm(org.vgm,'vgm')}</div>`;
+  org.mgrs.forEach((m,i)=>{
+    const c=MC[i],gid='mgrg-'+i;
+    h+=`<div class="mgl open" style="color:${c}" onclick="togMgrGroup('${gid}',this)">
+      <span style="width:6px;height:6px;border-radius:50%;background:${c};flex-shrink:0;display:inline-block"></span>
+      ${m.name}（${m.title}）
+      <span class="mgl-tgl">▾</span>
+    </div>`;
+    h+=`<div class="chip-row-wrap open" id="${gid}"><div>`;
+    h+=`<div class="chip-row">`;
+    h+=chipSm(m,'mgr',i);
+    org.mems.filter(x=>x.sup===m.name).forEach(x=>{h+=chipSm(x,'mem',i);});
+    h+=`</div></div></div>`;
+  });
+  pool.innerHTML=h;
+  pool.querySelectorAll('.chip-sm').forEach(ch=>{
+    ch.addEventListener('mousedown',onDown);
+    ch.addEventListener('touchstart',onTouch,{passive:false});
+    ch.setAttribute('draggable','true');
+    ch.addEventListener('dragstart',e=>{e.dataTransfer.setData('tp','member');e.dataTransfer.setData('val',ch.dataset.n);});
+  });
+  pool.querySelectorAll('.chip-info-btn').forEach(btn=>{
+    btn.addEventListener('mousedown',e=>{e.stopPropagation();});
+    btn.addEventListener('click',e=>{e.stopPropagation();openModal(btn.dataset.n);});
+  });
+}
+function togMgrGroup(gid,lbl){
+  const wrap=document.getElementById(gid);if(!wrap)return;
+  const o=wrap.classList.toggle('open');lbl.classList.toggle('open',o);
+}
+function chipSm(p,role,mi){
+  const c=pC[p.name]||'#64748b',b=pB[p.name]||'#f1f5f9';
+  const extra=role==='mgr'?'chip-mgr':'';
+  const icons=certIconsHtml(p.name);
+  return`<div class="chip-sm ${extra}" data-n="${p.name}" data-tp="member" style="background:${b};color:${c};border-color:${c}44">
+    <span class="chip-av" style="background:${c};color:#fff">${p.name[0]}</span>${p.name}${icons}
+    <button class="chip-info-btn" data-n="${p.name}" title="查看詳情">ℹ</button>
+  </div>`;
+}
+
+// ─────────────────────────────────────────
+// STATUS CHIPS
+// ─────────────────────────────────────────
+function bindStatusChips(){
+  document.querySelectorAll('.scd').forEach(ch=>{
+    ch.addEventListener('mousedown',onDown);ch.addEventListener('touchstart',onTouch,{passive:false});
+    ch.setAttribute('draggable','true');ch.addEventListener('dragstart',e=>{e.dataTransfer.setData('tp','status');e.dataTransfer.setData('val',ch.dataset.sv);});
+  });
+}
+
+// ─────────────────────────────────────────
+// CERT STATS TABLE
+// ─────────────────────────────────────────
+function renderCertTable(){
+  const groups=[
+    {label:'孝智組',mgr:'吳孝智'},
+    {label:'囿任組',mgr:'陳囿任'},
+    {label:'鎧峻組',mgr:'張鎧峻'},
+    {label:'巍耀組',mgr:'張巍耀'},
+    {label:'柏勛組',mgr:'宋柏勛'},
+  ];
+  const certTypes=['品管','職安','管挖','無人機','技師','工地主任'];
+  const tbl=document.getElementById('certTable');
+  let h=`<thead><tr><th>組別</th><th>人數</th>`;
+  certTypes.forEach(c=>{h+=`<th>${c}</th>`;});
+  h+=`</tr></thead><tbody>`;
+  const totals={人數:0};certTypes.forEach(c=>{totals[c]=0;});
+
+  groups.forEach(g=>{
+    const mems=[{name:g.mgr},...org.mems.filter(m=>m.sup===g.mgr)];
+    const cnt=mems.length;totals['人數']+=cnt;
+    h+=`<tr><td>${g.label}</td><td><span class="cert-num cert-has">${cnt}</span></td>`;
+    certTypes.forEach(ct=>{
+      const n=mems.filter(m=>(certInfo[m.name]||{certs:[]}).certs.some(c=>c.n===ct)).length;
+      totals[ct]+=n;
+      h+=`<td>${n>0?`<span class="cert-num cert-has">${n}</span>`:`<span class="cert-no">—</span>`}</td>`;
+    });
+    h+=`</tr>`;
+  });
+  // 副總行
+  const vgmCerts=(certInfo['張增糴']||{certs:[]}).certs;
+  h+=`<tr><td>副總</td><td><span class="cert-num cert-has">1</span></td>`;
+  certTypes.forEach(ct=>{
+    const n=vgmCerts.some(c=>c.n===ct)?1:0;
+    totals[ct]+=n;
+    h+=`<td>${n>0?`<span class="cert-num cert-has">${n}</span>`:`<span class="cert-no">—</span>`}</td>`;
+  });
+  h+=`</tr>`;
+
+  // 總計行
+  h+=`<tr><td>合計</td><td><span class="cert-num cert-has">${totals['人數']+1}</span></td>`;
+  certTypes.forEach(ct=>{h+=`<td><span class="cert-num cert-has">${totals[ct]}</span></td>`;});
+  h+=`</tr></tbody>`;
+  tbl.innerHTML=h;
+}
+
+// ─────────────────────────────────────────
+// PERSON MODAL
+// ─────────────────────────────────────────
+function openModal(name){
+  const ci=certInfo[name]||{seniority:0,edu:'—',certs:[]};
+  const mgrInfo=org.mgrs.find(m=>m.name===name)||org.vgm.name===name?org.vgm:null;
+  const memInfo=org.mems.find(m=>m.name===name);
+  const role=name===org.vgm.name?org.vgm.title:(mgrInfo?mgrInfo.title:(memInfo?'工程師':'—'));
+  const sup=memInfo?memInfo.sup:(name===org.vgm.name?'—':'副總');
+  const mi=org.mgrs.findIndex(m=>m.name===name);
+  const color=mi>=0?MC[mi]:(name===org.vgm.name?'#0f172a':'#64748b');
+  const bg=mi>=0?MB[mi]:(name===org.vgm.name?'#bae6fd':'#f1f5f9');
+
+  const assignedProjs=Object.entries(asgn).filter(([,ns])=>ns.includes(name)).map(([pid])=>pid);
+  const pmProjs=projects.filter(p=>p.pm===name);
+
+  let certsHtml='';
+  if(ci.certs.length){
+    ci.certs.forEach(c=>{
+      const cls=certExpClass(c.n);
+      const expColor=c.exp!=='長期'&&new Date(c.exp+'T00:00:00')<new Date(Date.now()+90*86400000)?'color:#ef4444':'';
+      certsHtml+=`<span class="cert-pill ${cls}">${c.n}<span class="exp" style="${expColor}">${c.exp}</span></span>`;
+    });
+  }else{certsHtml='<span style="font-size:12px;color:var(--text-light)">暫無紀錄</span>';}
+
+  let projsHtml='';
+  if(pmProjs.length){
+    projsHtml+='<div style="font-size:11px;font-weight:700;color:var(--text-light);margin-bottom:6px;">負責案件</div>';
+    projsHtml+=`<div class="modal-proj-list">${pmProjs.slice(0,5).map(p=>`<div class="modal-proj-item"><span class="modal-proj-id">${p.id}</span>${p.name.slice(0,30)}${p.name.length>30?'…':''}</div>`).join('')}${pmProjs.length>5?`<div style="font-size:11px;color:var(--text-light);padding:4px 9px;">… 共${pmProjs.length}件</div>`:''}</div>`;
+  }
+  if(assignedProjs.length){
+    projsHtml+=`<div style="font-size:11px;font-weight:700;color:var(--text-light);margin:10px 0 6px;">配置案件</div>`;
+    projsHtml+=`<div class="modal-proj-list">${assignedProjs.map(pid=>{const p=projects.find(x=>x.id===pid);return`<div class="modal-proj-item" style="border-left-color:#10b981"><span class="modal-proj-id" style="color:#10b981">${pid}</span>${p?p.name.slice(0,28)+'…':''}</div>`;}).join('')}</div>`;
+  }
+  if(!pmProjs.length&&!assignedProjs.length)projsHtml='<span style="font-size:12px;color:var(--text-light)">暫無配置</span>';
+
+  document.getElementById('modalBox').innerHTML=`
+    <div class="modal-hdr" style="background:${bg}">
+      <div class="modal-av" style="background:${color}">${name[0]}</div>
+      <div>
+        <div class="modal-name">${name}</div>
+        <div class="modal-role">${role}${memInfo?` · ${sup}組`:(name===org.vgm.name?'':' · 直屬副總')}</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('personModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-row">
+        <div class="modal-kv"><div class="lbl">年資</div><div class="val">${ci.seniority}</div></div>
+        <div class="modal-kv"><div class="lbl">組別</div><div class="val">${ci.group||'—'}</div></div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-kv" style="flex:1"><div class="lbl">學歷</div><div class="val" style="font-size:11px;">${ci.edu}</div></div>
+      </div>
+      <div class="modal-sect">
+        <div class="modal-sect-title">✦ 持有證照</div>
+        <div>${certsHtml}</div>
+      </div>
+      <div class="modal-sect">
+        <div class="modal-sect-title">📋 案件資訊</div>
+        ${projsHtml}
+      </div>
+    </div>`;
+  document.getElementById('personModal').classList.add('open');
+}
+function closeModal(e){if(e.target===document.getElementById('personModal'))document.getElementById('personModal').classList.remove('open');}
+
+// ─────────────────────────────────────────
+// DRAG
+// ─────────────────────────────────────────
+function onDown(e){if(e.button!==0)return;e.preventDefault();startDrag(e.currentTarget,e.clientX,e.clientY);document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);}
+function onTouch(e){e.preventDefault();const t=e.touches[0];startDrag(e.currentTarget,t.clientX,t.clientY);document.addEventListener('touchmove',onTM,{passive:false});document.addEventListener('touchend',onTE);}
+function startDrag(chip,cx,cy){
+  if(chip.classList.contains('chip-info-btn'))return;
+  const isS=chip.dataset.tp==='status';
+  let sv=chip.dataset.sv||chip.dataset.n;
+  if(sv==='__custom__')sv=document.getElementById('cusInput').value.trim()||'其他';
+  dragSt={n:chip.dataset.n||sv,isS,sv,chip};
+  const r=chip.getBoundingClientRect();gOX=cx-r.left;gOY=cy-r.top;
+  ghost=document.getElementById('dGhost');ghost.innerHTML=chip.outerHTML;
+  ghost.style.cssText=`display:block;left:${cx-gOX}px;top:${cy-gOY}px;width:${r.width}px;`;
+  chip.classList.add('dragging');
+}
+function onMove(e){mvG(e.clientX,e.clientY);hl(e.clientX,e.clientY);}
+function onTM(e){e.preventDefault();const t=e.touches[0];mvG(t.clientX,t.clientY);hl(t.clientX,t.clientY);}
+function mvG(x,y){if(ghost)ghost.style.cssText=`display:block;left:${x-gOX}px;top:${y-gOY}px;`;}
+function hl(x,y){
+  document.querySelectorAll('.pc').forEach(c=>{c.classList.remove('dom','dos');});
+  const el=document.elementFromPoint(x,y);if(!el)return;
+  const c=el.closest('.pc');if(c)c.classList.add(dragSt&&dragSt.isS?'dos':'dom');
+}
+function onUp(e){fin(e.clientX,e.clientY);document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);}
+function onTE(e){const t=e.changedTouches[0];fin(t.clientX,t.clientY);document.removeEventListener('touchmove',onTM);document.removeEventListener('touchend',onTE);}
+function fin(x,y){
+  if(ghost)ghost.style.display='none';
+  document.querySelectorAll('.pc').forEach(c=>{c.classList.remove('dom','dos');});
+  if(dragSt){
+    const el=document.elementFromPoint(x,y);
+    if(el){const c=el.closest('.pc');if(c){if(dragSt.isS)doStatus(dragSt.sv,c.dataset.pid);else doAsgn(dragSt.n,c.dataset.pid);}}
+    dragSt.chip.classList.remove('dragging');dragSt=null;
+  }
+}
+
+// ─────────────────────────────────────────
+// D3 FORCE GRAPH
+// ─────────────────────────────────────────
+let gSim=null,gSvg=null,gZoom=null;
+function toggleFull(){showFull=!showFull;document.getElementById('btnFull').classList.toggle('active',showFull);drawGraph();}
+function gZI(){if(gSvg&&gZoom)gSvg.transition().duration(280).call(gZoom.scaleBy,1.45);}
+function gZO(){if(gSvg&&gZoom)gSvg.transition().duration(280).call(gZoom.scaleBy,0.68);}
+function gRst(){if(gSvg&&gZoom)gSvg.transition().duration(450).call(gZoom.transform,d3.zoomIdentity);}
+let gDB=null;
+function drawGraph(){clearTimeout(gDB);gDB=setTimeout(_dG,70);}
+function _dG(){
+  const box=document.getElementById('graphBox');if(!box||typeof d3==='undefined')return;
+  const W=box.offsetWidth||760,H=box.offsetHeight||320;
+  if(gSim){gSim.stop();gSim=null;}
+  d3.select('#graphBox').selectAll('*').remove();
+
+  const aM=new Set(),aP=new Set();
+  Object.entries(asgn).forEach(([id,ns])=>{ns.forEach(n=>aM.add(n));if(ns.length)aP.add(id);});
+  Object.keys(stAsgn).forEach(id=>aP.add(id));
+
+  const sM=showFull?new Set(org.mems.map(m=>m.name)):aM;
+  const sG=showFull?new Set(org.mgrs.map(m=>m.name)):new Set([...sM].map(n=>{const m=org.mems.find(p=>p.name===n);return m?m.sup:null;}).filter(Boolean));
+  org.mgrs.forEach(m=>{if([...aP].some(id=>projects.find(p=>p.id===id&&p.pm===m.name)))sG.add(m.name);});
+
+  if(!showFull&&sM.size===0&&aP.size===0){
+    const svg=d3.select('#graphBox').append('svg').attr('width',W).attr('height',H);
+    svg.append('text').attr('x',W/2).attr('y',H/2).attr('text-anchor','middle').attr('fill','#4b5563').attr('font-size',12).attr('font-family','Noto Sans TC,sans-serif').text('尚未配置 · 拖曳組員或狀態至案件，或點「全員」檢視組織');
+    return;
+  }
+
+  const nodes=[],links=[];
+  nodes.push({id:org.vgm.name,type:'vgm',r:25});
+  org.mgrs.forEach((m,i)=>{
+    if(!sG.has(m.name))return;
+    nodes.push({id:m.name,type:'mgr',r:19,mi:i});
+    links.push({source:org.vgm.name,target:m.name,lt:'org'});
+  });
+  [...sM].forEach(name=>{
+    const m=org.mems.find(p=>p.name===name);if(!m)return;
+    nodes.push({id:name,type:'mem',r:aM.has(name)?13:8,sup:m.sup});
+    if(sG.has(m.sup))links.push({source:m.sup,target:name,lt:'org'});
+  });
+  [...aP].forEach(id=>{
+    const p=projects.find(x=>x.id===id),st=stAsgn[id];
+    nodes.push({id,type:'proj',r:11,st});
+    (asgn[id]||[]).forEach(n=>{if(sM.has(n))links.push({source:n,target:id,lt:'asgn'});});
+  });
+
+  const gC=['#818cf8','#34d399','#fb923c','#f472b6','#a3e635'];
+  const nCol=d=>{
+    if(d.type==='vgm')return'#22d3ee';
+    if(d.type==='mgr')return gC[d.mi%5];
+    if(d.type==='mem'){const i=org.mgrs.findIndex(m=>m.name===d.sup);return gC[i%5]+(aM.has(d.id)?'':'88');}
+    return'#fbbf24';
+  };
+  const nGl=d=>{if(d.type==='vgm')return'gv';if(d.type==='mgr')return'gm';if(d.type==='proj')return'gp';return'gme';};
+
+  const svg=d3.select('#graphBox').append('svg').attr('width',W).attr('height',H);
+  gSvg=svg;
+
+  const sg=svg.append('g');
+  for(let i=0;i<60;i++){const r=Math.random();sg.append('circle').attr('cx',Math.random()*W).attr('cy',Math.random()*H).attr('r',r<.6?.45:r<.9?1:1.4).attr('fill',`rgba(255,255,255,${.1+Math.random()*.28})`);}
+
+  const defs=svg.append('defs');
+  [['gv',7,3],['gm',5,2],['gme',4,2],['gp',4,2]].forEach(([id,blur,s])=>{
+    const f=defs.append('filter').attr('id',id).attr('x','-60%').attr('y','-60%').attr('width','220%').attr('height','220%');
+    f.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation',blur).attr('result','b');
+    const mg=f.append('feMerge');for(let i=0;i<s;i++)mg.append('feMergeNode').attr('in','b');mg.append('feMergeNode').attr('in','SourceGraphic');
+  });
+
+  const g=svg.append('g');
+  gZoom=d3.zoom().scaleExtent([.12,6]).on('start',()=>svg.classed('panning',true)).on('zoom',e=>g.attr('transform',e.transform)).on('end',()=>svg.classed('panning',false));
+  svg.call(gZoom);
+
+  gSim=d3.forceSimulation(nodes)
+    .force('link',d3.forceLink(links).id(d=>d.id).distance(d=>d.lt==='asgn'?90:d.source.type==='vgm'?115:80).strength(d=>d.lt==='asgn'?.5:.4))
+    .force('charge',d3.forceManyBody().strength(d=>d.type==='vgm'?-650:d.type==='mgr'?-380:d.type==='proj'?-190:-190))
+    .force('center',d3.forceCenter(W/2,H/2))
+    .force('collide',d3.forceCollide().radius(d=>d.r+15).strength(.9))
+    .alphaDecay(.024);
+
+  const lkC=d=>{
+    if(d.lt==='org'&&d.source.type==='vgm')return'rgba(34,211,238,.14)';
+    if(d.lt==='org'){const i=org.mgrs.findIndex(m=>m.name===(d.source.id||d.source));return(gC[i%5]||'#818cf8')+'44';}
+    const n=d.source.id||d.source,m=org.mems.find(p=>p.name===n);const i=m?org.mgrs.findIndex(x=>x.name===m.sup):-1;return(gC[i%5]||'#fbbf24')+'bb';
+  };
+  const lk=g.append('g').selectAll('line').data(links).join('line').attr('stroke',lkC).attr('stroke-width',d=>d.lt==='asgn'?1.8:1).attr('stroke-dasharray',d=>d.lt==='org'?'4 3':'none');
+
+  const nd=g.append('g').selectAll('g').data(nodes).join('g').style('cursor','pointer')
+    .call(d3.drag().on('start',(e,d)=>{if(!e.active)gSim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;}).on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;}).on('end',(e,d)=>{if(!e.active)gSim.alphaTarget(0);d.fx=null;d.fy=null;}));
+
+  nd.append('circle').attr('r',d=>d.r+7).attr('fill','none').attr('stroke',d=>nCol(d)).attr('stroke-width',.7).attr('stroke-opacity',.18);
+  nd.each(function(d){
+    const sel=d3.select(this);
+    if(d.type==='proj'){
+      sel.append('rect').attr('x',-d.r*2.5).attr('y',-d.r*.82).attr('width',d.r*5).attr('height',d.r*1.64).attr('rx',5)
+        .attr('fill','#1c1917').attr('stroke',d.st?'#fb923c':'#fbbf24').attr('stroke-width',d.st?2:1.5).attr('filter','url(#gp)');
+      if(d.st){const sc={'設計中':'#60a5fa','施工中':'#34d399','結案中':'#c084fc'}[d.st]||'#fb923c';sel.append('circle').attr('cx',d.r*2.3).attr('cy',-d.r*.72).attr('r',4).attr('fill',sc).attr('filter','url(#gme)');}
+    }else{
+      sel.append('circle').attr('r',d.r).attr('fill',d.type==='vgm'?'#0c1a2e':d.type==='mgr'?'#0f1629':'#0a1812')
+        .attr('stroke',nCol(d)).attr('stroke-width',d.type==='vgm'?2.5:1.8).attr('filter',`url(#${nGl(d)})`);
+      sel.append('circle').attr('r',d.r*.38).attr('fill',nCol(d)).attr('fill-opacity',.55);
+    }
+  });
+  nd.append('text').attr('text-anchor','middle').attr('dy',d=>d.type==='proj'?'0.35em':d.r+12)
+    .attr('fill',d=>d.type==='proj'?'#fde68a':nCol(d))
+    .attr('font-size',d=>d.type==='vgm'?12:d.type==='mgr'?11:10)
+    .attr('font-weight',d=>(d.type==='vgm'||d.type==='mgr')?700:500)
+    .attr('font-family','Noto Sans TC,sans-serif').attr('pointer-events','none')
+    .text(d=>d.id.length>8?d.id.slice(0,8):d.id);
+  nd.filter(d=>d.type==='vgm').append('text').attr('dy','-.9em').attr('text-anchor','middle').attr('fill','#67e8f9').attr('font-size',8).attr('font-family','Noto Sans TC,sans-serif').attr('pointer-events','none').text('副總');
+  nd.filter(d=>d.type==='mgr').append('text').attr('dy','-.75em').attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size',8).attr('font-family','Noto Sans TC,sans-serif').attr('pointer-events','none').text('副理');
+
+  const tt=d3.select('#graphBox').append('div').style('position','absolute').style('display','none').style('background','#1e293b').style('border','1px solid #334155').style('border-radius','8px').style('padding','6px 10px').style('font-size','11px').style('color','#e2e8f0').style('pointer-events','none').style('font-family','Noto Sans TC,sans-serif').style('z-index','10').style('line-height','1.55').style('max-width','180px');
+  nd.on('mouseenter',(e,d)=>{
+    let h=`<strong>${d.id}</strong>`;
+    if(d.type==='mgr'){const n=projects.filter(p=>p.pm===d.id).length;h+=`<br><span style="color:#94a3b8">副理・${n}件</span>`;}
+    if(d.type==='mem'){const pj=Object.entries(asgn).filter(([,ns])=>ns.includes(d.id)).map(([i])=>i);const ci=certInfo[d.id];h+=`<br><span style="color:#94a3b8">${d.sup}</span>${pj.length?`<br><span style="color:#34d399">${pj.join(' ')}</span>`:''}${ci&&ci.certs.length?`<br><span style="color:#fbbf24">${ci.certs.map(c=>c.n).join(' · ')}</span>`:''}`;}
+    if(d.type==='proj'){const p=projects.find(x=>x.id===d.id),ms=(asgn[d.id]||[]).join(' ');h+=`<br><span style="color:#8b949e;font-size:10px">${p?p.name.slice(0,30)+'…':''}</span>${ms?`<br><span style="color:#34d399">${ms}</span>`:''}${d.st?`<br><span style="color:#fb923c">${d.st}</span>`:''}`;}
+    tt.style('display','block').html(h);
+  }).on('mousemove',e=>{const r=box.getBoundingClientRect();tt.style('left',e.clientX-r.left+12+'px').style('top',e.clientY-r.top-8+'px');}).on('mouseleave',()=>tt.style('display','none'));
+  nd.on('click',(e,d)=>{if(d.type==='mem'||d.type==='mgr'||d.type==='vgm')openModal(d.id);});
+
+  gSim.on('tick',()=>{lk.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);nd.attr('transform',d=>`translate(${d.x},${d.y})`);});
+
+  setTimeout(()=>{
+    const b=g.node().getBBox();if(!b.width)return;
+    const sc=Math.min(.88,Math.min(W/(b.width+50),H/(b.height+50)));
+    svg.transition().duration(650).call(gZoom.transform,d3.zoomIdentity.translate(W/2-sc*(b.x+b.width/2),H/2-sc*(b.y+b.height/2)).scale(sc));
+  },1500);
+}
+
+// ─────────────────────────────────────────
+// PANEL TOGGLE
+// ─────────────────────────────────────────
+function togPanel(titleEl){
+  const body=titleEl.nextElementSibling;
+  const open=body.classList.toggle('open');
+  titleEl.classList.toggle('open',open);
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+renderStats();
+renderProfitChart();
+renderMemberPool();
+bindStatusChips();
+renderCertTable();
+(()=>{const r=localStorage.getItem(LSK);if(r){const d=JSON.parse(r);asgn=d.asgn||{};stAsgn=d.stAsgn||{};dirty=false;updSaveUI();}})();
+renderBoards();
+updSaveUI();
+drawGraph();
+</script>
+</body>
+</html>
