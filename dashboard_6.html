@@ -411,14 +411,15 @@ const projects=[
   {id:"SD035-04",name:"台61線21K-29K伸縮縫擇要改善工程",pm:"張增糴",agency:"交通部公路局北區養護工程分局",status:"",profit:359400}
 ];
 
-const org={
+// org 結構 — 初始值為備用，INIT 時從 personnelData.json 重建
+let org={
   vgm:{name:'張增糴',title:'副總經理'},
   mgrs:[
-    {name:'吳孝智',title:'副理'},
-    {name:'陳囿任',title:'副理*'},
-    {name:'張鎧峻',title:'副理'},
-    {name:'張巍耀',title:'副理'},
-    {name:'宋柏勛',title:'副理'},
+    {name:'吳孝智',title:'副理',group:'孝智組'},
+    {name:'陳囿任',title:'副理*',group:'囿任組'},
+    {name:'張鎧峻',title:'副理',group:'鎧峻組'},
+    {name:'張巍耀',title:'副理',group:'巍耀組'},
+    {name:'宋柏勛',title:'副理',group:'柏勛組'},
   ],
   mems:[
     {name:'康慶龍',sup:'吳孝智'},{name:'翁巧晴',sup:'吳孝智'},{name:'王宥達',sup:'吳孝智'},{name:'林全華',sup:'吳孝智'},{name:'陳建榮',sup:'吳孝智'},{name:'李萬財',sup:'吳孝智'},
@@ -428,6 +429,31 @@ const org={
     {name:'張智淵',sup:'宋柏勛'},{name:'簡宏瑋',sup:'宋柏勛'},{name:'莊盛宇',sup:'宋柏勛'},{name:'林啓聖',sup:'宋柏勛'},{name:'李瑞迪',sup:'宋柏勛'},{name:'周建志',sup:'宋柏勛'},
   ]
 };
+
+// 從 personnelData.json 重建 org（排除北分局；mgrs 順序固定維持色彩一致性）
+const ORG_GROUPS=['孝智組','囿任組','鎧峻組','巍耀組','柏勛組']; // 維持色彩指派順序
+function buildOrgFromJson(data){
+  const vgmEntry=data.find(p=>/副總/.test(p.role)||p.group==='副總經理');
+  const vgm={name:vgmEntry?vgmEntry.name:org.vgm.name,title:'副總經理'};
+  const mgrs=[],groupMgrMap={};
+  ORG_GROUPS.forEach(g=>{
+    const e=data.find(p=>p.group===g&&/副理/.test(p.role));
+    if(e){mgrs.push({name:e.name,title:e.role,group:g});groupMgrMap[g]=e.name;}
+  });
+  const mgrNames=new Set([vgm.name,...mgrs.map(m=>m.name)]);
+  const mems=[];
+  ORG_GROUPS.forEach(g=>{
+    const sup=groupMgrMap[g];if(!sup)return;
+    data.filter(p=>p.group===g&&!mgrNames.has(p.name)).forEach(p=>mems.push({name:p.name,sup}));
+  });
+  return{vgm,mgrs,mems};
+}
+function rebuildColorMaps(){
+  [pC,pB].forEach(m=>Object.keys(m).forEach(k=>delete m[k]));
+  pC[org.vgm.name]='#0f172a';pB[org.vgm.name]='#bae6fd';
+  org.mgrs.forEach((m,i)=>{pC[m.name]=MC[i];pB[m.name]=MB[i];});
+  org.mems.forEach(m=>{pC[m.name]=pC[m.sup]||'#64748b';pB[m.name]=pB[m.sup]||'#f1f5f9';});
+}
 
 // 證照資料 — 從 personnelData.json 動態載入
 let certInfo={};
@@ -467,9 +493,7 @@ let perfData=null,perf115Data=null;
 const MC=['#2563eb','#10b981','#f59e0b','#8b5cf6','#ec4899'];
 const MB=['#dbeafe','#d1fae5','#fef3c7','#ede9fe','#fce7f3'];
 const pC={},pB={};
-pC[org.vgm.name]='#0f172a';pB[org.vgm.name]='#bae6fd';
-org.mgrs.forEach((m,i)=>{pC[m.name]=MC[i];pB[m.name]=MB[i];});
-org.mems.forEach(m=>{pC[m.name]=pC[m.sup]||'#64748b';pB[m.name]=pB[m.sup]||'#f1f5f9';});
+rebuildColorMaps();
 
 function fa(n){if(n>=10000000)return(n/10000000).toFixed(2)+' 千萬';if(n>=10000)return Math.round(n/10000)+' 萬';return Math.round(n).toLocaleString();}
 function certExpClass(exp){
@@ -643,13 +667,15 @@ function certIconsHtml(name){
 // ─────────────────────────────────────────
 // MEMBER POOL
 // ─────────────────────────────────────────
+const POOL_DISPLAY_ORDER=['鎧峻組','囿任組','孝智組','柏勛組','巍耀組'];
 function renderMemberPool(){
   const pool=document.getElementById('memberPool');
   let h='';
   h+=`<div class="mgl" style="color:#0f172a;cursor:default;background:transparent;">副總經理</div>`;
   h+=`<div class="chip-row">${chipSm(org.vgm,'vgm')}</div>`;
-  org.mgrs.forEach((m,i)=>{
-    const c=MC[i],gid='mgrg-'+i;
+  POOL_DISPLAY_ORDER.forEach((gName,idx)=>{
+    const m=org.mgrs.find(x=>x.group===gName);if(!m)return;
+    const c=pC[m.name]||'#64748b',gid='mgrg-'+gName;
     h+=`<div class="mgl open" style="color:${c}" onclick="togMgrGroup('${gid}',this)">
       <span style="width:6px;height:6px;border-radius:50%;background:${c};flex-shrink:0;display:inline-block"></span>
       ${m.name}（${m.title}）
@@ -657,8 +683,8 @@ function renderMemberPool(){
     </div>`;
     h+=`<div class="chip-row-wrap open" id="${gid}"><div>`;
     h+=`<div class="chip-row">`;
-    h+=chipSm(m,'mgr',i);
-    org.mems.filter(x=>x.sup===m.name).forEach(x=>{h+=chipSm(x,'mem',i);});
+    h+=chipSm(m,'mgr');
+    org.mems.filter(x=>x.sup===m.name).forEach(x=>{h+=chipSm(x,'mem');});
     h+=`</div></div></div>`;
   });
   pool.innerHTML=h;
@@ -1005,8 +1031,13 @@ function togPanel(titleEl){
 (async()=>{
   try{
     const [r1,r2,r3]=await Promise.all([fetch('personnelData.json'),fetch('performanceData.json'),fetch('115performanceData.json')]);
-    if(r1.ok){const data=await r1.json();certInfo=buildCertInfoFromJson(data);}
-    else{console.warn('personnelData.json 載入失敗');}
+    if(r1.ok){
+      const data=await r1.json();
+      certInfo=buildCertInfoFromJson(data);
+      const newOrg=buildOrgFromJson(data);
+      org.vgm=newOrg.vgm;org.mgrs=newOrg.mgrs;org.mems=newOrg.mems;
+      rebuildColorMaps();
+    }else{console.warn('personnelData.json 載入失敗');}
     if(r2.ok){perfData=await r2.json();}
     else{console.warn('performanceData.json 載入失敗');}
     if(r3.ok){perf115Data=await r3.json();}
