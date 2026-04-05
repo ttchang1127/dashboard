@@ -52,6 +52,8 @@ body{font-family:'Noto Sans TC',-apple-system,sans-serif;background:var(--bg);co
 .btn-save:hover{background:#1d4ed8;}
 .btn-load{padding:4px 12px;border-radius:6px;font-size:11px;font-family:inherit;background:#f1f5f9;color:#475569;border:1px solid var(--border);cursor:pointer;}
 .btn-load:hover{background:var(--border);}
+.btn-drive{padding:4px 12px;border-radius:6px;font-size:11px;font-family:inherit;font-weight:700;background:#16a34a;color:#fff;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:.15s;}
+.btn-drive:hover{background:#15803d;}
 .sdot{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;}
 .sdot.saved{background:#10b981;}
 .main-wrap{display:grid;grid-template-columns:38fr 32fr 30fr;gap:10px;padding:10px 14px 0;height:calc(100vh - var(--hh));overflow:hidden;}
@@ -291,8 +293,8 @@ body{font-family:'Noto Sans TC',-apple-system,sans-serif;background:var(--bg);co
           <button class="btn-save" onclick="saveData()">存檔</button>
           <button class="btn-load" onclick="importData()">匯入JSON</button>
           <button class="btn-save" onclick="exportData()">匯出JSON</button>
+          <a class="btn-drive" href="https://drive.google.com/drive/folders/1F926CLQT-FHCL4LiTwm5-8GNLjIIYhhb?usp=drive_link" target="_blank" rel="noopener">☁ Google Drive</a>
         </div>
-        <div class="shint" style="margin:0 10px 10px;">💡 若要儲存在 Google Drive，請匯出 JSON 檔案並放入已同步的 Google Drive 資料夾；若要載入，從該資料夾匯入 JSON。</div>
         <div class="status-pool">
           <div class="scd-grid">
             <div class="scd scd-d" data-sv="設計中" data-tp="status">📐 設計中</div>
