@@ -284,12 +284,15 @@ body{font-family:'Noto Sans TC',-apple-system,sans-serif;background:var(--bg);co
         💾 存檔 &amp; 🏷️ 案件狀態 <span class="sub"></span> <span class="ptgl">▾</span>
       </div>
       <div class="panel-body open"><div>
-        <div class="save-bar" style="margin:8px 10px 0;">
+        <div class="save-bar" style="margin:8px 10px 0;flex-wrap:wrap;">
           <span class="sdot" id="sdot"></span>
           <span class="st" id="stxt">尚未存檔</span>
           <button class="btn-load" onclick="loadData()">讀取</button>
           <button class="btn-save" onclick="saveData()">存檔</button>
+          <button class="btn-load" onclick="importData()">匯入JSON</button>
+          <button class="btn-save" onclick="exportData()">匯出JSON</button>
         </div>
+        <div class="shint" style="margin:0 10px 10px;">💡 若要儲存在 Google Drive，請匯出 JSON 檔案並放入已同步的 Google Drive 資料夾；若要載入，從該資料夾匯入 JSON。</div>
         <div class="status-pool">
           <div class="scd-grid">
             <div class="scd scd-d" data-sv="設計中" data-tp="status">📐 設計中</div>
@@ -509,12 +512,43 @@ let asgn={},stAsgn={},dirty=false,showFull=false,bOpen={};
 let dragSt=null,ghost=null,gOX=0,gOY=0;
 const LSK='dash_v4';
 
-function saveData(){localStorage.setItem(LSK,JSON.stringify({asgn,stAsgn,ts:Date.now()}));dirty=false;updSaveUI();}
+function saveData(){
+  const payload={asgn,stAsgn,ts:Date.now()};
+  localStorage.setItem(LSK,JSON.stringify(payload));
+  dirty=false;updSaveUI();
+}
 function loadData(){
   const r=localStorage.getItem(LSK);
-  if(!r){alert('找不到存檔');return;}
+  if(!r){alert('找不到本機存檔');return;}
   const d=JSON.parse(r);asgn=d.asgn||{};stAsgn=d.stAsgn||{};dirty=false;updSaveUI();
-  renderBoards();drawGraph();alert('✅ 已讀取（'+new Date(d.ts).toLocaleString()+'）');
+  renderBoards();drawGraph();alert('✅ 已讀取本機存檔（'+new Date(d.ts).toLocaleString()+'）');
+}
+function exportData(){
+  saveData();
+  const payload={asgn,stAsgn,ts:Date.now()};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+  const name='dashboard_6_backup_'+new Date().toISOString().slice(0,10)+'.json';
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=name;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+function importData(){
+  const input=document.createElement('input');
+  input.type='file';input.accept='.json,application/json';
+  input.addEventListener('change',async()=>{
+    const file=input.files&&input.files[0];
+    if(!file)return;
+    try{
+      const text=await file.text();
+      const d=JSON.parse(text);
+      if(typeof d!=='object'||d===null){throw new Error('格式錯誤');}
+      asgn=d.asgn||{};stAsgn=d.stAsgn||{};dirty=false;
+      localStorage.setItem(LSK,JSON.stringify({asgn,stAsgn,ts:d.ts||Date.now()}));
+      updSaveUI();renderBoards();drawGraph();
+      alert('✅ 已匯入JSON存檔（'+new Date((d.ts||Date.now())).toLocaleString()+'）');
+    }catch(err){alert('匯入失敗：'+err.message);}
+  });
+  input.click();
 }
 function markDirty(){dirty=true;updSaveUI();clearTimeout(window._aST);window._aST=setTimeout(saveData,3000);}
 function updSaveUI(){
