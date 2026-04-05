@@ -430,65 +430,37 @@ const org={
   ]
 };
 
-// 證照資料 (依桃園_新北辦公室儀表板.xlsx更新)
-const certInfo={
-  '張增糴':{group:'副總經理',seniority:'12年11個月',edu:'國立臺灣大學土木工程學系碩士',certs:[{n:'技師',exp:'長期'}]},
-  '吳孝智':{group:'孝智組',seniority:'12年10個月',edu:'國立中央大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'管挖',exp:'長期'}]},
-  '陳囿任':{group:'囿任組',seniority:'7年1個月',edu:'中華大學營建管理研究所碩士',certs:[{n:'品管',exp:'長期'}]},
-  '張鎧峻':{group:'鎧峻組',seniority:'11年9個月',edu:'國立成功大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '張巍耀':{group:'巍耀組',seniority:'11年3個月',edu:'逢甲大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'管挖',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '宋柏勛':{group:'柏勛組',seniority:'7年7個月',edu:'國立中央大學土木工程學系博士',certs:[{n:'品管',exp:'長期'},{n:'無人機',exp:'長期'}]},
-  '王文宏':{group:'—',seniority:'—',edu:'—',certs:[]},
-  '康慶龍':{group:'孝智組',seniority:'11年1個月',edu:'逢甲大學水利工程與資源保育學系學士',certs:[{n:'品管',exp:'長期'},{n:'無人機',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '翁巧晴':{group:'孝智組',seniority:'11年11個月',edu:'蘭陽技術學院土木工程科副學士',certs:[{n:'品管',exp:'長期'}]},
-  '王宥達':{group:'孝智組',seniority:'11年2個月',edu:'交通大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'}]},
-  '林全華':{group:'孝智組',seniority:'5年8個月',edu:'致遠管理學院營建管理學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '陳建榮':{group:'孝智組',seniority:'3年7個月',edu:'國立宜蘭大學土木工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'測量',exp:'長期'},{n:'工地主任',exp:'長期'}]},
-  '張佳文':{group:'孝智組',seniority:'1年7個月',edu:'國立臺北科技大學土木工程學系學士',certs:[{n:'品管',exp:'長期'}]},
-  '李萬財':{group:'孝智組',seniority:'7個月',edu:'國立臺灣科技大學營建所',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '黃阡維':{group:'囿任組',seniority:'9年11個月',edu:'國立嘉義大學土木與水資源工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'管挖',exp:'長期'},{n:'無人機',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '吳尚東':{group:'囿任組',seniority:'7年10個月',edu:'國立臺灣海洋大學河海工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '陳珮婷':{group:'囿任組',seniority:'7年8個月',edu:'國立金門大學都市計畫與景觀學系學士',certs:[{n:'品管',exp:'長期'}]},
-  '呂紹吉':{group:'囿任組',seniority:'6年2個月',edu:'逢甲大學水利工程與資源保育學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '許英麗':{group:'囿任組',seniority:'5年1個月',edu:'中華大學景觀建築學系學士',certs:[{n:'品管',exp:'長期'}]},
-  '蕭輔仁':{group:'囿任組',seniority:'2年7個月',edu:'健行科技大學資訊管理系學士',certs:[{n:'職安',exp:'長期'}]},
-  '林莊健':{group:'囿任組',seniority:'1年6個月',edu:'中國文化大學景觀學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '謝宜庭':{group:'囿任組',seniority:'1年1個月',edu:'國立聯合大學土木與防災工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '高鴻瑜':{group:'囿任組',seniority:'1年',edu:'朝陽科技大學營建工程系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '張友誠':{group:'鎧峻組',seniority:'11年',edu:'國立交通大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'}]},
-  '曾院榮':{group:'鎧峻組',seniority:'9年',edu:'國立交通大學土木工程學系學士',certs:[{n:'技師',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '王宜婷':{group:'鎧峻組',seniority:'7年9個月',edu:'中原大學土木工程學系學士',certs:[{n:'品管',exp:'長期'}]},
-  '詹子瑩':{group:'鎧峻組',seniority:'4年1個月',edu:'逢甲大學水利工程與資源保育學系碩士',certs:[{n:'品管',exp:'長期'},{n:'無人機',exp:'長期'}]},
-  '王子銘':{group:'鎧峻組',seniority:'1年1個月',edu:'Oregon State University 水利工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'無人機',exp:'長期'}]},
-  '陳蒼緯':{group:'鎧峻組',seniority:'9個月',edu:'國立中興大學水土保持學系碩士',certs:[{n:'品管',exp:'長期'},{n:'管挖',exp:'長期'}]},
-  '梅德鍾':{group:'巍耀組',seniority:'9年',edu:'淡江大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'無人機',exp:'長期'}]},
-  '李俊毅':{group:'巍耀組',seniority:'6年10個月',edu:'國立高雄第一科技大學環境與安全衛生工程系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'管挖',exp:'長期'}]},
-  '蕭家璨':{group:'巍耀組',seniority:'5年9個月',edu:'逢甲大學土木工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'無人機',exp:'長期'}]},
-  '吳諾樸':{group:'巍耀組',seniority:'4年1個月',edu:'朝陽科技大學景觀及都市設計系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'管挖',exp:'長期'}]},
-  '陳品圻':{group:'巍耀組',seniority:'3年7個月',edu:'朝陽科技大學景觀及都市設計系學士',certs:[{n:'品管',exp:'長期'},{n:'管挖',exp:'長期'}]},
-  '黃立昕':{group:'巍耀組',seniority:'3年',edu:'中原大學土木工程學系學士',certs:[{n:'技師',exp:'長期'},{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '潘國揚':{group:'巍耀組',seniority:'1年7個月',edu:'陸軍軍官學校理組學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '黃國亮':{group:'巍耀組',seniority:'1年',edu:'中原大學土木工程學系碩士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '蕭凱馨':{group:'巍耀組',seniority:'11個月',edu:'萬能科技大學財務金融系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '張智淵':{group:'柏勛組',seniority:'2年10個月',edu:'國立臺灣科技大學營建工程系碩士',certs:[{n:'技師',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '簡宏瑋':{group:'柏勛組',seniority:'2年8個月',edu:'國立中央大學土木工程學系學士',certs:[{n:'技師',exp:'長期'}]},
-  '莊盛宇':{group:'柏勛組',seniority:'2年6個月',edu:'國立臺灣科技大學營建工程學系碩士',certs:[{n:'技師',exp:'長期'}]},
-  '林啓聖':{group:'柏勛組',seniority:'2年1個月',edu:'德霖技術學院土木工程系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '李瑞迪':{group:'柏勛組',seniority:'1年7個月',edu:'宏國德霖科技大學土木工程系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'},{n:'工地主任',exp:'長期'}]},
-  '許淑靜':{group:'柏勛組',seniority:'1年1個月',edu:'德霖科技大學土木工程學系學士',certs:[{n:'品管',exp:'長期'},{n:'職安',exp:'長期'}]},
-  '周建志':{group:'柏勛組',seniority:'1年1個月',edu:'國立臺灣科技大學營建工程學系學士',certs:[{n:'品管',exp:'長期'}]},
-  '楊萬璽':{group:'駐點',seniority:'9年7個月',edu:'國立臺北科技大學土木工程系學士',certs:[{n:'品管',exp:'長期'}]},
-  '李佳穎':{group:'行政',seniority:'9年',edu:'國立屏東科技大學農企業管理系學士',certs:[{n:'品管',exp:'長期'}]},
-  '石婷瑄':{group:'駐點',seniority:'1年10個月',edu:'萬能科技大學行銷與流通管理系學士',certs:[]},
-  '林致毅':{group:'北分局',seniority:'8年8個月',edu:'中華大學土木工程學系學士',certs:[{n:'品管',exp:'長期'}]},
-  '林偉正':{group:'北分局',seniority:'4年10個月',edu:'萬能科技大學土木工程系學士',certs:[{n:'品管',exp:'長期'}]},
-  '楊元舜':{group:'北分局',seniority:'1年8個月',edu:'中原大學土木工程學系碩士',certs:[]},
-  '江品增':{group:'北分局',seniority:'1年3個月',edu:'國立宜蘭大學土木工程學系學士',certs:[]},
-  '許甘棠':{group:'北分局',seniority:'1年3個月',edu:'高雄市私立國際高級商工職業學校',certs:[]},
-  '沈宏昌':{group:'北分局',seniority:'1年1個月',edu:'國立中興大學土木工程學系學士',certs:[]},
-  '王昱杰':{group:'北分局',seniority:'1年1個月',edu:'逢甲大學營建工程與管理學系學士',certs:[]},
-  '許聖耘':{group:'北分局',seniority:'1年1個月',edu:'朝陽科技大學營建工程系學士',certs:[]},
-};
+// 證照資料 — 從 personnelData.json 動態載入
+let certInfo={};
+function buildCertInfoFromJson(data){
+  const result={};
+  const certMap=[
+    {re:/品管/,n:'品管'},
+    {re:/管挖/,n:'管挖'},
+    {re:/無人機/,n:'無人機'},
+    {re:/技師/,n:'技師'},
+    {re:/工地主任/,n:'工地主任'},
+    {re:/測量/,n:'測量'},
+    {re:/職安|職業安全|安全衛生|安全管理師|安全管理員/,n:'職安'},
+  ];
+  data.forEach(p=>{
+    const seen=new Set();
+    const certs=(p.certificates||[]).reduce((arr,c)=>{
+      const raw=(c.name||'').replace(/^\d+\./,'').trim();
+      const match=certMap.find(m=>m.re.test(raw));
+      const shortName=match?match.n:raw;
+      if(shortName&&!seen.has(shortName)){seen.add(shortName);arr.push({n:shortName,exp:'長期'});}
+      return arr;
+    },[]);
+    result[p.name]={
+      group:p.group||'—',
+      seniority:p.seniority||'—',
+      edu:(p.education||'—').replace(/\n/g,''),
+      certs
+    };
+  });
+  return result;
+}
 
 // 114年度預估獲利 (各組，單位：元)
 const perf114={
@@ -782,7 +754,7 @@ function renderCertTable(){
 // ─────────────────────────────────────────
 function openModal(name){
   const ci=certInfo[name]||{seniority:0,edu:'—',certs:[]};
-  const mgrInfo=org.mgrs.find(m=>m.name===name)||org.vgm.name===name?org.vgm:null;
+  const mgrInfo=org.mgrs.find(m=>m.name===name)||(org.vgm.name===name?org.vgm:null);
   const memInfo=org.mems.find(m=>m.name===name);
   const role=name===org.vgm.name?org.vgm.title:(mgrInfo?mgrInfo.title:(memInfo?'工程師':'—'));
   const sup=memInfo?memInfo.sup:(name===org.vgm.name?'—':'副總');
@@ -818,7 +790,7 @@ function openModal(name){
       <div class="modal-av" style="background:${color}">${name[0]}</div>
       <div>
         <div class="modal-name">${name}</div>
-        <div class="modal-role">${role}${memInfo?` · ${sup}組`:(name===org.vgm.name?'':' · 直屬副總')}</div>
+        <div class="modal-role">${role}${memInfo?` · ${sup}組`:(name===org.vgm.name?'':(mi>=0?` · ${ci.group||'—'}`:' · 直屬副總'))}</div>
       </div>
       <button class="modal-close" onclick="document.getElementById('personModal').classList.remove('open')">✕</button>
     </div>
@@ -1023,15 +995,22 @@ function togPanel(titleEl){
 // ─────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────
-renderStats();
-renderProfitChart();
-renderMemberPool();
-bindStatusChips();
-renderCertTable();
-(()=>{const r=localStorage.getItem(LSK);if(r){const d=JSON.parse(r);asgn=d.asgn||{};stAsgn=d.stAsgn||{};dirty=false;updSaveUI();}})();
-renderBoards();
-updSaveUI();
-drawGraph();
+(async()=>{
+  try{
+    const res=await fetch('personnelData.json');
+    if(res.ok){const data=await res.json();certInfo=buildCertInfoFromJson(data);}
+    else{console.warn('personnelData.json 載入失敗，使用空資料');}
+  }catch(e){console.warn('personnelData.json 載入錯誤:',e);}
+  renderStats();
+  renderProfitChart();
+  renderMemberPool();
+  bindStatusChips();
+  renderCertTable();
+  (()=>{const r=localStorage.getItem(LSK);if(r){const d=JSON.parse(r);asgn=d.asgn||{};stAsgn=d.stAsgn||{};dirty=false;updSaveUI();}})();
+  renderBoards();
+  updSaveUI();
+  drawGraph();
+})();
 </script>
 </body>
 </html>
