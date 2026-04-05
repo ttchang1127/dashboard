@@ -461,8 +461,8 @@ function buildCertInfoFromJson(data){
   return result;
 }
 
-// 年度績效資料 — 從 performanceData.json 動態載入
-let perfData=null;
+// 年度績效資料 — 從 performanceData.json / 115performanceData.json 動態載入
+let perfData=null,perf115Data=null;
 
 const MC=['#2563eb','#10b981','#f59e0b','#8b5cf6','#ec4899'];
 const MB=['#dbeafe','#d1fae5','#fef3c7','#ede9fe','#fce7f3'];
@@ -540,28 +540,12 @@ function renderProfitChart(){
 }
 
 let yearChartInstance=null;
-function compute115(groups){
-  // 115年度各組協助案件為 SC837、SC847；其餘依 PM 計算
-  const pmMap={'孝智組':'吳孝智','囿任組':'陳囿任','鎧峻組':'張鎧峻','巍耀組':'張巍耀','柏勛組':'宋柏勛'};
-  const assistPfx=['SC837','SC847'];
-  return groups.map((g,i)=>{
-    if(i===groups.length-1)
-      return projects.filter(p=>assistPfx.some(pfx=>p.id.startsWith(pfx))).reduce((s,p)=>s+p.profit,0);
-    const pm=pmMap[g];
-    if(!pm)return 0;
-    return projects.filter(p=>p.pm===pm&&!assistPfx.some(pfx=>p.id.startsWith(pfx))).reduce((s,p)=>s+p.profit,0);
-  });
-}
+function parsePerf(row){return row.map(v=>Math.round(Number(String(v).replace(/,/g,''))/10000));}
 function renderYearChart(){
-  if(!perfData){return;}
-  // 原始 JSON：row0=組名, row1=114年度（字串含逗號）
-  const rawGroups=perfData[0];
-  const labels=rawGroups.map(g=>/各組.*協助/.test(g)?'各組其他協助案件':g);
-  const data114=perfData[1].map(v=>Math.round(Number(String(v).replace(/,/g,''))/10000));
-  const raw115=perfData[2]||null;
-  const data115=(raw115
-    ?raw115.map(v=>Math.round(Number(String(v).replace(/,/g,''))/10000))
-    :compute115(rawGroups).map(v=>Math.round(v/10000)));
+  if(!perfData||!perf115Data){return;}
+  const labels=perfData[0].map(g=>/各組.*協助/.test(g)?'各組其他協助案件':g);
+  const data114=parsePerf(perfData[1]);
+  const data115=parsePerf(perf115Data[1]);
   const ctx=document.getElementById('yearCompChart').getContext('2d');
   if(yearChartInstance){yearChartInstance.destroy();}
   yearChartInstance=new Chart(ctx,{
@@ -1020,11 +1004,13 @@ function togPanel(titleEl){
 // ─────────────────────────────────────────
 (async()=>{
   try{
-    const [r1,r2]=await Promise.all([fetch('personnelData.json'),fetch('performanceData.json')]);
+    const [r1,r2,r3]=await Promise.all([fetch('personnelData.json'),fetch('performanceData.json'),fetch('115performanceData.json')]);
     if(r1.ok){const data=await r1.json();certInfo=buildCertInfoFromJson(data);}
     else{console.warn('personnelData.json 載入失敗');}
     if(r2.ok){perfData=await r2.json();}
     else{console.warn('performanceData.json 載入失敗');}
+    if(r3.ok){perf115Data=await r3.json();}
+    else{console.warn('115performanceData.json 載入失敗');}
   }catch(e){console.warn('JSON 載入錯誤:',e);}
   renderStats();
   renderProfitChart();
