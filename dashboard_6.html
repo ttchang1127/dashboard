@@ -461,10 +461,8 @@ function buildCertInfoFromJson(data){
   return result;
 }
 
-// 114年度預估獲利 (各組，單位：元)
-const perf114={
-  '孝智組':9800000,'囿任組':4200000,'鎧峻組':22000000,'巍耀組':5800000,'柏勛組':18000000,'增糴組':13500000
-};
+// 年度績效資料 — 從 performanceData.json 動態載入
+let perfData=null;
 
 const MC=['#2563eb','#10b981','#f59e0b','#8b5cf6','#ec4899'];
 const MB=['#dbeafe','#d1fae5','#fef3c7','#ede9fe','#fce7f3'];
@@ -510,11 +508,6 @@ const pmList=Object.entries(pmMap).map(([pm,ps])=>({pm,ps,t:ps.reduce((s,p)=>s+p
 const totP=pmList.reduce((s,p)=>s+p.t,0);
 let chartOpen=false;
 
-// 計算各組115年合計
-function getGroupTotal115(groupName){
-  const mgrName={'孝智組':'吳孝智','囿任組':'陳囿任','鎧峻組':'張鎧峻','巍耀組':'張巍耀','柏勛組':'宋柏勛','增糴組':'張增糴'}[groupName];
-  return projects.filter(p=>p.pm===mgrName).reduce((s,p)=>s+p.profit,0);
-}
 
 function switchTab(tab,el){
   document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
@@ -547,16 +540,34 @@ function renderProfitChart(){
 }
 
 let yearChartInstance=null;
+function compute115(groups){
+  // 115年度各組協助案件為 SC837、SC847；其餘依 PM 計算
+  const pmMap={'孝智組':'吳孝智','囿任組':'陳囿任','鎧峻組':'張鎧峻','巍耀組':'張巍耀','柏勛組':'宋柏勛'};
+  const assistPfx=['SC837','SC847'];
+  return groups.map((g,i)=>{
+    if(i===groups.length-1)
+      return projects.filter(p=>assistPfx.some(pfx=>p.id.startsWith(pfx))).reduce((s,p)=>s+p.profit,0);
+    const pm=pmMap[g];
+    if(!pm)return 0;
+    return projects.filter(p=>p.pm===pm&&!assistPfx.some(pfx=>p.id.startsWith(pfx))).reduce((s,p)=>s+p.profit,0);
+  });
+}
 function renderYearChart(){
-  const groups=['孝智組','囿任組','鎧峻組','巍耀組','柏勛組','增糴組'];
-  const data114=groups.map(g=>Math.round(perf114[g]/10000));
-  const data115=groups.map(g=>Math.round(getGroupTotal115(g)/10000));
+  if(!perfData){return;}
+  // 原始 JSON：row0=組名, row1=114年度（字串含逗號）
+  const rawGroups=perfData[0];
+  const labels=rawGroups.map(g=>/各組.*協助/.test(g)?'各組其他協助案件':g);
+  const data114=perfData[1].map(v=>Math.round(Number(String(v).replace(/,/g,''))/10000));
+  const raw115=perfData[2]||null;
+  const data115=(raw115
+    ?raw115.map(v=>Math.round(Number(String(v).replace(/,/g,''))/10000))
+    :compute115(rawGroups).map(v=>Math.round(v/10000)));
   const ctx=document.getElementById('yearCompChart').getContext('2d');
   if(yearChartInstance){yearChartInstance.destroy();}
   yearChartInstance=new Chart(ctx,{
     type:'bar',
     data:{
-      labels:groups,
+      labels,
       datasets:[
         {label:'114年度',data:data114,backgroundColor:'rgba(99,179,237,0.80)',borderColor:'rgba(99,179,237,1)',borderWidth:1,borderRadius:4},
         {label:'115年度',data:data115,backgroundColor:'rgba(251,146,60,0.80)',borderColor:'rgba(251,146,60,1)',borderWidth:1,borderRadius:4}
@@ -1009,10 +1020,12 @@ function togPanel(titleEl){
 // ─────────────────────────────────────────
 (async()=>{
   try{
-    const res=await fetch('personnelData.json');
-    if(res.ok){const data=await res.json();certInfo=buildCertInfoFromJson(data);}
-    else{console.warn('personnelData.json 載入失敗，使用空資料');}
-  }catch(e){console.warn('personnelData.json 載入錯誤:',e);}
+    const [r1,r2]=await Promise.all([fetch('personnelData.json'),fetch('performanceData.json')]);
+    if(r1.ok){const data=await r1.json();certInfo=buildCertInfoFromJson(data);}
+    else{console.warn('personnelData.json 載入失敗');}
+    if(r2.ok){perfData=await r2.json();}
+    else{console.warn('performanceData.json 載入失敗');}
+  }catch(e){console.warn('JSON 載入錯誤:',e);}
   renderStats();
   renderProfitChart();
   renderMemberPool();
