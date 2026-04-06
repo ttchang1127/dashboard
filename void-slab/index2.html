@@ -1249,18 +1249,137 @@
     </div>
     <script type="module" src="js/main.js"></script>
 
+    <!-- 計算書資訊輸入 Modal -->
+    <div id="pdf-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
+            <h2 class="text-xl font-bold text-slate-800 mb-6">計算書資訊</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">案件名稱</label>
+                    <input id="input-project-name" type="text" placeholder="請輸入案件名稱"
+                        class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">公司名稱</label>
+                    <input id="input-company-name" type="text" placeholder="請輸入公司名稱"
+                        class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">姓名</label>
+                    <input id="input-user-name" type="text" placeholder="請輸入姓名"
+                        class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+            <div class="mt-8 flex justify-end gap-3">
+                <button onclick="closeModal()"
+                    class="px-5 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                    取消
+                </button>
+                <button onclick="confirmExport()"
+                    class="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors">
+                    確認產出
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // 開啟 Modal
         function exportToPDF() {
-            // 1. 記錄目前顯示的分頁
-            const allPanels = document.querySelectorAll('#tab-content > .tab-panel');
+            const modal = document.getElementById('pdf-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // 關閉 Modal
+        function closeModal() {
+            const modal = document.getElementById('pdf-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // 點擊 Modal 背景關閉
+        document.getElementById('pdf-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // 確認後執行列印
+        function confirmExport() {
+            const projectName = document.getElementById('input-project-name').value.trim() || '案件名稱';
+            const companyName = document.getElementById('input-company-name').value.trim() || '公司名稱';
+            const userName    = document.getElementById('input-user-name').value.trim()    || '姓名';
+
+            closeModal();
+            injectPageStyle(projectName, companyName, userName);
+            doPrint();
+        }
+
+        // 動態注入 @page 頁首頁尾 CSS
+        function injectPageStyle(projectName, companyName, userName) {
+            // 跳脫字元，避免破壞 CSS content 字串
+            function esc(str) {
+                return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            }
+
+            let el = document.getElementById('dynamic-print-style');
+            if (!el) {
+                el = document.createElement('style');
+                el.id = 'dynamic-print-style';
+                document.head.appendChild(el);
+            }
+
+            el.textContent = `
+                @page {
+                    margin: 2.8cm 1.5cm 2cm 1.5cm;
+
+                    @top-left {
+                        content: "${esc(projectName)}";
+                        font-family: 'Noto Sans TC', 'Inter', sans-serif;
+                        font-size: 9pt;
+                        vertical-align: middle;
+                        text-align: left;
+                        color: #334155;
+                    }
+                    @top-center {
+                        content: "預力混凝土中空版橋梁設計";
+                        font-family: 'Noto Sans TC', 'Inter', sans-serif;
+                        font-size: 10pt;
+                        font-weight: bold;
+                        vertical-align: middle;
+                        text-align: center;
+                        color: #1e293b;
+                    }
+                    @top-right {
+                        content: "${esc(companyName)}" "\\A" "${esc(userName)}";
+                        white-space: pre;
+                        font-family: 'Noto Sans TC', 'Inter', sans-serif;
+                        font-size: 9pt;
+                        vertical-align: middle;
+                        text-align: right;
+                        color: #334155;
+                    }
+                    @bottom-right {
+                        content: "P." counter(page) " of P." counter(pages);
+                        font-family: 'Noto Sans TC', 'Inter', sans-serif;
+                        font-size: 9pt;
+                        vertical-align: middle;
+                        text-align: right;
+                        color: #64748b;
+                    }
+                }
+            `;
+        }
+
+        // 展開所有分頁並列印
+        function doPrint() {
+            const allPanels    = document.querySelectorAll('#tab-content > .tab-panel');
             const allSubPanels = document.querySelectorAll('.sub-tab-panel');
-            const allDetails = document.querySelectorAll('details');
+            const allDetails   = document.querySelectorAll('details');
 
-            const hiddenPanels = [];
+            const hiddenPanels    = [];
             const hiddenSubPanels = [];
-            const closedDetails = [];
+            const closedDetails   = [];
 
-            // 2. 顯示所有 tab-panel
             allPanels.forEach(panel => {
                 if (panel.classList.contains('hidden')) {
                     hiddenPanels.push(panel);
@@ -1268,7 +1387,6 @@
                 }
             });
 
-            // 3. 顯示所有 sub-tab-panel
             allSubPanels.forEach(panel => {
                 if (panel.classList.contains('hidden')) {
                     hiddenSubPanels.push(panel);
@@ -1276,7 +1394,6 @@
                 }
             });
 
-            // 4. 展開所有 details
             allDetails.forEach(detail => {
                 if (!detail.open) {
                     closedDetails.push(detail);
@@ -1284,15 +1401,15 @@
                 }
             });
 
-            // 5. 等待 Plotly 圖表重新渲染後列印
+            // 等待 Plotly 圖表重新渲染後列印
             setTimeout(() => {
                 window.print();
 
-                // 6. 列印後還原狀態
+                // 列印後還原狀態
                 setTimeout(() => {
-                    hiddenPanels.forEach(panel => panel.classList.add('hidden'));
+                    hiddenPanels.forEach(panel    => panel.classList.add('hidden'));
                     hiddenSubPanels.forEach(panel => panel.classList.add('hidden'));
-                    closedDetails.forEach(detail => { detail.open = false; });
+                    closedDetails.forEach(detail  => { detail.open = false; });
                 }, 500);
             }, 400);
         }
