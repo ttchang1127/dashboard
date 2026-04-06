@@ -81,6 +81,39 @@
             .grid {
                 display: grid !important;
             }
+
+            /* ── 表格列印樣式 ── */
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 9pt !important;
+                page-break-inside: auto;
+            }
+            thead {
+                display: table-header-group;
+            }
+            thead tr th {
+                background-color: #334155 !important;
+                color: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-weight: bold !important;
+                text-align: center !important;
+                padding: 6px 8px !important;
+                border: 1px solid #1e293b !important;
+                font-size: 9pt !important;
+            }
+            tbody tr td {
+                padding: 5px 8px !important;
+                border: 1px solid #cbd5e1 !important;
+                font-size: 9pt !important;
+                vertical-align: middle !important;
+            }
+            tbody tr:nth-child(even) {
+                background-color: #f8fafc !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
         }
     </style>
 
@@ -1340,6 +1373,8 @@
                         vertical-align: middle;
                         text-align: left;
                         color: #334155;
+                        border-bottom: 1.5pt solid #334155;
+                        padding-bottom: 4pt;
                     }
                     @top-center {
                         content: "預力混凝土中空版橋梁設計";
@@ -1349,6 +1384,8 @@
                         vertical-align: middle;
                         text-align: center;
                         color: #1e293b;
+                        border-bottom: 1.5pt solid #334155;
+                        padding-bottom: 4pt;
                     }
                     @top-right {
                         content: "${esc(companyName)}" "\\A" "${esc(userName)}";
@@ -1359,6 +1396,18 @@
                         vertical-align: middle;
                         text-align: right;
                         color: #334155;
+                        border-bottom: 1.5pt solid #334155;
+                        padding-bottom: 4pt;
+                    }
+                    @bottom-left {
+                        content: "";
+                        border-top: 1pt solid #94a3b8;
+                        padding-top: 4pt;
+                    }
+                    @bottom-center {
+                        content: "";
+                        border-top: 1pt solid #94a3b8;
+                        padding-top: 4pt;
                     }
                     @bottom-right {
                         content: "P." counter(page) " of P." counter(pages);
@@ -1367,7 +1416,9 @@
                         font-weight: bold;
                         vertical-align: middle;
                         text-align: right;
-                        color: #64748b;
+                        color: #334155;
+                        border-top: 1pt solid #94a3b8;
+                        padding-top: 4pt;
                     }
                 }
             `;
