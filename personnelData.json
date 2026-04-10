@@ -170,19 +170,6 @@
     "seniority": "11年1個月"
   },
   {
-    "name": "林致毅",
-    "group": "北分局",
-    "role": "",
-    "education": "中華大學 \n土木工程學系\n 學士",
-    "certificates": [
-      {
-        "name": "1.品管",
-        "number": ""
-      }
-    ],
-    "seniority": "8年8個月"
-  },
-  {
     "name": "黃阡維",
     "group": "囿任組",
     "role": "組員",
@@ -219,23 +206,6 @@
       }
     ],
     "seniority": "9年8個月"
-  },
-  {
-    "name": "曾院榮",
-    "group": "鎧峻組",
-    "role": "組員",
-    "education": "國立交通大學 \n土木工程學系\n 學士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      },
-      {
-        "name": "2.職安(營造業甲種職業安全衛生業務主管)",
-        "number": ""
-      }
-    ],
-    "seniority": "9年0個月"
   },
   {
     "name": "李佳穎",
@@ -572,19 +542,6 @@
       }
     ],
     "seniority": "2年7個月"
-  },
-  {
-    "name": "莊盛宇",
-    "group": "柏勛組",
-    "role": "組員",
-    "education": "國立臺灣科技大學 \n營建工程學系 \n碩士",
-    "certificates": [
-      {
-        "name": "1.土木技師",
-        "number": ""
-      }
-    ],
-    "seniority": "2年6個月"
   },
   {
     "name": "石婷瑄",
