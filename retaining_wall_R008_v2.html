@@ -1,0 +1,3291 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>公路總局 R-008 擋土牆設計工具 v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f1f5f9; --surface:#ffffff; --surface2:#f8fafc;
+  --border:#e2e8f0; --border2:#cbd5e1;
+  --text:#1e293b; --text2:#475569; --text3:#94a3b8;
+  --accent:#1e6b4a; --accent-light:#ecfdf5;
+  --blue:#1e40af; --blue-light:#eff6ff;
+  --red:#dc2626; --warn:#d97706;
+  --mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.05);
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --radius:10px; --radius-sm:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden}
+
+/* ── 側欄 ── */
+#sidebar{width:200px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.04)}
+#sidebar-header{padding:16px 14px 12px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#ecfdf5 0%,#f0fdf4 100%)}
+#sidebar-header h1{font-size:12px;font-weight:700;line-height:1.6;color:var(--accent)}
+#sidebar-header p{font-size:10px;color:var(--text3);margin-top:2px}
+#nav{padding:6px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:9px;padding:10px 14px;cursor:pointer;font-size:12.5px;color:var(--text2);transition:all .18s;border-left:3px solid transparent;border-radius:0}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-num{width:22px;height:22px;border-radius:50%;background:var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;transition:all .18s}
+.nav-item.active .nav-num{background:var(--accent);color:#fff;box-shadow:0 2px 6px rgba(30,107,74,0.35)}
+.sidebar-footer{padding:10px 14px;border-top:1px solid var(--border)}
+.sidebar-footer p{font-size:10px;color:var(--text3);line-height:1.7}
+
+/* ── 主區 ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 22px;height:48px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:var(--shadow-sm)}
+#topbar h2{font-size:14px;font-weight:600;color:var(--text)}
+.badge{background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:600;padding:3px 12px;border-radius:20px;border:1px solid #bbf7d0;letter-spacing:.02em}
+
+/* ── 分頁 ── */
+.page{display:none;flex:1;overflow-y:auto;padding:18px 20px;gap:16px}
+.page.active{display:flex}
+.left-col{width:310px;flex-shrink:0;display:flex;flex-direction:column;gap:12px}
+.right-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+
+/* ── 卡片 ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow)}
+.card-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;border-radius:var(--radius) var(--radius) 0 0;background:linear-gradient(to bottom,#fff,var(--surface2))}
+.card-header h3{font-size:12.5px;font-weight:600;color:var(--text)}
+.card-header .sub{font-size:10.5px;color:var(--text3)}
+.card-body{padding:13px}
+
+/* ── 輸入列 ── */
+.input-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.input-row:last-child{border-bottom:none}
+.input-label{flex:1;font-size:12px;color:var(--text2)}
+.input-ctrl{display:flex;align-items:center;gap:3px}
+.input-ctrl input[type=number]{width:72px;height:28px;border:1px solid var(--border2);border-radius:var(--radius-sm);text-align:center;font-size:12.5px;font-family:var(--mono);background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s,background .15s}
+.input-ctrl input[type=number]:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(30,107,74,0.08)}
+.input-ctrl input[type=number][readonly]{background:var(--blue-light);color:var(--blue);cursor:default}
+.input-ctrl select{height:28px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;padding:0 4px;background:var(--surface2);color:var(--text);outline:none}
+.btn-step{width:24px;height:24px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all .12s;user-select:none}
+.btn-step:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.input-unit{font-size:10.5px;color:var(--text3);margin-left:3px;width:22px}
+
+/* ── H 選擇器 ── */
+.h-selector{display:flex;flex-wrap:wrap;gap:5px}
+.h-chip{padding:3px 11px;border-radius:20px;border:1px solid var(--border2);font-size:11.5px;cursor:pointer;background:var(--surface);color:var(--text2);transition:all .15s;font-family:var(--mono);box-shadow:var(--shadow-sm)}
+.h-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.h-chip.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 6px rgba(30,107,74,0.3)}
+
+/* ── 鋼筋表格 ── */
+.rebar-table{width:100%;border-collapse:collapse;font-size:11.5px}
+.rebar-table th{background:var(--surface2);padding:5px;text-align:center;border:1px solid var(--border);font-weight:600;font-size:10.5px;color:var(--text2)}
+.rebar-table td{padding:4px;text-align:center;border:1px solid var(--border)}
+.rebar-table tr:nth-child(even) td{background:#f8fafc}
+.rebar-table .tag{font-weight:700;color:var(--accent);font-size:13px}
+.rebar-table input[type=number]{width:58px;height:24px;border:1px solid var(--border2);border-radius:4px;text-align:center;font-size:11.5px;font-family:var(--mono);background:var(--surface2);outline:none}
+.rebar-table input[type=number]:focus{border-color:var(--accent);background:#fff}
+.rebar-table select{height:24px;border:1px solid var(--border2);border-radius:4px;font-size:11px;padding:0 2px;background:var(--surface2);outline:none;width:60px}
+
+/* ── Canvas ── */
+#canvas-wrap1,#canvas-wrap2{background:var(--surface2);border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border)}
+#canvas-wrap3{background:#0f172a;border-radius:var(--radius-sm);overflow:hidden}
+canvas{display:block;width:100%}
+
+/* ── DXF 預覽 ── */
+.dxf-pre{font-family:var(--mono);font-size:10px;background:#0f172a;color:#86efac;border-radius:var(--radius-sm);padding:10px;height:140px;overflow-y:auto;line-height:1.5;white-space:pre}
+
+/* ── 按鈕 ── */
+.btn-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.btn{padding:6px 14px;border-radius:var(--radius-sm);font-size:12px;border:1px solid var(--border2);background:var(--surface);cursor:pointer;color:var(--text);font-family:'Noto Sans TC',sans-serif;transition:all .15s;box-shadow:var(--shadow-sm)}
+.btn:hover{background:var(--surface2);border-color:var(--text3)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 6px rgba(30,107,74,0.25)}
+.btn-primary:hover{background:#166534;box-shadow:0 3px 10px rgba(30,107,74,0.35)}
+.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 6px rgba(30,64,175,0.2)}
+.btn-blue:hover{background:#1e3a8a}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+/* ── 圖例 ── */
+.legend{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:8px;padding:6px 4px 2px}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ── 備註 ── */
+.note{font-size:11px;color:var(--text3);line-height:1.9}
+.note li{margin-left:14px;padding:1px 0}
+
+/* ── 分隔 ── */
+.section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:8px}
+
+/* ── 參考圖欄 ── */
+#ref-col,#ref-col2{display:flex;flex-direction:column;gap:8px}
+#ref-img-wrap,#ref-img-wrap2{flex:1;min-height:0;overflow:hidden;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);position:relative;cursor:grab;user-select:none}
+#ref-img-wrap:active,#ref-img-wrap2:active{cursor:grabbing}
+/* 以自然尺寸渲染，避免預先縮圖模糊；transform 負責 fit/zoom */
+#ref-img,#ref-img2{display:block;max-width:none;width:auto;height:auto;position:absolute;transform-origin:0 0;will-change:transform;image-rendering:auto}
+
+@media(max-width:860px){
+  #sidebar{display:none}
+  .left-col{width:100%}
+  .page{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div id="err-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#c0392b;color:#fff;padding:8px 14px;font-size:13px;z-index:9999;font-family:monospace"></div>
+
+<!-- ═══ 側欄 ═══ -->
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>懸臂式擋土牆</h1>
+    <p>依交通部公路總局標準圖R-008</p>
+  </div>
+  <nav id="nav">
+    <div class="nav-item active" onclick="setTab(1,this)">
+      <span class="nav-num">1</span>擋土牆外觀尺寸
+    </div>
+    <div class="nav-item" onclick="setTab(2,this)">
+      <span class="nav-num">2</span>擋土牆鋼筋配置
+    </div>
+    <div class="nav-item" onclick="setTab(3,this)">
+      <span class="nav-num">3</span>3D 模型
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <p>圖號 R-008 | 單位：cm<br>座標原點：趾部左下角</p>
+  </div>
+</div>
+
+<!-- ═══ 主區 ═══ -->
+<div id="main">
+  <div id="topbar">
+    <h2 id="topbar-title">1. 擋土牆外觀尺寸</h2>
+    <span class="badge" id="topbar-badge">H = 6.85 m</span>
+  </div>
+
+  <!-- ── 分頁 1：外觀尺寸 ── -->
+  <div class="page active" id="page1">
+    <div class="left-col">
+
+      <!-- 標準表帶入 -->
+      <div class="card">
+        <div class="card-header"><h3>從標準表帶入</h3><span class="sub">選擇後自動填入尺寸與鋼筋</span></div>
+        <div class="card-body">
+          <div class="h-selector" id="h-chips"></div>
+        </div>
+      </div>
+
+      <!-- 外觀尺寸輸入 -->
+      <div class="card">
+        <div class="card-header"><h3>外觀尺寸輸入</h3><span class="sub">可手動修改</span></div>
+        <div class="card-body" id="dim-inputs"></div>
+      </div>
+
+      <!-- 止滑榫 -->
+      <div class="card">
+        <div class="card-header"><h3>止滑榫</h3><span class="sub">防滑鍵設定</span></div>
+        <div class="card-body">
+          <div class="input-row" style="border-bottom:1px solid var(--border)">
+            <div class="input-label">啟用止滑榫</div>
+            <div class="input-ctrl" style="gap:6px">
+              <input type="checkbox" id="key-on" checked style="width:16px;height:16px;cursor:pointer"
+                     onchange="ST.keyOn=this.checked;document.getElementById('key-dims').style.display=this.checked?'':'none';updateAll()">
+              <label for="key-on" style="font-size:12px;cursor:pointer;color:var(--text2)">啟用（坡度 1:3）</label>
+            </div>
+          </div>
+          <div id="key-dims">
+            <div class="input-row">
+              <div class="input-label">Q — 距踵部</div>
+              <div class="input-ctrl">
+                <button class="btn-step" onclick="adjKey('KEY_Q',-5)">−</button>
+                <input type="number" id="dim-KEY_Q" value="30" min="5" step="5"
+                       onchange="ST.KEY_Q=Math.max(5,+this.value);updateAll()">
+                <button class="btn-step" onclick="adjKey('KEY_Q',5)">＋</button>
+                <span class="input-unit">cm</span>
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="input-label">P — 底部寬</div>
+              <div class="input-ctrl">
+                <button class="btn-step" onclick="adjKey('KEY_P',-5)">−</button>
+                <input type="number" id="dim-KEY_P" value="30" min="10" step="5"
+                       onchange="ST.KEY_P=Math.max(10,+this.value);updateAll()">
+                <button class="btn-step" onclick="adjKey('KEY_P',5)">＋</button>
+                <span class="input-unit">cm</span>
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="input-label">R — 深度</div>
+              <div class="input-ctrl">
+                <button class="btn-step" onclick="adjKey('KEY_R',-5)">−</button>
+                <input type="number" id="dim-KEY_R" value="30" min="10" step="5"
+                       onchange="ST.KEY_R=Math.max(10,+this.value);updateAll()">
+                <button class="btn-step" onclick="adjKey('KEY_R',5)">＋</button>
+                <span class="input-unit">cm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="right-col">
+      <div style="display:flex;gap:12px;align-items:stretch;flex:1;min-height:0">
+
+        <!-- ── 左欄：斷面圖 + DXF ── -->
+        <div style="flex:2;min-width:0;display:flex;flex-direction:column;gap:12px">
+
+          <!-- 斷面預覽 -->
+          <div class="card">
+            <div class="card-header">
+              <h3>外觀斷面圖（比例）</h3>
+              <div style="display:flex;align-items:center;gap:5px">
+                <button class="btn btn-sm" onclick="adjZoom1(-0.15)" title="縮小">－</button>
+                <button class="btn btn-sm" id="zoom1-lbl" onclick="resetView1()" title="重置視角" style="min-width:46px;font-family:var(--mono);font-size:11px">100%</button>
+                <button class="btn btn-sm" onclick="adjZoom1(0.15)" title="放大">＋</button>
+              </div>
+            </div>
+            <div class="card-body" style="padding:10px">
+              <div id="canvas-wrap1"><canvas id="c1" height="420"></canvas></div>
+            </div>
+          </div>
+
+          <!-- DXF 輸出 -->
+          <div class="card">
+            <div class="card-header"><h3>DXF 輸出 — 外觀尺寸（輪廓線）</h3></div>
+            <div class="card-body">
+              <div class="dxf-pre" id="dxf1-pre"></div>
+              <div class="btn-row">
+                <button class="btn btn-primary" onclick="downloadFile(ST.dxf1,'outline_'+hLabel()+'.dxf')">⬇ 外觀.dxf</button>
+                <button class="btn btn-sm"      onclick="copyText(ST.dxf1)">複製 DXF</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /左欄 -->
+
+        <!-- ── 右欄：參考圖（底部與左欄對齊）── -->
+        <div id="ref-col" style="flex:3;min-width:0;min-height:0">
+          <!-- 下拉選單 + 超連結 -->
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <select id="ref-img-sel" onchange="switchRefImg(this.value)"
+                    style="flex:1;height:30px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;padding:0 8px;background:var(--surface);color:var(--text);outline:none;cursor:pointer;box-shadow:var(--shadow-sm)">
+              <option value="std">懸臂擋土牆標準斷面</option>
+              <option value="tbl">表一 擋土牆各部位尺寸</option>
+            </select>
+            <a id="ref-img-ext" href="https://ttchang1127.github.io/dashboard/images/%E6%87%B8%E8%87%82%E6%93%8B%E5%9C%9F%E7%89%86%E6%A8%99%E6%BA%96%E6%96%B7%E9%9D%A2.png" target="_blank"
+               class="btn btn-sm" style="text-decoration:none;color:var(--blue);white-space:nowrap">🔗 開大圖</a>
+          </div>
+          <!-- 圖片顯示（flex:1 撐滿剩餘高度）-->
+          <div id="ref-img-wrap">
+            <img id="ref-img"
+                 src="https://ttchang1127.github.io/dashboard/images/%E6%87%B8%E8%87%82%E6%93%8B%E5%9C%9F%E7%89%86%E6%A8%99%E6%BA%96%E6%96%B7%E9%9D%A2.png"
+                 alt="參考圖" draggable="false">
+          </div>
+          <!-- 設計備註 -->
+          <div class="card" style="flex-shrink:0">
+            <div class="card-header"><h3>設計備註</h3></div>
+            <div class="card-body">
+              <ol class="note">
+                <li>尺寸除另有注明外，均以 cm 為單位。</li>
+                <li>單位重 r = 1.5 T/m³。</li>
+                <li>混凝土 f'c = 210 kgf/cm²。</li>
+                <li>直施工接縫每 9m 一處；伸縮縫 27m 一處。</li>
+                <li>泄水孔平均每 4m² 一處，山側每 2m² 一處。</li>
+                <li>DXF 座標單位：cm，Y 軸向上，原點為趾部左下角。</li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /右欄 -->
+
+      </div>
+    </div>
+  </div><!-- /page1 -->
+
+  <!-- ── 分頁 2：鋼筋配置 ── -->
+  <div class="page" id="page2">
+    <div class="left-col" style="width:380px">
+
+      <!-- 尺寸唯讀顯示 -->
+      <div class="card">
+        <div class="card-header"><h3>外觀尺寸（來自分頁 1）</h3><span class="sub">唯讀</span></div>
+        <div class="card-body" id="dim-ro"></div>
+      </div>
+
+      <!-- 保護層 -->
+      <div class="card">
+        <div class="card-header"><h3>保護層設定</h3></div>
+        <div class="card-body">
+          <div class="input-row">
+            <div class="input-label">牆身保護層 covW</div>
+            <div class="input-ctrl">
+              <button class="btn-step" onclick="adjCov('covW',-0.5)">−</button>
+              <input type="number" id="covW-inp" value="5.0" min="1" max="20" step="0.5"
+                     onchange="ST.covW=+this.value;redraw2()">
+              <button class="btn-step" onclick="adjCov('covW',0.5)">＋</button>
+              <span class="input-unit">cm</span>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-label">基礎保護層 covF</div>
+            <div class="input-ctrl">
+              <button class="btn-step" onclick="adjCov('covF',-0.5)">−</button>
+              <input type="number" id="covF-inp" value="7.5" min="1" max="20" step="0.5"
+                     onchange="ST.covF=+this.value;redraw2()">
+              <button class="btn-step" onclick="adjCov('covF',0.5)">＋</button>
+              <span class="input-unit">cm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 鋼筋輸入表 -->
+      <div class="card">
+        <div class="card-header"><h3>鋼筋配置輸入</h3><span class="sub">號數 / 間距 輸入 ── a / b / c 依斷面圖計算</span></div>
+        <div class="card-body" style="padding:8px;overflow-x:auto">
+          <table class="rebar-table" id="rebar-tbl"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div style="display:flex;gap:12px;align-items:stretch;flex:1;min-height:0">
+
+        <!-- ── 左欄：斷面圖 + DXF ── -->
+        <div style="flex:2;min-width:0;display:flex;flex-direction:column;gap:12px">
+
+          <!-- 鋼筋斷面預覽 -->
+          <div class="card">
+            <div class="card-header">
+              <h3>鋼筋配置斷面圖（比例）</h3>
+              <div style="display:flex;align-items:center;gap:5px">
+                <button class="btn btn-sm" onclick="adjZoom2(-0.15)" title="縮小">－</button>
+                <button class="btn btn-sm" id="zoom2-lbl" onclick="resetView2()" title="重置視角" style="min-width:46px;font-family:var(--mono);font-size:11px">100%</button>
+                <button class="btn btn-sm" onclick="adjZoom2(0.15)" title="放大">＋</button>
+              </div>
+            </div>
+            <div class="card-body" style="padding:10px">
+              <div id="canvas-wrap2"><canvas id="c2" height="420"></canvas></div>
+              <div class="legend" id="rebar-legend"></div>
+            </div>
+          </div>
+
+          <!-- DXF 輸出 -->
+          <div class="card">
+            <div class="card-header"><h3>DXF 輸出 — 輪廓線 ＋ 鋼筋配置</h3></div>
+            <div class="card-body">
+              <div class="dxf-pre" id="dxf2-pre"></div>
+              <div class="btn-row">
+                <button class="btn btn-primary" onclick="downloadFile(ST.dxf2,'rebar_'+hLabel()+'.dxf')">⬇ 鋼筋.dxf</button>
+                <button class="btn btn-sm"      onclick="copyText(ST.dxf2)">複製 DXF</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /左欄 -->
+
+        <!-- ── 右欄：鋼筋參考圖（底部與左欄對齊）── -->
+        <div id="ref-col2" style="flex:3;min-width:0;min-height:0">
+          <!-- 下拉選單 + 超連結 -->
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <select id="ref-img-sel2" onchange="switchRefImg2(this.value)"
+                    style="flex:1;height:30px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;padding:0 8px;background:var(--surface);color:var(--text);outline:none;cursor:pointer;box-shadow:var(--shadow-sm)">
+              <option value="bar">鋼筋形狀及編號</option>
+              <option value="tbl2">表二 鋼筋標準圖</option>
+            </select>
+            <a id="ref-img-ext2" href="https://ttchang1127.github.io/dashboard/images/%E9%8B%BC%E7%AD%8B%E5%BD%A2%E7%8B%80%E5%8F%8A%E7%B7%A8%E8%99%9F.png" target="_blank"
+               class="btn btn-sm" style="text-decoration:none;color:var(--blue);white-space:nowrap">🔗 開大圖</a>
+          </div>
+          <!-- 圖片顯示 -->
+          <div id="ref-img-wrap2">
+            <img id="ref-img2"
+                 src="https://ttchang1127.github.io/dashboard/images/%E9%8B%BC%E7%AD%8B%E5%BD%A2%E7%8B%80%E5%8F%8A%E7%B7%A8%E8%99%9F.png"
+                 alt="鋼筋形狀參考圖" draggable="false">
+          </div>
+        </div><!-- /右欄 -->
+
+      </div>
+    </div>
+  </div><!-- /page2 -->
+
+  <!-- ── 分頁 3：3D 模型 ── -->
+  <div class="page" id="page3">
+    <div class="left-col">
+
+      <!-- 段落長度設定 -->
+      <div class="card">
+        <div class="card-header"><h3>3D 模型設定</h3><span class="sub">Y 軸＝沿牆方向</span></div>
+        <div class="card-body">
+          <div class="input-row">
+            <div class="input-label">段落長度 L</div>
+            <div class="input-ctrl">
+              <button class="btn-step" onclick="adjSL(-10)">−</button>
+              <input type="number" id="sl-inp" value="100" min="30" max="500" step="10"
+                     onchange="ST.sectionLen=Math.max(30,+this.value);redraw3D()">
+              <button class="btn-step" onclick="adjSL(10)">＋</button>
+              <span class="input-unit">cm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 斷面尺寸唯讀 -->
+      <div class="card">
+        <div class="card-header"><h3>斷面尺寸（來自分頁 1）</h3><span class="sub">唯讀</span></div>
+        <div class="card-body" id="dim-ro3"></div>
+      </div>
+
+      <!-- 鋼筋圖例 -->
+      <div class="card">
+        <div class="card-header"><h3>鋼筋配置（來自分頁 2）</h3></div>
+        <div class="card-body">
+          <div class="legend" id="rebar-legend3"></div>
+        </div>
+      </div>
+
+      <!-- 備註 -->
+      <div class="card">
+        <div class="card-header"><h3>DXF 座標說明</h3></div>
+        <div class="card-body">
+          <ol class="note">
+            <li>X＝牆寬方向（趾部左下角為原點）</li>
+            <li>Y＝沿牆長度方向（0→L）</li>
+            <li>Z＝高度方向（地面→牆頂）</li>
+            <li>DXF 含完整 3D LINE 實體，可在 AutoCAD 中旋轉</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <!-- 3D 預覽 + 材料數量表 並排 1:1 -->
+      <div style="display:flex;gap:12px;min-width:0;align-items:flex-start">
+
+        <!-- 3D 預覽 -->
+        <div class="card" style="flex:1;min-width:0">
+          <div class="card-header" style="flex-wrap:wrap;gap:6px">
+            <h3 style="flex:1;min-width:140px">3D 模型預覽　<span style="font-size:10px;color:var(--text3);font-weight:400">左鍵旋轉・中鍵平移・滾輪縮放</span></h3>
+            <div style="display:flex;gap:5px;flex-wrap:wrap">
+              <button class="btn btn-sm" id="v-xy"  onclick="setView3D('xy')" title="X-Y 正面（Z方向看）">X-Y</button>
+              <button class="btn btn-sm" id="v-yz"  onclick="setView3D('yz')" title="Y-Z 側面（X方向看）">Y-Z</button>
+              <button class="btn btn-sm" id="v-xz"  onclick="setView3D('xz')" title="X-Z 俯視（Y方向看）">X-Z</button>
+              <button class="btn btn-sm btn-primary" id="v-iso" onclick="setView3D('iso')" title="等角 3D 視圖">X-Y-Z</button>
+              <button class="btn btn-sm" onclick="setView3D('reset')" title="重置縮放與角度">↺ 重置</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding:10px">
+            <div id="canvas-wrap3"><canvas id="c3" height="500"></canvas></div>
+          </div>
+        </div>
+
+        <!-- 材料數量表 -->
+        <div class="card" style="flex:1;min-width:0">
+          <div class="card-header">
+            <h3>材料數量表</h3>
+            <span class="sub" id="qty-subtitle"></span>
+          </div>
+          <div class="card-body" id="qty-table-body" style="padding:10px"></div>
+        </div>
+
+      </div><!-- /並排 -->
+
+      <!-- DXF 輸出 -->
+      <div class="card">
+        <div class="card-header"><h3>DXF 輸出 — 3D 模型（輪廓＋鋼筋）</h3></div>
+        <div class="card-body">
+          <div class="dxf-pre" id="dxf3-pre"></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="downloadFile(ST.dxf3,'3d_'+hLabel()+'.dxf')">⬇ 3D.dxf</button>
+            <button class="btn btn-sm"      onclick="copyText(ST.dxf3)">複製 DXF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page3 -->
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// 資料庫
+// ═══════════════════════════════════════════════════════════════
+// 表一：[H_cm, J_cm, -, T, TOE(E), HEEL(G), E_found(L), -, 60, WBOT(F), RP, Q]
+// 依標準圖：H=J+L, T=E+F+G, WTOP固定60cm, 止滑榫R=P=RP
+const TABLE1 = [
+  [ 470,  400, 0, 300,  60, 175,  70, 0, 60,  65,  40, 120],
+  [ 525,  450, 0, 325,  65, 190,  75, 0, 60,  70,  40, 150],
+  [ 585,  500, 0, 350,  65, 210,  85, 0, 60,  75,  40, 150],
+  [ 645,  550, 0, 400,  75, 240,  95, 0, 60,  85,  50, 200],
+  [ 705,  600, 0, 450,  75, 285, 105, 0, 60,  90,  50, 200],
+  [ 760,  650, 0, 500,  85, 315, 110, 0, 60, 100,  60, 250],
+  [ 815,  700, 0, 550,  85, 360, 115, 0, 60, 105,  60, 250],
+  [ 870,  750, 0, 600,  95, 390, 120, 0, 60, 115,  60, 350],
+  [ 925,  800, 0, 650,  95, 435, 125, 0, 60, 120,  60, 350],
+  [ 995,  850, 0, 750, 105, 515, 145, 0, 60, 130,  70, 350],
+  [1050,  900, 0, 800, 105, 560, 150, 0, 60, 135,  70, 350],
+];
+// 表二：[No, 號數, 間距, a, b, c, 每支長]
+const TABLE2 = {
+  470: [[1,19,15,285,55, 0,385],[2,13,30,285,55, 0,385],[3,16,30,285,92,25,297],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,19,30,455,26,0,481],[7,19,30,263,26,0,289],[8,13,30,455,18,0,473],[9,13,30,100,0,0,100]],
+  525: [[1,19,15,310,55, 0,430],[2,16,30,310,55, 0,430],[3,16,30,310,97,25,297],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,19,30,510,26,0,536],[7,19,30,319,26,0,319],[8,13,30,510,18,0,528],[9,13,30,100,0,0,100]],
+  585: [[1,22,15,310,60, 0,430],[2,16,30,310,60, 0,430],[3,16,30,310,97,25,319],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,22,30,570,30,0,600],[7,22,30,328,30,0,358],[8,13,30,570,18,0,586],[9,13,30,100,0,0,100]],
+  645: [[1,25,15,310,60, 0,430],[2,19,30,310,60, 0,430],[3,19,30,310,97,25,319],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,22,30,570,30,0,600],[7,22,30,363,30,0,393],[8,16,30,570,18,0,588],[9,13,30,100,0,0,100]],
+  705: [[1,25,15,310,60, 0,430],[2,19,30,310,60, 0,430],[3,19,30,310,97,25,319],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,22,30,570,30,0,600],[7,22,30,328,30,0,358],[8,16,30,570,18,0,588],[9,13,30,100,0,0,100]],
+  760: [[1,22,15,385,80, 0,535],[2,19,30,385,80, 0,535],[3,22,30,385,105,45,467],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,25,30,745,35,0,780],[7,25,30,458,35,0,463],[8,16,30,745,22,0,767],[9,13,30,100,0,0,100]],
+  815: [[1,25,15,535,105,0,735],[2,19,30,535,105,0,735],[3,22,30,535,105,45,617],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,25,30,800,35,0,835],[7,25,30,488,35,0,523],[8,16,30,800,22,0,822],[9,13,30,100,0,0,100]],
+  870: [[1,29,15,585,105,0,795],[2,22,30,585,105,0,795],[3,22,30,585,110,45,677],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,25,30,855,35,0,890],[7,25,30,523,35,0,558],[8,16,30,855,22,0,877],[9,13,30,100,0,0,100]],
+  925: [[1,29,15,635,110,0,855],[2,22,30,635,110,0,855],[3,22,30,635,116,45,727],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,29,30,910,41,0,951],[7,29,30,559,41,0,604],[8,19,30,910,26,0,936],[9,13,30,100,0,0,100]],
+  995: [[1,32,15,735,130,0,995],[2,22,30,735,130,0,995],[3,25,30,735,130,55,807],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,29,30,980,41,0,1021],[7,29,30,604,41,0,639],[8,19,30,980,26,0,1006],[9,13,30,100,0,0,100]],
+  1050:[[1,25,15,735,135,0,1005,2],[2,22,30,735,135,0,1005],[3,25,30,735,135,55,807],[4,13,30,100,0,0,100],[5,13,30,0,0,0,0],[6,32,30,1035,46,0,1081],[7,32,30,593,46,0,639],[8,19,30,1035,26,0,1061],[9,13,30,100,0,0,100]],
+};
+const TAGS   = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];
+const SIZES  = [13,16,19,22,25,29,32];
+// 鋼筋顏色（Canvas 顯示）
+const BAR_COLORS = ['#c0392b','#e07b00','#8b2d8b','#1a4f8a','#0a7a6a','#8b1a1a','#b8680a','#555','#777'];
+// DXF 顏色索引
+const BAR_DXF_COLOR = [1,30,6,5,4,2,3,8,9];
+// DXF 層名（ASCII 相容）
+const BAR_LAYER = ['REBAR-01','REBAR-02','REBAR-03','REBAR-04','REBAR-05','REBAR-06','REBAR-07','REBAR-08','REBAR-09'];
+
+// ═══════════════════════════════════════════════════════════════
+// 全域狀態
+// ═══════════════════════════════════════════════════════════════
+const ST = {
+  J:600, E:105, TOE:75, HEEL:285, WBOT:90, WTOP:60,
+  zoom1:1.0,
+  covW:5.0, covF:7.5,
+  bars:[
+    {sz:19,sp:15,a:310,b:60,c:0},
+    {sz:16,sp:30,a:310,b:60,c:0},
+    {sz:16,sp:30,a:138,b:38,c:25},
+    {sz:13,sp:30,a:100,b:0, c:0},
+    {sz:13,sp:30,a:0,  b:0, c:0},
+    {sz:22,sp:30,a:570,b:30,c:0},
+    {sz:22,sp:30,a:328,b:30,c:0},
+    {sz:13,sp:30,a:570,b:18,c:0},
+    {sz:13,sp:30,a:100,b:0, c:0},
+  ],
+  sectionLen: 100,
+  keyOn: true, KEY_Q: 200, KEY_P: 50, KEY_R: 50,
+  pan1: {x:0, y:0},
+  zoom2:1.0, pan2: {x:0, y:0},
+  barVis:[true,true,true,true,true,true,true,true,true],
+  dxf1:'', dxf2:'', lsp1:'', lsp2:'',
+  dxf3:'', lsp3:'',
+  curH: 705,
+};
+
+// ═══════════════════════════════════════════════════════════════
+// 工具
+// ═══════════════════════════════════════════════════════════════
+const f2 = v => v.toFixed(2);
+const f4 = v => v.toFixed(4);
+function hLabel(){ return 'H'+(totalH()/100).toFixed(2)+'m'; }
+function totalH(){ return ST.J + ST.E; }
+function totalW(){ return ST.TOE + ST.WBOT + ST.HEEL; }
+
+// ═══════════════════════════════════════════════════════════════
+// 分頁切換
+// ═══════════════════════════════════════════════════════════════
+function setTab(n, el){
+  document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===n-1));
+  document.querySelectorAll('.nav-item').forEach((x,i)=>x.classList.toggle('active',i===n-1));
+  const titles=['1. 擋土牆外觀尺寸','2. 擋土牆鋼筋配置','3. 3D 模型'];
+  document.getElementById('topbar-title').textContent = titles[n-1]||titles[0];
+  if(n===2){ syncDimReadonly(); redraw2(); updateZoom2Lbl(); requestAnimationFrame(()=>{ syncRefHeight2(); RC2.init(); fitRefView2(); }); }
+  else if(n===3){ redraw3D(); }
+  else { redraw1(); drawRef(); requestAnimationFrame(()=>{ syncRefHeight(); initRefImgEvents(); fitRefView(); }); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 從標準表帶入
+// ═══════════════════════════════════════════════════════════════
+function initChips(){
+  const wrap = document.getElementById('h-chips');
+  TABLE1.forEach(row=>{
+    const c=document.createElement('div');
+    c.className='h-chip'+(row[0]===ST.curH?' active':'');
+    c.textContent=(row[0]/100).toFixed(2)+'m';
+    c.dataset.h=row[0];
+    c.onclick=()=>fillFromTable(row[0]);
+    wrap.appendChild(c);
+  });
+}
+function fillFromTable(H){
+  ST.curH=H;
+  document.querySelectorAll('.h-chip').forEach(c=>c.classList.toggle('active',+c.dataset.h===H));
+  const row=TABLE1.find(r=>r[0]===H);
+  const [,J,,, TOE,HEEL,E,,,WBOT,RP,Q]=row;
+  ST.J=J; ST.E=E; ST.TOE=TOE; ST.HEEL=HEEL; ST.WBOT=WBOT; ST.WTOP=60;
+  if(RP){ ST.KEY_P=RP; ST.KEY_R=RP;
+    ['KEY_P','KEY_R'].forEach(k=>{ const el=document.getElementById('dim-'+k); if(el) el.value=RP; }); }
+  if(Q){ ST.KEY_Q=Q;
+    const el=document.getElementById('dim-KEY_Q'); if(el) el.value=Q; }
+  const b2=TABLE2[H];
+  b2.forEach((b,i)=>{ ST.bars[i]={sz:b[1],sp:b[2],a:b[3],b:b[4],c:b[5],n:b[7]||1}; });
+  renderDimInputs();
+  renderRebarTable();
+  updateAll();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 尺寸輸入 UI
+// ═══════════════════════════════════════════════════════════════
+const DIM_DEFS = [
+  {k:'J',   label:'牆身高度 J',   step:5,  min:100},
+  {k:'E',   label:'底板厚度 E',   step:5,  min:30},
+  {k:'TOE', label:'趾部寬 E',     step:5,  min:10},
+  {k:'HEEL',label:'踵部寬 G',     step:5,  min:10},
+  {k:'WBOT',label:'牆底厚 F',     step:5,  min:10},
+];
+function renderDimInputs(){
+  const body=document.getElementById('dim-inputs');
+  body.innerHTML='';
+  DIM_DEFS.forEach(({k,label,step,min})=>{
+    const row=document.createElement('div');
+    row.className='input-row';
+    row.innerHTML=`<div class="input-label">${label}</div>
+      <div class="input-ctrl">
+        <button class="btn-step" onclick="adjDim('${k}',${-step})">−</button>
+        <input type="number" id="dim-${k}" value="${ST[k]}" min="${min}" step="${step}"
+          onchange="ST['${k}']=Math.max(${min},+this.value);updateAll()">
+        <button class="btn-step" onclick="adjDim('${k}',${step})">＋</button>
+        <span class="input-unit">cm</span>
+      </div>`;
+    body.appendChild(row);
+  });
+}
+function adjDim(k,d){
+  const inp=document.getElementById('dim-'+k);
+  const def=DIM_DEFS.find(x=>x.k===k);
+  ST[k]=Math.max(def.min, ST[k]+d);
+  inp.value=ST[k];
+  updateAll();
+}
+function adjCov(k,d){
+  ST[k]=Math.max(1, Math.round((ST[k]+d)*10)/10);
+  document.getElementById(k+'-inp').value=ST[k];
+  redraw2();
+}
+function syncDimReadonly(){
+  const body=document.getElementById('dim-ro');
+  body.innerHTML='';
+  const info=[
+    ['H (J+E)', totalH()],['J',ST.J],['E (底板厚)',ST.E],
+    ['E (趾部寬)',ST.TOE],['G (踵部寬)',ST.HEEL],['F (牆底厚)',ST.WBOT],['牆頂厚 (固定)',ST.WTOP],
+    ['T (底板總寬)',totalW()],
+  ];
+  info.forEach(([l,v])=>{
+    const row=document.createElement('div');
+    row.className='input-row';
+    row.innerHTML=`<div class="input-label">${l}</div>
+      <div class="input-ctrl">
+        <input type="number" value="${v}" readonly style="width:74px;height:24px">
+        <span class="input-unit">cm</span>
+      </div>`;
+    body.appendChild(row);
+  });
+  document.getElementById('topbar-badge').textContent='H = '+(totalH()/100).toFixed(2)+' m';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 各鋼筋 a/b/c 幾何計算（唯讀顯示用）
+// ═══════════════════════════════════════════════════════════════
+function computeBarDims(i){
+  const {E,covF,KEY_Q,KEY_P,KEY_R,bars}=ST;
+  const b=bars[i]; const TW=totalW();
+  const D_cm=b.sz/10, cov=covF+D_cm/2;
+  const r=v=>Math.round(v);
+
+  if(i===0){
+    // ① ㄇ型：a=橫桿寬, b=腳長
+    return {a:r(TW-2*cov), b:r(E-2*cov), c:'—'};
+  }
+  if(i===1){
+    // ② ㄩ型：a=橫桿寬, b=腳長
+    return {a:r(TW-2*cov), b:r(E-2*cov), c:'—'};
+  }
+  if(i===2){
+    // ③ 剪力榫：a=斜腳長（沿斜面）, b=底橫桿, c=水平鉤
+    if(!ST.keyOn) return {a:'—',b:'—',c:'—'};
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const off=cov*(Math.sqrt(10)-1)/3;
+    const dy=(E-cov)+(KEY_R-cov);       // 總垂直高差
+    return {a:r(dy*Math.sqrt(10)/3), b:r(KEY_P-2*off), c:b.c||0};
+  }
+  if(i===3){
+    // ④ Z方向橫向筋：a=單根長度（TABLE2）
+    return {a:b.a||100, b:'—', c:'—'};
+  }
+  if(i===4){
+    // ⑤ 止滑榫內側縱向筋：a/b/c 依坡面幾何決定，顯示 —
+    return {a:'—',b:'—',c:'—'};
+  }
+  if(i===7){
+    // ⑧ 牆前主筋：a 由幾何計算（牆頂至底板底部垂直長）
+    const {J,E,TOE,covW}=ST;
+    const g8=bar8Geom(bars,J,E,TOE,covW,covF);
+    if(!g8) return {a:'—',b:b.b||0,c:'—'};
+    return {a:Math.round(g8.yTop-g8.yBot), b:b.b||0, c:'—'};
+  }
+  if(i===5){
+    // ⑥ 牆背主筋：a 由幾何計算（背面斜率全長）
+    const {J,E,TOE,WBOT,WTOP,covW}=ST;
+    const g6=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+    if(!g6) return {a:'—',b:b.b||0,c:'—'};
+    const dx=g6.xBot-g6.xTop, dy=g6.yBot-g6.yTop;
+    return {a:Math.round(Math.sqrt(dx*dx+dy*dy)), b:b.b||0, c:'—'};
+  }
+  if(i===6){
+    // ⑦ 牆背短筋：a 由幾何計算（牆身一半至底板底部）
+    const {J,E,TOE,WBOT,WTOP,covW}=ST;
+    const g7=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+    if(!g7) return {a:'—',b:b.b||0,c:'—'};
+    const dx=g7.xBot-g7.xTop, dy=g7.yBot-g7.yTop;
+    return {a:Math.round(Math.sqrt(dx*dx+dy*dy)), b:b.b||0, c:'—'};
+  }
+  if(i===8){
+    // ⑨ 牆身水平分布筋：a 固定 100，b/c 不適用
+    return {a:100, b:'—', c:'—'};
+  }
+  return {a:b.a||0, b:b.b||0, c:b.c||0};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 鋼筋配置輸入 UI
+// ═══════════════════════════════════════════════════════════════
+function renderRebarTable(){
+  const tbl=document.getElementById('rebar-tbl');
+  tbl.innerHTML=`<tr>
+    <th>鋼筋</th><th>號數<br><span style="font-weight:400;font-size:9.5px;color:var(--text3)">依表二</span></th><th>間距<br>(cm)</th>
+    <th>a (cm)</th><th>b (cm)</th><th>c (cm)</th>
+  </tr>`;
+  ST.bars.forEach((bar,i)=>{
+    const tr=document.createElement('tr');
+    const d=computeBarDims(i);
+    const dimCell=v=>`<td style="color:var(--text2);font-size:11px;font-family:var(--mono)">${v}</td>`;
+    tr.innerHTML=`
+      <td class="tag">${TAGS[i]}</td>
+      <td style="font-weight:600;font-family:var(--mono);font-size:12px">${(bar.n||1)>1?(bar.n)+'-':''}D${bar.sz}</td>
+      <td><input type="number" value="${bar.sp}" min="5" step="5"
+           onchange="ST.bars[${i}].sp=+this.value;redraw2()"></td>
+      ${dimCell(d.a)}${dimCell(d.b)}${dimCell(d.c)}`;
+    tbl.appendChild(tr);
+  });
+  // 勾選圖例（控制各鋼筋顯示/隱藏）
+  const leg=document.getElementById('rebar-legend');
+  if(leg){
+    leg.innerHTML='';
+
+    // ── 全選 / 全不勾選 控制項 ──
+    const allWrap=document.createElement('label');
+    allWrap.style.cssText='display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;padding:2px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);font-size:11px;color:var(--text2);transition:background .15s;margin-right:6px';
+    allWrap.onmouseenter=()=>allWrap.style.background='rgba(0,0,0,0.06)';
+    allWrap.onmouseleave=()=>allWrap.style.background='var(--surface2)';
+    const allChk=document.createElement('input');
+    allChk.type='checkbox';
+    allChk.style.cssText='width:14px;height:14px;cursor:pointer';
+    // 設定初始狀態
+    const nChecked=ST.barVis.filter(Boolean).length;
+    allChk.checked   = nChecked===ST.barVis.length;
+    allChk.indeterminate = nChecked>0 && nChecked<ST.barVis.length;
+    const allTxt=document.createElement('span');
+    allTxt.textContent='全不勾選';
+    allChk.onchange=()=>{
+      const v=allChk.checked;
+      allTxt.textContent=v?'全勾選':'全不勾選';
+      ST.barVis.fill(v);
+      // 同步所有個別 checkbox
+      leg.querySelectorAll('input[data-bar]').forEach(c=>{ c.checked=v; });
+      allChk.indeterminate=false;
+      redraw2();
+    };
+    allWrap.appendChild(allChk); allWrap.appendChild(allTxt);
+    leg.appendChild(allWrap);
+
+    // ── 個別鋼筋 ──
+    const updateAll=()=>{
+      const n=ST.barVis.filter(Boolean).length;
+      allChk.checked      = n===ST.barVis.length;
+      allChk.indeterminate= n>0 && n<ST.barVis.length;
+      allTxt.textContent  = n===ST.barVis.length?'全勾選':'全不勾選';
+    };
+    TAGS.forEach((tag,i)=>{
+      const item=document.createElement('label');
+      item.className='legend-item';
+      item.style.cssText='display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;padding:2px 4px;border-radius:4px;transition:background .15s';
+      item.onmouseenter=()=>item.style.background='rgba(0,0,0,0.05)';
+      item.onmouseleave=()=>item.style.background='';
+      const chk=document.createElement('input');
+      chk.type='checkbox'; chk.checked=ST.barVis[i];
+      chk.dataset.bar=i;
+      chk.style.cssText='accent-color:'+BAR_COLORS[i]+';width:14px;height:14px;cursor:pointer';
+      chk.onchange=()=>{ ST.barVis[i]=chk.checked; updateAll(); redraw2(); };
+      const dot=document.createElement('span');
+      dot.style.cssText=`display:inline-block;width:10px;height:10px;border-radius:50%;background:${BAR_COLORS[i]};flex-shrink:0`;
+      const txt=document.createElement('span');
+      txt.style.cssText='font-size:11px;color:var(--text)';
+      const nb_2=ST.bars[i].n||1; const nbp_2=nb_2>1?(nb_2+'-'):'';
+      txt.textContent=`${tag} ${nbp_2}D${ST.bars[i].sz}@${ST.bars[i].sp}`;
+      item.appendChild(chk); item.appendChild(dot); item.appendChild(txt);
+      leg.appendChild(item);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 全部更新
+// ═══════════════════════════════════════════════════════════════
+function updateAll(){
+  document.getElementById('topbar-badge').textContent='H = '+(totalH()/100).toFixed(2)+' m';
+  redraw1();
+  drawRef();
+  requestAnimationFrame(()=>{ syncRefHeight(); syncRefHeight2(); });
+  // 如果分頁2 active 也重繪
+  if(document.getElementById('page2').classList.contains('active')){
+    syncDimReadonly();
+    redraw2();
+  }
+  if(document.getElementById('page3').classList.contains('active')){
+    redraw3D();
+  }
+  ST.dxf1=genDXF1();
+  ST.lsp1=genLSP1();
+  document.getElementById('dxf1-pre').textContent=ST.dxf1.split('\n').slice(0,60).join('\n')+'...';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 幾何輔助
+// ═══════════════════════════════════════════════════════════════
+function getOutlinePts(){
+  const {J,E,TOE,HEEL,WBOT,WTOP}=ST;
+  // Y-up, origin 底板左下角
+  return [
+    [TOE,        J+E],
+    [TOE+WTOP,   J+E],
+    [TOE+WBOT,   E],
+    [TOE+WBOT+HEEL, E],
+    [TOE+WBOT+HEEL, 0],
+    [0,          0],
+    [0,          E],
+    [TOE,        E],
+    [TOE,        J+E],  // 閉合
+  ];
+}
+// 牆背面在高度 y 的 x 座標
+function backFaceX(y){
+  const {J,E,TOE,WBOT,WTOP}=ST;
+  const t=(y-E)/J;  // 0=底,1=頂
+  return TOE + WBOT - (WBOT-WTOP)*t;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Canvas 工具 (Y-up -> canvas Y-down)
+// ═══════════════════════════════════════════════════════════════
+function makeScale(canvas, zoom, pan){
+  zoom=zoom||1.0;
+  pan=pan||{x:0,y:0};
+  const W=canvas.offsetWidth||canvas.parentElement.clientWidth||500;
+  canvas.width=W;
+  const cH=canvas.height;
+  const padL=70,padR=55,padT=35,padB=55;
+  const mW=totalW(),mH=totalH();
+  const sc0=Math.min((W-padL-padR)/mW,(cH-padT-padB)/mH);
+  const sc=sc0*zoom;
+  const areaW=W-padL-padR, areaH=cH-padT-padB;
+  const ox0=padL+(areaW-mW*sc)/2;
+  const oy0=padT+areaH-(areaH-mH*sc)/2;
+  const ox=ox0+pan.x, oy_base=oy0+pan.y;
+  const px=x=>ox+x*sc;
+  const py=y=>oy_base-y*sc;
+  return {px,py,sc,padL,padR,padT,padB,ox,oy:padT,W,cH};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 繪製 Tab1：輪廓圖
+// ═══════════════════════════════════════════════════════════════
+function redraw1(){
+  const canvas=document.getElementById('c1');
+  if(!canvas.offsetWidth&&!canvas.parentElement.clientWidth) return;
+  init1Events(canvas);
+  const {px,py,sc,cH,W}=makeScale(canvas, ST.zoom1, ST.pan1);
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,cH);
+  const {J,E,TOE,HEEL,WBOT,WTOP}=ST;
+  const TW=totalW(), TH=totalH();
+
+  // 回填土
+  ctx.fillStyle='rgba(26,79,138,0.07)';
+  ctx.fillRect(px(TOE+WBOT),py(J+E),HEEL*sc,J*sc);
+
+  // 牆體填充
+  ctx.fillStyle='rgba(200,195,180,0.4)';
+  const pts=getOutlinePts();
+  ctx.beginPath();
+  pts.forEach(([x,y],i)=>i===0?ctx.moveTo(px(x),py(y)):ctx.lineTo(px(x),py(y)));
+  ctx.closePath();
+  ctx.fill();
+
+  // 輪廓線
+  ctx.strokeStyle='#1e6b4a';
+  ctx.lineWidth=1.8;
+  ctx.beginPath();
+  pts.forEach(([x,y],i)=>i===0?ctx.moveTo(px(x),py(y)):ctx.lineTo(px(x),py(y)));
+  ctx.stroke();
+
+  // 止滑榫
+  if(ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const slope=KEY_R/3;
+    const kRightBot=TW-KEY_Q,   kLeftBot=kRightBot-KEY_P;
+    const kRightTop=kRightBot+slope, kLeftTop=kLeftBot-slope;
+    ctx.fillStyle='#fff';
+    ctx.beginPath();
+    ctx.moveTo(px(kLeftTop),py(0));
+    ctx.lineTo(px(kRightTop),py(0));
+    ctx.lineTo(px(kRightBot),py(-KEY_R));
+    ctx.lineTo(px(kLeftBot),py(-KEY_R));
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle='#1e6b4a'; ctx.lineWidth=1.8;
+    ctx.stroke();
+  }
+
+  // ── 尺寸標註 ──
+  ctx.font='10.5px "Noto Sans TC",sans-serif';
+  ctx.fillStyle='#1a1917';
+
+  // H 總高 (左側)
+  annotV(ctx,px(-45),py(TH),py(0),'H='+TH+'cm','#5c5a54');
+  // J 牆身 (右側)
+  annotV(ctx,px(TW+30),py(J+E),py(E),'J='+J+'cm','#1a4f8a');
+  // E 底版厚 (右側)
+  annotV(ctx,px(TW+30),py(E),py(0),'E='+E+'cm','#b8680a');
+  // T 底版總寬 (下方)
+  annotH(ctx,px(0),px(TW),py(-40),'T='+TW+'cm','#1a4f8a');
+  // E 趾部
+  annotH(ctx,px(0),px(TOE),py(-22),'E='+TOE+'cm','#9b9890');
+  // G 踵部
+  annotH(ctx,px(TOE+WBOT),px(TW),py(-22),'G='+HEEL+'cm','#9b9890');
+  // F 牆底厚
+  annotH(ctx,px(TOE),px(TOE+WBOT),py(E+2),'F='+WBOT+'cm','#1e6b4a');
+  // 牆頂厚
+  annotH(ctx,px(TOE),px(TOE+WTOP),py(J+E+14),WTOP+'cm','#1e6b4a');
+}
+
+function updateZoom1Lbl(){
+  const el=document.getElementById('zoom1-lbl');
+  if(el) el.textContent=Math.round(ST.zoom1*100)+'%';
+}
+function adjZoom1(delta){
+  ST.zoom1=Math.max(0.3,Math.min(5,Math.round((ST.zoom1+delta)*100)/100));
+  updateZoom1Lbl(); redraw1();
+}
+function resetView1(){ ST.zoom1=1; ST.pan1={x:0,y:0}; updateZoom1Lbl(); redraw1(); }
+
+function updateZoom2Lbl(){
+  const el=document.getElementById('zoom2-lbl');
+  if(el) el.textContent=Math.round(ST.zoom2*100)+'%';
+}
+function adjZoom2(delta){
+  ST.zoom2=Math.max(0.3,Math.min(5,Math.round((ST.zoom2+delta)*100)/100));
+  updateZoom2Lbl(); redraw2();
+}
+function resetView2(){ ST.zoom2=1; ST.pan2={x:0,y:0}; updateZoom2Lbl(); redraw2(); }
+
+// ── 通用 Canvas 互動：拖曳平移 + 滾輪縮放（供 c1 / c2 共用）──
+function initCanvasEvents(canvas, getZoom, setZoom, getPan, redrawFn, zoomLblFn){
+  if(canvas._evOk) return; canvas._evOk=true;
+  canvas.style.cursor='grab';
+  let _drag=false, _mx=0, _my=0;
+  canvas.addEventListener('mousedown',e=>{
+    _drag=true; _mx=e.clientX; _my=e.clientY;
+    canvas.style.cursor='grabbing'; e.preventDefault();
+  });
+  canvas.addEventListener('mousemove',e=>{
+    if(!_drag) return;
+    const p=getPan(); p.x+=e.clientX-_mx; p.y+=e.clientY-_my;
+    _mx=e.clientX; _my=e.clientY; redrawFn();
+  });
+  const stop=()=>{ _drag=false; canvas.style.cursor='grab'; };
+  canvas.addEventListener('mouseup',stop);
+  canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const rect=canvas.getBoundingClientRect();
+    const dpr=canvas.width/rect.width;
+    const cx=(e.clientX-rect.left)*dpr, cy=(e.clientY-rect.top)*dpr;
+    const f=e.deltaY<0?1.12:1/1.12, oz=getZoom();
+    const nz=Math.max(0.3,Math.min(8,oz*f));
+    setZoom(nz); const r=nz/oz;
+    const p=getPan(); p.x=cx-r*(cx-p.x); p.y=cy-r*(cy-p.y);
+    zoomLblFn(); redrawFn();
+  },{passive:false});
+  let _tt=[];
+  canvas.addEventListener('touchstart',e=>{ _tt=[...e.touches]; e.preventDefault(); },{passive:false});
+  canvas.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    const p=getPan();
+    if(e.touches.length===1&&_tt.length>=1){
+      p.x+=e.touches[0].clientX-_tt[0].clientX; p.y+=e.touches[0].clientY-_tt[0].clientY;
+    } else if(e.touches.length===2&&_tt.length>=2){
+      const d0=Math.hypot(_tt[1].clientX-_tt[0].clientX,_tt[1].clientY-_tt[0].clientY);
+      const d1=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);
+      if(d0>0){ setZoom(Math.max(0.3,Math.min(8,getZoom()*d1/d0))); zoomLblFn(); }
+    }
+    _tt=[...e.touches]; redrawFn();
+  },{passive:false});
+  canvas.addEventListener('touchend',e=>{ _tt=[...e.touches]; },{passive:false});
+}
+
+function init1Events(canvas){
+  initCanvasEvents(canvas,
+    ()=>ST.zoom1, v=>{ ST.zoom1=v; },
+    ()=>ST.pan1, redraw1, updateZoom1Lbl);
+}
+function init2Events(canvas){
+  initCanvasEvents(canvas,
+    ()=>ST.zoom2, v=>{ ST.zoom2=v; },
+    ()=>ST.pan2, redraw2, updateZoom2Lbl);
+}
+
+const REF_IMGS={
+  std:'https://ttchang1127.github.io/dashboard/images/%E6%87%B8%E8%87%82%E6%93%8B%E5%9C%9F%E7%89%86%E6%A8%99%E6%BA%96%E6%96%B7%E9%9D%A2.png',
+  tbl:'https://ttchang1127.github.io/dashboard/images/%E8%A1%A8%E4%B8%80_%E6%93%8B%E5%9C%9F%E7%89%86%E6%A8%99%E6%BA%96%E5%B0%BA%E5%AF%B8%E5%8F%8A%E6%95%B8%E9%87%8F%E8%A1%A8.png',
+};
+const REF_IMGS2={
+  bar:'https://ttchang1127.github.io/dashboard/images/%E9%8B%BC%E7%AD%8B%E5%BD%A2%E7%8B%80%E5%8F%8A%E7%B7%A8%E8%99%9F.png',
+  tbl2:'https://ttchang1127.github.io/dashboard/images/%E8%A1%A8%E4%BA%8C%E9%8B%BC%E7%AD%8B%E6%A8%99%E6%BA%96%E5%9C%96.png',
+};
+
+// ── 參考圖通用控制器工廠（供 Tab1 / Tab2 共用）──
+function createRefCtrl(wrapId, imgId, colId, extId){
+  const s={zoom:1,px:0,py:0,drag:false,mx:0,my:0};
+  const $=id=>document.getElementById(id);
+  function apply(){ const img=$(imgId); if(img) img.style.transform=`translate(${s.px}px,${s.py}px) scale(${s.zoom})`; }
+  function fit(){
+    const img=$(imgId), wrap=$(wrapId); if(!img||!wrap) return;
+    const nw=img.naturalWidth||1, nh=img.naturalHeight||1;
+    const cw=wrap.clientWidth||300, ch=wrap.clientHeight||200;
+    if(nw<1||nh<1||cw<1||ch<1) return;
+    const sc=Math.min(cw/nw,ch/nh);
+    s.zoom=sc; s.px=(cw-nw*sc)/2; s.py=(ch-nh*sc)/2; s.drag=false; apply();
+  }
+  function reset(){
+    s.drag=false;
+    const img=$(imgId);
+    if(img&&img.naturalWidth>0){ fit(); }
+    else { s.zoom=1; s.px=0; s.py=0; apply(); if(img) img.onload=fit; }
+  }
+  function switchImg(url){
+    const img=$(imgId), ext=$(extId);
+    if(ext) ext.href=url;
+    if(img){ img.onload=null; img.src=url; (img.complete&&img.naturalWidth>0)?fit():(img.onload=fit); }
+  }
+  function syncH(leftSel){
+    const lc=document.querySelector(leftSel), col=$(colId); if(!lc||!col) return;
+    const h=lc.getBoundingClientRect().height; if(h<10) return;
+    col.style.height=h+'px'; col.style.overflow='hidden';
+  }
+  function init(){
+    const wrap=$(wrapId); if(!wrap||wrap._refOk) return; wrap._refOk=true;
+    wrap.addEventListener('wheel',e=>{
+      e.preventDefault();
+      const rect=wrap.getBoundingClientRect(), cx=e.clientX-rect.left, cy=e.clientY-rect.top;
+      const f=e.deltaY<0?1.12:1/1.12, oz=s.zoom;
+      s.zoom=Math.max(0.15,Math.min(10,s.zoom*f)); const r=s.zoom/oz;
+      s.px=cx-r*(cx-s.px); s.py=cy-r*(cy-s.py); apply();
+    },{passive:false});
+    wrap.addEventListener('mousedown',e=>{ if(e.ctrlKey||e.metaKey)return; s.drag=true; s.mx=e.clientX; s.my=e.clientY; e.preventDefault(); });
+    window.addEventListener('mousemove',e=>{ if(!s.drag)return; s.px+=e.clientX-s.mx; s.py+=e.clientY-s.my; s.mx=e.clientX; s.my=e.clientY; apply(); });
+    window.addEventListener('mouseup',()=>{ s.drag=false; });
+    let _rt=[];
+    wrap.addEventListener('touchstart',e=>{ _rt=[...e.touches]; e.preventDefault(); },{passive:false});
+    wrap.addEventListener('touchmove',e=>{
+      e.preventDefault();
+      if(e.touches.length===1&&_rt.length>=1){ s.px+=e.touches[0].clientX-_rt[0].clientX; s.py+=e.touches[0].clientY-_rt[0].clientY; apply(); }
+      else if(e.touches.length===2&&_rt.length>=2){
+        const d0=Math.hypot(_rt[1].clientX-_rt[0].clientX,_rt[1].clientY-_rt[0].clientY);
+        const d1=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);
+        if(d0>0){ const rect=wrap.getBoundingClientRect();
+          const cx=(e.touches[0].clientX+e.touches[1].clientX)/2-rect.left;
+          const cy=(e.touches[0].clientY+e.touches[1].clientY)/2-rect.top;
+          const r=d1/d0; s.zoom=Math.max(0.15,Math.min(10,s.zoom*r));
+          s.px=cx-r*(cx-s.px); s.py=cy-r*(cy-s.py); apply(); }
+      }
+      _rt=[...e.touches];
+    },{passive:false});
+    wrap.addEventListener('touchend',e=>{ _rt=[...e.touches]; },{passive:false});
+    wrap.addEventListener('dblclick',reset);
+  }
+  return {s, apply, fit, reset, switchImg, syncH, init};
+}
+
+// Tab1 控制器
+const RC1=createRefCtrl('ref-img-wrap','ref-img','ref-col','ref-img-ext');
+const refState=RC1.s; // 保留舊名稱相容性
+function applyRefTransform(){ RC1.apply(); }
+function fitRefView(){ RC1.fit(); }
+function resetRefView(){ RC1.reset(); }
+function initRefImgEvents(){ RC1.init(); }
+function syncRefHeight(){ RC1.syncH('#page1 [style*="flex:2"]'); }
+
+// Tab2 控制器
+const RC2=createRefCtrl('ref-img-wrap2','ref-img2','ref-col2','ref-img-ext2');
+function fitRefView2(){ RC2.fit(); }
+function syncRefHeight2(){ RC2.syncH('#page2 [style*="flex:2"]'); }
+
+function switchRefImg(key){ RC1.switchImg(REF_IMGS[key]||REF_IMGS.std); }
+function switchRefImg2(key){ RC2.switchImg(REF_IMGS2[key]||REF_IMGS2.bar); }
+
+function adjKey(k,d){
+  const mins={KEY_Q:5,KEY_P:10,KEY_R:10};
+  ST[k]=Math.max(mins[k]||5, ST[k]+d);
+  const el=document.getElementById('dim-'+k);
+  if(el) el.value=ST[k];
+  updateAll();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 標準斷面符號圖（c_ref）
+// ═══════════════════════════════════════════════════════════════
+function drawRef(){
+  const canvas=document.getElementById('c_ref');
+  if(!canvas) return;
+  const W=canvas.offsetWidth||canvas.parentElement.clientWidth||300;
+  canvas.width=W;
+  const cH=canvas.height;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,cH);
+
+  // 畫在固定比例座標，依標準斷面符號
+  const {J,E,TOE,HEEL,WBOT,WTOP}=ST;
+  const TW=totalW(), TH=totalH();
+  const keyR=ST.keyOn?ST.KEY_R:0;
+
+  const padL=52,padR=38,padT=30,padB=52;
+  const usH=TH+(ST.keyOn?keyR:0);
+  const sc=Math.min((W-padL-padR)/TW,(cH-padT-padB)/usH);
+  const ox=padL, oy=padT;
+  const px2=x=>ox+x*sc;
+  const py2=y=>cH-padB-(y)*sc;  // y=0 at footing bottom
+
+  // 回填土（踵部後方）
+  ctx.fillStyle='rgba(26,79,138,0.07)';
+  ctx.fillRect(px2(TOE+WBOT),py2(J+E),HEEL*sc,J*sc);
+
+  // 牆體
+  ctx.fillStyle='rgba(200,195,180,0.45)';
+  const pts=getOutlinePts();
+  ctx.beginPath();
+  pts.forEach(([x,y],i)=>i===0?ctx.moveTo(px2(x),py2(y)):ctx.lineTo(px2(x),py2(y)));
+  ctx.closePath();
+  ctx.fill();
+
+  // 止滑榫
+  if(ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const slope=KEY_R/3;
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const kRT=kRB+slope, kLT=kLB-slope;
+    ctx.fillStyle='#fff';
+    ctx.beginPath();
+    ctx.moveTo(px2(kLT),py2(0));
+    ctx.lineTo(px2(kRT),py2(0));
+    ctx.lineTo(px2(kRB),py2(-KEY_R));
+    ctx.lineTo(px2(kLB),py2(-KEY_R));
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#1e6b4a'; ctx.lineWidth=1.5; ctx.stroke();
+  }
+
+  // 輪廓線
+  ctx.strokeStyle='#1e6b4a'; ctx.lineWidth=1.8;
+  ctx.beginPath();
+  pts.forEach(([x,y],i)=>i===0?ctx.moveTo(px2(x),py2(y)):ctx.lineTo(px2(x),py2(y)));
+  ctx.stroke();
+
+  // 中心線（牆身）
+  ctx.strokeStyle='#c0392b'; ctx.lineWidth=0.7;
+  ctx.setLineDash([5,3]);
+  ctx.beginPath();
+  ctx.moveTo(px2(TOE+(WBOT+WTOP)/2),py2(E+J*0.1));
+  ctx.lineTo(px2(TOE+(WBOT+WTOP)/2),py2(E+J*0.95));
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // ── 標準符號標註 ──
+  ctx.font='10px "Noto Sans TC",sans-serif';
+
+  // H 總高（左外側）
+  refAnnotV(ctx,px2(-38),py2(TH),py2(0),'H','#5c5a54');
+  // J 牆身（左內側）
+  refAnnotV(ctx,px2(-22),py2(J+E),py2(E),'J','#1a4f8a');
+  // E 底板厚（右外側）
+  refAnnotV(ctx,px2(TW+22),py2(E),py2(0),'E','#b8680a');
+
+  // T 底版總寬（下方）
+  refAnnotH(ctx,px2(0),px2(TW),py2(-(ST.keyOn?keyR:0)-36),'T','#1a4f8a');
+  // E 趾部寬
+  refAnnotH(ctx,px2(0),px2(TOE),py2(-(ST.keyOn?keyR:0)-20),'E','#9b9890');
+  // G 踵部寬
+  refAnnotH(ctx,px2(TOE+WBOT),px2(TW),py2(-(ST.keyOn?keyR:0)-20),'G','#9b9890');
+  // F 牆底厚
+  refAnnotH(ctx,px2(TOE),px2(TOE+WBOT),py2(E+2),'F','#1e6b4a');
+  // 牆頂厚（上方）
+  refAnnotH(ctx,px2(TOE),px2(TOE+WTOP),py2(J+E+16),'d','#1e6b4a');
+
+  // 止滑榫標註
+  if(ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const slope=KEY_R/3;
+    const kLT=kLB-slope;
+    // Q 距踵
+    refAnnotH(ctx,px2(kRB+slope),px2(TW),py2(-KEY_R-16),'Q','#7b3f00');
+    // P 底寬
+    refAnnotH(ctx,px2(kLB),px2(kRB),py2(-KEY_R-2),'P','#7b3f00');
+    // R 深度（右側）
+    refAnnotV(ctx,px2(TW+8),py2(0),py2(-KEY_R),'R','#7b3f00');
+    // 坡度文字
+    ctx.save(); ctx.fillStyle='#7b3f00'; ctx.font='9px "Noto Sans TC",sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('1:3',px2(kLT-slope*0.5),py2(-KEY_R*0.5));
+    ctx.restore();
+  }
+
+  // 標題
+  ctx.save();
+  ctx.font='bold 10px "Noto Sans TC",sans-serif';
+  ctx.fillStyle='#1e6b4a'; ctx.textAlign='center';
+  ctx.fillText('懸臂擋土牆標準斷面',W/2,15);
+  ctx.restore();
+}
+
+function refAnnotV(ctx,x,y1,y2,label,color){
+  if(Math.abs(y1-y2)<6) return;
+  ctx.save();
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=0.8;
+  ctx.beginPath(); ctx.moveTo(x,y1); ctx.lineTo(x,y2); ctx.stroke();
+  arrowTip(ctx,x,y1,-Math.PI/2);
+  arrowTip(ctx,x,y2, Math.PI/2);
+  ctx.font='bold 10px "Noto Sans TC",sans-serif';
+  ctx.textAlign='center';
+  ctx.save(); ctx.translate(x-12,(y1+y2)/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText(label,0,0); ctx.restore();
+  ctx.restore();
+}
+function refAnnotH(ctx,x1,x2,y,label,color){
+  if(x1>=x2) return;
+  ctx.save();
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=0.8;
+  ctx.beginPath(); ctx.moveTo(x1,y); ctx.lineTo(x2,y); ctx.stroke();
+  arrowTip(ctx,x1,y,Math.PI);
+  arrowTip(ctx,x2,y,0);
+  ctx.font='bold 10px "Noto Sans TC",sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText(label,(x1+x2)/2,y-5);
+  ctx.restore();
+}
+
+function annotV(ctx,x,y1,y2,label,color){
+  ctx.save();
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=0.8;
+  ctx.beginPath(); ctx.moveTo(x,y1); ctx.lineTo(x,y2); ctx.stroke();
+  arrowTip(ctx,x,y1,-Math.PI/2);
+  arrowTip(ctx,x,y2, Math.PI/2);
+  ctx.font='10px "Noto Sans TC",sans-serif';
+  ctx.textAlign='center';
+  ctx.save(); ctx.translate(x-13,(y1+y2)/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText(label,0,0); ctx.restore();
+  ctx.restore();
+}
+function annotH(ctx,x1,x2,y,label,color){
+  if(x1>=x2) return;
+  ctx.save();
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=0.8;
+  ctx.beginPath(); ctx.moveTo(x1,y); ctx.lineTo(x2,y); ctx.stroke();
+  arrowTip(ctx,x1,y,Math.PI);
+  arrowTip(ctx,x2,y,0);
+  ctx.font='10px "Noto Sans TC",sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText(label,(x1+x2)/2,y-5);
+  ctx.restore();
+}
+function arrowTip(ctx,x,y,ang){
+  const ah=5;
+  ctx.beginPath();
+  ctx.moveTo(x,y);
+  ctx.lineTo(x-ah*Math.cos(ang-0.4),y-ah*Math.sin(ang-0.4));
+  ctx.lineTo(x-ah*Math.cos(ang+0.4),y-ah*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 繪製 Tab2：輪廓 + 鋼筋
+// ═══════════════════════════════════════════════════════════════
+function redraw2(){
+  try{ ST.dxf2=genDXF2(); ST.lsp2=genLSP2(); }catch(e){ console.error('DXF2生成錯誤',e); }
+  document.getElementById('dxf2-pre').textContent=(ST.dxf2||'').split('\n').slice(0,60).join('\n')+'...';
+  renderRebarTable();
+
+  const canvas=document.getElementById('c2');
+  if(!canvas.offsetWidth&&!canvas.parentElement.clientWidth) return;
+  init2Events(canvas);
+  updateZoom2Lbl();
+  const {px,py,sc,W,cH}=makeScale(canvas, ST.zoom2, ST.pan2);
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,cH);
+  const {J,E,TOE,HEEL,WBOT,WTOP,covW,covF,bars}=ST;
+  const TW=totalW(), TH=totalH();
+
+  // 回填土
+  ctx.fillStyle='rgba(26,79,138,0.06)';
+  ctx.fillRect(px(TOE+WBOT),py(J+E),HEEL*sc,J*sc);
+
+  // 輪廓填充
+  ctx.fillStyle='rgba(200,195,180,0.3)';
+  const pts=getOutlinePts();
+  ctx.beginPath();
+  pts.forEach(([x,y],i)=>i===0?ctx.moveTo(px(x),py(y)):ctx.lineTo(px(x),py(y)));
+  ctx.closePath(); ctx.fill();
+
+  // 止滑榫（剪力榫）
+  if(ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const slope=KEY_R/3;
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const kRT=kRB+slope, kLT=kLB-slope;
+    ctx.fillStyle='rgba(200,195,180,0.3)';
+    ctx.beginPath();
+    ctx.moveTo(px(kLT),py(0)); ctx.lineTo(px(kRT),py(0));
+    ctx.lineTo(px(kRB),py(-KEY_R)); ctx.lineTo(px(kLB),py(-KEY_R));
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#1e6b4a'; ctx.lineWidth=1.4; ctx.stroke();
+  }
+
+  // 輪廓線
+  ctx.strokeStyle='#1e6b4a'; ctx.lineWidth=1.6;
+  ctx.beginPath();
+  pts.forEach(([x,y],i)=>i===0?ctx.moveTo(px(x),py(y)):ctx.lineTo(px(x),py(y)));
+  ctx.stroke();
+
+  // ── 鋼筋繪製 ──
+  ctx.lineWidth=1.4;
+
+  const V=ST.barVis;
+  if(V[0]) drawBar1(ctx,px,py,sc,0);  // ①
+  if(V[1]) drawBar2(ctx,px,py,sc,1);  // ②
+  if(V[2]) drawBar3(ctx,px,py,sc,2);  // ③
+  if(V[3]) drawBar4(ctx,px,py,sc,3);  // ④
+  if(V[4]) drawBar5(ctx,px,py,sc,4);  // ⑤
+  if(V[5]) drawBar6(ctx,px,py,sc,5);  // ⑥
+  if(V[6]) drawBar7(ctx,px,py,sc,6);  // ⑦
+  if(V[7]) drawBar8(ctx,px,py,sc,7);  // ⑧
+  if(V[8]) drawBar9(ctx,px,py,sc,8);  // ⑨
+
+  // 標籤（僅顯示可見鋼筋）
+  ctx.font='bold 11px "Noto Sans TC",sans-serif';
+  barLabels(ctx,px,py,sc);
+
+  // H 標註
+  ctx.strokeStyle='#5c5a54'; ctx.fillStyle='#5c5a54'; ctx.lineWidth=0.8;
+  annotV(ctx,px(-42),py(TH),py(0),'H='+(TH/100).toFixed(2)+'m','#5c5a54');
+
+}
+
+
+function cLine(ctx,px,py,x1,y1,x2,y2,color){
+  ctx.save();
+  ctx.strokeStyle=color;
+  ctx.beginPath(); ctx.moveTo(px(x1),py(y1)); ctx.lineTo(px(x2),py(y2)); ctx.stroke();
+  ctx.restore();
+}
+function cDot(ctx,px,py,x,y,r,color){
+  ctx.save();
+  ctx.fillStyle=color;
+  ctx.beginPath(); ctx.arc(px(x),py(y),r,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+// ① ㄇ型：底板頂部，上橫桿 + 兩端向下腳（X-Y 平面）
+function drawBar1(ctx,px,py,sc,i){
+  const {E,covF}=ST; const b=ST.bars[i];
+  const TW=totalW();
+  if(!b.sz) return;
+  const D_cm = b.sz/10;
+  const cov = covF + D_cm/2;
+  const lw = Math.max(1.5, D_cm*sc);
+  const y_top = E - cov;                    // 橫桿中心線 Y（底板頂面往內）
+  const leg = E - 2*cov;                    // 腳長
+  const x1 = TW - cov;                      // 右端（踵側）
+  const x0 = cov;                           // 左端（趾側）
+  const nb = b.n||1;                        // bundle 根數
+  ctx.save();
+  ctx.strokeStyle = BAR_COLORS[i];
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  for(let bi=0; bi<nb; bi++){
+    const y = y_top - bi*D_cm;             // 第2支往下偏移一個直徑
+    ctx.beginPath();
+    ctx.moveTo(px(x0), py(y - leg));
+    ctx.lineTo(px(x0), py(y));
+    ctx.lineTo(px(x1), py(y));
+    ctx.lineTo(px(x1), py(y - leg));
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+// ② ㄩ型：底板底部，下橫桿 + 兩端向上腳（X-Y 平面）
+function drawBar2(ctx,px,py,sc,i){
+  const {E,covF}=ST; const b=ST.bars[i];
+  const TW=totalW();
+  if(!b.sz) return;
+  const D_cm = b.sz/10;
+  const cov = covF + D_cm/2;
+  const lw = Math.max(1.5, D_cm*sc);
+  const y_bot = cov;                         // 橫桿中心線 Y（底板底面往內）
+  const leg = E - 2*cov;                    // 腳長 = 底板厚 - 上下保護層（延伸至底板頂保護層）
+  const x0 = cov;                            // 左端（趾側）
+  const x1 = TW - cov;                      // 右端（踵側）
+  ctx.save();
+  ctx.strokeStyle = BAR_COLORS[i];
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(px(x0), py(y_bot + leg));      // 左腳頂端
+  ctx.lineTo(px(x0), py(y_bot));            // 左腳底端（接橫桿）
+  ctx.lineTo(px(x1), py(y_bot));            // 橫桿
+  ctx.lineTo(px(x1), py(y_bot + leg));      // 右腳頂端
+  ctx.stroke();
+  ctx.restore();
+}
+// ③ 剪力榫鋼筋（對稱，全程固定 1:3 斜率）
+//   路徑（5段連續線）：
+//   左c←  左斜腳a↘（1:3固定斜率）  底橫桿b→  右斜腳a↗  →右c
+//
+//   a 段全程 1:3 斜率：從底部角點往上，每升 3 往外縮 1
+//   b 段 = 底橫桿（沿榫底輪廓內縮 cov）
+//   c 段 = 左右對稱水平鉤（底板頂部保護層處）
+//
+// 角點偏移：off = cov*(√10-1)/3（底部角點位移，由法向量推導）
+// 頂部角點：由底部 + 整段高度 dy / 3 往外展開
+function drawBar3(ctx,px,py,sc,i){
+  if(!ST.keyOn) return;
+  const {E,covF,KEY_Q,KEY_P,KEY_R}=ST;
+  const b=ST.bars[i];
+  if(!b.sz) return;
+  const TW=totalW();
+  const D_cm=b.sz/10;
+  const cov=covF+D_cm/2;
+  const lw=Math.max(1.5, D_cm*sc);
+
+  // 剪力榫底部角點（保護層內縮）
+  const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+  const off=cov*(Math.sqrt(10)-1)/3;
+  const y_bot=-(KEY_R-cov);            // 底橫桿 Y（榫底面內縮 cov）
+  const x_bL=kLB+off;                  // 左底角點 X
+  const x_bR=kRB-off;                  // 右底角點 X
+
+  // a 段頂端：從底部角點以固定 1:3 斜率延伸至底板頂部保護層
+  const y_topF=E-covF-D_cm/2;
+  const dy=y_topF-y_bot;               // 總高差（垂直）
+  const x_tL=x_bL - dy/3;             // 左頂端：往左展開 dy/3
+  const x_tR=x_bR + dy/3;             // 右頂端：往右展開 dy/3（對稱）
+  const hook=b.c||0;
+
+  ctx.save();
+  ctx.strokeStyle=BAR_COLORS[i];
+  ctx.lineWidth=lw;
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.beginPath();
+  ctx.moveTo(px(x_tL-hook), py(y_topF));  // 左鉤端
+  ctx.lineTo(px(x_tL),      py(y_topF));  // 左鉤→左斜腳頂
+  ctx.lineTo(px(x_bL),      py(y_bot));   // 左斜腳↘（1:3 斜率）
+  ctx.lineTo(px(x_bR),      py(y_bot));   // 底橫桿→
+  ctx.lineTo(px(x_tR),      py(y_topF));  // 右斜腳↗（1:3 斜率）
+  ctx.lineTo(px(x_tR+hook), py(y_topF));  // 右鉤端
+  ctx.stroke();
+  ctx.restore();
+}
+// ④ 底板縱向橫向筋（Z方向）：以圓截面表示
+//   頂排：Y = E - covF - D①/2 - D④/2，X方向均布，根數 = ⌈(TW-2·covF)/sp④⌉
+//   底排：Y = covF + D②/2 + D④/2，同上
+function drawBar4(ctx,px,py,sc,i){
+  const {E,covF,bars}=ST;
+  const b=bars[i];
+  if(!b.sz) return;
+  const TW=totalW();
+  const D4=b.sz/10;
+  const D1=bars[0].sz/10, D2=bars[1].sz/10;
+  const r=Math.max(2, D4/2*sc);
+
+  const y_top = E - covF - D1/2 - D4/2;
+  const y_bot = covF + D2/2 + D4/2;
+
+  const sp = b.sp;
+  const n  = Math.ceil((TW - 2*covF) / sp);  // 根數（無條件進入）
+  const x0 = covF + D4/2;                     // 第一根 X 位置
+
+  [y_top, y_bot].forEach(y=>{
+    for(let k=0; k<n; k++){
+      cDot(ctx,px,py, x0 + k*sp, y, r, BAR_COLORS[i]);
+    }
+  });
+}
+// ── bar⑤ 幾何計算（共用） ─────────────────────────────────────────
+// 回傳所有圓點座標 [{x,y}, ...]
+// 規則：4 角隅各 1 根；若坡面長 > sp⑤ 各補 1 根中點；底面同理
+function bar5Pts(bars, covF, KEY_Q, KEY_P, KEY_R, TW){
+  const D3c=bars[2].sz/10, D5c=bars[4].sz/10;
+  const cov3=covF+D3c/2, sq10=Math.sqrt(10);
+  const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+  const off3=cov3*(sq10-1)/3;
+  const x_bL=kLB+off3, x_bR=kRB-off3;
+  const y_bot=-(KEY_R-cov3);
+  const off5=D3c/2+D5c/2;
+  const off5x=off5*3/sq10, off5y=off5/sq10;
+  const sp5=bars[4].sp;
+
+  // 4 角隅（bar③ 內側面）：
+  //   TL = 左坡面頂（y=0 處）  TR = 右坡面頂
+  //   BL = 左坡面底             BR = 右坡面底
+  const xTL=x_bL+y_bot/3+off5x, xTR=x_bR-y_bot/3-off5x;
+  const yTB=off5y;                        // TL/TR 的共同 y
+  const xBL=x_bL+off5x, xBR=x_bR-off5x;
+  const yBB=y_bot+off5y;                  // BL/BR 的共同 y
+
+  const pts=[ {x:xTL,y:yTB}, {x:xTR,y:yTB},
+              {x:xBL,y:yBB}, {x:xBR,y:yBB} ];
+
+  // 坡面長度（TL→BL 沿 1:3 坡，= |y_bot|×√10/3）
+  const slopeLen = (-y_bot)*sq10/3;
+  if(slopeLen > sp5){
+    pts.push({x:(xTL+xBL)/2, y:(yTB+yBB)/2}); // 左坡中點
+    pts.push({x:(xTR+xBR)/2, y:(yTB+yBB)/2}); // 右坡中點
+  }
+  // 底面長度（BL→BR 水平）
+  const botLen = xBR - xBL;
+  if(botLen > sp5)
+    pts.push({x:(xBL+xBR)/2, y:yBB});           // 底面中點
+
+  return pts;
+}
+
+// ⑤ 止滑榫內側縱向筋（Z 方向）：角隅 + 必要時中補一根
+function drawBar5(ctx,px,py,sc,i){
+  if(!ST.keyOn) return;
+  const {covF,KEY_Q,KEY_P,KEY_R,bars}=ST;
+  const b=bars[i]; if(!b.sz) return;
+  const TW=totalW();
+  const D5c=b.sz/10, r5=Math.max(2,D5c/2*sc);
+  bar5Pts(bars,covF,KEY_Q,KEY_P,KEY_R,TW)
+    .forEach(({x,y})=>cDot(ctx,px,py,x,y,r5,BAR_COLORS[i]));
+}
+// ── bar⑥ 幾何計算（共用） ─────────────────────────────────────────
+// 回傳 {xTop,yTop, xBot,yBot, xHook}
+// 牆背面線性延伸至底板底部，底端向前（向 TOE 方向）彎 b
+function bar6Geom(bars, J, E, TOE, WBOT, WTOP, covW, covF){
+  const b=bars[5]; if(!b.sz) return null;
+  const D6=b.sz/10, cov6=covW+D6/2;
+  // 背面 X（線性延伸，含牆體以下）
+  const bfX = y => TOE + WBOT + (y - E) * (WTOP - WBOT) / J;
+  const yTop  = E + J - cov6;      // 牆頂背面
+  const xTop  = bfX(yTop) - cov6;
+  const yBot  = covF + D6/2;
+  const xBot  = bfX(yBot) - cov6;
+  const xHook = xBot - b.b;        // 向前（TOE 方向）
+  return {xTop,yTop,xBot,yBot,xHook};
+}
+
+// ⑥ 牆背主筋：沿牆身背部斜率，從牆頂到底板底部，底端向前彎 b
+function drawBar6(ctx,px,py,sc,i){
+  const {J,E,TOE,WBOT,WTOP,covW,covF,bars}=ST;
+  const b=bars[i]; if(!b.sz) return;
+  const g=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF); if(!g) return;
+  const lw=Math.max(1.5,(b.sz/10)*sc);
+  ctx.save();
+  ctx.strokeStyle=BAR_COLORS[i]; ctx.lineWidth=lw;
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath();
+  ctx.moveTo(px(g.xTop),  py(g.yTop));
+  ctx.lineTo(px(g.xBot),  py(g.yBot));
+  ctx.lineTo(px(g.xHook), py(g.yBot));
+  ctx.stroke();
+  ctx.restore();
+}
+// ── bar⑦ 幾何計算（共用）─────────────────────────────────────────
+// 同 bar⑥ 形狀，但起點在牆身背部高度一半，使用 bars[6]
+function bar7Geom(bars, J, E, TOE, WBOT, WTOP, covW, covF){
+  const b=bars[6]; if(!b.sz) return null;
+  const D6=bars[5].sz/10, D7=b.sz/10;
+  const cov7=covW+D6+D7/2;   // ⑥ 直徑外側再往內，避免重疊
+  const bfX = y => TOE + WBOT + (y - E) * (WTOP - WBOT) / J;
+  const yTop  = E + J/2;           // 牆身背部高度一半
+  const xTop  = bfX(yTop) - cov7;
+  const yBot  = covF + D7/2;
+  const xBot  = bfX(yBot) - cov7;
+  const xHook = xBot - b.b;        // 向前（TOE 方向）
+  return {xTop,yTop,xBot,yBot,xHook};
+}
+
+// ⑦ 牆背短筋：從牆身背部高度一半延伸至底板底部，底端向前彎 b
+function drawBar7(ctx,px,py,sc,i){
+  const {J,E,TOE,WBOT,WTOP,covW,covF,bars}=ST;
+  const b=bars[i]; if(!b.sz) return;
+  const g=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF); if(!g) return;
+  const lw=Math.max(1.5,(b.sz/10)*sc);
+  ctx.save();
+  ctx.strokeStyle=BAR_COLORS[i]; ctx.lineWidth=lw;
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath();
+  ctx.moveTo(px(g.xTop),  py(g.yTop));
+  ctx.lineTo(px(g.xBot),  py(g.yBot));
+  ctx.lineTo(px(g.xHook), py(g.yBot));
+  ctx.stroke();
+  ctx.restore();
+}
+// ── bar⑧ 幾何計算（共用）─────────────────────────────────────────
+// 牆前面為垂直（x=TOE），從牆頂沿前面至底板底部，底端向後（HEEL方向）彎 b
+function bar8Geom(bars, J, E, TOE, covW, covF){
+  const b=bars[7]; if(!b.sz) return null;
+  const D8=b.sz/10, cov8=covW+D8/2;
+  const xTop  = TOE + cov8;      // 牆前面垂直，固定 x
+  const yTop  = E + J - cov8;    // 牆頂含保護層
+  const xBot  = TOE + cov8;      // 垂直段同 x
+  const yBot  = covF + D8/2;     // 底板底部含保護層
+  const xHook = xBot + b.b;      // 向後（HEEL 方向）
+  return {xTop, yTop, xBot, yBot, xHook};
+}
+
+// ⑧ 牆前主筋：從牆頂沿前面垂直至底板底部，底端向後彎 b
+function drawBar8(ctx,px,py,sc,i){
+  const {J,E,TOE,covW,covF,bars}=ST;
+  const b=bars[i]; if(!b.sz) return;
+  const g=bar8Geom(bars,J,E,TOE,covW,covF); if(!g) return;
+  const lw=Math.max(1.5,(b.sz/10)*sc);
+  ctx.save();
+  ctx.strokeStyle=BAR_COLORS[i]; ctx.lineWidth=lw;
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath();
+  ctx.moveTo(px(g.xTop),  py(g.yTop));
+  ctx.lineTo(px(g.xBot),  py(g.yBot));
+  ctx.lineTo(px(g.xHook), py(g.yBot));
+  ctx.stroke();
+  ctx.restore();
+}
+// ── bar⑨ 幾何計算（共用）─────────────────────────────────────────
+// 牆前面（垂直）+ 牆背面（斜面），角隅起依 sp 佈設，回傳各點 {x,y}
+function bar9Pts(bars, J, E, TOE, WBOT, WTOP, covW){
+  const b=bars[8]; if(!b.sz) return [];
+  const D9=b.sz/10, cov9=covW+D9/2, sp9=b.sp;
+  const bfX = y => TOE + WBOT + (y - E) * (WTOP - WBOT) / J;
+  const slantLen = Math.sqrt((WBOT-WTOP)**2 + J**2);
+  const pts = [];
+  // 牆前面（垂直）: 角隅起每 sp9 一根
+  const n_front = Math.ceil((J - covW) / sp9);
+  const x_front = TOE + cov9;
+  for(let k=0; k<n_front; k++) pts.push({x: x_front, y: E + cov9 + k * sp9});
+  // 牆背面（斜面）: 角隅起每 sp9 沿斜率一根
+  const n_back  = Math.ceil((slantLen - covW) / sp9);
+  const dy_step = sp9 * J / slantLen;
+  const y_back0 = E + cov9 * J / slantLen;
+  for(let k=0; k<n_back; k++){
+    const y = y_back0 + k * dy_step;
+    pts.push({x: bfX(y) - cov9, y});
+  }
+  return pts;
+}
+
+// ⑨ 牆身水平分布筋：點（Z 方向貫通筋，各面各角隅起依間距）
+function drawBar9(ctx,px,py,sc,i){
+  const {J,E,TOE,WBOT,WTOP,covW,bars}=ST;
+  const b=bars[i]; if(!b.sz) return;
+  const r=Math.max(2, (b.sz/10)/2*sc);
+  bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW)
+    .forEach(({x,y})=>cDot(ctx,px,py,x,y,r,BAR_COLORS[i]));
+}
+
+function barLabels(ctx,px,py,sc){
+  const {J,E,TOE,HEEL,WBOT,WTOP,covW,covF,bars}=ST;
+  ctx.textAlign='left'; ctx.font='10px "Noto Sans TC",sans-serif';
+  const TW=totalW();
+  const bfx=backFaceX(E)-covW;
+  const D0=bars[0].sz/10;  // ① 鋼筋直徑 cm
+  const D1=bars[1].sz/10;  // ② 鋼筋直徑 cm
+  const lbls=[
+    // ① ㄇ型：底板頂部橫桿中段右側
+    [TW*0.5, E-covF-D0/2,                   0],
+    // ② ㄩ型：底板底部橫桿中段右側
+    [TW*0.5, covF+D1/2,                     1],
+    // ③ 剪力榫鋼筋：標籤在右斜腳旁
+    [TW-ST.KEY_Q+ST.KEY_P/2+4, -(ST.KEY_R*0.3), 2],
+    // ④ 最後一根圓點右側（頂排旁）
+    [(()=>{ const sp4=bars[3].sp,D4=bars[3].sz/10,n4=Math.ceil((TW-2*covF)/sp4);
+            return covF+D4/2+(n4-1)*sp4+D4/2+3; })(),
+     E-covF-bars[0].sz/10-bars[3].sz/10/2, 3],
+    // ⑤ 止滑榫右側（止滑榫存在時）
+    [ST.keyOn ? TW-ST.KEY_Q+4 : bfx+4,
+     ST.keyOn ? -ST.KEY_R*0.5 : E+J*0.5,   4],
+    // ⑥ 牆背主筋：標籤在牆背面上段右側
+    [(()=>{ const g=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+            return g ? g.xTop+3 : bfx+4; })(),
+     (()=>{ const g=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+            return g ? (g.yTop+g.yBot)*0.7 : E+J*0.5; })(),  5],
+    // ⑦ 牆背短筋：標籤在牆背底部（底端旁）
+    [(()=>{ const g=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+            return g ? g.xBot+3 : bfx+4; })(),
+     (()=>{ const g=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+            return g ? g.yBot+8 : E*0.3; })(),  6],
+    // ⑧ 牆前主筋：標籤在牆前底部彎折處旁
+    [(()=>{ const g=bar8Geom(bars,J,E,TOE,covW,covF);
+            return g ? g.xHook+3 : TOE+covW+4; })(),
+     (()=>{ const g=bar8Geom(bars,J,E,TOE,covW,covF);
+            return g ? g.yBot+8 : covF+8; })(),  7],
+    // ⑨ 牆身水平分布筋：標籤在牆前面第1根旁
+    [(()=>{ const pts=bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW);
+            return pts.length ? pts[0].x+3 : TOE+covW+4; })(),
+     (()=>{ const pts=bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW);
+            return pts.length ? pts[0].y+3 : E+J*0.5; })(),  8],
+  ];
+  lbls.forEach(([x,y,i])=>{
+    if(!ST.barVis[i]) return;  // 隱藏時不顯示標籤
+    ctx.fillStyle=BAR_COLORS[i];
+    const nb_=bars[i].n||1; const nbPfx=nb_>1?(nb_+'-'):'';
+    ctx.fillText(TAGS[i]+' '+nbPfx+'D'+bars[i].sz+'@'+bars[i].sp, px(x), py(y));
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DXF 工具函式（dxfL / dxfC / dxfT 定義在 dxfHeader 區塊內）
+// ═══════════════════════════════════════════════════════════════
+function dxfDV(x_dim,y1,y2,label,layer){
+  // 垂直尺寸線
+  let s='';
+  s+=dxfL(x_dim-3,y1,x_dim+3,y1,layer);
+  s+=dxfL(x_dim-3,y2,x_dim+3,y2,layer);
+  s+=dxfL(x_dim,y1,x_dim,y2,layer);
+  s+=dxfT(x_dim-35,(y1+y2)/2,12,label,layer);
+  return s;
+}
+function dxfDH(x1,x2,y_dim,label,layer){
+  // 水平尺寸線
+  let s='';
+  s+=dxfL(x1,y_dim-3,x1,y_dim+3,layer);
+  s+=dxfL(x2,y_dim-3,x2,y_dim+3,layer);
+  s+=dxfL(x1,y_dim,x2,y_dim,layer);
+  s+=dxfT((x1+x2)/2-10,y_dim+6,10,label,layer);
+  return s;
+}
+function dxfHeader(layerDefs){
+  // AC1009 (R12) — 最廣相容格式；AC1015+ 需要額外的 BLOCKS section 否則 CAD 無法開啟
+  const hdr =
+    '  0\nSECTION\n  2\nHEADER\n'+
+    '  9\n$ACADVER\n  1\nAC1009\n'+
+    '  9\n$INSUNITS\n 70\n     4\n'+   // 4=mm；單位 cm 畫圖，數字即 cm
+    '  0\nENDSEC\n';
+
+  // TABLES section：需要 LTYPE 和 LAYER（加上預設 layer 0）
+  const ltEntry =
+    '  0\nLTYPE\n  2\nCONTINUOUS\n 70\n     0\n  3\nSolid line\n 72\n    65\n 73\n     0\n 40\n0.0\n';
+  const layerZero =
+    '  0\nLAYER\n  2\n0\n 70\n     0\n 62\n     7\n  6\nCONTINUOUS\n';
+  const layerEntries = layerDefs.map(([n,c])=>
+    `  0\nLAYER\n  2\n${n}\n 70\n     0\n 62\n${String(c).padStart(6)}\n  6\nCONTINUOUS\n`
+  ).join('');
+
+  const tables =
+    '  0\nSECTION\n  2\nTABLES\n'+
+    `  0\nTABLE\n  2\nLTYPE\n 70\n     1\n${ltEntry}  0\nENDTAB\n`+
+    `  0\nTABLE\n  2\nLAYER\n 70\n${layerDefs.length+1}\n${layerZero}${layerEntries}  0\nENDTAB\n`+
+    '  0\nENDSEC\n';
+
+  // R12 不需要 BLOCKS section；直接進 ENTITIES
+  return hdr + tables + '  0\nSECTION\n  2\nENTITIES\n';
+}
+const dxfFooter=()=>'  0\nENDSEC\n  0\nEOF\n';
+
+// 確保所有 entity 函式用標準 group code 格式（兩位補空白）
+function dxfL(x1,y1,x2,y2,layer){
+  return `  0\nLINE\n  8\n${layer}\n 10\n${f4(x1)}\n 20\n${f4(y1)}\n 30\n0.0\n`+
+         ` 11\n${f4(x2)}\n 21\n${f4(y2)}\n 31\n0.0\n`;
+}
+function dxfC(cx,cy,r,layer){
+  return `  0\nCIRCLE\n  8\n${layer}\n 10\n${f4(cx)}\n 20\n${f4(cy)}\n 30\n0.0\n 40\n${f4(r)}\n`;
+}
+function dxfT(x,y,h,txt,layer){
+  return `  0\nTEXT\n  8\n${layer}\n 10\n${f4(x)}\n 20\n${f4(y)}\n 30\n0.0\n 40\n${f4(h)}\n  1\n${txt}\n`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DXF1：輪廓線（Tab1）
+// ═══════════════════════════════════════════════════════════════
+function genDXF1(){
+  const {J,E,TOE,HEEL,WBOT,WTOP,keyOn,KEY_Q,KEY_P,KEY_R}=ST;
+  const TW=totalW(), TH=totalH();
+  const keyDepth = keyOn ? KEY_R : 0;
+  const botY    = -keyDepth;           // 圖面最低點 Y
+  const bDim1   = botY - 52;           // 底部最外圍尺寸線 Y
+  const bDim2   = botY - 32;           // 底部次層尺寸線 Y
+
+  const layers=[
+    ['WALL-OUTLINE',3],['DIM',4],['KEY',2],
+  ];
+  let body='';
+
+  // ── 牆身輪廓 ──
+  const pts=getOutlinePts();
+  for(let i=0;i<pts.length-1;i++)
+    body+=dxfL(pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1],'WALL-OUTLINE');
+
+  // ── 剪力榫 (shear key) ──
+  if(keyOn){
+    const slope=KEY_R/3;
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const kRT=kRB+slope, kLT=kLB-slope;
+    // 梯形四邊
+    body+=dxfL(kLT, 0,    kRT, 0,      'KEY');  // top
+    body+=dxfL(kRT, 0,    kRB,-KEY_R,  'KEY');  // right slope
+    body+=dxfL(kRB,-KEY_R,kLB,-KEY_R,  'KEY');  // bottom
+    body+=dxfL(kLB,-KEY_R,kLT, 0,      'KEY');  // left slope
+    // 剪力榫尺寸
+    body+=dxfDH(kLB, kRB, botY-10, 'P='+KEY_P, 'KEY');   // 底寬 P
+    body+=dxfDH(kRT, TW,  botY-10, 'Q='+KEY_Q, 'KEY');   // 距右邊 Q
+    body+=dxfDV(TW+55, botY, 0, 'R='+KEY_R, 'KEY');       // 深度 R
+  }
+
+  // ── 尺寸標註（英文符號，不含中文）──
+  // 左側垂直
+  body+=dxfDV(-70, 0,  TH, 'H='+TH, 'DIM');
+  body+=dxfDV(-48, E,  TH, 'J='+J,  'DIM');
+  body+=dxfDV(-26, 0,  E,  'E='+E,  'DIM');
+  // 右側垂直
+  body+=dxfDV(TW+25, E, TH, 'J='+J, 'DIM');
+  // 底部水平（T / E / G）— 隨剪力榫向下移
+  body+=dxfDH(0,       TW,      bDim1, 'T='+TW,    'DIM');
+  body+=dxfDH(0,       TOE,     bDim2, 'E='+TOE,   'DIM');
+  body+=dxfDH(TOE+WBOT,TW,      bDim2, 'G='+HEEL,  'DIM');
+  // 底版厚 E 及牆底厚 F（板內）
+  body+=dxfDH(TOE, TOE+WBOT,  E+6,   'F='+WBOT,  'DIM');
+  body+=dxfDH(TOE, TOE+WTOP,  TH+22, 'd='+WTOP,  'DIM');
+
+  // ── 標題文字（英文）──
+  const keyNote = keyOn ? '  Key P='+KEY_P+' Q='+KEY_Q+' R='+KEY_R+' cm' : '';
+  body+=dxfT(TOE, TH+48, 16, 'R-008 Retaining Wall - Outline (unit: cm)', 'DIM');
+  body+=dxfT(TOE, TH+30, 12, 'H='+(TH/100).toFixed(2)+'m  J='+J+'  E='+E+'  T='+TW, 'DIM');
+  body+=dxfT(TOE, TH+16, 10, 'F='+WBOT+'  E(toe)='+TOE+'  G='+HEEL+keyNote, 'DIM');
+
+  return dxfHeader(layers)+body+dxfFooter();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DXF2：輪廓 + 鋼筋（Tab2）
+// ═══════════════════════════════════════════════════════════════
+function genDXF2(){
+  const {J,E,TOE,HEEL,WBOT,WTOP,covW,covF,bars}=ST;
+  const TW=totalW(), TH=totalH();
+
+  const layers=[
+    ['WALL-OUTLINE',3],['DIM',4],['TEXT',7],
+    ...BAR_LAYER.map((n,i)=>[n, BAR_DXF_COLOR[i]]),
+    ['REBAR-TAG',1],
+  ];
+  let body='';
+
+  // 輪廓
+  const pts=getOutlinePts();
+  for(let i=0;i<pts.length-1;i++)
+    body+=dxfL(pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1],'WALL-OUTLINE');
+
+  // 剪力榫 (shear key)
+  const {keyOn,KEY_Q,KEY_P,KEY_R}=ST;
+  if(keyOn){
+    const slope=KEY_R/3;
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const kRT=kRB+slope, kLT=kLB-slope;
+    body+=dxfL(kLT, 0,    kRT, 0,      'WALL-OUTLINE');
+    body+=dxfL(kRT, 0,    kRB,-KEY_R,  'WALL-OUTLINE');
+    body+=dxfL(kRB,-KEY_R,kLB,-KEY_R,  'WALL-OUTLINE');
+    body+=dxfL(kLB,-KEY_R,kLT, 0,      'WALL-OUTLINE');
+  }
+
+  // 尺寸簡要
+  const keyDepth2=keyOn?KEY_R:0;
+  body+=dxfDV(-55,0,TH,'H='+TH,'DIM');
+  body+=dxfDH(0,TW,-keyDepth2-45,'T='+TW,'DIM');
+
+  const lay=i=>BAR_LAYER[i];
+
+  // ① ㄇ型：底板頂部（橫桿 + 兩端下腳，腳長 = 底板厚 - 上下保護層）
+  const b0=bars[0];
+  if(b0.sz){
+    const D0_cm=b0.sz/10, cov0=covF+D0_cm/2;
+    const y_top0=E-cov0;
+    const leg0=E-2*cov0;
+    const xL0=cov0, xR0=TW-cov0;
+    body+=dxfL(xL0,y_top0-leg0, xL0,y_top0,      lay(0));  // 左腳
+    body+=dxfL(xL0,y_top0,      xR0,y_top0,      lay(0));  // 橫桿
+    body+=dxfL(xR0,y_top0,      xR0,y_top0-leg0, lay(0));  // 右腳
+    body+=dxfT(TW*0.5,y_top0+5,11,TAGS[0]+' D'+b0.sz+'@'+b0.sp,lay(0));
+  }
+
+  // ② ㄩ型：底板底部（橫桿 + 兩端上腳，腳長 = 底板厚 - 上下保護層）
+  const b1=bars[1];
+  if(b1.sz){
+    const D1_cm=b1.sz/10, cov1=covF+D1_cm/2;
+    const y_bot1=cov1;
+    const leg1=E-2*cov1;
+    const xL1=cov1, xR1=TW-cov1;
+    body+=dxfL(xL1,y_bot1+leg1, xL1,y_bot1,      lay(1));  // 左腳
+    body+=dxfL(xL1,y_bot1,      xR1,y_bot1,      lay(1));  // 橫桿
+    body+=dxfL(xR1,y_bot1,      xR1,y_bot1+leg1, lay(1));  // 右腳
+    body+=dxfT(TW*0.5,y_bot1-14,11,TAGS[1]+' D'+b1.sz+'@'+b1.sp,lay(1));
+  }
+
+  // ③ 剪力榫鋼筋（對稱，固定 1:3 斜率）
+  const b2=bars[2];
+  if(b2.sz&&ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const kRB2=TW-KEY_Q, kLB2=kRB2-KEY_P;
+    const D2_cm=b2.sz/10, cov2=covF+D2_cm/2;
+    const off2=cov2*(Math.sqrt(10)-1)/3;
+    const y_bot2=-(KEY_R-cov2);
+    const y_topF2=E-covF-D2_cm/2;
+    const x_bL2=kLB2+off2, x_bR2=kRB2-off2;
+    const dy2=y_topF2-y_bot2;
+    const x_tL2=x_bL2-dy2/3, x_tR2=x_bR2+dy2/3;
+    const hook2=b2.c||0;
+    body+=dxfL(x_tL2-hook2,y_topF2, x_tL2,y_topF2,      lay(2)); // 左鉤
+    body+=dxfL(x_tL2,y_topF2,       x_bL2,y_bot2,       lay(2)); // 左斜腳
+    body+=dxfL(x_bL2,y_bot2,        x_bR2,y_bot2,       lay(2)); // 底橫桿
+    body+=dxfL(x_bR2,y_bot2,        x_tR2,y_topF2,      lay(2)); // 右斜腳
+    body+=dxfL(x_tR2,y_topF2,       x_tR2+hook2,y_topF2,lay(2)); // 右鉤
+    body+=dxfT(x_tR2+hook2+4,(y_topF2+y_bot2)/2,11,TAGS[2]+' D'+b2.sz+'@'+b2.sp,lay(2));
+  }
+
+  // ④ Z方向橫向筋（底板頂部＋底部各2個圓點）
+  const b3=bars[3];
+  if(b3.sz){
+    const D4_cm=b3.sz/10;
+    const D1_cm=bars[0].sz/10, D2_cm=bars[1].sz/10;
+    const r4=D4_cm/2;
+    const y4_top=E-covF-D1_cm/2-D4_cm/2;
+    const y4_bot=covF+D2_cm/2+D4_cm/2;
+    const sp4=b3.sp;
+    const n4=Math.ceil((TW-2*covF)/sp4);
+    const x4_0=covF+D4_cm/2;
+    [y4_top, y4_bot].forEach(y=>{
+      for(let k=0;k<n4;k++) body+=dxfC(x4_0+k*sp4, y, r4, lay(3));
+    });
+    body+=dxfT(x4_0+(n4-1)*sp4+4, (y4_top+y4_bot)/2, 11, TAGS[3]+' D'+b3.sz+'@'+b3.sp, lay(3));
+  }
+
+  // ⑤ 止滑榫內側縱向筋（角隅 + 必要中補）
+  const b4=bars[4];
+  if(b4.sz&&keyOn){
+    const r5_=bars[4].sz/20;
+    bar5Pts(bars,covF,KEY_Q,KEY_P,KEY_R,TW)
+      .forEach(({x,y})=>body+=dxfC(x,y,r5_,lay(4)));
+    const kRBt=TW-KEY_Q;
+    body+=dxfT(kRBt+4, -(KEY_R*0.5), 11, TAGS[4]+' D'+b4.sz+'@'+b4.sp, lay(4));
+  }
+
+  // ⑥ 牆背主筋（沿背面斜率）
+  {const g6=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g6){
+    body+=dxfL(g6.xTop,g6.yTop, g6.xBot,g6.yBot, lay(5));
+    body+=dxfL(g6.xBot,g6.yBot, g6.xHook,g6.yBot, lay(5));
+    body+=dxfT(g6.xTop+3, g6.yTop+5, 11, TAGS[5]+' D'+bars[5].sz+'@'+bars[5].sp, lay(5));
+  }}
+
+  // ⑦ 牆背短筋（沿背面斜率，從牆身一半至底板底部）
+  {const g7=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g7){
+    body+=dxfL(g7.xTop,g7.yTop, g7.xBot,g7.yBot, lay(6));
+    body+=dxfL(g7.xBot,g7.yBot, g7.xHook,g7.yBot, lay(6));
+    body+=dxfT(g7.xTop+3, g7.yTop+5, 11, TAGS[6]+' D'+bars[6].sz+'@'+bars[6].sp, lay(6));
+  }}
+
+  // ⑧ 牆前主筋（垂直，從牆頂至底板底部）
+  {const g8=bar8Geom(bars,J,E,TOE,covW,covF);
+  if(g8){
+    body+=dxfL(g8.xTop,g8.yTop, g8.xBot,g8.yBot, lay(7));
+    body+=dxfL(g8.xBot,g8.yBot, g8.xHook,g8.yBot, lay(7));
+    body+=dxfT(g8.xHook+3, g8.yBot+5, 11, TAGS[7]+' D'+bars[7].sz+'@'+bars[7].sp, lay(7));
+  }}
+
+  // ⑨ 牆身水平分布筋（點）
+  {const r9=bars[8].sz/20;
+  const pts9=bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW);
+  pts9.forEach(({x,y})=>{ body+=dxfC(x,y,r9,lay(8)); });
+  if(pts9.length) body+=dxfT(pts9[0].x+3,pts9[0].y+4,11,TAGS[8]+' D'+bars[8].sz+'@'+bars[8].sp,lay(8));
+  }
+
+  // 文字（英文）
+  body+=dxfT(0,TH+45,18,'R-008 Retaining Wall - Rebar Layout (unit: cm)','TEXT');
+  body+=dxfT(0,TH+28,14,'H='+(TH/100).toFixed(2)+'m  covW='+covW+'  covF='+covF+' cm','TEXT');
+
+  return dxfHeader(layers)+body+dxfFooter();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AutoLISP 產生
+// ═══════════════════════════════════════════════════════════════
+function genLSP1(){
+  const {J,E,TOE,HEEL,WBOT,WTOP}=ST;
+  const TW=totalW(), TH=totalH();
+  const pts=getOutlinePts().map(([x,y])=>`(list (+ ox ${x}) (+ oy ${y}))`).join('\n    ');
+  return `;;; ============================================================
+;;; 公路總局 R-008 擋土牆 — 外觀輪廓
+;;; H=${(TH/100).toFixed(2)}m  J=${J}cm  E=${E}cm
+;;; TOE=${TOE}cm  HEEL=${HEEL}cm  WBOT=${WBOT}cm  WTOP=${WTOP}cm
+;;; 指令: RETWALL1  單位: cm
+;;; ============================================================
+(defun C:RETWALL1 ( / ox oy pt)
+  (setq pt (getpoint "\\n點選插入基準點 (趾部左下角): "))
+  (setq ox (car pt) oy (cadr pt))
+  (rw1:layers)
+  (rw1:outline ox oy)
+  (rw1:dims ox oy)
+  (prompt (strcat "\\n完成 H=${(TH/100).toFixed(2)}m"))
+  (princ))
+
+(defun rw1:layers ()
+  (command "_.LAYER" "_M" "WALL-OUTLINE" "_C" "3" "WALL-OUTLINE" "")
+  (command "_.LAYER" "_M" "DIM"          "_C" "4" "DIM"          "")
+  (command "_.LAYER" "_M" "TEXT"         "_C" "7" "TEXT"         ""))
+
+(defun rw1:outline (ox oy)
+  (command "_.LAYER" "_S" "WALL-OUTLINE" "")
+  (command "_.PLINE"
+    (list (+ ox ${TOE})              (+ oy ${J+E}))
+    (list (+ ox ${TOE+WTOP})         (+ oy ${J+E}))
+    (list (+ ox ${TOE+WBOT})         (+ oy ${E}))
+    (list (+ ox ${TOE+WBOT+HEEL})    (+ oy ${E}))
+    (list (+ ox ${TOE+WBOT+HEEL})    oy)
+    (list ox oy)
+    (list ox (+ oy ${E}))
+    (list (+ ox ${TOE}) (+ oy ${E}))
+    "C"))
+
+(defun rw1:dims (ox oy)
+  (command "_.DIMSCALE" 50)
+  (command "_.LAYER" "_S" "DIM" "")
+  (command "_.DIMLINEAR"
+    (list (+ ox ${TOE}) (+ oy ${J+E})) (list ox oy)
+    (list (- ox 60) (+ oy ${(J+E)/2})))
+  (command "_.DIMLINEAR"
+    (list ox oy) (list (+ ox ${TW}) oy)
+    (list (+ ox ${TW/2}) (- oy 60)))
+  (command "_.LAYER" "_S" "TEXT" "")
+  (command "_.TEXT" (list (+ ox ${TOE}) (+ oy ${J+E+48})) 18 0
+    "公路總局 R-008 擋土牆外觀斷面"))
+;;; EOF
+`;
+}
+
+function genLSP2(){
+  const {J,E,TOE,HEEL,WBOT,WTOP,covW,covF,bars}=ST;
+  const TW=totalW(), TH=totalH();
+  let barLines=bars.map((b,i)=>
+    `  ; ${TAGS[i]} D${b.sz}@${b.sp}  a=${b.a} b=${b.b} c=${b.c}`).join('\n');
+
+  const xBack=TOE+WBOT-covW;
+
+  return `;;; ============================================================
+;;; 公路總局 R-008 擋土牆 — 鋼筋配置
+;;; H=${(TH/100).toFixed(2)}m  covW=${covW}cm  covF=${covF}cm
+;;; ============================================================
+;;; 鋼筋一覽
+${barLines}
+
+(defun C:RETWALL2 ( / ox oy)
+  (setq pt (getpoint "\\n點選插入基準點 (趾部左下角): "))
+  (setq ox (car pt) oy (cadr pt))
+  (rw2:layers)
+  (rw2:outline ox oy)
+  (rw2:rebar  ox oy)
+  (prompt "\\n鋼筋配置繪製完成")
+  (princ))
+
+(defun rw2:layers ()
+  (command "_.LAYER" "_M" "WALL-OUTLINE" "_C" "3"  "WALL-OUTLINE" "")
+${BAR_LAYER.map((n,i)=>`  (command "_.LAYER" "_M" "${n}" "_C" "${BAR_DXF_COLOR[i]}" "${n}" "")`).join('\n')}
+  (command "_.LAYER" "_M" "REBAR-TAG"    "_C" "1"  "REBAR-TAG"    ""))
+
+(defun rw2:outline (ox oy)
+  (command "_.LAYER" "_S" "WALL-OUTLINE" "")
+  (command "_.PLINE"
+    (list (+ ox ${TOE})           (+ oy ${J+E}))
+    (list (+ ox ${TOE+WTOP})      (+ oy ${J+E}))
+    (list (+ ox ${TOE+WBOT})      (+ oy ${E}))
+    (list (+ ox ${TOE+WBOT+HEEL}) (+ oy ${E}))
+    (list (+ ox ${TOE+WBOT+HEEL}) oy)
+    (list ox oy)
+    (list ox (+ oy ${E}))
+    (list (+ ox ${TOE}) (+ oy ${E}))
+    "C"))
+
+(defun rw2:rebar (ox oy / x y xa)
+  ; ① 牆背主筋 D${bars[0].sz}@${bars[0].sp}
+  (command "_.LAYER" "_S" "REBAR-01" "")
+  (setq x (+ ox ${f2(xBack)}))
+  (command "_.LINE" (list x (+ oy ${J+E-bars[0].a})) (list x (+ oy ${J+E})) "")
+  ${bars[0].b?`(command "_.LINE" (list (- x ${bars[0].b}) (+ oy ${J+E-bars[0].a})) (list x (+ oy ${J+E-bars[0].a})) "")`:'; 無底鉤'}
+
+  ; ② 前面主筋 D${bars[1].sz}@${bars[1].sp}
+  (command "_.LAYER" "_S" "REBAR-02" "")
+  (setq x (+ ox ${TOE+covW}))
+  (command "_.LINE" (list x (+ oy ${J+E-bars[1].a})) (list x (+ oy ${J+E})) "")
+  ${bars[1].b?`(command "_.LINE" (list x (+ oy ${J+E-bars[1].a})) (list (+ x ${bars[1].b}) (+ oy ${J+E-bars[1].a})) "")`:'; 無底鉤'}
+
+  ; ③ 剪力榫鋼筋 D${bars[2].sz}@${bars[2].sp}
+  ${(()=>{
+    if(!ST.keyOn) return '; keyOff - skip bar3';
+    const {KEY_Q,KEY_P,KEY_R}=ST; const b3=bars[2];
+    const kRB3=TW-KEY_Q, kLB3=kRB3-KEY_P;
+    const D3c=b3.sz/10, cov3=covF+D3c/2;
+    const off3=cov3*(Math.sqrt(10)-1)/3;
+    const yb3=-(KEY_R-cov3), ytF3=E-covF-D3c/2;
+    const xbL3=kLB3+off3, xbR3=kRB3-off3;
+    const dy3=ytF3-yb3;
+    const xtL3=xbL3-dy3/3, xtR3=xbR3+dy3/3;
+    const hk3=b3.c||0;
+    return `(command "_.LAYER" "_S" "REBAR-03" "")
+  (command "_.LINE" (list (+ ox ${f2(xtL3-hk3)}) (+ oy ${f2(ytF3)})) (list (+ ox ${f2(xtL3)}) (+ oy ${f2(ytF3)})) "")
+  (command "_.LINE" (list (+ ox ${f2(xtL3)}) (+ oy ${f2(ytF3)})) (list (+ ox ${f2(xbL3)}) (+ oy ${f2(yb3)})) "")
+  (command "_.LINE" (list (+ ox ${f2(xbL3)}) (+ oy ${f2(yb3)})) (list (+ ox ${f2(xbR3)}) (+ oy ${f2(yb3)})) "")
+  (command "_.LINE" (list (+ ox ${f2(xbR3)}) (+ oy ${f2(yb3)})) (list (+ ox ${f2(xtR3)}) (+ oy ${f2(ytF3)})) "")
+  (command "_.LINE" (list (+ ox ${f2(xtR3)}) (+ oy ${f2(ytF3)})) (list (+ ox ${f2(xtR3+hk3)}) (+ oy ${f2(ytF3)})) "")`;
+  })()}
+
+  ; ④ Z方向橫向筋 D${bars[3].sz}@${bars[3].sp}（底板頂部＋底部均布）
+  ${(()=>{
+    const b4_=bars[3]; if(!b4_.sz) return '; bar4 sz=0 skip';
+    const D4c=b4_.sz/10, D1c=bars[0].sz/10, D2c=bars[1].sz/10;
+    const r4_=D4c/2, sp4_=b4_.sp;
+    const n4_=Math.ceil((TW-2*covF)/sp4_);
+    const y4t=E-covF-D1c/2-D4c/2, y4b=covF+D2c/2+D4c/2;
+    const x4_0=covF+D4c/2;
+    let lines=`(command "_.LAYER" "_S" "REBAR-04" "")`;
+    [y4t,y4b].forEach(y=>{
+      for(let k=0;k<n4_;k++){
+        const xk=x4_0+k*sp4_;
+        lines+=`\n  (command "_.CIRCLE" (list (+ ox ${f2(xk)}) (+ oy ${f2(y)})) ${f2(r4_)})`;
+      }
+    });
+    return lines;
+  })()}
+
+  ; ⑤ 止滑榫內側縱向筋 D${bars[4].sz}@${bars[4].sp}（角隅＋必要中補）
+  ${(()=>{
+    const bv=bars[4]; if(!bv.sz||!ST.keyOn) return '; keyOff or bar5 sz=0 skip';
+    const r5v=bv.sz/20;
+    let out=`(command "_.LAYER" "_S" "REBAR-05" "")`;
+    bar5Pts(bars,covF,ST.KEY_Q,ST.KEY_P,ST.KEY_R,TW).forEach(({x,y})=>{
+      out+=`\n  (command "_.CIRCLE" (list (+ ox ${f2(x)}) (+ oy ${f2(y)})) ${f2(r5v)})`;
+    });
+    return out;
+  })()}
+
+  ; ⑥ 牆背主筋 D${bars[5].sz}@${bars[5].sp}（沿背面斜率）
+  ${(()=>{
+    const g6=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+    if(!g6) return '; bar6 sz=0 skip';
+    return `(command "_.LAYER" "_S" "REBAR-06" "")
+  (command "_.LINE"
+    (list (+ ox ${f2(g6.xTop)}) (+ oy ${f2(g6.yTop)}))
+    (list (+ ox ${f2(g6.xBot)}) (+ oy ${f2(g6.yBot)})) "")
+  (command "_.LINE"
+    (list (+ ox ${f2(g6.xBot)}) (+ oy ${f2(g6.yBot)}))
+    (list (+ ox ${f2(g6.xHook)}) (+ oy ${f2(g6.yBot)})) "")`;
+  })()}
+
+  ; ⑦ 牆背短筋 D${bars[6].sz}@${bars[6].sp}（牆身一半至底板底部）
+  ${(()=>{
+    const g7=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+    if(!g7) return '; bar7 sz=0 skip';
+    return `(command "_.LAYER" "_S" "REBAR-07" "")
+  (command "_.LINE"
+    (list (+ ox ${f2(g7.xTop)}) (+ oy ${f2(g7.yTop)}))
+    (list (+ ox ${f2(g7.xBot)}) (+ oy ${f2(g7.yBot)})) "")
+  (command "_.LINE"
+    (list (+ ox ${f2(g7.xBot)}) (+ oy ${f2(g7.yBot)}))
+    (list (+ ox ${f2(g7.xHook)}) (+ oy ${f2(g7.yBot)})) "")`;
+  })()}
+
+  ; ⑧ 牆前主筋 D${bars[7].sz}@${bars[7].sp}（垂直，牆頂至底板底部）
+  ${(()=>{
+    const g8=bar8Geom(bars,J,E,TOE,covW,covF);
+    if(!g8) return '; bar8 sz=0 skip';
+    return `(command "_.LAYER" "_S" "REBAR-08" "")
+  (command "_.LINE"
+    (list (+ ox ${f2(g8.xTop)}) (+ oy ${f2(g8.yTop)}))
+    (list (+ ox ${f2(g8.xBot)}) (+ oy ${f2(g8.yBot)})) "")
+  (command "_.LINE"
+    (list (+ ox ${f2(g8.xBot)}) (+ oy ${f2(g8.yBot)}))
+    (list (+ ox ${f2(g8.xHook)}) (+ oy ${f2(g8.yBot)})) "")`;
+  })()}
+
+  ; ⑨ 牆身水平分布筋 D${bars[8].sz}@${bars[8].sp}（點，Z方向）
+  ${(()=>{
+    const pts9=bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW);
+    if(!pts9.length) return '; bar9 sz=0 skip';
+    const r9=bars[8].sz/20;
+    let out=`(command "_.LAYER" "_S" "REBAR-09" "")`;
+    pts9.forEach(({x,y})=>{
+      out+=`\n  (command "_.CIRCLE" (list (+ ox ${f2(x)}) (+ oy ${f2(y)})) ${f2(r9)})`;
+    });
+    return out;
+  })()})
+;;; EOF
+`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Tab3：3D 模型（可旋轉  X=牆寬 Y=牆高 Z=牆長）
+// ═══════════════════════════════════════════════════════════════
+
+// 旋轉狀態（全域，不隨 redraw 重置）
+const R3 = { ax: 0.25, ay: -0.55, zoom: 1.0, panX: 0, panY: 0 };
+let _r3drag = false, _r3mx = 0, _r3my = 0;
+let _r3pan  = false; // 中鍵平移模式
+let _r3pinch = 0; // two-finger pinch distance
+
+function setView3D(v){
+  const views={
+    'xy' : {ax:0,        ay:0,           zoom:1.0},  // 正面：看 X-Y 斷面（從 -Z 方向看）
+    'yz' : {ax:0,        ay:Math.PI/2,   zoom:1.0},  // 側面：看 Y-Z（從 +X 方向看）
+    'xz' : {ax:-Math.PI/2, ay:0,         zoom:1.0},  // 俯視：看 X-Z（從 +Y 方向看）
+    'iso': {ax:0.25,     ay:-0.55,       zoom:1.0},  // 等角 3D
+    'reset':{ax:0.25,   ay:-0.55,       zoom:1.0},
+  };
+  const s=views[v]||views.iso;
+  R3.ax=s.ax; R3.ay=s.ay; R3.zoom=s.zoom; R3.panX=0; R3.panY=0;
+  // 更新按鈕高亮
+  ['xy','yz','xz','iso'].forEach(k=>{
+    const el=document.getElementById('v-'+k);
+    if(el) el.className='btn btn-sm'+(k===v?' btn-primary':'');
+  });
+  redraw3D();
+}
+
+function adjSL(d){
+  ST.sectionLen=Math.max(30,ST.sectionLen+d);
+  document.getElementById('sl-inp').value=ST.sectionLen;
+  redraw3D();
+}
+
+function syncDim3(){
+  const body=document.getElementById('dim-ro3');
+  if(!body) return;
+  body.innerHTML='';
+  const info=[
+    ['H (J+E)',totalH()],['J',ST.J],['E',ST.E],
+    ['TOE',ST.TOE],['HEEL',ST.HEEL],['WBOT',ST.WBOT],['WTOP',ST.WTOP],
+    ['底板總寬',totalW()],
+    ['段落長 L',ST.sectionLen],
+  ];
+  info.forEach(([l,v])=>{
+    const row=document.createElement('div');
+    row.className='input-row';
+    row.innerHTML=`<div class="input-label">${l}</div>
+      <div class="input-ctrl">
+        <input type="number" value="${v}" readonly style="width:74px;height:24px">
+        <span class="input-unit">cm</span>
+      </div>`;
+    body.appendChild(row);
+  });
+  // ── 鋼筋勾選圖例（與分頁 2 共用 ST.barVis，勾選後重繪 3D）──
+  const leg=document.getElementById('rebar-legend3');
+  if(leg){
+    leg.innerHTML='';
+    // 全選 / 全不勾選
+    const allWrap=document.createElement('label');
+    allWrap.style.cssText='display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;padding:2px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);font-size:11px;color:var(--text2);transition:background .15s;margin-right:6px';
+    allWrap.onmouseenter=()=>allWrap.style.background='rgba(0,0,0,0.06)';
+    allWrap.onmouseleave=()=>allWrap.style.background='var(--surface2)';
+    const allChk3=document.createElement('input');
+    allChk3.type='checkbox';
+    allChk3.style.cssText='width:14px;height:14px;cursor:pointer';
+    const nC=ST.barVis.filter(Boolean).length;
+    allChk3.checked=nC===ST.barVis.length;
+    allChk3.indeterminate=nC>0&&nC<ST.barVis.length;
+    const allTxt3=document.createElement('span');
+    allTxt3.textContent=nC===ST.barVis.length?'全勾選':'全不勾選';
+    allChk3.onchange=()=>{
+      const v=allChk3.checked;
+      ST.barVis.fill(v);
+      allChk3.indeterminate=false;
+      allTxt3.textContent=v?'全勾選':'全不勾選';
+      leg.querySelectorAll('input[data-bar3]').forEach(c=>{ c.checked=v; });
+      redraw3D();
+    };
+    allWrap.appendChild(allChk3); allWrap.appendChild(allTxt3);
+    leg.appendChild(allWrap);
+    // 個別鋼筋
+    const upAll3=()=>{
+      const n=ST.barVis.filter(Boolean).length;
+      allChk3.checked=n===ST.barVis.length;
+      allChk3.indeterminate=n>0&&n<ST.barVis.length;
+      allTxt3.textContent=n===ST.barVis.length?'全勾選':'全不勾選';
+    };
+    TAGS.forEach((tag,i)=>{
+      const item=document.createElement('label');
+      item.className='legend-item';
+      item.style.cssText='display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;padding:2px 4px;border-radius:4px;transition:background .15s';
+      item.onmouseenter=()=>item.style.background='rgba(255,255,255,0.08)';
+      item.onmouseleave=()=>item.style.background='';
+      const chk=document.createElement('input');
+      chk.type='checkbox'; chk.checked=ST.barVis[i];
+      chk.dataset.bar3=i;
+      chk.style.cssText='accent-color:'+BAR_COLORS[i]+';width:14px;height:14px;cursor:pointer';
+      chk.onchange=()=>{ ST.barVis[i]=chk.checked; upAll3(); redraw3D(); };
+      const dot=document.createElement('span');
+      dot.style.cssText=`display:inline-block;width:10px;height:10px;border-radius:50%;background:${BAR_COLORS[i]};flex-shrink:0`;
+      const txt=document.createElement('span');
+      txt.style.cssText='font-size:11px;color:var(--text2)';
+      const nb_3=ST.bars[i].n||1; const nbp_3=nb_3>1?(nb_3+'-'):'';
+      txt.textContent=`${tag} ${nbp_3}D${ST.bars[i].sz}@${ST.bars[i].sp}`;
+      item.appendChild(chk); item.appendChild(dot); item.appendChild(txt);
+      leg.appendChild(item);
+    });
+  }
+}
+
+// 旋轉矩陣：先繞 Y（方位角）再繞 X（仰角）
+function makeRot3(ax, ay){
+  const cx=Math.cos(ax), sx=Math.sin(ax);
+  const cy=Math.cos(ay), sy=Math.sin(ay);
+  return (x,y,z)=>{
+    // Ry
+    const x1=x*cy+z*sy, y1=y, z1=-x*sy+z*cy;
+    // Rx
+    return [x1, y1*cx-z1*sx, y1*sx+z1*cx];
+  };
+}
+
+function init3DEvents(canvas){
+  if(canvas._r3ok) return;
+  canvas._r3ok=true;
+  canvas.style.cursor='grab';
+  canvas.addEventListener('mousedown',e=>{
+    if(e.button===1){          // 中鍵：平移
+      _r3pan=true; _r3mx=e.clientX; _r3my=e.clientY;
+      canvas.style.cursor='move';
+      e.preventDefault();
+    } else {                   // 左鍵：旋轉
+      _r3drag=true; _r3mx=e.clientX; _r3my=e.clientY;
+      canvas.style.cursor='grabbing';
+    }
+  });
+  canvas.addEventListener('mousemove',e=>{
+    if(_r3pan){
+      R3.panX+=(e.clientX-_r3mx);
+      R3.panY+=(e.clientY-_r3my);
+      _r3mx=e.clientX; _r3my=e.clientY;
+      redraw3D();
+    } else if(_r3drag){
+      R3.ay-=(e.clientX-_r3mx)*0.008;  // 向右拖曳 → 向右旋轉（繞Y軸）
+      R3.ax-=(e.clientY-_r3my)*0.008;
+      R3.ax=Math.max(-1.5,Math.min(1.5,R3.ax));
+      _r3mx=e.clientX; _r3my=e.clientY;
+      redraw3D();
+    }
+  });
+  const stop=()=>{
+    _r3drag=false; _r3pan=false;
+    canvas.style.cursor='grab';
+  };
+  canvas.addEventListener('mouseup',stop);
+  canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('contextmenu',e=>e.preventDefault()); // 防右鍵選單干擾
+  // touch
+  canvas.addEventListener('touchstart',e=>{
+    const t=e.touches[0]; _r3drag=true; _r3mx=t.clientX; _r3my=t.clientY;
+    e.preventDefault();
+  },{passive:false});
+  canvas.addEventListener('touchmove',e=>{
+    if(!_r3drag) return;
+    const t=e.touches[0];
+    R3.ay-=(t.clientX-_r3mx)*0.008;  // 向右拖曳 → 向右旋轉（繞Y軸）
+    R3.ax-=(t.clientY-_r3my)*0.008;
+    R3.ax=Math.max(-1.5,Math.min(1.5,R3.ax));
+    _r3mx=t.clientX; _r3my=t.clientY;
+    redraw3D(); e.preventDefault();
+  },{passive:false});
+  canvas.addEventListener('touchend',()=>{_r3drag=false; _r3pinch=0;});
+  // 滾輪縮放
+  canvas.addEventListener('wheel',e=>{
+    e.preventDefault();
+    R3.zoom *= e.deltaY<0 ? 1.12 : 1/1.12;
+    R3.zoom = Math.max(0.15, Math.min(8, R3.zoom));
+    redraw3D();
+  },{passive:false});
+  // 雙指縮放 (pinch)
+  canvas.addEventListener('touchstart',e=>{
+    if(e.touches.length===2){
+      const dx=e.touches[0].clientX-e.touches[1].clientX;
+      const dy=e.touches[0].clientY-e.touches[1].clientY;
+      _r3pinch=Math.hypot(dx,dy);
+    }
+  },{passive:false});
+  canvas.addEventListener('touchmove',e=>{
+    if(e.touches.length===2 && _r3pinch>0){
+      const dx=e.touches[0].clientX-e.touches[1].clientX;
+      const dy=e.touches[0].clientY-e.touches[1].clientY;
+      const d=Math.hypot(dx,dy);
+      R3.zoom *= d/_r3pinch;
+      R3.zoom = Math.max(0.15, Math.min(8, R3.zoom));
+      _r3pinch=d;
+      redraw3D(); e.preventDefault();
+    }
+  },{passive:false});
+}
+
+function redraw3D(){
+  syncDim3();
+  const canvas=document.getElementById('c3');
+  if(!canvas) return;
+  init3DEvents(canvas);
+  const W=canvas.offsetWidth||canvas.parentElement.clientWidth||620;
+  canvas.width=W;
+  const cH=canvas.height;
+  const ctx=canvas.getContext('2d');
+
+  // Dark background
+  ctx.fillStyle='#16213e';
+  ctx.fillRect(0,0,W,cH);
+
+  const {J,E,TOE,HEEL,WBOT,WTOP,covW,covF,bars}=ST;
+  const TW=totalW(), TH=totalH(), SL=ST.sectionLen;
+
+  // 旋轉函式（Ry 再 Rx）
+  const rot=makeRot3(R3.ax, R3.ay);
+
+  // 自動縮放：找旋轉後的邊界框
+  // Y 底部需含止滑榫深度（若開啟），否則為 0
+  const yMin = ST.keyOn ? -ST.KEY_R : 0;
+  const corners=[
+    [0,yMin,0],[TW,yMin,0],[0,TH,0],[TW,TH,0],
+    [0,yMin,SL],[TW,yMin,SL],[0,TH,SL],[TW,TH,SL],
+  ];
+  const rc=corners.map(([x,y,z])=>rot(x,y,z));
+  const rxArr=rc.map(c=>c[0]), ryArr=rc.map(c=>c[1]);
+  const minRX=Math.min(...rxArr), maxRX=Math.max(...rxArr);
+  const minRY=Math.min(...ryArr), maxRY=Math.max(...ryArr);
+
+  const pad=55;
+  const sc=Math.min((W-2*pad)/(maxRX-minRX||1),(cH-2*pad-40)/(maxRY-minRY||1)) * R3.zoom;
+  const cxS=W/2-(minRX+maxRX)/2*sc;
+  const cyS=(cH+40)/2+(minRY+maxRY)/2*sc;
+
+  // 模型座標 → 螢幕 [sx, sy]（回傳第3分量作深度用）
+  const p3=(x,y,z)=>{
+    const [rx,ry,rz]=rot(x,y,z);
+    return [cxS+rx*sc+R3.panX, cyS-ry*sc+R3.panY, rz];
+  };
+
+  // 畫線輔助
+  const l3=(x1,y1,z1,x2,y2,z2)=>{
+    const [ax,ay]=p3(x1,y1,z1),[bx,by]=p3(x2,y2,z2);
+    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke();
+  };
+  // Z 方向線段輔助：投影長度近零（正交視圖）時改畫實體填滿圓（鋼筋斷面）
+  // diam = 鋼筋直徑（cm，模型單位）；半徑 = max(3px, diam/2*sc)
+  const lz=(x1,y1,z1,x2,y2,z2,diam)=>{
+    const [ax,ay]=p3(x1,y1,z1),[bx,by]=p3(x2,y2,z2);
+    const len=Math.hypot(bx-ax,by-ay);
+    if(len<4){
+      const cx=(ax+bx)/2, cy=(ay+by)/2;
+      const r=2;
+      const col=ctx.strokeStyle;
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.fillStyle=col; ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke();
+    }
+  };
+
+  // ── 混凝土輪廓（X-Y 斷面 沿 Z 拉伸）──
+  // getOutlinePts() 傳回 [[x, h], ...] 其中 h = 高度 = Y 座標
+  const outline=getOutlinePts();
+  const nPts=outline.length-1;
+
+  // 後面 (Z=SL) 先畫（畫家算法）
+  ctx.fillStyle='rgba(40,70,115,0.20)';
+  ctx.beginPath();
+  for(let i=0;i<nPts;i++){
+    const [sx,sy]=p3(outline[i][0],outline[i][1],SL);
+    if(i===0) ctx.moveTo(sx,sy); else ctx.lineTo(sx,sy);
+  }
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='rgba(100,160,255,0.40)'; ctx.lineWidth=1.0;
+  for(let i=0;i<nPts;i++){
+    const j=(i+1)%nPts;
+    l3(outline[i][0],outline[i][1],SL, outline[j][0],outline[j][1],SL);
+  }
+
+  // 縱向邊線
+  ctx.strokeStyle='rgba(100,160,255,0.40)'; ctx.lineWidth=0.9;
+  for(let i=0;i<nPts;i++){
+    l3(outline[i][0],outline[i][1],0, outline[i][0],outline[i][1],SL);
+  }
+
+  // 前面 (Z=0) 填色 + 輪廓線
+  ctx.fillStyle='rgba(60,100,155,0.28)';
+  ctx.beginPath();
+  for(let i=0;i<nPts;i++){
+    const [sx,sy]=p3(outline[i][0],outline[i][1],0);
+    if(i===0) ctx.moveTo(sx,sy); else ctx.lineTo(sx,sy);
+  }
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='rgba(120,185,255,0.90)'; ctx.lineWidth=1.5;
+  for(let i=0;i<nPts;i++){
+    const j=(i+1)%nPts;
+    l3(outline[i][0],outline[i][1],0, outline[j][0],outline[j][1],0);
+  }
+
+  // ── 止滑榫輪廓（與分頁1、2一致）──
+  if(ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const slope=KEY_R/3;
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const kRT=kRB+slope, kLT=kLB-slope;
+    // 止滑榫為梯形，頂部 y=0，底部 y=-KEY_R
+    const keyPts=[[kLT,0],[kRT,0],[kRB,-KEY_R],[kLB,-KEY_R]];
+    const nK=keyPts.length;
+    ctx.strokeStyle='rgba(120,185,255,0.90)'; ctx.lineWidth=1.2;
+    // 後面 Z=SL
+    for(let i=0;i<nK;i++){
+      const j=(i+1)%nK;
+      l3(keyPts[i][0],keyPts[i][1],SL, keyPts[j][0],keyPts[j][1],SL);
+    }
+    // 縱向邊線
+    ctx.lineWidth=0.9; ctx.strokeStyle='rgba(100,160,255,0.40)';
+    keyPts.forEach(([x,y])=>l3(x,y,0, x,y,SL));
+    // 前面 Z=0
+    ctx.strokeStyle='rgba(120,185,255,0.90)'; ctx.lineWidth=1.2;
+    for(let i=0;i<nK;i++){
+      const j=(i+1)%nK;
+      l3(keyPts[i][0],keyPts[i][1],0, keyPts[j][0],keyPts[j][1],0);
+    }
+  }
+
+  // ── 鋼筋（X=牆寬, Y=高度, Z=段落深度）──
+  const V=ST.barVis;
+  // ① ㄇ型：底板頂部橫桿 + 兩腳向下，沿 Z 每 sp 一根
+  if(V[0]){const b=bars[0]; if(b.sz){
+    ctx.strokeStyle=BAR_COLORS[0]; ctx.lineWidth=1.8;
+    const D1=b.sz/10, cov1=covF+D1/2;
+    const yTop=E-cov1, leg=E-2*cov1;
+    const x0=cov1, x1=TW-cov1;
+    const nb1=b.n||1;
+    for(let zp=0;zp<=SL+0.01;zp+=b.sp){
+      for(let bi=0;bi<nb1;bi++){
+        const y=yTop-bi*D1;             // bundle 第2支往下偏移一個直徑
+        const zz=zp+bi*D1;             // bundle 第2支在Z方向也偏移，緊靠
+        l3(x0,y-leg,zz, x0,y,zz);
+        l3(x0,y,zz,     x1,y,zz);
+        l3(x1,y,zz,     x1,y-leg,zz);
+      }
+    }
+  }}
+  // ② ㄩ型：底板底部橫桿 + 兩腳向上，沿 Z 每 sp 一根
+  if(V[1]){const b=bars[1]; if(b.sz){
+    ctx.strokeStyle=BAR_COLORS[1]; ctx.lineWidth=1.8;
+    const D2=b.sz/10, cov2=covF+D2/2;
+    const yBot=cov2, leg=E-2*cov2;
+    const x0=cov2, x1=TW-cov2;
+    for(let zp=0;zp<=SL+0.01;zp+=b.sp){
+      l3(x0,yBot+leg,zp, x0,yBot,zp);   // 左腳
+      l3(x0,yBot,zp,     x1,yBot,zp);   // 橫桿
+      l3(x1,yBot,zp,     x1,yBot+leg,zp); // 右腳
+    }
+  }}
+  // ③ 剪力榫鋼筋：對稱固定 1:3 斜率，沿 Z 每 sp 一根
+  if(V[2]){const b=bars[2]; if(b.sz&&ST.keyOn){
+    ctx.strokeStyle=BAR_COLORS[2]; ctx.lineWidth=1.8;
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const kRB3=TW-KEY_Q, kLB3=kRB3-KEY_P;
+    const D3c=b.sz/10, cov3=covF+D3c/2;
+    const off3=cov3*(Math.sqrt(10)-1)/3;
+    const yb3=-(KEY_R-cov3), ytF3=E-covF-D3c/2;
+    const xbL3=kLB3+off3, xbR3=kRB3-off3;
+    const dy3=ytF3-yb3;
+    const xtL3=xbL3-dy3/3, xtR3=xbR3+dy3/3;
+    const hk3=b.c||0;
+    for(let zp=0;zp<=SL+0.01;zp+=b.sp){
+      l3(xtL3-hk3,ytF3,zp, xtL3,ytF3,zp);
+      l3(xtL3,ytF3,zp,     xbL3,yb3,zp);
+      l3(xbL3,yb3,zp,      xbR3,yb3,zp);
+      l3(xbR3,yb3,zp,      xtR3,ytF3,zp);
+      l3(xtR3,ytF3,zp,     xtR3+hk3,ytF3,zp);
+    }
+  }}
+  // ④ Z方向橫向筋：底板頂部及底部均布（沿 Z 方向貫通）
+  if(V[3]){
+    const D4c=bars[3].sz/10, D1c=bars[0].sz/10, D2c=bars[1].sz/10;
+    const y4t=E-covF-D1c/2-D4c/2, y4b=covF+D2c/2+D4c/2;
+    const sp4=bars[3].sp, n4=Math.ceil((TW-2*covF)/sp4), x4_0=covF+D4c/2;
+    ctx.strokeStyle=BAR_COLORS[3]; ctx.lineWidth=1.8;
+    [y4t,y4b].forEach(yP=>{
+      for(let k=0;k<n4;k++) lz(x4_0+k*sp4,yP,0, x4_0+k*sp4,yP,SL,D4c);
+    });
+  }
+  // ⑤ 止滑榫內側縱向筋：Z 方向線段（角隅 + 必要中補）
+  if(V[4] && ST.keyOn && bars[4].sz){
+    const D5c=bars[4].sz/10;
+    ctx.strokeStyle=BAR_COLORS[4]; ctx.lineWidth=1.4;
+    bar5Pts(bars,covF,ST.KEY_Q,ST.KEY_P,ST.KEY_R,TW)
+      .forEach(({x,y})=>lz(x,y,0, x,y,SL,D5c));
+  }
+  // ⑥ 牆背主筋：沿背面斜率，每 sp 重複（Z 方向）
+  if(V[5]){const g6=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g6){
+    ctx.strokeStyle=BAR_COLORS[5]; ctx.lineWidth=1.8;
+    for(let zp=0;zp<=SL+0.01;zp+=bars[5].sp){
+      l3(g6.xTop,g6.yTop,zp, g6.xBot,g6.yBot,zp);
+      l3(g6.xBot,g6.yBot,zp, g6.xHook,g6.yBot,zp);
+    }
+  }}
+  // ⑦ 牆背短筋：沿背面斜率，每 sp 重複（Z 方向）
+  if(V[6]){const g7=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g7){
+    ctx.strokeStyle=BAR_COLORS[6]; ctx.lineWidth=1.8;
+    for(let zp=0;zp<=SL+0.01;zp+=bars[6].sp){
+      l3(g7.xTop,g7.yTop,zp, g7.xBot,g7.yBot,zp);
+      l3(g7.xBot,g7.yBot,zp, g7.xHook,g7.yBot,zp);
+    }
+  }}
+  // ⑧ 牆前主筋：垂直，每 sp 重複（Z 方向）
+  if(V[7]){const g8=bar8Geom(bars,J,E,TOE,covW,covF);
+  if(g8){
+    ctx.strokeStyle=BAR_COLORS[7]; ctx.lineWidth=1.8;
+    for(let zp=0;zp<=SL+0.01;zp+=bars[7].sp){
+      l3(g8.xTop,g8.yTop,zp, g8.xBot,g8.yBot,zp);
+      l3(g8.xBot,g8.yBot,zp, g8.xHook,g8.yBot,zp);
+    }
+  }}
+  // ⑨ 牆身水平分布筋：Z 方向貫通線，各 (x,y) 各一根
+  if(V[8]){const pts9=bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW);
+  if(pts9.length){
+    const D9c=bars[8].sz/10;
+    ctx.strokeStyle=BAR_COLORS[8]; ctx.lineWidth=1.4;
+    pts9.forEach(({x,y})=>lz(x,y,0, x,y,SL,D9c));
+  }}
+
+  // ── 座標軸（原點在模型(0,0,0)位置）──
+  const axLen=Math.min(TW,TH,SL)*0.28;
+  const [axOx,axOy]=p3(0,0,0);
+  const [axXx,axXy]=p3(axLen,0,0);
+  const [axYx,axYy]=p3(0,axLen,0);
+  const [axZx,axZy]=p3(0,0,axLen);
+  ctx.lineWidth=2.5;
+  [['#ff4444',[axXx,axXy],'X'],['#44dd44',[axYx,axYy],'Y'],['#4488ff',[axZx,axZy],'Z']].forEach(([c,[ex,ey],lbl])=>{
+    ctx.strokeStyle=c; ctx.fillStyle=c;
+    ctx.beginPath(); ctx.moveTo(axOx,axOy); ctx.lineTo(ex,ey); ctx.stroke();
+    ctx.font='bold 12px sans-serif'; ctx.textAlign='left';
+    ctx.fillText(lbl,ex+3,ey+4);
+  });
+
+  // ── 標題 ──
+  ctx.fillStyle='#ddeeff';
+  ctx.font='bold 12px "Noto Sans TC",sans-serif';
+  ctx.textAlign='left';
+  ctx.fillText('公路總局 R-008 擋土牆 3D 模型　← 拖曳旋轉', 10, 20);
+  ctx.font='10px "Noto Sans TC",sans-serif';
+  ctx.fillStyle='#7799bb';
+  ctx.fillText('H='+(TH/100).toFixed(2)+'m  Z（牆長）='+(SL/100).toFixed(1)+'m  單位:cm', 10, 35);
+
+  // 產生 DXF3/LSP3
+  try{ ST.dxf3=genDXF3(); ST.lsp3=genLSP3(); }catch(e){ console.error('DXF3 error',e); }
+  renderQuantityTable();
+  const pre3=document.getElementById('dxf3-pre');
+  if(pre3) pre3.textContent=(ST.dxf3||'').split('\n').slice(0,60).join('\n')+'...';
+}
+
+// ─── 材料數量計算 ────────────────────────────────────────────
+// 鋼筋單位重量 (kg/m)
+const REBAR_UW = {13:1.042,16:1.578,19:2.226,22:3.042,25:3.854,29:5.185,32:6.313};
+
+function computeQuantities(){
+  const {J,E,TOE,HEEL,WBOT,WTOP,covW,covF,bars}=ST;
+  const TW=totalW(), SL=ST.sectionLen;
+  const n_sp = zp=>Math.floor(SL/zp)+1; // 沿Z方向根數
+  const cm2m = v=>v/100;
+
+  const rows=[]; // {tag, sz, n, count, lenPerBar_m, totalLen_m, weight_kg}
+
+  // ① ㄇ型
+  {const b=bars[0]; if(b.sz){
+    const D1=b.sz/10, cov1=covF+D1/2;
+    const horiz=TW-2*cov1, leg=E-2*cov1;
+    const perBar=cm2m(horiz+2*leg);
+    const nb=b.n||1, cnt=n_sp(b.sp)*nb;
+    const tot=perBar*cnt;
+    rows.push({tag:'①',sz:b.sz,n:nb,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+  // ② ㄩ型
+  {const b=bars[1]; if(b.sz){
+    const D2=b.sz/10, cov2=covF+D2/2;
+    const horiz=TW-2*cov2, leg=E-2*cov2;
+    const perBar=cm2m(horiz+2*leg);
+    const cnt=n_sp(b.sp);
+    const tot=perBar*cnt;
+    rows.push({tag:'②',sz:b.sz,n:1,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+  // ③ 止滑榫筋
+  {const b=bars[2]; if(b.sz&&ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const D3c=b.sz/10, cov3=covF+D3c/2;
+    const off3=cov3*(Math.sqrt(10)-1)/3;
+    const yb3=-(KEY_R-cov3), ytF3=E-covF-D3c/2;
+    const dy3=ytF3-yb3;
+    const slant=dy3*Math.sqrt(10)/3;
+    const bot=KEY_P-2*off3;
+    const hk3=b.c||0;
+    const perBar=cm2m(2*hk3+2*slant+bot);
+    const cnt=n_sp(b.sp);
+    const tot=perBar*cnt;
+    rows.push({tag:'③',sz:b.sz,n:1,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+  // ④ Z方向筋
+  {const b=bars[3]; if(b.sz){
+    const D4c=b.sz/10, D1c=bars[0].sz/10, D2c=bars[1].sz/10;
+    const sp4=b.sp, n4=Math.ceil((TW-2*covF)/sp4);
+    const cnt=n4*2; // 頂部+底部
+    const perBar=cm2m(SL);
+    const tot=perBar*cnt;
+    rows.push({tag:'④',sz:b.sz,n:1,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+  // ⑤ 止滑榫縱向筋
+  {const b=bars[4]; if(b.sz&&ST.keyOn){
+    const pts=bar5Pts(bars,covF,ST.KEY_Q,ST.KEY_P,ST.KEY_R,TW);
+    const cnt=pts.length;
+    const perBar=cm2m(SL);
+    const tot=perBar*cnt;
+    rows.push({tag:'⑤',sz:b.sz,n:1,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+  // ⑥ 牆背主筋
+  {const g6=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g6){
+    const b=bars[5];
+    const diag=Math.hypot(g6.xTop-g6.xBot,g6.yTop-g6.yBot);
+    const hook=g6.xBot-g6.xHook;
+    const perBar=cm2m(diag+hook);
+    const cnt=n_sp(b.sp);
+    const tot=perBar*cnt;
+    rows.push({tag:'⑥',sz:b.sz,n:1,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+  // ⑦ 牆背短筋
+  {const g7=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g7){
+    const b=bars[6];
+    const diag=Math.hypot(g7.xTop-g7.xBot,g7.yTop-g7.yBot);
+    const hook=g7.xBot-g7.xHook;
+    const perBar=cm2m(diag+hook);
+    const cnt=n_sp(b.sp);
+    const tot=perBar*cnt;
+    rows.push({tag:'⑦',sz:b.sz,n:1,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+  // ⑧ 牆前主筋
+  {const g8=bar8Geom(bars,J,E,TOE,covW,covF);
+  if(g8){
+    const b=bars[7];
+    const vert=g8.yTop-g8.yBot;
+    const hook=Math.abs(g8.xHook-g8.xBot);
+    const perBar=cm2m(vert+hook);
+    const cnt=n_sp(b.sp);
+    const tot=perBar*cnt;
+    rows.push({tag:'⑧',sz:b.sz,n:1,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+  // ⑨ 牆身水平分布筋
+  {const b=bars[8]; if(b.sz){
+    const pts9=bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW);
+    const cnt=pts9.length;
+    const perBar=cm2m(SL);
+    const tot=perBar*cnt;
+    rows.push({tag:'⑨',sz:b.sz,n:1,cnt,perBar,tot,wt:tot*(REBAR_UW[b.sz]||0)});
+  }}
+
+  // 混凝土體積（斷面積 × 段落長）
+  const oPts=getOutlinePts().slice(0,-1); // 去掉閉合點
+  let area=0;
+  for(let i=0;i<oPts.length;i++){
+    const j=(i+1)%oPts.length;
+    area+=(oPts[i][0]*oPts[j][1]-oPts[j][0]*oPts[i][1]);
+  }
+  area=Math.abs(area)/2; // cm²
+  // 加止滑榫梯形
+  if(ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const slope=KEY_R/3;
+    const topW=KEY_P+2*slope, botW=KEY_P;
+    area+=(topW+botW)/2*KEY_R; // cm²
+  }
+  const concVol=(area/10000)*(SL/100); // m³
+
+  return {rows, concVol};
+}
+
+function renderQuantityTable(){
+  const body=document.getElementById('qty-table-body');
+  if(!body) return;
+  const sub=document.getElementById('qty-subtitle');
+  const SL_m=(ST.sectionLen/100).toFixed(1);
+  if(sub) sub.textContent=`L=${SL_m}m 段落`;
+
+  const {rows,concVol}=computeQuantities();
+  const totalWt=rows.reduce((s,r)=>s+r.wt,0);
+
+  let html=`<table style="width:100%;border-collapse:collapse;font-size:11.5px">
+  <thead>
+    <tr style="background:var(--surface2)">
+      <th style="padding:5px 4px;border:1px solid var(--border);text-align:center;font-size:10.5px;color:var(--text2)">鋼筋</th>
+      <th style="padding:5px 4px;border:1px solid var(--border);text-align:center;font-size:10.5px;color:var(--text2)">號數</th>
+      <th style="padding:5px 4px;border:1px solid var(--border);text-align:center;font-size:10.5px;color:var(--text2)">根數</th>
+      <th style="padding:5px 4px;border:1px solid var(--border);text-align:center;font-size:10.5px;color:var(--text2)">每支長(m)</th>
+      <th style="padding:5px 4px;border:1px solid var(--border);text-align:center;font-size:10.5px;color:var(--text2)">總長(m)</th>
+      <th style="padding:5px 4px;border:1px solid var(--border);text-align:center;font-size:10.5px;color:var(--text2)">重量(kg)</th>
+    </tr>
+  </thead><tbody>`;
+
+  rows.forEach(r=>{
+    const nbLabel=r.n>1?`${r.n}-`:'';
+    html+=`<tr>
+      <td style="padding:4px;border:1px solid var(--border);text-align:center;font-weight:700;color:var(--accent)">${r.tag}</td>
+      <td style="padding:4px;border:1px solid var(--border);text-align:center;font-family:var(--mono)">${nbLabel}D${r.sz}</td>
+      <td style="padding:4px;border:1px solid var(--border);text-align:center;font-family:var(--mono)">${r.cnt}</td>
+      <td style="padding:4px;border:1px solid var(--border);text-align:center;font-family:var(--mono)">${r.perBar.toFixed(2)}</td>
+      <td style="padding:4px;border:1px solid var(--border);text-align:center;font-family:var(--mono)">${r.tot.toFixed(1)}</td>
+      <td style="padding:4px;border:1px solid var(--border);text-align:center;font-family:var(--mono)">${r.wt.toFixed(1)}</td>
+    </tr>`;
+  });
+
+  html+=`<tr style="background:var(--surface2);font-weight:600">
+    <td colspan="5" style="padding:5px 4px;border:1px solid var(--border);text-align:right">鋼筋合計</td>
+    <td style="padding:5px 4px;border:1px solid var(--border);text-align:center;font-family:var(--mono);color:var(--accent)">${totalWt.toFixed(1)}</td>
+  </tr>
+  <tr style="background:var(--blue-light)">
+    <td colspan="5" style="padding:5px 4px;border:1px solid var(--border);text-align:right;font-weight:600;color:var(--blue)">混凝土體積</td>
+    <td style="padding:5px 4px;border:1px solid var(--border);text-align:center;font-family:var(--mono);color:var(--blue);font-weight:600">${concVol.toFixed(3)} m³</td>
+  </tr></tbody></table>`;
+
+  body.innerHTML=html;
+}
+
+// ─── 3D DXF（X=牆寬, Y=牆高, Z=牆長）────────────────────────
+function dxfL3(x1,y1,z1, x2,y2,z2, layer){
+  return `0\nLINE\n8\n${layer}\n10\n${f4(x1)}\n20\n${f4(y1)}\n30\n${f4(z1)}\n11\n${f4(x2)}\n21\n${f4(y2)}\n31\n${f4(z2)}\n`;
+}
+
+function genDXF3(){
+  const {J,E,TOE,HEEL,WBOT,WTOP,covW,covF,bars,sectionLen}=ST;
+  const TW=totalW(), TH=totalH(), SL=sectionLen;
+  const layers=[['WALL-OUTLINE',3],...BAR_LAYER.map((n,i)=>[n,BAR_DXF_COLOR[i]]),['TEXT',7]];
+  let body='';
+
+  // ── 混凝土輪廓（拉伸）──
+  const outline=getOutlinePts(), nPts=outline.length-1;
+  for(let i=0;i<nPts;i++){
+    const j=(i+1)%nPts;
+    const [x1,y1]=outline[i],[x2,y2]=outline[j];
+    body+=dxfL3(x1,y1,0,  x2,y2,0,  'WALL-OUTLINE');
+    body+=dxfL3(x1,y1,SL, x2,y2,SL, 'WALL-OUTLINE');
+    body+=dxfL3(x1,y1,0,  x1,y1,SL, 'WALL-OUTLINE');
+  }
+
+  // ── 止滑榫輪廓（梯形，拉伸）──
+  if(ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const slope=KEY_R/3;
+    const kRB=TW-KEY_Q, kLB=kRB-KEY_P;
+    const kRT=kRB+slope, kLT=kLB-slope;
+    const kPts=[[kLT,0],[kRT,0],[kRB,-KEY_R],[kLB,-KEY_R]];
+    const nK=kPts.length;
+    for(let i=0;i<nK;i++){
+      const j=(i+1)%nK;
+      const [x1,y1]=kPts[i],[x2,y2]=kPts[j];
+      body+=dxfL3(x1,y1,0,  x2,y2,0,  'WALL-OUTLINE');
+      body+=dxfL3(x1,y1,SL, x2,y2,SL, 'WALL-OUTLINE');
+      body+=dxfL3(x1,y1,0,  x1,y1,SL, 'WALL-OUTLINE');
+    }
+  }
+
+  // ── ① ㄇ型（底板頂部橫桿＋兩腳向下）bundle 支援 ──
+  {const b=bars[0]; if(b.sz){
+    const D1=b.sz/10, cov1=covF+D1/2;
+    const yTop=E-cov1, leg=E-2*cov1;
+    const x0=cov1, x1=TW-cov1;
+    const nb=b.n||1;
+    for(let zp=0;zp<=SL+0.01;zp+=b.sp){
+      for(let bi=0;bi<nb;bi++){
+        const y=yTop-bi*D1, zz=zp+bi*D1;
+        body+=dxfL3(x0,y-leg,zz, x0,y,zz, BAR_LAYER[0]);
+        body+=dxfL3(x0,y,zz,     x1,y,zz, BAR_LAYER[0]);
+        body+=dxfL3(x1,y,zz,     x1,y-leg,zz, BAR_LAYER[0]);
+      }
+    }
+  }}
+
+  // ── ② ㄩ型（底板底部橫桿＋兩腳向上）──
+  {const b=bars[1]; if(b.sz){
+    const D2=b.sz/10, cov2=covF+D2/2;
+    const yBot=cov2, leg=E-2*cov2;
+    const x0=cov2, x1=TW-cov2;
+    for(let zp=0;zp<=SL+0.01;zp+=b.sp){
+      body+=dxfL3(x0,yBot+leg,zp, x0,yBot,zp, BAR_LAYER[1]);
+      body+=dxfL3(x0,yBot,zp,     x1,yBot,zp, BAR_LAYER[1]);
+      body+=dxfL3(x1,yBot,zp,     x1,yBot+leg,zp, BAR_LAYER[1]);
+    }
+  }}
+
+  // ── ③ 止滑榫鋼筋（對稱 1:3 斜率，5段）──
+  {const b=bars[2]; if(b.sz&&ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const kRB3=TW-KEY_Q, kLB3=kRB3-KEY_P;
+    const D3c=b.sz/10, cov3=covF+D3c/2;
+    const off3=cov3*(Math.sqrt(10)-1)/3;
+    const yb3=-(KEY_R-cov3), ytF3=E-covF-D3c/2;
+    const xbL3=kLB3+off3, xbR3=kRB3-off3;
+    const dy3=ytF3-yb3;
+    const xtL3=xbL3-dy3/3, xtR3=xbR3+dy3/3;
+    const hk3=b.c||0;
+    for(let zp=0;zp<=SL+0.01;zp+=b.sp){
+      body+=dxfL3(xtL3-hk3,ytF3,zp, xtL3,ytF3,zp, BAR_LAYER[2]);
+      body+=dxfL3(xtL3,ytF3,zp,     xbL3,yb3,zp,  BAR_LAYER[2]);
+      body+=dxfL3(xbL3,yb3,zp,      xbR3,yb3,zp,  BAR_LAYER[2]);
+      body+=dxfL3(xbR3,yb3,zp,      xtR3,ytF3,zp, BAR_LAYER[2]);
+      body+=dxfL3(xtR3,ytF3,zp,     xtR3+hk3,ytF3,zp, BAR_LAYER[2]);
+    }
+  }}
+
+  // ── ④ Z方向橫向筋（底板頂＋底，點列）──
+  {const D4c=bars[3].sz/10, D1c=bars[0].sz/10, D2c=bars[1].sz/10;
+    const y4t=E-covF-D1c/2-D4c/2, y4b=covF+D2c/2+D4c/2;
+    const sp4=bars[3].sp, n4=Math.ceil((TW-2*covF)/sp4), x4_0=covF+D4c/2;
+    [y4t,y4b].forEach(yP=>{
+      for(let k=0;k<n4;k++)
+        body+=dxfL3(x4_0+k*sp4,yP,0, x4_0+k*sp4,yP,SL, BAR_LAYER[3]);
+    });}
+
+  // ── ⑤ 止滑榫內側縱向筋 ──
+  if(ST.keyOn && bars[4].sz){
+    bar5Pts(bars,covF,ST.KEY_Q,ST.KEY_P,ST.KEY_R,TW)
+      .forEach(({x,y})=>body+=dxfL3(x,y,0, x,y,SL, BAR_LAYER[4]));
+  }
+
+  // ── ⑥ 牆背主筋 ──
+  {const g6=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g6){ for(let zp=0;zp<=SL+0.01;zp+=bars[5].sp){
+    body+=dxfL3(g6.xTop,g6.yTop,zp, g6.xBot,g6.yBot,zp, BAR_LAYER[5]);
+    body+=dxfL3(g6.xBot,g6.yBot,zp, g6.xHook,g6.yBot,zp, BAR_LAYER[5]);
+  }}}
+
+  // ── ⑦ 牆背短筋 ──
+  {const g7=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g7){ for(let zp=0;zp<=SL+0.01;zp+=bars[6].sp){
+    body+=dxfL3(g7.xTop,g7.yTop,zp, g7.xBot,g7.yBot,zp, BAR_LAYER[6]);
+    body+=dxfL3(g7.xBot,g7.yBot,zp, g7.xHook,g7.yBot,zp, BAR_LAYER[6]);
+  }}}
+
+  // ── ⑧ 牆前主筋 ──
+  {const g8=bar8Geom(bars,J,E,TOE,covW,covF);
+  if(g8){ for(let zp=0;zp<=SL+0.01;zp+=bars[7].sp){
+    body+=dxfL3(g8.xTop,g8.yTop,zp, g8.xBot,g8.yBot,zp, BAR_LAYER[7]);
+    body+=dxfL3(g8.xBot,g8.yBot,zp, g8.xHook,g8.yBot,zp, BAR_LAYER[7]);
+  }}}
+
+  // ── ⑨ 牆身水平分布筋（Z方向貫通）──
+  {const pts9=bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW);
+  pts9.forEach(({x,y})=>body+=dxfL3(x,y,0, x,y,SL, BAR_LAYER[8]));}
+
+  body+=dxfT(0,-20,18,'R-008 Retaining Wall - 3D Model (unit: cm)','TEXT');
+  body+=dxfT(0,-36,12,'X=width  Y=height  Z=length('+SL+'cm)','TEXT');
+
+  // ── 材料數量表（TEXT 實體，置於 X=TW+20 右側）──
+  const {rows:qRows,concVol:qConcVol}=computeQuantities();
+  const qX=TW+20, qH=7, qGap=9;
+  let qY=TH+30;
+  const qt=(x,y,h,txt)=>dxfT(x,y,h,txt,'TEXT');
+  body+=qt(qX,qY,10,'材料數量表 (L='+SL+'cm)'); qY-=qGap*1.8;
+  body+=qt(qX,qY,7,'鋼筋  號數   根數  每支長(m)  總長(m)  重量(kg)'); qY-=qGap;
+  let totalWtDxf=0;
+  qRows.forEach(r=>{
+    const nbL=r.n>1?`${r.n}-`:'';
+    body+=qt(qX,qY,qH,
+      `${r.tag}  ${nbL}D${r.sz}  ${r.cnt}根  ${r.perBar.toFixed(2)}  ${r.tot.toFixed(1)}  ${r.wt.toFixed(1)}`);
+    qY-=qGap; totalWtDxf+=r.wt;
+  });
+  body+=qt(qX,qY,qH,'鋼筋合計: '+totalWtDxf.toFixed(1)+' kg'); qY-=qGap;
+  body+=qt(qX,qY,qH,'混凝土: '+qConcVol.toFixed(3)+' m3');
+
+  return dxfHeader(layers)+body+dxfFooter();
+}
+
+// ─── 3D AutoLISP ──────────────────────────────────────────────
+function genLSP3(){
+  const {J,E,TOE,HEEL,WBOT,WTOP,covW,covF,bars,sectionLen}=ST;
+  const TW=totalW(), TH=totalH(), SL=sectionLen;
+  const f=v=>v.toFixed(2);
+  const xBf=f(backFaceX(E)-covW);
+
+  // Outline vertices: [[x,y], ...] where y = height (Y axis)
+  const oPts=getOutlinePts().slice(0,-1);
+
+  let barLines='';
+
+  // ① 牆背主筋：沿 Y 豎向，沿 Z 每 sp 一根
+  const b0=bars[0];
+  if(b0.a){
+    barLines+=`
+  ; ① 牆背主筋 D${b0.sz}@${b0.sp}
+  (command "_.LAYER" "_S" "REBAR-01" "")
+  (setq zi 0.0)
+  (repeat ${Math.floor(SL/b0.sp)+1}
+    (command "_.LINE"
+      (list (+ ox ${xBf}) (+ oy ${f(J+E-b0.a)}) (+ oz zi))
+      (list (+ ox ${xBf}) (+ oy ${f(J+E)}) (+ oz zi)) "")
+    ${b0.b?`(command "_.LINE"
+      (list (+ ox ${f(backFaceX(E)-covW-b0.b)}) (+ oy ${f(J+E-b0.a)}) (+ oz zi))
+      (list (+ ox ${xBf}) (+ oy ${f(J+E-b0.a)}) (+ oz zi)) "")`:'; 無底鉤'}
+    (setq zi (+ zi ${b0.sp})))`;
+  }
+
+  // ② 前面主筋：沿 Y 豎向，沿 Z 每 sp 一根
+  const b1=bars[1];
+  if(b1.a){
+    barLines+=`
+  ; ② 前面主筋 D${b1.sz}@${b1.sp}
+  (command "_.LAYER" "_S" "REBAR-02" "")
+  (setq zi 0.0)
+  (repeat ${Math.floor(SL/b1.sp)+1}
+    (command "_.LINE"
+      (list (+ ox ${f(TOE+covW)}) (+ oy ${f(J+E-b1.a)}) (+ oz zi))
+      (list (+ ox ${f(TOE+covW)}) (+ oy ${f(J+E)}) (+ oz zi)) "")
+    ${b1.b?`(command "_.LINE"
+      (list (+ ox ${f(TOE+covW)}) (+ oy ${f(J+E-b1.a)}) (+ oz zi))
+      (list (+ ox ${f(TOE+covW+b1.b)}) (+ oy ${f(J+E-b1.a)}) (+ oz zi)) "")`:'; 無底鉤'}
+    (setq zi (+ zi ${b1.sp})))`;
+  }
+
+  // ③ 剪力榫鋼筋：對稱固定 1:3 斜率，沿 Z 每 sp 一根
+  const b2=bars[2];
+  if(b2.sz&&ST.keyOn){
+    const {KEY_Q,KEY_P,KEY_R}=ST;
+    const kRB3=TW-KEY_Q, kLB3=kRB3-KEY_P;
+    const D3c=b2.sz/10, cov3=covF+D3c/2;
+    const off3=cov3*(Math.sqrt(10)-1)/3;
+    const yb3=-(KEY_R-cov3), ytF3=E-covF-D3c/2;
+    const xbL3=kLB3+off3, xbR3=kRB3-off3;
+    const dy3=ytF3-yb3;
+    const xtL3=xbL3-dy3/3, xtR3=xbR3+dy3/3;
+    const hk3=b2.c||0;
+    barLines+=`
+  ; ③ 剪力榫鋼筋 D${b2.sz}@${b2.sp}
+  (command "_.LAYER" "_S" "REBAR-03" "")
+  (setq zi 0.0)
+  (repeat ${Math.floor(SL/b2.sp)+1}
+    (command "_.LINE" (list (+ ox ${f(xtL3-hk3)}) (+ oy ${f(ytF3)}) (+ oz zi)) (list (+ ox ${f(xtL3)}) (+ oy ${f(ytF3)}) (+ oz zi)) "")
+    (command "_.LINE" (list (+ ox ${f(xtL3)}) (+ oy ${f(ytF3)}) (+ oz zi)) (list (+ ox ${f(xbL3)}) (+ oy ${f(yb3)}) (+ oz zi)) "")
+    (command "_.LINE" (list (+ ox ${f(xbL3)}) (+ oy ${f(yb3)}) (+ oz zi)) (list (+ ox ${f(xbR3)}) (+ oy ${f(yb3)}) (+ oz zi)) "")
+    (command "_.LINE" (list (+ ox ${f(xbR3)}) (+ oy ${f(yb3)}) (+ oz zi)) (list (+ ox ${f(xtR3)}) (+ oy ${f(ytF3)}) (+ oz zi)) "")
+    (command "_.LINE" (list (+ ox ${f(xtR3)}) (+ oy ${f(ytF3)}) (+ oz zi)) (list (+ ox ${f(xtR3+hk3)}) (+ oy ${f(ytF3)}) (+ oz zi)) "")
+    (setq zi (+ zi ${b2.sp})))`;
+  }
+
+  // ④ Z方向橫向筋（底板頂部＋底部均布，沿 Z 方向貫通）
+  {const b3=bars[3];
+  const D4c=b3.sz/10, D1c=bars[0].sz/10, D2c=bars[1].sz/10;
+  const y4t=E-covF-D1c/2-D4c/2, y4b=covF+D2c/2+D4c/2;
+  const sp4=b3.sp, n4=Math.ceil((TW-2*covF)/sp4), x4_0=covF+D4c/2;
+  let lsp4Lines=`\n  ; ④ Z方向橫向筋 D${b3.sz}@${b3.sp}（底板頂部＋底部各${n4}根）\n  (command "_.LAYER" "_S" "REBAR-04" "")`;
+  [y4t,y4b].forEach(y=>{
+    for(let k=0;k<n4;k++){
+      const xk=x4_0+k*sp4;
+      lsp4Lines+=`\n  (command "_.LINE"\n    (list (+ ox ${f(xk)}) (+ oy ${f(y)}) oz)\n    (list (+ ox ${f(xk)}) (+ oy ${f(y)}) (+ oz ${SL})) "")`;
+    }
+  });
+  barLines+=lsp4Lines;};
+
+
+  // ⑤ 止滑榫內側縱向筋：沿 Z 方向（角隅 + 必要中補）
+  if(bars[4].sz&&ST.keyOn){
+    let lsp5=`\n  ; ⑤ 止滑榫內側縱向筋 D${bars[4].sz}@${bars[4].sp}\n  (command "_.LAYER" "_S" "REBAR-05" "")`;
+    bar5Pts(bars,covF,ST.KEY_Q,ST.KEY_P,ST.KEY_R,TW).forEach(({x,y})=>{
+      lsp5+=`\n  (command "_.LINE" (list (+ ox ${f(x)}) (+ oy ${f(y)}) oz) (list (+ ox ${f(x)}) (+ oy ${f(y)}) (+ oz ${SL})) "")`;
+    });
+    barLines+=lsp5;
+  };
+
+  // ⑥ 牆背主筋：沿背面斜率，每 sp 重複（Z 方向）
+  {const g6=bar6Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g6){
+    barLines+=`
+  ; ⑥ 牆背主筋 D${bars[5].sz}@${bars[5].sp}
+  (command "_.LAYER" "_S" "REBAR-06" "")
+  (setq zi 0.0)
+  (repeat ${Math.floor(SL/bars[5].sp)+1}
+    (command "_.LINE"
+      (list (+ ox ${f(g6.xTop)}) (+ oy ${f(g6.yTop)}) (+ oz zi))
+      (list (+ ox ${f(g6.xBot)}) (+ oy ${f(g6.yBot)}) (+ oz zi)) "")
+    (command "_.LINE"
+      (list (+ ox ${f(g6.xBot)}) (+ oy ${f(g6.yBot)}) (+ oz zi))
+      (list (+ ox ${f(g6.xHook)}) (+ oy ${f(g6.yBot)}) (+ oz zi)) "")
+    (setq zi (+ zi ${bars[5].sp})))`;
+  }}
+
+  // ⑦ 牆背短筋：沿背面斜率，沿 Z 每 sp 一根
+  {const g7=bar7Geom(bars,J,E,TOE,WBOT,WTOP,covW,covF);
+  if(g7){
+    barLines+=`
+  ; ⑦ 牆背短筋 D${bars[6].sz}@${bars[6].sp}（牆身一半至底板底部）
+  (command "_.LAYER" "_S" "REBAR-07" "")
+  (setq zi 0.0)
+  (repeat ${Math.floor(SL/bars[6].sp)+1}
+    (command "_.LINE"
+      (list (+ ox ${f(g7.xTop)}) (+ oy ${f(g7.yTop)}) (+ oz zi))
+      (list (+ ox ${f(g7.xBot)}) (+ oy ${f(g7.yBot)}) (+ oz zi)) "")
+    (command "_.LINE"
+      (list (+ ox ${f(g7.xBot)}) (+ oy ${f(g7.yBot)}) (+ oz zi))
+      (list (+ ox ${f(g7.xHook)}) (+ oy ${f(g7.yBot)}) (+ oz zi)) "")
+    (setq zi (+ zi ${bars[6].sp})))`;
+  }}
+
+  // ⑧ 牆前主筋：垂直，沿 Z 每 sp 一根
+  {const g8=bar8Geom(bars,J,E,TOE,covW,covF);
+  if(g8){
+    barLines+=`
+  ; ⑧ 牆前主筋 D${bars[7].sz}@${bars[7].sp}（垂直，牆頂至底板底部）
+  (command "_.LAYER" "_S" "REBAR-08" "")
+  (setq zi 0.0)
+  (repeat ${Math.floor(SL/bars[7].sp)+1}
+    (command "_.LINE"
+      (list (+ ox ${f(g8.xTop)}) (+ oy ${f(g8.yTop)}) (+ oz zi))
+      (list (+ ox ${f(g8.xBot)}) (+ oy ${f(g8.yBot)}) (+ oz zi)) "")
+    (command "_.LINE"
+      (list (+ ox ${f(g8.xBot)}) (+ oy ${f(g8.yBot)}) (+ oz zi))
+      (list (+ ox ${f(g8.xHook)}) (+ oy ${f(g8.yBot)}) (+ oz zi)) "")
+    (setq zi (+ zi ${bars[7].sp})))`;
+  }}
+
+  // ⑨ 牆身水平分布筋：Z 方向貫通線，各 (x,y) 各一根
+  {const pts9=bar9Pts(bars,J,E,TOE,WBOT,WTOP,covW);
+  if(pts9.length){
+    const lineStr=pts9.map(({x,y})=>
+      `\n  (command "_.LINE"\n    (list (+ ox ${f(x)}) (+ oy ${f(y)}) oz)\n    (list (+ ox ${f(x)}) (+ oy ${f(y)}) (+ oz ${SL})) "")`).join('');
+    barLines+=`
+  ; ⑨ 牆身水平分布筋 D${bars[8].sz}@${bars[8].sp}（Z方向）
+  (command "_.LAYER" "_S" "REBAR-09" "")${lineStr}`;
+  }}
+
+  // Outline LINE commands for LSP
+  // oPts = [[x, y], ...] where y = height (Y axis), extrude along Z (wall length)
+  const nPts3=oPts.length;
+  const outlineLines=oPts.map((pt,i)=>{
+    const j=(i+1)%nPts3;
+    const [x1,y1]=pt, [x2,y2]=oPts[j];
+    return [
+      `  (command "_.LINE" (list (+ ox ${x1}) (+ oy ${y1}) oz) (list (+ ox ${x2}) (+ oy ${y2}) oz) "")`,
+      `  (command "_.LINE" (list (+ ox ${x1}) (+ oy ${y1}) (+ oz ${SL})) (list (+ ox ${x2}) (+ oy ${y2}) (+ oz ${SL})) "")`,
+      `  (command "_.LINE" (list (+ ox ${x1}) (+ oy ${y1}) oz) (list (+ ox ${x1}) (+ oy ${y1}) (+ oz ${SL})) "")`,
+    ].join('\n');
+  }).join('\n');
+
+  return `;;; ============================================================
+;;; 公路總局 R-008 擋土牆 — 3D 模型
+;;; H=${(TH/100).toFixed(2)}m  Z(牆長)=${(SL/100).toFixed(1)}m
+;;; covW=${covW}cm  covF=${covF}cm
+;;; 座標系：X=牆寬  Y=牆高  Z=牆長
+;;; 插入點：趾部前下角  單位：cm
+;;; 指令：RETWALL3D
+;;; ============================================================
+(defun C:RETWALL3D ( / ox oy oz pt)
+  (setq pt (getpoint "\\n點選插入基準點 (趾部左下角地面): "))
+  (setq ox (car pt) oy (cadr pt) oz (if (caddr pt) (caddr pt) 0.0))
+  (rw3:layers)
+  (rw3:outline ox oy oz)
+  (rw3:rebar   ox oy oz)
+  (prompt "\\n3D 擋土牆繪製完成")
+  (princ))
+
+(defun rw3:layers ()
+  (command "_.LAYER" "_M" "WALL-OUTLINE" "_C" "3"  "WALL-OUTLINE" "")
+${BAR_LAYER.map((n,i)=>`  (command "_.LAYER" "_M" "${n}" "_C" "${BAR_DXF_COLOR[i]}" "${n}" "")`).join('\n')}
+  (command "_.LAYER" "_M" "TEXT"         "_C" "7"  "TEXT"         ""))
+
+(defun rw3:outline (ox oy oz)
+  (command "_.LAYER" "_S" "WALL-OUTLINE" "")
+${outlineLines})
+
+(defun rw3:rebar (ox oy oz / zi yi xi ki)
+${barLines})
+;;; EOF
+`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 下載 / 複製
+// ═══════════════════════════════════════════════════════════════
+function downloadFile(content,name){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type:'application/octet-stream'}));
+  a.download=name; a.click();
+}
+function copyText(txt){
+  navigator.clipboard.writeText(txt).then(()=>alert('已複製到剪貼簿'));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 初始化
+// ═══════════════════════════════════════════════════════════════
+// 全域錯誤攔截
+window.onerror = function(msg, src, line, col, err){
+  document.getElementById('err-banner').style.display='block';
+  document.getElementById('err-banner').textContent = 'JS錯誤 ('+line+':'+col+'): '+msg;
+};
+
+try {
+  initChips();
+  renderDimInputs();
+  renderRebarTable();
+} catch(e) {
+  console.error('Init error:', e);
+}
+
+// 等 DOM 完全渲染後再繪製
+window.addEventListener('load',()=>{
+  try {
+    fillFromTable(705);
+    requestAnimationFrame(()=>{
+      syncRefHeight();
+      initRefImgEvents();
+      // Tab1 圖片初始化
+      const img=document.getElementById('ref-img');
+      if(img&&img.complete&&img.naturalWidth>0){ fitRefView(); }
+      else if(img){ img.onload=()=>fitRefView(); }
+      // Tab2 圖片初始化
+      RC2.init();
+      const img2=document.getElementById('ref-img2');
+      if(img2&&img2.complete&&img2.naturalWidth>0){ fitRefView2(); }
+      else if(img2){ img2.onload=()=>fitRefView2(); }
+    });
+  }
+  catch(e){
+    document.getElementById('err-banner').style.display='block';
+    document.getElementById('err-banner').textContent = 'Load error: '+e.message;
+    console.error('Load error:', e);
+  }
+});
+window.addEventListener('resize',()=>{
+  redraw1(); drawRef();
+  syncRefHeight(); requestAnimationFrame(fitRefView);
+  syncRefHeight2(); requestAnimationFrame(fitRefView2);
+  if(document.getElementById('page2').classList.contains('active')) redraw2();
+  if(document.getElementById('page3').classList.contains('active')) redraw3D();
+});
+</script>
+</body>
+</html>
