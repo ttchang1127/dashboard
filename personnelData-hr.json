@@ -883,5 +883,33 @@
     ],
     "salary": "#N/A",
     "seniority": "#N/A"
+  },
+  {
+    "name": "徐詩雨",
+    "group": "巍耀組",
+    "role": "組員",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
+  },
+  {
+    "name": "黃建忠",
+    "group": "鎧峻組",
+    "role": "組員",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
   }
 ]
