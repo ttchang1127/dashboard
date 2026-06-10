@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>瀝青混凝土鋪面施工規範題庫</title>
+<style>
+  :root {
+    --bg: #1a1a1a;
+    --surface: #242424;
+    --card: #2e2e2e;
+    --border: #3a3a3a;
+    --accent: #d4a04a;
+    --accent-light: #e8bf7a;
+    --text: #e8e4dc;
+    --text-dim: #9a9690;
+    --correct: #4caf7a;
+    --wrong: #e05555;
+    --correct-bg: rgba(76,175,122,0.12);
+    --wrong-bg: rgba(224,85,85,0.12);
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2418 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: normal;
+    letter-spacing: 0.06em;
+    color: var(--accent-light);
+    margin-bottom: 6px;
+  }
+
+  header p {
+    color: var(--text-dim);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Scoreboard ── */
+  #scoreboard {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 97px;
+    z-index: 99;
+  }
+
+  .score-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .score-chip span {
+    font-weight: bold;
+    color: var(--accent);
+  }
+
+  /* ── Controls ── */
+  #controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 16px 24px 8px;
+  }
+
+  button {
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 8px 20px;
+    transition: all 0.18s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #1a1200;
+    font-weight: bold;
+  }
+  .btn-primary:hover { background: var(--accent-light); }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Filter Tabs ── */
+  #filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 24px 12px;
+    justify-content: center;
+  }
+
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-dim);
+    font-size: 12px;
+    padding: 4px 14px;
+  }
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1a1200;
+    font-weight: bold;
+  }
+  .filter-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Question Grid ── */
+  #quiz-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 12px 20px 60px;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .question-card.answered-correct { border-color: var(--correct); }
+  .question-card.answered-wrong   { border-color: var(--wrong); }
+
+  .q-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .q-num {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    min-width: 38px;
+  }
+
+  .q-tag {
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 1px 8px;
+    border: 1px solid var(--border);
+  }
+
+  .q-text {
+    padding: 12px 18px 4px;
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+
+  /* ── Options ── */
+  .options {
+    padding: 8px 14px 14px;
+    display: grid;
+    gap: 6px;
+  }
+
+  .option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .option-label:hover { background: rgba(212,160,74,0.07); border-color: rgba(212,160,74,0.3); }
+
+  .option-label input[type=radio] { display: none; }
+
+  .opt-key {
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+
+  .option-label.selected .opt-key {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1a1200;
+  }
+
+  .option-label.correct-answer {
+    background: var(--correct-bg);
+    border-color: var(--correct);
+  }
+  .option-label.correct-answer .opt-key {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: #fff;
+  }
+
+  .option-label.wrong-answer {
+    background: var(--wrong-bg);
+    border-color: var(--wrong);
+  }
+  .option-label.wrong-answer .opt-key {
+    background: var(--wrong);
+    border-color: var(--wrong);
+    color: #fff;
+  }
+
+  /* ── Explanation ── */
+  .explanation {
+    display: none;
+    margin: 2px 14px 14px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .explanation.show { display: block; }
+
+  /* ── Progress bar ── */
+  #progress-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 6px;
+  }
+
+  #progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  #progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 2px;
+    width: 0;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Result modal ── */
+  #result-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  #result-modal.show { display: flex; }
+
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 36px 40px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+  }
+
+  .modal-box h2 {
+    font-family: var(--font-display);
+    color: var(--accent-light);
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .modal-score {
+    font-size: 56px;
+    font-weight: bold;
+    color: var(--accent);
+    line-height: 1;
+    margin: 16px 0;
+  }
+
+  .modal-detail {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .modal-grade {
+    font-size: 15px;
+    margin: 8px 0 24px;
+    font-weight: bold;
+  }
+
+  #hidden-count {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 4px 16px 14px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⬛ 瀝青混凝土鋪面施工規範題庫</h1>
+  <p>桃工規 02741 · 02742 · 02747 · 02966 ｜共 100 題</p>
+</header>
+
+<div id="scoreboard">
+  <div class="score-chip">作答 <span id="s-answered">0</span> / 100</div>
+  <div class="score-chip">正確 <span id="s-correct">0</span></div>
+  <div class="score-chip">錯誤 <span id="s-wrong">0</span></div>
+  <div class="score-chip">正確率 <span id="s-rate">—</span></div>
+</div>
+
+<div id="controls">
+  <button class="btn-primary" onclick="showResult()">📊 查看成績</button>
+  <button class="btn-outline" onclick="resetAll()">🔄 重新作答</button>
+  <button class="btn-outline" onclick="toggleExplanations()">💡 顯示解析</button>
+  <button class="btn-outline" onclick="showOnlyWrong()">❌ 只看錯題</button>
+</div>
+
+<div id="filter-bar">
+  <button class="filter-btn active" onclick="filterTag('all',this)">全部 (100)</button>
+  <button class="filter-btn" onclick="filterTag('02741',this)">02741 一般要求</button>
+  <button class="filter-btn" onclick="filterTag('02742',this)">02742 鋪面</button>
+  <button class="filter-btn" onclick="filterTag('02747',this)">02747 黏層</button>
+  <button class="filter-btn" onclick="filterTag('02966',this)">02966 再生瀝青</button>
+</div>
+
+<div id="progress-wrap">
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+</div>
+
+<div id="hidden-count"></div>
+
+<div id="quiz-container"></div>
+
+<div id="result-modal">
+  <div class="modal-box">
+    <h2>測驗結果</h2>
+    <div class="modal-score" id="modal-score-num">0</div>
+    <div style="color:var(--text-dim);font-size:13px;">分（滿分 100 分）</div>
+    <div class="modal-detail" id="modal-detail"></div>
+    <div class="modal-grade" id="modal-grade"></div>
+    <button class="btn-primary" onclick="document.getElementById('result-modal').classList.remove('show')" style="width:100%;padding:10px">關閉</button>
+    <br><br>
+    <button class="btn-outline" onclick="resetAll();document.getElementById('result-modal').classList.remove('show')" style="width:100%;padding:10px">重新作答</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  // ── 02741 一般要求（25題）──
+  {
+    id:1, tag:'02741',
+    q:'根據第02741章，停留於幾mm（何號篩）以上之粒料定義為粗粒料？',
+    opts:['A. 4.75mm（No.4）','B. 2.36mm（No.8）','C. 1.18mm（No.16）','D. 0.075mm（No.200）'],
+    ans:1,
+    exp:'第02741章第1.5.1款：粗粒料為停留於2.36mm（No.8）試驗篩以上之部分。'
+  },
+  {
+    id:2, tag:'02741',
+    q:'黏度分級AC1-20瀝青膠泥，在60℃時黏度規定為何？',
+    opts:['A. 1000±200 poises','B. 2000±400 poises','C. 3000±600 poises','D. 4000±800 poises'],
+    ans:1,
+    exp:'表02741-3：AC1-20黏度在60℃時為2000±400 poises。'
+  },
+  {
+    id:3, tag:'02741',
+    q:'粗粒料依CNS 490洛杉磯磨損試驗，密級配用粗粒料旋轉500轉後磨損率不得大於幾%？',
+    opts:['A. 30%','B. 35%','C. 40%','D. 45%'],
+    ans:2,
+    exp:'第02741章第2.1.4款：密級配粗粒料磨損率不得大於40%，開放級配不得大於35%。'
+  },
+  {
+    id:4, tag:'02741',
+    q:'礦物填縫料依CNS 5088試驗法，其塑性指數（PI）不得大於多少？（石灰和水泥不受此限）',
+    opts:['A. 2','B. 4','C. 6','D. 8'],
+    ans:1,
+    exp:'第02741章第2.1.4(4)C款：礦物填縫料塑性指數不得大於4，但石灰和水泥不受此限。'
+  },
+  {
+    id:5, tag:'02741',
+    q:'瀝青混凝土拌和料倒入拌和機後，乾拌時間規定最少不得少於幾秒？',
+    opts:['A. 10秒','B. 15秒','C. 20秒','D. 30秒'],
+    ans:1,
+    exp:'第02741章第3.2.1(3)C款：乾拌時間不得少於15秒。'
+  },
+  {
+    id:6, tag:'02741',
+    q:'瀝青混凝土拌和料的濕拌時間規定最少不得少於幾秒？',
+    opts:['A. 15秒','B. 20秒','C. 30秒','D. 45秒'],
+    ans:2,
+    exp:'第02741章第3.2.1(3)C款：濕拌時間不得少於30秒，亦不得超過50秒。'
+  },
+  {
+    id:7, tag:'02741',
+    q:'密級配瀝青混凝土，自拌和廠輸出時之溫度上限為何？',
+    opts:['A. 140℃','B. 150℃','C. 163℃','D. 185℃'],
+    ans:2,
+    exp:'第02741章第3.2.1(3)B款：密級配輸出溫度不得低於135℃或高於163℃。'
+  },
+  {
+    id:8, tag:'02741',
+    q:'瀝青膠泥針入度分級60~70，其軟化點要求為何？',
+    opts:['A. ≧38℃','B. ≧42℃','C. ≧46℃','D. ≧50℃'],
+    ans:2,
+    exp:'表02741-2：針入度分級60~70之軟化點≧46℃。'
+  },
+  {
+    id:9, tag:'02741',
+    q:'瀝青材料之儲存槽總容量最低規定為本工程每日施工最高需要量的幾倍？',
+    opts:['A. 2倍','B. 3倍','C. 4倍','D. 5倍'],
+    ans:1,
+    exp:'第02741章第2.1.3款：儲存槽總容量不得少於每日施工最高需要量之3倍。'
+  },
+  {
+    id:10, tag:'02741',
+    q:'瀝青材料經試驗合格後，超過幾天未使用者需重新試驗？',
+    opts:['A. 14天','B. 21天','C. 30天','D. 45天'],
+    ans:2,
+    exp:'第02741章第2.1.3款：瀝青材料試驗合格後超過30天未使用，應重新試驗合格方可使用。'
+  },
+  {
+    id:11, tag:'02741',
+    q:'瀝青混凝土配合設計報告，同一種規格數量在多少噸以下，且符合其他條件者，得引用1年內之配合設計報告？',
+    opts:['A. 2000t','B. 3000t','C. 3500t','D. 5000t'],
+    ans:2,
+    exp:'第02741章第2.2.3款：同一規格且同一料源同一拌和廠，數量在3500t以下者得引用過去1年內之報告。'
+  },
+  {
+    id:12, tag:'02741',
+    q:'加入礦物填縫料之重量，除設計圖說另有規定外，不得超過拌和粒料總重之幾%？',
+    opts:['A. 5%','B. 7%','C. 10%','D. 12%'],
+    ans:1,
+    exp:'第02741章第2.1.4(4)E款：礦物填縫料重量不得超過拌和粒料總重之7%。'
+  },
+  {
+    id:13, tag:'02741',
+    q:'粒料進入拌和機前，粗、細粒料的烘乾加熱溫度規定為何範圍？',
+    opts:['A. 100℃～135℃','B. 120℃～150℃','C. 135℃～163℃','D. 150℃～180℃'],
+    ans:2,
+    exp:'第02741章第3.2.1(2)A款：粒料進入拌和機之溫度為135℃～163℃。'
+  },
+  {
+    id:14, tag:'02741',
+    q:'鋼質粒料（氧化碴細粒料）依CNS 15311測試浸水膨脹比，7天最終膨脹量須小於多少才可使用？',
+    opts:['A. 0.3%','B. 0.5%','C. 1.0%','D. 2.0%'],
+    ans:1,
+    exp:'第02741章第2.1.4(3)B款：鋼質粒料浸水7天最終膨脹量須小於0.5%始可再利用。'
+  },
+  {
+    id:15, tag:'02741',
+    q:'密級配瀝青混凝土用於面層時，拌和粒料之含砂當量不得少於多少？',
+    opts:['A. 30','B. 40','C. 50','D. 60'],
+    ans:2,
+    exp:'第02741章第2.1.4(5)款：用於面層含砂當量不得少於50，底層不得少於40。'
+  },
+  {
+    id:16, tag:'02741',
+    q:'磅秤計量設備之靈敏度規定，應為所需最大荷重之幾%以內？',
+    opts:['A. ±0.2%','B. ±0.5%','C. ±1.0%','D. ±2.0%'],
+    ans:1,
+    exp:'第02741章第3.1.1(1)A款：磅秤靈敏度應為最大荷重之±0.5%（含）以內。'
+  },
+  {
+    id:17, tag:'02741',
+    q:'瀝青含量及粒料級配之抽驗，同一天供應之同一種瀝青混凝土，未達200t時，可抽驗幾次？',
+    opts:['A. 1次','B. 2次','C. 3次','D. 免驗'],
+    ans:0,
+    exp:'第02741章第3.3.1款：數量未達200t時得僅抽驗1次。'
+  },
+  {
+    id:18, tag:'02741',
+    q:'開放級配瀝青混凝土依肯塔堡飛散試驗，磨耗量規定應不超過幾%？',
+    opts:['A. 10%','B. 15%','C. 20%','D. 25%'],
+    ans:2,
+    exp:'第02741章第2.2.2(3)B款：肯塔堡磨耗試驗磨耗量應≦20%。'
+  },
+  {
+    id:19, tag:'02741',
+    q:'開放級配瀝青混凝土依AASHTO T305試驗，瀝青垂流量應不超過多少%？',
+    opts:['A. ≦0.1%','B. ≦0.3%','C. ≦0.5%','D. ≦1.0%'],
+    ans:1,
+    exp:'第02741章第2.2.2(3)A款：垂流量應≦0.3%。'
+  },
+  {
+    id:20, tag:'02741',
+    q:'粒料與瀝青材料在拌和時之溫度，兩者相差不得超過幾℃？',
+    opts:['A. 10℃','B. 15℃','C. 20℃','D. 25℃'],
+    ans:1,
+    exp:'第02741章第3.2.1(2)A款：粒料與瀝青拌和時之溫度，彼此相差不得超過15℃。'
+  },
+  {
+    id:21, tag:'02741',
+    q:'細粒料依硫酸鈉健度試驗（五循環），重量損失不得大於多少%？',
+    opts:['A. 10%','B. 12%','C. 15%','D. 18%'],
+    ans:2,
+    exp:'第02741章第2.1.4(2)B款：細粒料硫酸鈉健度試驗（五循環）重量損失不得大於15%（粗粒料為12%）。'
+  },
+  {
+    id:22, tag:'02741',
+    q:'用於底層之瀝青混凝土，包裹百分率不得少於多少%？',
+    opts:['A. 80%','B. 85%','C. 90%','D. 95%'],
+    ans:2,
+    exp:'第02741章第3.2.1(3)E款：用於底層包裹百分率不得少於90%，面層不得少於95%。'
+  },
+  {
+    id:23, tag:'02741',
+    q:'礦物填縫料（石粉）通過0.075mm（No.200）篩的百分率規定為何？',
+    opts:['A. 90～100%','B. 80～100%','C. 70～100%','D. 60～100%'],
+    ans:2,
+    exp:'表02741-4：礦物填縫料通過0.075mm篩之百分率為70～100%。'
+  },
+  {
+    id:24, tag:'02741',
+    q:'每部貨車之空重應至少每天測定幾次？',
+    opts:['A. 1次','B. 2次','C. 3次','D. 每載一次'],
+    ans:0,
+    exp:'第02741章第3.1.1(12)E款：每部貨車空重每天工作開始時至少應測定1次。'
+  },
+  {
+    id:25, tag:'02741',
+    q:'地磅秤出之拌和料淨重，與每一車裝料各盤重量和之誤差應在幾%以內？',
+    opts:['A. ±1%','B. ±2%','C. ±3%','D. ±5%'],
+    ans:1,
+    exp:'第02741章第3.1.1(12)F款：地磅誤差須在±2%以內，否則需停止並修正。'
+  },
+
+  // ── 02742 瀝青混凝土鋪面（35題）──
+  {
+    id:26, tag:'02742',
+    q:'瀝青混凝土施工氣候規定，施工地點氣溫須在幾℃以上方可鋪築？',
+    opts:['A. 5℃','B. 8℃','C. 10℃','D. 15℃'],
+    ans:2,
+    exp:'第02742章第3.1.1(1)款：氣溫在10℃以上，且底層乾燥無積水時方可鋪築。'
+  },
+  {
+    id:27, tag:'02742',
+    q:'初壓時使用鐵輪壓路機，其重量規定為幾噸以上？',
+    opts:['A. 6噸以上','B. 8噸以上','C. 10噸以上','D. 12噸以上'],
+    ans:1,
+    exp:'第02742章第3.1.4(2)A款：初壓用8噸以上二軸三輪或關閉振動裝置之6噸以上振動壓路機。'
+  },
+  {
+    id:28, tag:'02742',
+    q:'振動壓路機之振動頻率通常以幾rpm為宜？',
+    opts:['A. 1000～1500rpm','B. 1500～2000rpm','C. 2000～3000rpm','D. 3000～4000rpm'],
+    ans:2,
+    exp:'第02742章第3.1.4(3)A款：振動壓路機振動頻率通常以2000～3000rpm為宜。'
+  },
+  {
+    id:29, tag:'02742',
+    q:'厚度小於幾cm之瀝青路面，不得啟動振動壓路機之振動裝置？',
+    opts:['A. 3cm','B. 4cm','C. 5cm','D. 6cm'],
+    ans:2,
+    exp:'第02742章第3.1.4(3)B款：厚度小於5cm之瀝青路面不得啟動振動裝置。'
+  },
+  {
+    id:30, tag:'02742',
+    q:'使用AC-10瀝青拌和物，其倒入鋪築機時溫度不得低於幾℃？',
+    opts:['A. 110℃','B. 120℃','C. 130℃','D. 140℃'],
+    ans:1,
+    exp:'第02742章第3.2.3(5)款：使用AC-10瀝青拌和物不得低於120℃；AC-20不得低於130℃。'
+  },
+  {
+    id:31, tag:'02742',
+    q:'初壓開始時，瀝青混凝土溫度不得低於幾℃？',
+    opts:['A. 100℃','B. 105℃','C. 110℃','D. 120℃'],
+    ans:2,
+    exp:'第02742章第3.2.4(2)A款：初壓時瀝青混凝土之溫度不得低於110℃。'
+  },
+  {
+    id:32, tag:'02742',
+    q:'鐵輪壓路機初壓時滾壓速度不得超過每小時幾km？',
+    opts:['A. 2km/hr','B. 3km/hr','C. 4km/hr','D. 5km/hr'],
+    ans:1,
+    exp:'第02742章第3.2.4(2)E款：鐵輪壓路機初壓時每小時不得超過3km，其餘不得超過5km。'
+  },
+  {
+    id:33, tag:'02742',
+    q:'膠輪壓路機次壓滾壓，每一輪胎地面接觸壓力不得小於幾kgf/cm²？',
+    opts:['A. 4.2kgf/cm²','B. 4.9kgf/cm²','C. 5.6kgf/cm²','D. 6.3kgf/cm²'],
+    ans:2,
+    exp:'第02742章第3.1.4(2)B款：輪胎地面接觸壓力不得小於5.6kgf/cm²（80 lb/in²）。'
+  },
+  {
+    id:34, tag:'02742',
+    q:'瀝青混凝土路面分層鋪築時，縱向接縫至少應相距幾cm？',
+    opts:['A. 10cm','B. 15cm','C. 20cm','D. 30cm'],
+    ans:1,
+    exp:'第02742章第3.2.3(10)款：縱向接縫至少應相距15cm，橫向接縫至少應相距60cm。'
+  },
+  {
+    id:35, tag:'02742',
+    q:'瀝青混凝土鋪面完成後，在鋪面溫度冷卻至幾℃前應禁止車輛行駛？',
+    opts:['A. 30℃','B. 40℃','C. 50℃','D. 60℃'],
+    ans:2,
+    exp:'第02742章第3.3款：在鋪面溫度自然冷卻至50℃前，應禁止任何車輛行駛其上。'
+  },
+  {
+    id:36, tag:'02742',
+    q:'現場試鋪段規定，設計圖說有規定時應先試鋪至少幾m長之路面？',
+    opts:['A. 50m','B. 100m','C. 150m','D. 200m'],
+    ans:2,
+    exp:'第02742章第3.4.1款：應先試鋪至少150m長之一段路面。'
+  },
+  {
+    id:37, tag:'02742',
+    q:'瀝青混凝土路面平整度檢驗，鋪面連續長度幾m以上應採慣性剖面儀或高低式平坦儀量測？',
+    opts:['A. 100m','B. 150m','C. 200m','D. 300m'],
+    ans:2,
+    exp:'第02742章第4.1(2)款：鋪面連續長度200m以上應採高低式平坦儀或慣性剖面儀量測。'
+  },
+  {
+    id:38, tag:'02742',
+    q:'一般公路使用慣性剖面儀量測，IRI合格標準（符合）為多少m/km以下？',
+    opts:['A. ≦2.8m/km','B. ≦3.2m/km','C. ≦3.5m/km','D. ≦4.2m/km'],
+    ans:2,
+    exp:'表02742-1：一般公路IRI≦3.5m/km為符合；超過4.2m/km須刨除重鋪。'
+  },
+  {
+    id:39, tag:'02742',
+    q:'快速道路使用慣性剖面儀量測，IRI超過多少m/km時須全面刨除重鋪？',
+    opts:['A. >3.2m/km','B. >3.6m/km','C. >4.0m/km','D. >4.2m/km'],
+    ans:1,
+    exp:'表02742-1：快速道路IRI>3.6m/km需就檢驗不合格路面範圍刨除重鋪。'
+  },
+  {
+    id:40, tag:'02742',
+    q:'連續鋪築時，以每幾m²為一批辦理厚度與壓實度檢驗？',
+    opts:['A. 2,000m²','B. 3,000m²','C. 5,000m²','D. 8,000m²'],
+    ans:2,
+    exp:'第02742章第4.2款：同一種瀝青混凝土以每5,000m²為一批，每批次應作厚度與壓實度檢驗5點。'
+  },
+  {
+    id:41, tag:'02742',
+    q:'壓實度試驗，連續鋪築時全距R規定須小於多少%？',
+    opts:['A. 5%','B. 8%','C. 10%','D. 12%'],
+    ans:2,
+    exp:'表02742-3備註：連續鋪築全距R須小於10%，否則視為不合格。'
+  },
+  {
+    id:42, tag:'02742',
+    q:'區塊修補壓實度，平均值X的合格範圍下限為何%？',
+    opts:['A. 90%','B. 93%','C. 95%','D. 98%'],
+    ans:2,
+    exp:'表02742-3：區塊修復壓實度合格條件為98%≧X≧95%且98%≧D≧93%。'
+  },
+  {
+    id:43, tag:'02742',
+    q:'壓路機與瀝青鋪築機跟隨距離，初壓時通常不超過幾m？（開放級配除外）',
+    opts:['A. 30m','B. 45m','C. 60m','D. 90m'],
+    ans:2,
+    exp:'第02742章第3.2.4(2)A款：壓路機應緊隨鋪築機之後，距離通常不超過60m（開放級配不超過15m）。'
+  },
+  {
+    id:44, tag:'02742',
+    q:'高低式平坦儀量測，一般公路平整度標準差S合格值為幾mm以下？',
+    opts:['A. ≦1.6mm','B. ≦2.0mm','C. ≦2.4mm','D. ≦2.8mm'],
+    ans:3,
+    exp:'表02742-1：一般公路高低式平坦儀量測，平整度標準差S≦2.8mm；快速道路≦2.4mm。'
+  },
+  {
+    id:45, tag:'02742',
+    q:'瀝青混凝土路面以3m直規量測單點高低差，合格規定為幾mm以內？',
+    opts:['A. ±3mm','B. ±4mm','C. ±5mm','D. ±6mm'],
+    ans:3,
+    exp:'表02742-1及第4.1(4)款：單點高低差不超過±6mm為合格。'
+  },
+  {
+    id:46, tag:'02742',
+    q:'分層鋪築時，前一層瀝青混凝土面清理後，在鋪築前幾小時內應噴灑黏層？',
+    opts:['A. 1小時','B. 2小時','C. 4小時','D. 6小時'],
+    ans:1,
+    exp:'第02742章第3.2.3(9)款：應於鋪築前兩小時內先清理並依工程司指示均勻噴灑黏層。'
+  },
+  {
+    id:47, tag:'02742',
+    q:'高低式平坦儀量測，每幾m為一量測點讀取高低差值1次？',
+    opts:['A. 0.5m','B. 1.0m','C. 1.5m','D. 2.0m'],
+    ans:2,
+    exp:'第02742章第4.1(6)款：高低式平坦儀每1.5m為量測點讀取高低差值一次。'
+  },
+  {
+    id:48, tag:'02742',
+    q:'新鋪設路面之人（手）孔蓋，應先將其調降至路面設計高程幾cm以下？',
+    opts:['A. 10cm','B. 15cm','C. 20cm','D. 25cm'],
+    ans:2,
+    exp:'第02742章第3.2.1(4)款：應先將人（手）孔蓋調降至路面設計高程20cm以下。'
+  },
+  {
+    id:49, tag:'02742',
+    q:'瀝青混凝土路面計量，以公噸計算時的計算基準為何？',
+    opts:['A. 以磅單重量為準','B. 按體積乘以單位重計算','C. 以拌和廠過磅重量為準','D. 依鋪築機計量'],
+    ans:1,
+    exp:'第02742章第5.1.1(2)款：以體積（長×寬×厚）乘以實際所鋪瀝青混凝土之單位重計算。'
+  },
+  {
+    id:50, tag:'02742',
+    q:'膠輪壓路機次壓時，其滾壓速度規定每小時不得超過幾km？',
+    opts:['A. 3km/hr','B. 4km/hr','C. 5km/hr','D. 6km/hr'],
+    ans:2,
+    exp:'第02742章第3.2.4(2)K款：膠輪壓路機滾壓速度每小時不得超過5km。'
+  },
+  {
+    id:51, tag:'02742',
+    q:'鋪築前接縫（縱、橫向接縫）接合面處理方式，下列何者正確？',
+    opts:['A. 無需特別處理','B. 塗刷一層黏層材料','C. 鋪設防水布','D. 噴水保濕'],
+    ans:1,
+    exp:'第02742章第3.2.5(3)款：接縫接合面應清刷潔淨並除去鬆動材料後，塗刷一層黏層材料。'
+  },
+  {
+    id:52, tag:'02742',
+    q:'振動壓路機之滾壓速度規定為每小時幾km？',
+    opts:['A. 1～3km/hr','B. 2～4km/hr','C. 3～5km/hr','D. 4～6km/hr'],
+    ans:2,
+    exp:'第02742章第3.1.4(3)C款：振動壓路機之滾壓速度為每小時3～5km。'
+  },
+  {
+    id:53, tag:'02742',
+    q:'以慣性剖面儀量測時，檢驗工作須由檢驗區段起點向後至少幾m處開始，此段不納入檢驗範圍？',
+    opts:['A. 10m','B. 15m','C. 20m','D. 25m'],
+    ans:2,
+    exp:'第02742章第4.1(7)B款：需由檢驗區段起點向後至少20m處開始，此20m不納入檢驗範圍。'
+  },
+  {
+    id:54, tag:'02742',
+    q:'兩部鋪築機交錯鋪築時，兩機相距不得超過幾m，俾能趁熱滾壓？',
+    opts:['A. 15m','B. 20m','C. 30m','D. 45m'],
+    ans:2,
+    exp:'第02742章第3.2.5(7)款：兩部鋪築機相距不得超過30m，俾能獲得良好接縫趁熱滾壓。'
+  },
+  {
+    id:55, tag:'02742',
+    q:'膠輪壓路機每一輪胎載重可調整範圍為多少kg？',
+    opts:['A. 1000kg～2000kg','B. 1500kg～2500kg','C. 2000kg～3000kg','D. 2500kg～3500kg'],
+    ans:1,
+    exp:'第02742章第3.1.4(2)B款：膠輪壓路機每一輪胎載重能由1,500kg調整至2,500kg。'
+  },
+  {
+    id:56, tag:'02742',
+    q:'路面鋪築時緣石、邊溝等與瀝青混凝土相接合處，應全部均勻塗刷哪種材料？',
+    opts:['A. 透層材料','B. 速凝油溶瀝青或乳化瀝青','C. 水泥漿','D. 防水塗料'],
+    ans:1,
+    exp:'第02742章第3.2.3(3)款：緣石、邊溝等接合處應全部均勻塗刷速凝油溶瀝青或乳化瀝青一薄層。'
+  },
+  {
+    id:57, tag:'02742',
+    q:'瀝青路面滾壓時，若發現有鬆動、破裂、混有雜物等缺陷，應如何處理？',
+    opts:['A. 繼續滾壓壓實即可','B. 加鋪一層補強','C. 立即挖除換填新料並滾壓','D. 等冷卻後再評估'],
+    ans:2,
+    exp:'第02742章第3.2.4(2)N款：發現缺陷應立即予以挖除，並換填新瀝青拌和料後加以滾壓。'
+  },
+  {
+    id:58, tag:'02742',
+    q:'工程採區塊修補時，每次檢驗以幾m²為一批次？（連續面積未達5,000m²時）',
+    opts:['A. 500m²','B. 1,000m²','C. 2,000m²','D. 3,000m²'],
+    ans:2,
+    exp:'第02742章第4.2款：採區塊修補時，每次以2,000m²為一批次，每批次至少檢驗2點。'
+  },
+  {
+    id:59, tag:'02742',
+    q:'慣性剖面儀量測之檢驗區段，市區道路以每車道幾m為基本長度？',
+    opts:['A. 50m','B. 100m','C. 150m','D. 200m'],
+    ans:1,
+    exp:'第02742章第4.1(7)D款：於市區道路配合街廓，以每車道100m為一檢驗區段。'
+  },
+  {
+    id:60, tag:'02742',
+    q:'終壓使用之壓路機規定為幾噸二軸二輪？',
+    opts:['A. 4～6噸','B. 6～8噸','C. 8～10噸','D. 10～12噸'],
+    ans:1,
+    exp:'第02742章第3.1.4(2)C款：終壓用6～8噸二軸二輪壓路機。'
+  },
+
+  // ── 02747 瀝青黏層（15題）──
+  {
+    id:61, tag:'02747',
+    q:'瀝青黏層施工時，最常用之乳化瀝青種類為下列何者？',
+    opts:['A. RS-1','B. CRS-1','C. SS-1、CSS-1及CSS-1h','D. RC-70'],
+    ans:2,
+    exp:'第02747章第2.1.2款：最普遍者為SS-1、CSS-1及CSS-1h。'
+  },
+  {
+    id:62, tag:'02747',
+    q:'快凝油溶瀝青RC-70之澆置溫度規定為何？',
+    opts:['A. 20～60℃','B. 40～80℃','C. 60～105℃','D. 80～125℃'],
+    ans:1,
+    exp:'第02747章第2.1.3(1)款：RC-70為40～80℃。'
+  },
+  {
+    id:63, tag:'02747',
+    q:'以水稀釋之SS-1、CSS-1及CSS-1h之澆置溫度規定為何？',
+    opts:['A. 10～35℃','B. 24～55℃','C. 35～65℃','D. 50～80℃'],
+    ans:1,
+    exp:'第02747章第2.1.3(5)款：SS-1、CSS-1及CSS-1h澆置溫度為24～55℃。'
+  },
+  {
+    id:64, tag:'02747',
+    q:'瀝青黏層施工時，若施工地點氣溫低於幾℃時不得施工？',
+    opts:['A. 5℃','B. 8℃','C. 10℃','D. 15℃'],
+    ans:2,
+    exp:'第02747章第3.1.2(2)款：氣溫低於10℃時不得施工。'
+  },
+  {
+    id:65, tag:'02747',
+    q:'快凝瀝青黏層材料之使用量規定為幾L/m²？',
+    opts:['A. 0.05～0.25L/m²','B. 0.15～0.45L/m²','C. 0.25～0.70L/m²','D. 0.50～1.00L/m²'],
+    ans:1,
+    exp:'第02747章第3.2.3(2)A款：快凝瀝青使用量為0.15～0.45L/m²。'
+  },
+  {
+    id:66, tag:'02747',
+    q:'以水稀釋比例1：1之SS-1、CSS-1黏層材料使用量規定為幾L/m²？',
+    opts:['A. 0.10～0.30L/m²','B. 0.15～0.45L/m²','C. 0.25～0.70L/m²','D. 0.50～1.00L/m²'],
+    ans:2,
+    exp:'第02747章第3.2.3(2)B款：SS-1、CSS-1及CSS-1h（稀釋比例1：1）為0.25～0.70L/m²。'
+  },
+  {
+    id:67, tag:'02747',
+    q:'壓力瀝青撒佈機的實際撒佈量與規定使用量之偏差，應能控制在幾L/m²之許可差內？',
+    opts:['A. 0.05L/m²','B. 0.1L/m²','C. 0.15L/m²','D. 0.2L/m²'],
+    ans:1,
+    exp:'第02747章第3.2.1(2)款：偏差應能控制在0.1L/m²之許可差內。'
+  },
+  {
+    id:68, tag:'02747',
+    q:'分段澆置瀝青材料時，銜接處應鋪以適當寬度之厚紙，通常為幾m？',
+    opts:['A. 0.5m','B. 1m','C. 1.5m','D. 2m'],
+    ans:1,
+    exp:'第02747章第3.2.3(4)款：銜接處應鋪適當寬度（通常為1m）之厚紙，防止重複澆置。'
+  },
+  {
+    id:69, tag:'02747',
+    q:'瀝青黏層計量方式，按完工後經驗收合格之數量，以何單位計量？',
+    opts:['A. 公噸','B. 立方公尺','C. 平方公尺或公升','D. 公里'],
+    ans:2,
+    exp:'第02747章第4.1.1款：瀝青黏層以平方公尺或公升計量。'
+  },
+  {
+    id:70, tag:'02747',
+    q:'RC-3000快凝油溶瀝青之澆置溫度規定為何？',
+    opts:['A. 60～105℃','B. 80～125℃','C. 100～145℃','D. 120～165℃'],
+    ans:2,
+    exp:'第02747章第2.1.3(4)款：RC-3000為100～145℃。'
+  },
+  {
+    id:71, tag:'02747',
+    q:'瀝青黏層澆置完成後應禁止何種行為？',
+    opts:['A. 鋪設瀝青面層','B. 車輛及人畜通行','C. 噴水保濕','D. 複驗材料品質'],
+    ans:1,
+    exp:'第02747章第3.4.1款：黏層澆置完成後應有適當時間保護，禁止車輛及人畜通行。'
+  },
+  {
+    id:72, tag:'02747',
+    q:'下列哪種天氣條件不得施工瀝青黏層？',
+    opts:['A. 晴天但略有微風','B. 陰天但氣溫12℃','C. 霧天或雨天','D. 晴天但稍有濕度'],
+    ans:2,
+    exp:'第02747章第3.1.2款：霧天、雨天或氣溫低於10℃時不得施工。'
+  },
+  {
+    id:73, tag:'02747',
+    q:'RC-250快凝油溶瀝青之澆置溫度規定為何？',
+    opts:['A. 40～80℃','B. 60～105℃','C. 80～125℃','D. 100～145℃'],
+    ans:1,
+    exp:'第02747章第2.1.3(2)款：RC-250為60～105℃。'
+  },
+  {
+    id:74, tag:'02747',
+    q:'瀝青黏層在鋪設瀝青混凝土面層之前，須確認何種狀態方可鋪設？',
+    opts:['A. 黏層尚未完全乾固','B. 黏層已乾固','C. 黏層加溫後','D. 隨時可鋪設'],
+    ans:1,
+    exp:'第02747章第3.2.3(9)款：瀝青混凝土面層應於黏層乾固後鋪設。'
+  },
+  {
+    id:75, tag:'02747',
+    q:'RC-70快凝油溶瀝青黏度等級（60℃）規定為幾CST？',
+    opts:['A. 40～100CST','B. 70～140CST','C. 100～200CST','D. 150～300CST'],
+    ans:1,
+    exp:'表02747-1：RC-70動黏滯度60℃規定為70～140 CST。'
+  },
+
+  // ── 02966 再生瀝青混凝土（25題）──
+  {
+    id:76, tag:'02966',
+    q:'廠拌式熱拌再生瀝青混凝土（RAP）中，用於面層之再生料瀝青含量規定最少為幾%？',
+    opts:['A. 2.5%','B. 3.0%','C. 3.8%','D. 4.5%'],
+    ans:2,
+    exp:'第02966章第2.1.3(1)A款：用於面層RAP瀝青含量3.8%以上（底層3.0%以上）。'
+  },
+  {
+    id:77, tag:'02966',
+    q:'RAP（再生瀝青混凝土粒料）針入度（25℃、5sec、100g）規定須在多少以上？',
+    opts:['A. 10以上','B. 15以上','C. 20以上','D. 25以上'],
+    ans:2,
+    exp:'第02966章第2.1.3(1)A款：RAP針入度（25℃、5sec、100g）20以上。'
+  },
+  {
+    id:78, tag:'02966',
+    q:'再生瀝青混凝土若用分盤式拌和廠，所有再生粒料使用率規定不得超過多少%？',
+    opts:['A. 20%','B. 30%','C. 40%','D. 50%'],
+    ans:2,
+    exp:'第02966章第2.1.4(2)款：用分盤式拌和廠，所有再生粒料使用率不得超過40%。'
+  },
+  {
+    id:79, tag:'02966',
+    q:'再生瀝青混凝土施工前幾天，施工承攬廠商應提出配合設計報告書？',
+    opts:['A. 7天','B. 10天','C. 15天','D. 30天'],
+    ans:2,
+    exp:'第02966章第2.1.4(1)款：應於施工前15天提出配合設計報告書，經工程司核可後方得施工。'
+  },
+  {
+    id:80, tag:'02966',
+    q:'再生瀝青混凝土中，再生劑應符合哪些規範之規定？',
+    opts:['A. CNS 15073或ASTM D3381','B. CNS 15359或ASTM D5505','C. CNS 2260或AASHTO M226','D. CNS 490或ASTM D5581'],
+    ans:1,
+    exp:'第02966章第2.1.2款：再生劑應符合CNS 15359或ASTM D5505之規定。'
+  },
+  {
+    id:81, tag:'02966',
+    q:'再生瀝青混凝土之回收瀝青黏滯度（poises）規定，檢驗結果不得超過幾poises？',
+    opts:['A. 5,000 poises','B. 8,000 poises','C. 10,000 poises','D. 15,000 poises'],
+    ans:2,
+    exp:'表02966-1：回收瀝青黏滯度檢驗結果不得超過10,000 poises。'
+  },
+  {
+    id:82, tag:'02966',
+    q:'再生瀝青混凝土鋪面回收瀝青黏滯度，每工程至少需檢驗幾次？',
+    opts:['A. 1次','B. 2次','C. 3次','D. 5次'],
+    ans:0,
+    exp:'表02966-1：每工程至少一次，超過15,000m²為一批再各驗一次。'
+  },
+  {
+    id:83, tag:'02966',
+    q:'再生瀝青混凝土鋪面之回收瀝青黏滯度鑽心取樣，鑽心試體直徑規定為幾cm？',
+    opts:['A. 10cm','B. 12cm','C. 15cm','D. 20cm'],
+    ans:2,
+    exp:'表02966-1：採鋪設完成後現場鑽心取樣，取15cm直徑鑽心試體。'
+  },
+  {
+    id:84, tag:'02966',
+    q:'再生瀝青混凝土回收瀝青黏滯度，每批抽取幾點混合後辦理試驗？',
+    opts:['A. 3點','B. 5點','C. 7點','D. 10點'],
+    ans:1,
+    exp:'表02966-1：以分層隨機抽樣，每批抽5點，混合後辦理回收瀝青黏度試驗。'
+  },
+  {
+    id:85, tag:'02966',
+    q:'再生瀝青混凝土鋪面完成後，在鋪面溫度未冷卻至幾℃前應禁止任何車輛行駛？',
+    opts:['A. 30℃','B. 40℃','C. 50℃','D. 60℃'],
+    ans:2,
+    exp:'第02966章第3.6.1款：鋪面溫度未冷卻至50℃前，應禁止任何車輛行駛其上。'
+  },
+  {
+    id:86, tag:'02966',
+    q:'再生瀝青混凝土路面鋪築後應封閉幾小時以上？',
+    opts:['A. 6小時','B. 8小時','C. 12小時','D. 24小時'],
+    ans:2,
+    exp:'第02966章第3.6.2款：路面鋪築後應封閉12小時以上。'
+  },
+  {
+    id:87, tag:'02966',
+    q:'再生瀝青混凝土計量，以立方公尺計算時的計算基準為何？',
+    opts:['A. 圖說斷面×實際鋪築長度或面積×厚度','B. 磅單重量換算','C. 拌和廠產量記錄','D. 設計配比體積計算'],
+    ans:0,
+    exp:'第02966章第4.1.1(1)款：以契約圖說所示斷面及實際鋪築長度或面積乘以厚度計算體積。'
+  },
+  {
+    id:88, tag:'02966',
+    q:'RAP打碎後應分堆儲放，下列哪種分類方式符合規範？',
+    opts:['A. 分成2種或3種粒徑分堆','B. 不需分類統一儲存','C. 依含水量分堆','D. 依瀝青含量分堆'],
+    ans:0,
+    exp:'第02966章第2.1.3(1)B款：打碎後分成三種（19～12.5mm、12.5～4.75mm、4.75mm以下）或二種粒徑分堆儲放。'
+  },
+  {
+    id:89, tag:'02966',
+    q:'再生瀝青混凝土之拌和廠以何種類型為主？',
+    opts:['A. 連續式拌和廠','B. 乾鼓式拌和廠','C. 分盤式拌和廠','D. 三種皆可不限定'],
+    ans:2,
+    exp:'第02966章第3.2.1款：拌和廠以分盤式為主，使用其他類型時，必須先徵得工程司之同意。'
+  },
+  {
+    id:90, tag:'02966',
+    q:'分盤式拌和廠生產熱拌再生瀝青混凝土，必須加裝何種特有設備？',
+    opts:['A. 再生劑噴灑系統','B. RAP之專用熱爐','C. 超音波粒徑分析儀','D. 連續監控攝影機'],
+    ans:1,
+    exp:'第02966章第3.2.3款：必須加裝再生瀝青混凝土粒料（RAP）之專用熱爐，能分別烘乾新粒料或處理RAP。'
+  },
+  {
+    id:91, tag:'02966',
+    q:'再生瀝青混凝土（RAP）不得含有下列哪些有害物？',
+    opts:['A. 木屑、鐵線、有機物、黏土','B. 石灰石、砂岩','C. 舊瀝青膜、粗粒料','D. 砂、礫石'],
+    ans:0,
+    exp:'第02966章第2.1.3(1)C款：再生粒料不得含有木屑、鐵線、有機物、黏土及有礙品質功能之有害物。'
+  },
+  {
+    id:92, tag:'02966',
+    q:'再生瀝青混凝土壓實度檢驗結果不合格時，得申請加倍取樣重試，重試以幾次為限？',
+    opts:['A. 1次','B. 2次','C. 3次','D. 無限制'],
+    ans:0,
+    exp:'第02966章第3.4.2款：重試以1次為限，重試之結果均應合格。'
+  },
+  {
+    id:93, tag:'02966',
+    q:'再生瀝青混凝土黏度檢驗結果及處理辦法，依第幾章何款規定辦理？',
+    opts:['A. 第01330章罰則','B. 第01991章第3.3.2款罰則','C. 第02742章品質管理款','D. 第02741章檢驗款'],
+    ans:1,
+    exp:'第02966章第3.4.1款：黏度檢驗結果及處理辦法依第01991章「罰則」第3.3.2款規定辦理。'
+  },
+  {
+    id:94, tag:'02966',
+    q:'再生瀝青混凝土瀝青含量、厚度、平整度等以幾m²為一批辦理檢驗？',
+    opts:['A. 3,000m²','B. 5,000m²','C. 8,000m²','D. 10,000m²'],
+    ans:1,
+    exp:'第02966章第3.4.1款：除契約另有約定外，檢驗頻率以每5,000m²為一批。'
+  },
+  {
+    id:95, tag:'02966',
+    q:'再生瀝青混凝土計價單位已包含下列哪些費用？',
+    opts:['A. 僅材料費','B. 材料、加熱、拌和、運送、鋪築、滾壓等全部費用','C. 僅施工費','D. 僅再生粒料處理費'],
+    ans:1,
+    exp:'第02966章第4.2.3款：單價已包括底層整理清掃、RAP處理、新粒料、瀝青材料、再生劑、加熱拌和、運送、鋪築及滾壓等全部費用。'
+  },
+  {
+    id:96, tag:'02966',
+    q:'再生瀝青混凝土配合設計報告書，試驗值應包含哪兩項黏滯度數值？',
+    opts:['A. 設計黏滯度與最大黏滯度','B. 目標黏滯度值與配合設計結果之實作黏滯度值','C. 初始黏滯度與終期黏滯度','D. 高溫黏滯度與低溫黏滯度'],
+    ans:1,
+    exp:'第02966章第2.1.4(1)款：報告書試驗值應包含試驗之瀝青目標黏滯度值及配合設計結果之實作黏滯度值。'
+  },
+  {
+    id:97, tag:'02966',
+    q:'再生瀝青混凝土之瀝青混凝土挖（刨）除費及運費如何計量？',
+    opts:['A. 包含在再生瀝青混凝土單價內','B. 另外計量計價','C. 由業主另行補助','D. 由廠商自行吸收'],
+    ans:1,
+    exp:'第02966章第4.1.3款及第4.2.4款：瀝青混凝土之挖（刨）除費及運費另外計量計價。'
+  },
+  {
+    id:98, tag:'02966',
+    q:'再生瀝青混凝土若壓實度、平整度或厚度不符合規定時，應如何處理？',
+    opts:['A. 補鋪薄層即可','B. 灌注修補劑','C. 挖除並重新鋪築，直至符合規定','D. 依比例扣款即可繼續'],
+    ans:2,
+    exp:'第02966章第3.5款：應即挖除，並就材料、施工機具及施工方法加以檢討改正後重新鋪築，直至符合規定。'
+  },
+  {
+    id:99, tag:'02966',
+    q:'再生瀝青混凝土回收瀝青黏滯度，總量超過幾m²為一批檢驗一次？',
+    opts:['A. 5,000m²','B. 10,000m²','C. 15,000m²','D. 20,000m²'],
+    ans:2,
+    exp:'表02966-1：總量超過15,000m²為一批檢驗一次，分批餘數未達7,500m²得併入前一批，超過7,500m²時單獨為一批。'
+  },
+  {
+    id:100, tag:'02966',
+    q:'再生瀝青混凝土配合設計應依哪種方法辦理？',
+    opts:['A. AASHTO T283法','B. AI MS-2或MS-20配合設計方法','C. CNS 12395馬歇爾法','D. Hveem法'],
+    ans:1,
+    exp:'第02966章第2.1.4(1)款：施工承攬廠商應依據AI MS-2或MS-20配合設計方法提出配合設計報告書。'
+  }
+];
+
+// ── State ──
+let userAnswers = {};
+let showExplanations = false;
+let currentFilter = 'all';
+
+function buildQuiz(questions) {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  questions.forEach(q => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${q.id}`;
+    card.dataset.tag = q.tag;
+
+    const tagLabel = { '02741':'02741 一般要求','02742':'02742 鋪面','02747':'02747 黏層','02966':'02966 再生瀝青' }[q.tag];
+
+    const optsHtml = q.opts.map((opt, i) => {
+      const key = ['A','B','C','D'][i];
+      return `<label class="option-label" id="opt-${q.id}-${i}" onclick="selectAnswer(${q.id}, ${i})">
+        <input type="radio" name="q${q.id}" value="${i}">
+        <span class="opt-key">${key}</span>
+        <span>${opt.substring(3)}</span>
+      </label>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">Q ${q.id}</span>
+        <span class="q-tag">${tagLabel}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optsHtml}</div>
+      <div class="explanation" id="exp-${q.id}">💡 ${q.exp}</div>
+    `;
+
+    // Restore state
+    if (userAnswers[q.id] !== undefined) {
+      restoreAnswer(q, card);
+    }
+
+    container.appendChild(card);
+  });
+}
+
+function selectAnswer(qid, optIdx) {
+  if (userAnswers[qid] !== undefined) return; // already answered
+
+  const q = QUESTIONS.find(x => x.id === qid);
+  userAnswers[qid] = optIdx;
+
+  const card = document.getElementById(`card-${qid}`);
+  const correct = q.ans;
+
+  // Style options
+  for (let i = 0; i < q.opts.length; i++) {
+    const lbl = document.getElementById(`opt-${qid}-${i}`);
+    if (i === optIdx) {
+      lbl.classList.add(optIdx === correct ? 'correct-answer' : 'wrong-answer');
+      lbl.classList.add('selected');
+    }
+    if (i === correct && optIdx !== correct) {
+      lbl.classList.add('correct-answer');
+    }
+  }
+
+  card.classList.add(optIdx === correct ? 'answered-correct' : 'answered-wrong');
+
+  if (showExplanations) {
+    document.getElementById(`exp-${qid}`).classList.add('show');
+  }
+
+  updateScore();
+  updateProgress();
+}
+
+function restoreAnswer(q, card) {
+  const optIdx = userAnswers[q.id];
+  const correct = q.ans;
+
+  for (let i = 0; i < q.opts.length; i++) {
+    const lbl = document.getElementById(`opt-${q.id}-${i}`);
+    if (!lbl) continue;
+    if (i === optIdx) {
+      lbl.classList.add(optIdx === correct ? 'correct-answer' : 'wrong-answer');
+      lbl.classList.add('selected');
+    }
+    if (i === correct && optIdx !== correct) {
+      lbl.classList.add('correct-answer');
+    }
+  }
+
+  card.classList.add(optIdx === correct ? 'answered-correct' : 'answered-wrong');
+}
+
+function updateScore() {
+  const answered = Object.keys(userAnswers).length;
+  const correct = Object.entries(userAnswers).filter(([id, ans]) => {
+    const q = QUESTIONS.find(x => x.id === parseInt(id));
+    return q && q.ans === ans;
+  }).length;
+  const wrong = answered - correct;
+  const rate = answered > 0 ? Math.round(correct / answered * 100) : 0;
+
+  document.getElementById('s-answered').textContent = answered;
+  document.getElementById('s-correct').textContent = correct;
+  document.getElementById('s-wrong').textContent = wrong;
+  document.getElementById('s-rate').textContent = answered > 0 ? rate + '%' : '—';
+}
+
+function updateProgress() {
+  const answered = Object.keys(userAnswers).length;
+  document.getElementById('progress-fill').style.width = (answered / 100 * 100) + '%';
+}
+
+function showResult() {
+  const answered = Object.keys(userAnswers).length;
+  const correct = Object.entries(userAnswers).filter(([id, ans]) => {
+    const q = QUESTIONS.find(x => x.id === parseInt(id));
+    return q && q.ans === ans;
+  }).length;
+
+  const score = Math.round(correct / 100 * 100);
+  document.getElementById('modal-score-num').textContent = score;
+  document.getElementById('modal-detail').textContent = `共作答 ${answered} 題，答對 ${correct} 題，答錯 ${answered - correct} 題`;
+
+  let grade = '';
+  if (answered < 100) grade = '⚠️ 尚有 ' + (100 - answered) + ' 題未作答';
+  else if (score >= 90) grade = '🏆 優異！技術規範掌握精熟';
+  else if (score >= 80) grade = '✅ 良好！建議複習錯題';
+  else if (score >= 70) grade = '📖 及格！仍有進步空間';
+  else grade = '❌ 需加強！建議重新研讀規範';
+
+  document.getElementById('modal-grade').textContent = grade;
+  document.getElementById('result-modal').classList.add('show');
+}
+
+function resetAll() {
+  userAnswers = {};
+  buildQuiz(filterQuestions(currentFilter));
+  updateScore();
+  updateProgress();
+  document.getElementById('hidden-count').textContent = '';
+  showExplanations = false;
+}
+
+function toggleExplanations() {
+  showExplanations = !showExplanations;
+  document.querySelectorAll('.explanation').forEach(el => {
+    const qid = parseInt(el.id.replace('exp-', ''));
+    if (userAnswers[qid] !== undefined) {
+      showExplanations ? el.classList.add('show') : el.classList.remove('show');
+    }
+  });
+}
+
+function filterQuestions(tag) {
+  if (tag === 'all') return QUESTIONS;
+  return QUESTIONS.filter(q => q.tag === tag);
+}
+
+function filterTag(tag, btn) {
+  currentFilter = tag;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const filtered = filterQuestions(tag);
+  buildQuiz(filtered);
+
+  const hidden = 100 - filtered.length;
+  const info = document.getElementById('hidden-count');
+  info.textContent = tag !== 'all' ? `目前顯示 ${filtered.length} 題（共隱藏 ${hidden} 題）` : '';
+}
+
+function showOnlyWrong() {
+  const wrongIds = Object.entries(userAnswers)
+    .filter(([id, ans]) => {
+      const q = QUESTIONS.find(x => x.id === parseInt(id));
+      return q && q.ans !== ans;
+    })
+    .map(([id]) => parseInt(id));
+
+  if (wrongIds.length === 0) {
+    alert('目前沒有錯題！');
+    return;
+  }
+
+  const wrongQ = QUESTIONS.filter(q => wrongIds.includes(q.id));
+  buildQuiz(wrongQ);
+
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const info = document.getElementById('hidden-count');
+  info.textContent = `顯示 ${wrongQ.length} 道錯題`;
+}
+
+// Init
+buildQuiz(QUESTIONS);
+updateScore();
+</script>
+</body>
+</html>
