@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人行道工程施工規範題庫</title>
+<style>
+  :root {
+    --bg: #1a1a1a;
+    --surface: #242424;
+    --card: #2e2e2e;
+    --border: #3a3a3a;
+    --accent: #d4a04a;
+    --accent-light: #e8bf7a;
+    --text: #e8e4dc;
+    --text-dim: #9a9690;
+    --correct: #4caf7a;
+    --wrong: #e05555;
+    --correct-bg: rgba(76,175,122,0.12);
+    --wrong-bg: rgba(224,85,85,0.12);
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2418 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: normal;
+    letter-spacing: 0.06em;
+    color: var(--accent-light);
+    margin-bottom: 6px;
+  }
+  header p { color: var(--text-dim); font-size: 13px; letter-spacing: 0.04em; }
+  #scoreboard {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 97px;
+    z-index: 99;
+  }
+  .score-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .score-chip span { font-weight: bold; color: var(--accent); }
+  #controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 16px 24px 8px;
+  }
+  button {
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 8px 20px;
+    transition: all 0.18s;
+  }
+  .btn-primary { background: var(--accent); color: #1a1200; font-weight: bold; }
+  .btn-primary:hover { background: var(--accent-light); }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  #filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 24px 12px;
+    justify-content: center;
+  }
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-dim);
+    font-size: 12px;
+    padding: 4px 14px;
+  }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #1a1200; font-weight: bold; }
+  .filter-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+  #quiz-container { max-width: 900px; margin: 0 auto; padding: 12px 20px 60px; }
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .question-card.answered-correct { border-color: var(--correct); }
+  .question-card.answered-wrong   { border-color: var(--wrong); }
+  .q-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .q-num { font-size: 11px; color: var(--accent); font-weight: bold; letter-spacing: 0.08em; min-width: 38px; }
+  .q-tag {
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 1px 8px;
+    border: 1px solid var(--border);
+  }
+  .q-text { padding: 12px 18px 4px; font-size: 14.5px; line-height: 1.65; }
+  .options { padding: 8px 14px 14px; display: grid; gap: 6px; }
+  .option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .option-label:hover { background: rgba(212,160,74,0.07); border-color: rgba(212,160,74,0.3); }
+  .option-label input[type=radio] { display: none; }
+  .opt-key {
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+  .option-label.selected .opt-key { background: var(--accent); border-color: var(--accent); color: #1a1200; }
+  .option-label.correct-answer { background: var(--correct-bg); border-color: var(--correct); }
+  .option-label.correct-answer .opt-key { background: var(--correct); border-color: var(--correct); color: #fff; }
+  .option-label.wrong-answer { background: var(--wrong-bg); border-color: var(--wrong); }
+  .option-label.wrong-answer .opt-key { background: var(--wrong); border-color: var(--wrong); color: #fff; }
+  .explanation {
+    display: none;
+    margin: 2px 14px 14px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .explanation.show { display: block; }
+  #progress-wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 6px; }
+  #progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  #progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 2px;
+    width: 0;
+    transition: width 0.4s ease;
+  }
+  #result-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  #result-modal.show { display: flex; }
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 36px 40px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+  }
+  .modal-box h2 { font-family: var(--font-display); color: var(--accent-light); font-size: 22px; margin-bottom: 16px; }
+  .modal-score { font-size: 56px; font-weight: bold; color: var(--accent); line-height: 1; margin: 16px 0; }
+  .modal-detail { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+  .modal-grade { font-size: 15px; margin: 8px 0 24px; font-weight: bold; }
+  #hidden-count {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 4px 16px 14px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⬛ 人行道工程施工規範題庫</h1>
+  <p>桃工規 02752 · 02753 · 02770 · 02778 · 02779 · 02781 · 02786 · 03050 · 03110 · 03220 · 03310 ｜ 共 100 題</p>
+</header>
+
+<div id="scoreboard">
+  <div class="score-chip">作答 <span id="s-answered">0</span> / 100</div>
+  <div class="score-chip">正確 <span id="s-correct">0</span></div>
+  <div class="score-chip">錯誤 <span id="s-wrong">0</span></div>
+  <div class="score-chip">正確率 <span id="s-rate">—</span></div>
+</div>
+
+<div id="controls">
+  <button class="btn-primary" onclick="showResult()">📊 查看成績</button>
+  <button class="btn-outline" onclick="resetAll()">🔄 重新作答</button>
+  <button class="btn-outline" onclick="toggleExplanations()">💡 顯示解析</button>
+  <button class="btn-outline" onclick="showOnlyWrong()">❌ 只看錯題</button>
+</div>
+
+<div id="filter-bar">
+  <button class="filter-btn active" onclick="filterTag('all',this)">全部 (100)</button>
+  <button class="filter-btn" onclick="filterTag('03310',this)">03310 結構混凝土</button>
+  <button class="filter-btn" onclick="filterTag('03050',this)">03050 混凝土基本材料</button>
+  <button class="filter-btn" onclick="filterTag('03110',this)">03110 混凝土模板</button>
+  <button class="filter-btn" onclick="filterTag('03220',this)">03220 銲接鋼線網</button>
+  <button class="filter-btn" onclick="filterTag('02781',this)">02781 人行道更新</button>
+  <button class="filter-btn" onclick="filterTag('02779',this)">02779 人行道底層</button>
+  <button class="filter-btn" onclick="filterTag('02778',this)">02778 人行道面層</button>
+  <button class="filter-btn" onclick="filterTag('02770',this)">02770 緣石及緣石側溝</button>
+  <button class="filter-btn" onclick="filterTag('02786',this)">02786 高壓混凝土地磚</button>
+  <button class="filter-btn" onclick="filterTag('02752',this)">02752 壓花地坪</button>
+  <button class="filter-btn" onclick="filterTag('02753',this)">02753 噴花地坪</button>
+</div>
+
+<div id="progress-wrap">
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+</div>
+
+<div id="hidden-count"></div>
+<div id="quiz-container"></div>
+
+<div id="result-modal">
+  <div class="modal-box">
+    <h2>測驗結果</h2>
+    <div class="modal-score" id="modal-score-num">0</div>
+    <div style="color:var(--text-dim);font-size:13px;">分（滿分 100 分）</div>
+    <div class="modal-detail" id="modal-detail"></div>
+    <div class="modal-grade" id="modal-grade"></div>
+    <button class="btn-primary" onclick="document.getElementById('result-modal').classList.remove('show')" style="width:100%;padding:10px">關閉</button>
+    <br><br>
+    <button class="btn-outline" onclick="resetAll();document.getElementById('result-modal').classList.remove('show')" style="width:100%;padding:10px">重新作答</button>
+  </div>
+</div>
+
+<script>
+const TOTAL = 100;
+const TAG_LABELS = {
+  '03310': '03310 結構混凝土',
+  '03050': '03050 混凝土基本材料',
+  '03110': '03110 混凝土模板',
+  '03220': '03220 銲接鋼線網',
+  '02781': '02781 人行道更新',
+  '02779': '02779 人行道底層',
+  '02778': '02778 人行道面層',
+  '02770': '02770 緣石及緣石側溝',
+  '02786': '02786 高壓混凝土地磚',
+  '02752': '02752 壓花地坪',
+  '02753': '02753 噴花地坪'
+};
+
+const QUESTIONS = [
+  // ===== 03310 結構用混凝土 (18題) =====
+  {
+    id: 1,
+    tag: '03310',
+    q: '依第03310章規定，廠商澆置混凝土前應提前多少小時通知工程司？',
+    opts: ['A. 12小時', 'B. 24小時', 'C. 48小時', 'D. 72小時'],
+    ans: 1,
+    exp: '第03310章第3.1.1(5)A款：澆置混凝土應於24小時前通知工程司，未經工程司同意不得澆置。'
+  },
+  {
+    id: 2,
+    tag: '03310',
+    q: '依第03310章規定，混凝土分層澆置時，上下層澆置間隔時間不得超過多少分鐘？',
+    opts: ['A. 30分鐘', 'B. 45分鐘', 'C. 60分鐘', 'D. 90分鐘'],
+    ans: 1,
+    exp: '第03310章第3.3.1(4)款：上下層之澆置間隔時間不得超過45分鐘，以免形成冷縫或脆弱面。'
+  },
+  {
+    id: 3,
+    tag: '03310',
+    q: '依第03310章規定，巨積混凝土澆置每層厚度應為多少公分？',
+    opts: ['A. 10～30cm', 'B. 20～50cm', 'C. 30～60cm', 'D. 50～80cm'],
+    ans: 1,
+    exp: '第03310章第3.3.1(4)款：巨積混凝土澆置每層厚度為20～50cm。'
+  },
+  {
+    id: 4,
+    tag: '03310',
+    q: '依第03310章規定，低溫澆置作業中，周圍氣溫降至幾℃以下時應採取保護措施？',
+    opts: ['A. 0℃', 'B. 2℃', 'C. 5℃', 'D. 10℃'],
+    ans: 2,
+    exp: '第03310章第3.3.3款：周圍氣溫為5℃且繼續下降時，應採取加溫或模板隔熱等保護措施。'
+  },
+  {
+    id: 5,
+    tag: '03310',
+    q: '依第03310章規定，低溫澆置時，應使混凝土及氣溫保持在幾℃以上並維持幾天？',
+    opts: ['A. 10℃，5天', 'B. 13℃，7天', 'C. 15℃，7天', 'D. 10℃，7天'],
+    ans: 1,
+    exp: '第03310章第3.3.3(1)A款：將模板或構造物包圍加溫，使其內之混凝土及氣溫保持在13℃以上，完成澆置之混凝土應維持該溫度7天。'
+  },
+  {
+    id: 6,
+    tag: '03310',
+    q: '依第03310章規定，高溫澆置時，周圍溫度超過幾℃以上應對模板及鋼筋冷卻？',
+    opts: ['A. 25℃', 'B. 28℃', 'C. 30℃', 'D. 32℃'],
+    ans: 3,
+    exp: '第03310章第3.3.4(1)款：周圍溫度超過32℃以上時，應於澆置前將模板及鋼筋冷卻至32℃以下。'
+  },
+  {
+    id: 7,
+    tag: '03310',
+    q: '依第03310章規定，振動器插入搗實時，插入先澆置支撐結構體混凝土的深度約為多少公分？',
+    opts: ['A. 5cm', 'B. 10cm', 'C. 15cm', 'D. 20cm'],
+    ans: 1,
+    exp: '第03310章第3.3.5(6)款：結構梁體或樓地板搗實時，振動器應插至先澆置支撐結構體混凝土內，插入深度約10cm，以免過度振動。'
+  },
+  {
+    id: 8,
+    tag: '03310',
+    q: '依第03310章規定，水平及傾斜施工縫覆蓋之水泥砂漿厚度不得薄於多少mm？',
+    opts: ['A. 3mm', 'B. 6mm', 'C. 9mm', 'D. 12mm'],
+    ans: 1,
+    exp: '第03310章第3.3.6(4)款：水泥砂漿應與混凝土之水灰比相同，且不得薄於6mm厚。'
+  },
+  {
+    id: 9,
+    tag: '03310',
+    q: '依第03310章規定，水中混凝土澆置後至少多少小時之內不得進行抽水？',
+    opts: ['A. 24小時', 'B. 36小時', 'C. 48小時', 'D. 72小時'],
+    ans: 2,
+    exp: '第03310章第3.3.2(2)款：水中混凝土澆置後至少48小時之內，該地區不得進行抽水。'
+  },
+  {
+    id: 10,
+    tag: '03310',
+    q: '依第03310章規定，以特密管水中澆置時，特密管下端應伸入已澆置混凝土表面下至少多少公尺？',
+    opts: ['A. 1m', 'B. 1.5m', 'C. 2m', 'D. 2.5m'],
+    ans: 2,
+    exp: '第03310章第3.3.2(3)G款：澆置混凝土時，特密管下端應伸入已澆置混凝土表面下至少2m。'
+  },
+  {
+    id: 11,
+    tag: '03310',
+    q: '依第03310章規定，混凝土澆置後至少多少天內應保護混凝土不受天候侵害？',
+    opts: ['A. 3天', 'B. 5天', 'C. 7天', 'D. 14天'],
+    ans: 2,
+    exp: '第03310章第3.6.4款：新澆置後至少7天內，應保護混凝土不受天候侵害，包括雨水、過度日曬及過高或過低溫度。'
+  },
+  {
+    id: 12,
+    tag: '03310',
+    q: '依第03310章規定，混凝土抗壓強度試驗，任何一組強度試驗之結果不得低於規定強度fc\'減去多少kgf/cm²？',
+    opts: ['A. 25 kgf/cm²', 'B. 35 kgf/cm²', 'C. 50 kgf/cm²', 'D. 70 kgf/cm²'],
+    ans: 1,
+    exp: '第03310章第3.5.3(2)B款：任何一組強度試驗之結果不得低於fc\'-35 kgf/cm²。'
+  },
+  {
+    id: 13,
+    tag: '03310',
+    q: '依第03310章規定，鑽心試體評量基準中，同組試體之平均強度不低於規定強度fc\'的多少百分比？',
+    opts: ['A. 70%', 'B. 75%', 'C. 85%', 'D. 90%'],
+    ans: 2,
+    exp: '第03310章第3.5.3(12)款：同組試體之平均強度不低於規定強度fc之85%，且任一試體之強度不低於fc之75%。'
+  },
+  {
+    id: 14,
+    tag: '03310',
+    q: '依第03310章規定，不合格混凝土（非有條件接受情形）應於收到工程司通知後多少天內拆除及重做？',
+    opts: ['A. 14天', 'B. 21天', 'C. 30天', 'D. 60天'],
+    ans: 2,
+    exp: '第03310章第3.5.3(17)A款：不合格之混凝土其構造物應於收到工程司之通知後30天內拆除及重做。'
+  },
+  {
+    id: 15,
+    tag: '03310',
+    q: '依第03310章規定，泵送機輸送管出口端與澆置點之距離不得大於多少公尺？',
+    opts: ['A. 1m', 'B. 1.5m', 'C. 2m', 'D. 3m'],
+    ans: 1,
+    exp: '第03310章第3.2.3(2)款：輸送管之出口端應儘可能置於澆置點附近，其間之距離不得大於1.5m。'
+  },
+  {
+    id: 16,
+    tag: '03310',
+    q: '依第03310章規定，特密管之直徑為多少公分？',
+    opts: ['A. 10～15cm', 'B. 15～20cm', 'C. 20～25cm', 'D. 25～30cm'],
+    ans: 2,
+    exp: '第03310章第3.2.5(1)款：特密管直徑為20～25cm，上端裝有漏斗之不透水管，漏斗頂端應加設50mm×50mm網目之鋼網以防堵塞。'
+  },
+  {
+    id: 17,
+    tag: '03310',
+    q: '依第03310章規定，滑槽之坡度範圍應為何？',
+    opts: ['A. V:H = 1:1 至 1:2', 'B. V:H = 1:2 至 1:3', 'C. V:H = 1:3 至 1:4', 'D. V:H = 1:4 至 1:5'],
+    ans: 1,
+    exp: '第03310章第3.2.2(2)款：滑槽坡度不得陡於V:H=1:2，亦不得緩於V:H=1:3。'
+  },
+  {
+    id: 18,
+    tag: '03310',
+    q: '依第03310章規定，預拌混凝土試驗室之養護室溫度應控制在幾℃？',
+    opts: ['A. 20℃±2℃', 'B. 23℃±2℃', 'C. 25℃±2℃', 'D. 27℃±2℃'],
+    ans: 1,
+    exp: '第03310章第3.4.1(2)款：混凝土試體養護室之溫度應控制在23℃±2℃，相對濕度應大於95%。'
+  },
+  // ===== 03050 混凝土基本材料 (15題) =====
+  {
+    id: 19,
+    tag: '03050',
+    q: '依第03050章規定，新拌混凝土中之水溶性氯離子含量不得超過多少kg/m³？',
+    opts: ['A. 0.10 kg/m³', 'B. 0.15 kg/m³', 'C. 0.20 kg/m³', 'D. 0.30 kg/m³'],
+    ans: 1,
+    exp: '第03050章第2.2.2款：新拌混凝土中之水溶性氯離子含量，不得超過0.15kg/m³。'
+  },
+  {
+    id: 20,
+    tag: '03050',
+    q: '依第03050章規定，混凝土自加水攪拌開始，若無添加緩凝劑，超過多少分鐘而仍未澆置者不得使用？',
+    opts: ['A. 60分鐘', 'B. 90分鐘', 'C. 120分鐘', 'D. 150分鐘'],
+    ans: 1,
+    exp: '第03050章第3.4款：混凝土自加水攪拌開始，經過90分鐘而仍未澆置者即不得使用。添加緩凝劑可延長至120分鐘。'
+  },
+  {
+    id: 21,
+    tag: '03050',
+    q: '依第03050章規定，粗粒料磨損率（依CNS 490試驗法）不得大於多少百分比？',
+    opts: ['A. 30%', 'B. 40%', 'C. 50%', 'D. 60%'],
+    ans: 2,
+    exp: '第03050章第2.1.3(5)款：依CNS 490試驗法測定之粗粒料磨損率不得大於50%。'
+  },
+  {
+    id: 22,
+    tag: '03050',
+    q: '依第03050章規定，使用硫酸鈉進行健度試驗，粗粒料之平均重量損失率不得超過多少百分比？',
+    opts: ['A. 8%', 'B. 10%', 'C. 12%', 'D. 15%'],
+    ans: 2,
+    exp: '第03050章第2.1.3(6)款：使用硫酸鈉之粗粒料健度試驗，其平均重量損失率不得超出12%。細粒料不得超出10%。'
+  },
+  {
+    id: 23,
+    tag: '03050',
+    q: '依第03050章規定，細粒料之細度模數應在何範圍之間？',
+    opts: ['A. 1.50 至 2.30', 'B. 2.30 至 3.10', 'C. 2.50 至 3.50', 'D. 3.00 至 4.00'],
+    ans: 1,
+    exp: '第03050章第2.1.3(7)款：細粒料之細度模數應在2.30至3.10之間。若超出配比設計值之±0.20應調整用砂率。'
+  },
+  {
+    id: 24,
+    tag: '03050',
+    q: '依第03050章規定，礦物摻料僅使用飛灰時，飛灰用量不得超過總膠結材料重量的多少百分比？',
+    opts: ['A. 10%', 'B. 15%', 'C. 25%', 'D. 30%'],
+    ans: 2,
+    exp: '第03050章第2.1.6(2)款：如礦物摻料僅使用飛灰時，飛灰用量不得超過總膠結材料重量之25%。'
+  },
+  {
+    id: 25,
+    tag: '03050',
+    q: '依第03050章規定，礦物摻料僅使用水淬高爐爐碴粉時，用量不得超過總膠結材料重量的多少百分比？',
+    opts: ['A. 30%', 'B. 40%', 'C. 50%', 'D. 60%'],
+    ans: 2,
+    exp: '第03050章第2.1.6(3)款：如礦物摻料僅使用水淬高爐爐碴粉時，其用量不得超過總膠結材料重量之50%。'
+  },
+  {
+    id: 26,
+    tag: '03050',
+    q: '依第03050章規定，礦物摻料僅使用矽灰時，矽灰用量不得超過總膠結材料重量的多少百分比？',
+    opts: ['A. 5%', 'B. 10%', 'C. 15%', 'D. 20%'],
+    ans: 1,
+    exp: '第03050章第2.1.6(4)款：如礦物摻料僅使用矽灰時，矽灰用量不得超過總膠結材料重量之10%。'
+  },
+  {
+    id: 27,
+    tag: '03050',
+    q: '依第03050章規定，混凝土坍度設計值在51mm至100mm時，坍度許可差為多少mm？',
+    opts: ['A. ±10mm', 'B. ±15mm', 'C. ±25mm', 'D. ±40mm'],
+    ans: 2,
+    exp: '第03050章第3.5.1(2)款：配比設計坍度為51~100mm時，許可差為±25mm。'
+  },
+  {
+    id: 28,
+    tag: '03050',
+    q: '依第03050章規定，同一日澆置之混凝土，每一種配比以多少m³或每多少m²澆置面積為一批？',
+    opts: ['A. 60m³ 或 300m²', 'B. 100m³ 或 400m²', 'C. 120m³ 或 450m²', 'D. 150m³ 或 500m²'],
+    ans: 2,
+    exp: '第03050章表03050-5：同一日澆置之混凝土，每一種配比以120m³或每450m²澆置面積為一批，每批至少應進行一組強度試驗。'
+  },
+  {
+    id: 29,
+    tag: '03050',
+    q: '依第03050章規定，混凝土抗壓強度28天試驗，fc\'=280kgf/cm²之參考水膠比為何？',
+    opts: ['A. 0.40', 'B. 0.45', 'C. 0.50', 'D. 0.59'],
+    ans: 1,
+    exp: '第03050章表03050-1：fc\'=280kgf/cm²之參考水膠比為0.45。fc\'=210kgf/cm²為0.59，fc\'=350kgf/cm²為0.40。'
+  },
+  {
+    id: 30,
+    tag: '03050',
+    q: '依第03050章規定，拌和後及澆置前之混凝土溫度不得低於幾℃？',
+    opts: ['A. 5℃', 'B. 10℃', 'C. 13℃', 'D. 15℃'],
+    ans: 2,
+    exp: '第03050章第3.2.2(10)款：拌和後及澆置前之混凝土溫度不得低於13℃，亦不得高於32℃。'
+  },
+  {
+    id: 31,
+    tag: '03050',
+    q: '依第03050章規定，進行配比設計的條件，同一規格之混凝土契約總量大於多少m³時須進行？',
+    opts: ['A. 200m³', 'B. 300m³', 'C. 400m³', 'D. 500m³'],
+    ans: 3,
+    exp: '第03050章第1.5.3(1)款：當同一規格之混凝土，其契約總量大於500m³時，須進行配比設計。'
+  },
+  {
+    id: 32,
+    tag: '03050',
+    q: '依第03050章規定，施工期間每日至少應進行的粒料試驗項目，以下何者不包括？',
+    opts: ['A. 粗細粒料篩分析', 'B. 表面含水率', 'C. 混凝土氯離子含量', 'D. 粗粒料健度試驗'],
+    ans: 3,
+    exp: '第03050章第3.3.4款：每日至少之試驗項目為粗細粒料篩分析CNS486、表面含水率CNS489、混凝土氯離子含量CNS3090。粗粒料健度試驗為工程司要求時才需辦理。'
+  },
+  {
+    id: 33,
+    tag: '03050',
+    q: '依第03050章規定，供應單一工程混凝土總量大於多少m³之拌和廠，應檢附驗證合格之證明文件？',
+    opts: ['A. 2000m³', 'B. 3000m³', 'C. 5000m³', 'D. 10000m³'],
+    ans: 2,
+    exp: '第03050章第1.5.2(2)款：供應單一工程混凝土總量大於5000m³之拌和廠，應檢附依CNS3090驗證合格之證明文件。'
+  },
+  // ===== 03110 混凝土模板 (10題) =====
+  {
+    id: 34,
+    tag: '03110',
+    q: '依第03110章規定，模板受澆置混凝土負重後，其撓度不得大於構造物支撐間距的多少分之一？',
+    opts: ['A. 1/120', 'B. 1/180', 'C. 1/240', 'D. 1/360'],
+    ans: 2,
+    exp: '第03110章第1.5.4款：受澆置混凝土負重後，其模板之撓度不得大於構造物支撐間距之1/240。'
+  },
+  {
+    id: 35,
+    tag: '03110',
+    q: '依第03110章規定，使用第Ⅰ型水泥且不摻任何摻料之混凝土，柱、牆及梁之不做支撐側模最少拆模時間為何？',
+    opts: ['A. 6小時', 'B. 8小時', 'C. 12小時', 'D. 24小時'],
+    ans: 2,
+    exp: '第03110章表03110-1：柱、牆及梁之不做支撐側模，最少拆模時間為12小時。'
+  },
+  {
+    id: 36,
+    tag: '03110',
+    q: '依第03110章規定，拱模（活載重不大於靜載重時）最少拆模時間為多少天？',
+    opts: ['A. 7天', 'B. 10天', 'C. 14天', 'D. 21天'],
+    ans: 2,
+    exp: '第03110章表03110-1：拱模在活載重不大於靜載重條件下，最少拆模時間為14天；活載重大於靜載重時為7天。'
+  },
+  {
+    id: 37,
+    tag: '03110',
+    q: '依第03110章規定，模板組立之許可差應維持在設計值多少mm以內？',
+    opts: ['A. ±3mm', 'B. ±5mm', 'C. ±8mm', 'D. ±10mm'],
+    ans: 1,
+    exp: '第03110章第3.4.1款：模板組立之許可差應維持於設計值±5mm以內。'
+  },
+  {
+    id: 38,
+    tag: '03110',
+    q: '依第03110章規定，模板安裝時螺栓間距不得超過多少公分？',
+    opts: ['A. 50cm', 'B. 60cm', 'C. 70cm', 'D. 80cm'],
+    ans: 2,
+    exp: '第03110章第3.2.3(1)款：除契約圖說另有規定外，螺栓間距不得超過70cm。'
+  },
+  {
+    id: 39,
+    tag: '03110',
+    q: '依第03110章規定，暴露之稜角應以多大之三角形填角削角以保持光滑平直？',
+    opts: ['A. 大於1cm×1cm', 'B. 大於2cm×2cm', 'C. 大於3cm×3cm', 'D. 大於5cm×5cm'],
+    ans: 1,
+    exp: '第03110章第3.2.3(2)款：所有暴露之稜角應以大於2cm×2cm之三角形填角削角，以保持光滑平直之線條。'
+  },
+  {
+    id: 40,
+    tag: '03110',
+    q: '依第03110章規定，混凝土構造物高度30m以下，錘線偏離之許可差（一般線、表面、稜線）為多少mm？',
+    opts: ['A. ±10mm', 'B. ±13mm', 'C. ±20mm', 'D. ±25mm'],
+    ans: 3,
+    exp: '第03110章表03110-2：高度30m以下，線、表面、稜線之錘線偏離許可差為±25mm；外露角柱之外稜線及控制縫凹槽為±13mm。'
+  },
+  {
+    id: 41,
+    tag: '03110',
+    q: '依第03110章規定，模板單價含支撐，支撐超過多少公尺者須另行計量計價？',
+    opts: ['A. 3.0m', 'B. 3.5m', 'C. 4.1m', 'D. 5.0m'],
+    ans: 2,
+    exp: '第03110章第4.1.4款：模板單價皆含支撐，支撐4.1m以下者不予計量，超過4.1m者須註明支撐平均高度，以平方公尺計量。'
+  },
+  {
+    id: 42,
+    tag: '03110',
+    q: '依第03110章規定，門型支撐架（俗稱支撐鷹架）適用於水平模板高度超過多少公尺時？',
+    opts: ['A. 3.0m', 'B. 3.5m', 'C. 4.1m', 'D. 5.0m'],
+    ans: 2,
+    exp: '第03110章第1.6.1(2)款：水平模板高度超過4.1m時，可利用門型支撐架搭配單柱支撐做為水平模板之支撐使用。'
+  },
+  {
+    id: 43,
+    tag: '03110',
+    q: '依第03110章規定，最低氣溫在幾℃以上為計算拆模時間之基準溫度？',
+    opts: ['A. 10℃', 'B. 13℃', 'C. 15℃', 'D. 20℃'],
+    ans: 2,
+    exp: '第03110章表03110-1備注3：以上拆模時間係以養護期間氣溫在15℃以上為準，冬季應酌予延長。'
+  },
+  // ===== 03220 銲接鋼線網 (5題) =====
+  {
+    id: 44,
+    tag: '03220',
+    q: '依第03220章規定，銲接鋼線網之檢驗頻率，每多少m²取試樣一片？',
+    opts: ['A. 3000m²', 'B. 5000m²', 'C. 7000m²', 'D. 10000m²'],
+    ans: 2,
+    exp: '第03220章第2.1.3款：銲接鋼線網檢驗頻率以每7000m²取試樣一片，不足7000m²亦以7000m²計。'
+  },
+  {
+    id: 45,
+    tag: '03220',
+    q: '依第03220章規定，竹節銲接鋼線網之搭接，其外緣間之搭接長度不得少於多少公分？',
+    opts: ['A. 10cm', 'B. 15cm', 'C. 20cm', 'D. 25cm'],
+    ans: 2,
+    exp: '第03220章第3.3.1(4)款：竹節銲接鋼線網其外緣間之搭接長度不得少於20cm，其最外側橫向鋼線間之搭接長度不得少於5cm。'
+  },
+  {
+    id: 46,
+    tag: '03220',
+    q: '依第03220章規定，光面銲接鋼線網的搭接長度不得小於多少公分？',
+    opts: ['A. 10cm', 'B. 15cm', 'C. 20cm', 'D. 一個網格寬度加5cm'],
+    ans: 3,
+    exp: '第03220章第3.3.1(4)款：光面銲接鋼線網其介於兩搭接鋼線網最外橫向鋼線間之搭接長度不得少於一個網格之寬度加5cm，且不得小於15cm。'
+  },
+  {
+    id: 47,
+    tag: '03220',
+    q: '依第03220章規定，銲接鋼線網計量以何種單位計算？',
+    opts: ['A. 公尺', 'B. 公斤', 'C. 平方公尺', 'D. 立方公尺'],
+    ans: 2,
+    exp: '第03220章第4.1款：銲接鋼線網依實做及驗收合格之面積，以平方公尺為單位計量。'
+  },
+  {
+    id: 48,
+    tag: '03220',
+    q: '依第03220章規定，與混凝土外表面接觸之金屬墊座，須經過何種處理？',
+    opts: ['A. 油漆防鏽處理', 'B. 熱浸鍍鋅處理', 'C. 不銹鋼材質', 'D. 環氧樹脂塗裝'],
+    ans: 1,
+    exp: '第03220章第3.3.1(3)款：與混凝土外表面接觸之金屬墊座，須經熱浸鍍鋅處理。'
+  },
+  // ===== 02781 人行道更新 (10題) =====
+  {
+    id: 49,
+    tag: '02781',
+    q: '依第02781章規定，施工時若需提供人行空間，安全護欄與施工區間應留設多少公尺寬之通道？',
+    opts: ['A. 0.9m', 'B. 1.2m', 'C. 1.5m', 'D. 2.0m'],
+    ans: 2,
+    exp: '第02781章第3.1.3款：如需要提供人行空間區段，安全護欄與施工區間應留設1.5m寬（含安全護欄）之通道。'
+  },
+  {
+    id: 50,
+    tag: '02781',
+    q: '依第02781章規定，施工路段同一時間施工長度應以多少公尺為限？',
+    opts: ['A. 100m', 'B. 150m', 'C. 200m', 'D. 300m'],
+    ans: 2,
+    exp: '第02781章第3.2.1(2)款：施工長度應以200m為限，以免工作面過長影響周邊交通及環境。'
+  },
+  {
+    id: 51,
+    tag: '02781',
+    q: '依第02781章規定，人行道完成後之橫向洩水坡度應維持多少？',
+    opts: ['A. V:H = 1:100', 'B. V:H = 2:100', 'C. V:H = 3:100', 'D. V:H = 4:100'],
+    ans: 1,
+    exp: '第02781章第3.2.1(4)款：完成後之人行道面層應維持橫向洩水坡度V：H=2：100。'
+  },
+  {
+    id: 52,
+    tag: '02781',
+    q: '依第02781章規定，人行道倘與騎樓有高差，其最大橫坡可調整為多少？',
+    opts: ['A. V:H = 2:100', 'B. V:H = 4:100', 'C. V:H = 6:100', 'D. V:H = 8:100'],
+    ans: 2,
+    exp: '第02781章第3.2.1(4)款：人行道倘與騎樓有高差，其人行道最大橫坡可調整為V：H=6：100，如超過則以台階處理。'
+  },
+  {
+    id: 53,
+    tag: '02781',
+    q: '依第02781章規定，既有人行道鋪面拆除後，夯實整平至打設混凝土底層的時間不得逾多少天？',
+    opts: ['A. 1天', 'B. 2天', 'C. 3天', 'D. 5天'],
+    ans: 1,
+    exp: '第02781章第3.2.1(6)款：既有人行道鋪面拆除後，夯實整平至打設混凝土底層之時間如無經工程司認可之障礙因素不得逾2天。'
+  },
+  {
+    id: 54,
+    tag: '02781',
+    q: '依第02781章規定，無障礙斜坡道之開口寬度不得小於多少公分？',
+    opts: ['A. 90cm', 'B. 100cm', 'C. 120cm', 'D. 150cm'],
+    ans: 2,
+    exp: '第02781章第3.2.3(1)款：斜坡道開口寬度不得小於120cm。'
+  },
+  {
+    id: 55,
+    tag: '02781',
+    q: '依第02781章規定，無障礙斜坡道之最大坡度以多少為原則？',
+    opts: ['A. V:H = 1:8', 'B. V:H = 1:10', 'C. V:H = 1:12', 'D. V:H = 1:15'],
+    ans: 2,
+    exp: '第02781章第3.2.3(2)款：斜坡道最大坡度以V：H=1：12為原則，若現地狀況無法達到，得放寬至V：H=1：8。'
+  },
+  {
+    id: 56,
+    tag: '02781',
+    q: '依第02781章規定，禁止臨時停車標誌牌之設置間距為何？',
+    opts: ['A. 每10m設置一處', 'B. 每15m設置一處', 'C. 每20m設置一處', 'D. 每25m設置一處'],
+    ans: 2,
+    exp: '第02781章第3.1.4款：安全護欄上應附掛禁止臨時停車標誌牌（每20m設置一處）。'
+  },
+  {
+    id: 57,
+    tag: '02781',
+    q: '依第02781章規定，側溝牆高度不足超過多少公分以上者，應以210kgf/cm²混凝土加高？',
+    opts: ['A. 5cm', 'B. 8cm', 'C. 10cm', 'D. 15cm'],
+    ans: 2,
+    exp: '第02781章第3.2.2(3)款：側溝牆高度不足超過10cm以上者，除契約圖說另有規定外，應以210kgf/cm²混凝土加高。'
+  },
+  {
+    id: 58,
+    tag: '02781',
+    q: '依第02781章規定，路樹保護時，樹幹包覆範圍應從樹幹及樹根交接處以上多少公分範圍內完全包覆？',
+    opts: ['A. 100cm', 'B. 120cm', 'C. 150cm', 'D. 180cm'],
+    ans: 3,
+    exp: '第02781章第3.2.5(1)款：路樹保護應從樹幹及樹根交接處以上180cm範圍內完全包覆，並以繩索綁紮整齊。'
+  },
+  // ===== 02779 人行道底層 (7題) =====
+  {
+    id: 59,
+    tag: '02779',
+    q: '依第02779章規定，一般人行道路基整理之壓實度應達到最大乾密度的多少百分比以上？',
+    opts: ['A. 85%', 'B. 90%', 'C. 95%', 'D. 98%'],
+    ans: 1,
+    exp: '第02779章第3.1.1款：路基整理應壓實至以CNS14732方法校正所得最大乾密度90%，寬度1.5m以下之人行道或使用透水鋪面者可為85%以上。'
+  },
+  {
+    id: 60,
+    tag: '02779',
+    q: '依第02779章規定，透水鋪面之透水性滲透係數，每批樣品平均值應符合何公式？',
+    opts: ['A. x̄ ≥ 0.01 + 0.295R', 'B. x̄ ≥ 0.05 + 0.1R', 'C. x̄ ≥ 0.1 + 0.2R', 'D. x̄ ≥ 0.02 + 0.5R'],
+    ans: 0,
+    exp: '第02779章第3.1.5(2)款：每批之滲透係數應符合 x̄ ≥ 0.01+0.295R，其中x̄為滲透係數平均值（cm/sec），R為全距。'
+  },
+  {
+    id: 61,
+    tag: '02779',
+    q: '依第02779章規定，透水性鋪面完成後，每多少m²應配合厚度檢驗附近檢測透水性一次？',
+    opts: ['A. 500m²', 'B. 750m²', 'C. 1000m²', 'D. 2000m²'],
+    ans: 2,
+    exp: '第02779章第3.1.5(1)款：鋪面完成後，每1000m²應配合厚度檢驗附近檢測透水性一次。'
+  },
+  {
+    id: 62,
+    tag: '02779',
+    q: '依第02779章規定，卜特蘭水泥混凝土底層依不同抗壓強度以何種單位計量？',
+    opts: ['A. 平方公尺', 'B. 公尺', 'C. 立方公尺', 'D. 公斤'],
+    ans: 2,
+    exp: '第02779章第4.1.3款：卜特蘭水泥混凝土依不同抗壓強度，以立方公尺計量。'
+  },
+  {
+    id: 63,
+    tag: '02779',
+    q: '依第02779章規定，界石以何種單位計量計價？',
+    opts: ['A. 個', 'B. 公尺', 'C. 平方公尺', 'D. 立方公尺'],
+    ans: 1,
+    exp: '第02779章第4.1.4款：界石依不同材料及尺度，以公尺計量。'
+  },
+  {
+    id: 64,
+    tag: '02779',
+    q: '依第02779章規定，人行道底層施工前，以下哪些文件是需要送審的？',
+    opts: ['A. 品質管理計畫書、施工計畫', 'B. 施工計畫、工作圖', 'C. 品質管理計畫書、施工計畫、廠商資料', 'D. 廠商資料、試驗報告'],
+    ans: 2,
+    exp: '第02779章第1.5款：資料送審項目包括：1.5.1品質管理計畫書、1.5.2施工計畫、1.5.3廠商資料。'
+  },
+  {
+    id: 65,
+    tag: '02779',
+    q: '依第02779章規定，級配粒料基層或底層以何種方式計量？',
+    opts: ['A. 僅以立方公尺計量', 'B. 僅以平方公尺計量', 'C. 以立方公尺或平方公尺（註明厚度）計量', 'D. 以公斤計量'],
+    ans: 2,
+    exp: '第02779章第4.1.2款：級配粒料基層或底層以立方公尺或平方公尺（註明厚度）計量。'
+  },
+  // ===== 02778 人行道面層 (8題) =====
+  {
+    id: 66,
+    tag: '02778',
+    q: '依第02778章規定，水泥混凝土人行道伸縮縫間距不得超過多少公尺？',
+    opts: ['A. 3m', 'B. 4m', 'C. 5m', 'D. 6m'],
+    ans: 2,
+    exp: '第02778章第3.1.1(1)A款：伸縮縫保麗龍填縫板間之距離不超過5m，人行道如需與緣石之背面聯接時，則接縫應與緣石之接縫對齊。'
+  },
+  {
+    id: 67,
+    tag: '02778',
+    q: '依第02778章規定，水泥混凝土人行道須使用濕潤之麻布或其他認可方法養護至少多少小時？',
+    opts: ['A. 24小時', 'B. 48小時', 'C. 72小時', 'D. 96小時'],
+    ans: 2,
+    exp: '第02778章第3.1.1(2)款：混凝土人行道須使用濕潤之麻布或其他經認可之方法，施以最少72小時之養護。'
+  },
+  {
+    id: 68,
+    tag: '02778',
+    q: '依第02778章規定，瀝青混凝土人行道施工，所有接縫與邊緣之初壓及修面均需使用哪種壓路機？',
+    opts: ['A. 膠輪壓路機', 'B. 雙軸鐵輪壓路機', 'C. 振動壓路機', 'D. 三輪壓路機'],
+    ans: 1,
+    exp: '第02778章第3.1.2(2)A款：所有接縫與邊緣之第一次滾壓（初壓）及最後滾壓（修面）均需使用雙軸鐵輪壓路機，續壓則使用膠輪壓路機。'
+  },
+  {
+    id: 69,
+    tag: '02778',
+    q: '依第02778章規定，磚石塊人行道底層混凝土鋪設完成後至少多少天才可鋪貼地磚？',
+    opts: ['A. 1天', 'B. 2天', 'C. 3天', 'D. 7天'],
+    ans: 2,
+    exp: '第02778章第3.1.3(1)款：先進行底層混凝土之鋪設工作完成，至少三日才可鋪貼地磚。'
+  },
+  {
+    id: 70,
+    tag: '02778',
+    q: '依第02778章規定，磚石塊人行道勾縫填充工作需在鋪貼完成至少多少小時以後才可進行？',
+    opts: ['A. 24小時', 'B. 48小時', 'C. 72小時', 'D. 96小時'],
+    ans: 2,
+    exp: '第02778章第3.1.3(4)款：勾縫填充工作需在鋪貼完成至少72小時以後才可進行。'
+  },
+  {
+    id: 71,
+    tag: '02778',
+    q: '依第02778章規定，磚石塊人行道鋪貼時應以何種材料黏結？',
+    opts: ['A. 環氧樹脂砂漿', 'B. 1：3水泥砂漿', 'C. 1：2水泥砂漿', 'D. 純水泥砂漿'],
+    ans: 1,
+    exp: '第02778章第3.1.3(2)款：將底層上之雜質清除乾淨，再以1：3水泥砂漿均勻澆置於基礎混凝土上。'
+  },
+  {
+    id: 72,
+    tag: '02778',
+    q: '依第02778章規定，水泥混凝土人行道之計量單位為何？',
+    opts: ['A. 立方公尺', 'B. 每平方公尺面積', 'C. 公尺', 'D. 公斤'],
+    ans: 1,
+    exp: '第02778章第4.1.1款：水泥混凝土人行道與瀝青混凝土人行道，應以現場完成並經驗收之各種厚度人行道之每平方公尺面積為計量單位。'
+  },
+  {
+    id: 73,
+    tag: '02778',
+    q: '依第02778章規定，坡度超過多少百分比之表面，應按規定或工程司之指示用修飾刷予以整修？',
+    opts: ['A. 2%', 'B. 4%', 'C. 6%', 'D. 8%'],
+    ans: 1,
+    exp: '第02778章第3.1.1(1)B款：在坡度超過4%之表面上，應按規定或工程司之指示用修飾刷予以整修。'
+  },
+  // ===== 02770 緣石及緣石側溝 (8題) =====
+  {
+    id: 74,
+    tag: '02770',
+    q: '依第02770章規定，預鑄水泥混凝土緣石每段長度應在多少公尺之間？',
+    opts: ['A. 0.5m 至 1.0m', 'B. 1.0m 至 1.5m', 'C. 1.5m 至 2.0m', 'D. 2.0m 至 3.0m'],
+    ans: 1,
+    exp: '第02770章第3.2.8款：緣石每段長度應在1至1.5m之間。'
+  },
+  {
+    id: 75,
+    tag: '02770',
+    q: '依第02770章規定，場鑄水泥混凝土緣石，沿拉緊之基準線，任何一點線型與高程之許可差為多少mm？',
+    opts: ['A. 1mm', 'B. 3mm', 'C. 5mm', 'D. 10mm'],
+    ans: 1,
+    exp: '第02770章第3.2.9(3)款：緣石及邊溝之線型與高程應正確，沿拉緊之基準線，任何一點之線型與高程之許可差為3mm。'
+  },
+  {
+    id: 76,
+    tag: '02770',
+    q: '依第02770章規定，場鑄緣石澆置時，緣石與側溝任何一點之厚度許可差為多少公分？',
+    opts: ['A. 0.5cm', 'B. 1cm', 'C. 2cm', 'D. 3cm'],
+    ans: 1,
+    exp: '第02770章第3.2.9(1)款：緣石與側溝任何一點之厚度許可差為1cm。'
+  },
+  {
+    id: 77,
+    tag: '02770',
+    q: '依第02770章規定，緣石經過至少多少天養護後始可進行回填及路面工作？',
+    opts: ['A. 3天', 'B. 5天', 'C. 7天', 'D. 14天'],
+    ans: 2,
+    exp: '第02770章第3.2.9(6)款：緣石經過至少7天之養護後始可進行回填及路面工作。'
+  },
+  {
+    id: 78,
+    tag: '02770',
+    q: '依第02770章規定，場鑄緣石施工檢驗表中，數量達20～100m時需進行幾次側面直線線型檢驗？',
+    opts: ['A. 1次', 'B. 2次', 'C. 3次', 'D. 免檢驗'],
+    ans: 0,
+    exp: '第02770章表02770-1：數量達20~100m檢驗1次，數量超過100m時，每100m加驗1次。未達20m時免檢驗。'
+  },
+  {
+    id: 79,
+    tag: '02770',
+    q: '依第02770章規定，預鑄緣石鑽心試體評量基準，平均值應達設計強度的多少百分比以上？',
+    opts: ['A. 0.70fc\'', 'B. 0.75fc\'', 'C. 0.85fc\'', 'D. 0.90fc\''],
+    ans: 2,
+    exp: '第02770章表02770-1：預鑄緣石鑽心試體抗壓強度，平均值應達設計強度之0.85fc\'以上，且不得有任一強度低於0.75fc\'。'
+  },
+  {
+    id: 80,
+    tag: '02770',
+    q: '依第02770章規定，緣石計量以何種單位？',
+    opts: ['A. 平方公尺', 'B. 立方公尺', 'C. 公尺', 'D. 個'],
+    ans: 2,
+    exp: '第02770章第4.1款：緣石、緣石側溝依不同材料、型式、預鑄或場鑄以公尺計量。'
+  },
+  {
+    id: 81,
+    tag: '02770',
+    q: '依第02770章規定，預鑄水泥混凝土緣石安置時，接縫的寬度不得超過多少公分？',
+    opts: ['A. 0.5cm', 'B. 1cm', 'C. 1.5cm', 'D. 2cm'],
+    ans: 1,
+    exp: '第02770章第3.2.8款：預鑄塊應按契約圖說所示位置及高程安置，用1：3水泥砂漿鋪置於已壓實之路基上，兩端間之空隙不得超過1cm。'
+  },
+  // ===== 02786 高壓混凝土地磚 (7題) =====
+  {
+    id: 82,
+    tag: '02786',
+    q: '依第02786章規定，高壓混凝土地磚之厚度為多少mm？',
+    opts: ['A. 40mm', 'B. 50mm', 'C. 60mm', 'D. 80mm'],
+    ans: 2,
+    exp: '第02786章第2.1款：混凝土磚（連鎖及非連鎖）符合CNS 13295，厚度60mm之A、B、C級品。'
+  },
+  {
+    id: 83,
+    tag: '02786',
+    q: '依第02786章規定，高壓混凝土地磚（連鎖）之碎石級配料底層厚度不得少於多少mm？',
+    opts: ['A. 100mm', 'B. 150mm', 'C. 200mm', 'D. 250mm'],
+    ans: 2,
+    exp: '第02786章第2.1(1)款：碎石級配料底層厚度依契約圖說所示，但不得少於200mm。'
+  },
+  {
+    id: 84,
+    tag: '02786',
+    q: '依第02786章規定，高壓混凝土地磚（連鎖）之細砂層厚度不得少於多少mm？',
+    opts: ['A. 20mm', 'B. 30mm', 'C. 40mm', 'D. 50mm'],
+    ans: 2,
+    exp: '第02786章第2.1(2)款：細砂層厚度依契約圖說所示，但不得少於40mm。'
+  },
+  {
+    id: 85,
+    tag: '02786',
+    q: '依第02786章規定，高壓混凝土地磚（非連鎖）之混凝土墊層強度為多少kgf/cm²？',
+    opts: ['A. 140 kgf/cm²', 'B. 175 kgf/cm²', 'C. 210 kgf/cm²', 'D. 280 kgf/cm²'],
+    ans: 2,
+    exp: '第02786章第3.3.2款：混凝土磚墊層混凝土為210 kgf/cm²。'
+  },
+  {
+    id: 86,
+    tag: '02786',
+    q: '依第02786章規定，高壓混凝土地磚之防滑性能（濕式擺錘試驗），擺錘SRV值應達到哪些等級？',
+    opts: ['A. P1、P2等級', 'B. P2、P3等級', 'C. P3、P4等級', 'D. P4、P5等級'],
+    ans: 2,
+    exp: '第02786章第2.1款：防滑性能採用CNS 16106試驗結果，其濕式擺錘試驗之擺錘SRV值應達P3、P4等級，依契約圖說辦理。'
+  },
+  {
+    id: 87,
+    tag: '02786',
+    q: '依第02786章規定，高壓混凝土地磚備品應提供總數之多少百分比？',
+    opts: ['A. 0.5%', 'B. 1%', 'C. 2%', 'D. 3%'],
+    ans: 1,
+    exp: '第02786章第2.3.1款：按本工程用地範圍內所用混凝土磚總數之1%；每一種類、顏色及樣式之數量均應依照工程數量之比例，提供備品。'
+  },
+  {
+    id: 88,
+    tag: '02786',
+    q: '依第02786章規定，高壓混凝土地磚（含墊層、銲接鋼線網及水泥砂漿）計量以何種單位？',
+    opts: ['A. 立方公尺', 'B. 平方公尺', 'C. 公尺', 'D. 公斤'],
+    ans: 1,
+    exp: '第02786章第4.1款：混凝土磚鋪面，包括混凝土墊層、銲接鋼線網及水泥砂漿，依契約圖說所示之鋪設面積及規定之備品，以平方公尺數計量。'
+  },
+  // ===== 02752 壓花地坪 (10題) =====
+  {
+    id: 89,
+    tag: '02752',
+    q: '依第02752章規定，壓花地坪施工之作業環境氣溫須大於幾℃？',
+    opts: ['A. 5℃', 'B. 8℃', 'C. 10℃', 'D. 15℃'],
+    ans: 2,
+    exp: '第02752章第1.6.1款：作業環境氣溫須大於10℃，且24小時內降雨量須小於10mm，否則不得施工。'
+  },
+  {
+    id: 90,
+    tag: '02752',
+    q: '依第02752章規定，壓花地坪之面層硬化料抗壓強度（7天）應達到多少kg/cm²以上？',
+    opts: ['A. 140 kg/cm²', 'B. 175 kg/cm²', 'C. 210 kg/cm²', 'D. 245 kg/cm²'],
+    ans: 2,
+    exp: '第02752章第3.11款檢驗表：面層硬化料抗壓強度7天≥210 kg/cm²（依CNS 1010試驗）。'
+  },
+  {
+    id: 91,
+    tag: '02752',
+    q: '依第02752章規定，壓花地坪之面層硬化料耐磨耗性（CNS 10785砂紙法）重量損失須小於多少公克？',
+    opts: ['A. 0.1g', 'B. 0.2g', 'C. 0.3g', 'D. 0.5g'],
+    ans: 2,
+    exp: '第02752章第2.1.5(2)款：耐磨耗性：CNS 10785重量損失＜0.3g。'
+  },
+  {
+    id: 92,
+    tag: '02752',
+    q: '依第02752章規定，止滑劑防滑係數（BPN）應達多少以上（潮濕狀況）？',
+    opts: ['A. 35以上', 'B. 40以上', 'C. 45以上', 'D. 55以上'],
+    ans: 2,
+    exp: '第02752章第2.1.8(1)款：以CNS 16106試驗防滑係數(BPN) 45以上為原則，潮濕狀況試驗。'
+  },
+  {
+    id: 93,
+    tag: '02752',
+    q: '依第02752章規定，坡度達1/15之斜坡時，止滑係數（BPN）應提升至多少以上？',
+    opts: ['A. 50以上', 'B. 55以上', 'C. 60以上', 'D. 65以上'],
+    ans: 3,
+    exp: '第02752章第2.1.8(2)款：坡度達1/15之斜坡時，以CNS 16106試驗提升至防滑係數(BPN)65以上，潮濕狀況試驗。'
+  },
+  {
+    id: 94,
+    tag: '02752',
+    q: '依第02752章規定，濕式壓花地坪，伸縮縫一般每幾公尺設置一處？',
+    opts: ['A. 3m', 'B. 4m', 'C. 4.5m', 'D. 6m'],
+    ans: 2,
+    exp: '第02752章第3.1.2(5)B款：伸縮縫一般4.5m設置一處，其間距應為壓花模具寬度之整倍數。'
+  },
+  {
+    id: 95,
+    tag: '02752',
+    q: '依第02752章規定，濕式壓花地坪完成後應養護至少多少天？',
+    opts: ['A. 1天', 'B. 3天', 'C. 5天', 'D. 7天'],
+    ans: 1,
+    exp: '第02752章第3.7款：壓花完成以持續灑水或廠商提出經監造同意之養護方法，養護至少3天，期間應避免污染。'
+  },
+  {
+    id: 96,
+    tag: '02752',
+    q: '依第02752章規定，銲接鋼線網剝離焊接點數量不得超過全數焊接點的多少百分比？',
+    opts: ['A. 2%', 'B. 4%', 'C. 6%', 'D. 8%'],
+    ans: 1,
+    exp: '第02752章第3.11款：剝離焊接點少於全數焊接點之4%，且同一線上之剝離數不得大於同一線上全部焊接數之1/2。'
+  },
+  {
+    id: 97,
+    tag: '02752',
+    q: '依第02752章規定，乾式壓花時，混凝土表面的洩水坡度要求為何？',
+    opts: ['A. 至少1/200，不超過1/10', 'B. 至少1/100，不超過1/15', 'C. 至少1/50，不超過1/10', 'D. 至少1/200，不超過1/15'],
+    ans: 1,
+    exp: '第02752章第3.1.1(1)B款：洩水坡度至少1/100，且不得超過1/15，轉彎處應施作扇形或設置集水井。'
+  },
+  {
+    id: 98,
+    tag: '02752',
+    q: '依第02752章規定，壓花地坪完成後多少小時內不得行走？',
+    opts: ['A. 4小時', 'B. 8小時', 'C. 12小時', 'D. 24小時'],
+    ans: 3,
+    exp: '第02752章第3.10款：壓花完成24小時內不得行走，環境氣溫須大於10℃，且24小時內降雨量須小於10mm，否則不得施工。'
+  },
+  // ===== 02753 噴花地坪 (9題) =====
+  {
+    id: 99,
+    tag: '02753',
+    q: '依第02753章規定，噴花地坪接著劑之黏著強度（依CNS 8082規定）應達多少kgf/cm²以上？',
+    opts: ['A. 3 kgf/cm²', 'B. 5 kgf/cm²', 'C. 7 kgf/cm²', 'D. 10 kgf/cm²'],
+    ans: 1,
+    exp: '第02753章第2.1.1款：接著劑以適當比例調合水性樹脂與水，其黏著強度依CNS 8082規定應≧5 kgf/cm²。'
+  },
+  {
+    id: 100,
+    tag: '02753',
+    q: '依第02753章規定，噴花地坪封面劑之附著性（方格法）檢測幾點無剝落為合格標準？',
+    opts: ['A. 5點', 'B. 8點', 'C. 10點', 'D. 12點'],
+    ans: 2,
+    exp: '第02753章第2.1.3款：封面劑（油性壓克力樹脂）其附著性：依CNS 10757方格法檢測10點無剝落。'
+  }
+];
+
+let userAnswers = {};
+let showExplanations = false;
+let currentFilter = 'all';
+
+function buildQuiz(questions) {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  questions.forEach(q => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${q.id}`;
+    card.dataset.tag = q.tag;
+    const tagLabel = TAG_LABELS[q.tag] || q.tag;
+    const optsHtml = q.opts.map((opt, i) => {
+      const key = ['A','B','C','D'][i];
+      const txt = opt.replace(/^[A-D]\.\s*/, '');
+      return `<label class="option-label" id="opt-${q.id}-${i}" onclick="selectAnswer(${q.id}, ${i})">
+        <input type="radio" name="q${q.id}" value="${i}">
+        <span class="opt-key">${key}</span>
+        <span>${txt}</span>
+      </label>`;
+    }).join('');
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">Q ${q.id}</span>
+        <span class="q-tag">${tagLabel}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optsHtml}</div>
+      <div class="explanation" id="exp-${q.id}">💡 ${q.exp}</div>
+    `;
+    if (userAnswers[q.id] !== undefined) restoreAnswer(q, card);
+    container.appendChild(card);
+  });
+}
+
+function selectAnswer(qid, optIdx) {
+  if (userAnswers[qid] !== undefined) return;
+  const q = QUESTIONS.find(x => x.id === qid);
+  userAnswers[qid] = optIdx;
+  const card = document.getElementById(`card-${qid}`);
+  const correct = q.ans;
+  for (let i = 0; i < q.opts.length; i++) {
+    const lbl = document.getElementById(`opt-${qid}-${i}`);
+    if (i === optIdx) lbl.classList.add(optIdx === correct ? 'correct-answer' : 'wrong-answer', 'selected');
+    if (i === correct && optIdx !== correct) lbl.classList.add('correct-answer');
+  }
+  card.classList.add(optIdx === correct ? 'answered-correct' : 'answered-wrong');
+  if (showExplanations) document.getElementById(`exp-${qid}`).classList.add('show');
+  updateScore();
+  updateProgress();
+}
+
+function restoreAnswer(q, card) {
+  const optIdx = userAnswers[q.id];
+  const correct = q.ans;
+  for (let i = 0; i < q.opts.length; i++) {
+    const lbl = document.getElementById(`opt-${q.id}-${i}`);
+    if (!lbl) continue;
+    if (i === optIdx) lbl.classList.add(optIdx === correct ? 'correct-answer' : 'wrong-answer', 'selected');
+    if (i === correct && optIdx !== correct) lbl.classList.add('correct-answer');
+  }
+  card.classList.add(optIdx === correct ? 'answered-correct' : 'answered-wrong');
+}
+
+function updateScore() {
+  const answered = Object.keys(userAnswers).length;
+  const correct = Object.entries(userAnswers).filter(([id, ans]) => {
+    const q = QUESTIONS.find(x => x.id === parseInt(id));
+    return q && q.ans === ans;
+  }).length;
+  const wrong = answered - correct;
+  const rate = answered > 0 ? Math.round(correct / answered * 100) : 0;
+  document.getElementById('s-answered').textContent = answered;
+  document.getElementById('s-correct').textContent = correct;
+  document.getElementById('s-wrong').textContent = wrong;
+  document.getElementById('s-rate').textContent = answered > 0 ? rate + '%' : '—';
+}
+
+function updateProgress() {
+  const answered = Object.keys(userAnswers).length;
+  document.getElementById('progress-fill').style.width = (answered / TOTAL * 100) + '%';
+}
+
+function showResult() {
+  const answered = Object.keys(userAnswers).length;
+  const correct = Object.entries(userAnswers).filter(([id, ans]) => {
+    const q = QUESTIONS.find(x => x.id === parseInt(id));
+    return q && q.ans === ans;
+  }).length;
+  const score = Math.round(correct / TOTAL * 100);
+  document.getElementById('modal-score-num').textContent = score;
+  document.getElementById('modal-detail').textContent =
+    `共作答 ${answered} 題，答對 ${correct} 題，答錯 ${answered - correct} 題`;
+  let grade = '';
+  if (answered < TOTAL) grade = '⚠️ 尚有 ' + (TOTAL - answered) + ' 題未作答';
+  else if (score >= 90) grade = '🏆 優異！知識掌握精熟';
+  else if (score >= 80) grade = '✅ 良好！建議複習錯題';
+  else if (score >= 70) grade = '📖 及格！仍有進步空間';
+  else grade = '❌ 需加強！建議重新研讀規範';
+  document.getElementById('modal-grade').textContent = grade;
+  document.getElementById('result-modal').classList.add('show');
+}
+
+function resetAll() {
+  userAnswers = {};
+  buildQuiz(filterQuestions(currentFilter));
+  updateScore();
+  updateProgress();
+  document.getElementById('hidden-count').textContent = '';
+  showExplanations = false;
+}
+
+function toggleExplanations() {
+  showExplanations = !showExplanations;
+  document.querySelectorAll('.explanation').forEach(el => {
+    const qid = parseInt(el.id.replace('exp-', ''));
+    if (userAnswers[qid] !== undefined)
+      showExplanations ? el.classList.add('show') : el.classList.remove('show');
+  });
+}
+
+function filterQuestions(tag) {
+  return tag === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.tag === tag);
+}
+
+function filterTag(tag, btn) {
+  currentFilter = tag;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = filterQuestions(tag);
+  buildQuiz(filtered);
+  const hidden = TOTAL - filtered.length;
+  document.getElementById('hidden-count').textContent =
+    tag !== 'all' ? `目前顯示 ${filtered.length} 題（共隱藏 ${hidden} 題）` : '';
+}
+
+function showOnlyWrong() {
+  const wrongIds = Object.entries(userAnswers)
+    .filter(([id, ans]) => {
+      const q = QUESTIONS.find(x => x.id === parseInt(id));
+      return q && q.ans !== ans;
+    }).map(([id]) => parseInt(id));
+  if (wrongIds.length === 0) { alert('目前沒有錯題！'); return; }
+  buildQuiz(QUESTIONS.filter(q => wrongIds.includes(q.id)));
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('hidden-count').textContent = `顯示 ${wrongIds.length} 道錯題`;
+}
+
+buildQuiz(QUESTIONS);
+updateScore();
+</script>
+</body>
+</html>
