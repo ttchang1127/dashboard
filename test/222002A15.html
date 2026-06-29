@@ -88,7 +88,7 @@
 <div id="controls">
   <button class="btn-primary" onclick="showResult()">📊 查看成績</button>
   <button class="btn-outline" onclick="resetAll()">🔄 重新作答</button>
-  <button class="btn-outline" onclick="toggleExplanations()">💡 顯示答案</button>
+  <button id="toggle-answer-btn" class="btn-outline" onclick="toggleExplanations()">💡 顯示答案</button>
   <button class="btn-outline" onclick="showOnlyWrong()">❌ 只看錯題</button>
 </div>
 
@@ -161,8 +161,9 @@ function buildQuiz(questions) {
       multiBtn +
       '<div class="explanation" id="exp-' + q.id + '">💡 ' + q.exp + '</div>';
 
-    if (userAnswers[q.id] !== undefined) restoreAnswer(q, card);
     container.appendChild(card);
+    if (userAnswers[q.id] !== undefined) restoreAnswer(q, card);
+    if (showExplanations) document.getElementById('exp-' + q.id).classList.add('show');
   });
 }
 
@@ -295,21 +296,26 @@ function showResult() {
   document.getElementById('result-modal').classList.add('show');
 }
 
+function updateAnswerButton() {
+  const btn = document.getElementById('toggle-answer-btn');
+  if (btn) btn.textContent = showExplanations ? '\uD83D\uDE48 \u96B1\u85CF\u7B54\u6848' : '\uD83D\uDCA1 \u986F\u793A\u7B54\u6848';
+}
+
 function resetAll() {
   userAnswers = {};
+  showExplanations = false;
   buildQuiz(getVisibleQuestions());
   updateScore(); updateProgress();
   document.getElementById('hidden-count').textContent = '';
-  showExplanations = false;
+  updateAnswerButton();
 }
 
 function toggleExplanations() {
   showExplanations = !showExplanations;
   document.querySelectorAll('.explanation').forEach(el => {
-    const qid = parseInt(el.id.replace('exp-', ''));
-    if (userAnswers[qid] !== undefined)
-      showExplanations ? el.classList.add('show') : el.classList.remove('show');
+    el.classList.toggle('show', showExplanations);
   });
+  updateAnswerButton();
 }
 
 function filterTag(tag, btn) {
