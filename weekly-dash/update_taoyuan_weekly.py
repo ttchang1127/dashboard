@@ -53,10 +53,15 @@ def build_output(payload: dict) -> dict:
     groups = [group for group in groups if group]
 
     weeks = []
-    for row in values[2:]:
+    # Row 0 is the group header. Data starts immediately after that.
+    # Some sheets may include an extra spacer row, so skip rows that do not
+    # look like a weekly label instead of blindly dropping the first data row.
+    for row in values[1:]:
         week_cell = row[0].strip() if row else ""
         group_cells = [row[i].strip() if len(row) > i else "" for i in range(1, 6)]
         if not week_cell or not any(group_cells):
+            continue
+        if not re.search(r"\d{2}/\d{2}～\d{2}/\d{2}", week_cell):
             continue
         weeks.append(
             {
