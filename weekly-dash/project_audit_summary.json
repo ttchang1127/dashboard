@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07 16:00:20 +0800",
+  "generatedAt": "2026-07-07 16:50:09 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -223,42 +223,33 @@
       "name": "農業局橋檢案",
       "auditDate": "2026-07-07",
       "version": "V1",
-      "modifiedAt": "2026-07-06 17:19:57",
+      "modifiedAt": "2026-07-07 16:46:53",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 3
       },
-      "itemCount": 4,
+      "itemCount": 3,
       "topUrgent": {
-        "task": "115年6月工作月報 提送截止",
-        "dueLabel": "115/07/05",
-        "diff": -2,
-        "diffLabel": "逾期2天",
-        "statusLight": "🔴",
-        "owner": "待指派",
+        "task": "工作執行計畫書（10 份）",
+        "dueLabel": "115/7/12（計時中）",
+        "diff": 5,
+        "diffLabel": "D-5 預告",
+        "statusLight": "🟢",
+        "owner": "囿任哥 <@1516964897404092430>",
         "manager": null
       },
       "items": [
-        {
-          "task": "115年6月工作月報 提送截止",
-          "dueLabel": "115/07/05",
-          "diff": -2,
-          "diffLabel": "逾期2天",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
         {
           "task": "工作執行計畫書（10 份）",
           "dueLabel": "115/7/12（計時中）",
           "diff": 5,
           "diffLabel": "D-5 預告",
           "statusLight": "🟢",
-          "owner": "**巧晴姐**",
+          "owner": "囿任哥 <@1516964897404092430>",
           "manager": null
         },
         {
@@ -267,7 +258,7 @@
           "diff": 5,
           "diffLabel": "D-5 預告",
           "statusLight": "🟢",
-          "owner": "**巧晴姐**",
+          "owner": "囿任哥 <@1516964897404092430>",
           "manager": null
         },
         {
@@ -276,8 +267,8 @@
           "diff": 29,
           "diffLabel": "D-29 追蹤",
           "statusLight": "🟢",
-          "owner": "待指派",
-          "manager": null
+          "owner": "**英麗**",
+          "manager": "囿任哥 <@1516964897404092430>"
         }
       ]
     },
