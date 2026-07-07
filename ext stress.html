@@ -11,6 +11,7 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
@@ -285,6 +286,11 @@
                 <button onclick="switchTab(6)" id="tab-btn-6" class="tab-btn tab-inactive">
                     <span class="flex items-center">
                         <span>彎矩及剪力強度檢核</span>
+                    </span>
+                </button>
+                <button onclick="switchTab(7)" id="tab-btn-7" class="tab-btn tab-inactive">
+                    <span class="flex items-center">
+                        <span>撓度分析</span>
                     </span>
                 </button>
             </div>
@@ -868,7 +874,7 @@
                                 <div class="space-y-3">
                                     <!-- Force Input -->
                                     <div class="border-b border-slate-200 pb-3 mb-3">
-                                        <label class="block text-xs font-bold text-slate-700 mb-1">外置預力力量 (P)</label>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">外置預力力量 (P)<br><span class="font-normal text-slate-400">有效預力 P<sub>eff</sub>（已含所有預力損失）</span></label>
                                         <div class="flex items-center gap-2">
                                             <input type="number" id="ext-force-input"
                                                 class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500 font-mono text-amber-700 font-bold"
@@ -979,6 +985,36 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 無支撐自由段長度檢核 (AASHTO LRFD Art. 5.10.5：≤ 7500 mm) -->
+                    <div class="mt-4 border-l-4 border-slate-300 bg-slate-50 rounded-lg p-3" id="unsupportedLengthBox">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="text-xs font-bold text-slate-700" id="unsupportedLengthTitle">外置鋼腱無支撐自由段長度檢核</h4>
+                            <span class="text-xs px-2 py-1 rounded bg-slate-400 text-white" id="unsupportedLengthBadge">—</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-600">
+                                        <th class="border border-slate-200 p-1.5">自由段</th>
+                                        <th class="border border-slate-200 p-1.5 text-left pl-3">起 → 迄</th>
+                                        <th class="border border-slate-200 p-1.5">長度 (m)</th>
+                                        <th class="border border-slate-200 p-1.5">長度 (mm)</th>
+                                        <th class="border border-slate-200 p-1.5">規範上限</th>
+                                        <th class="border border-slate-200 p-1.5">判定</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="unsupportedLengthBody">
+                                    <!-- Generated -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500 leading-relaxed">
+                            <p>* <strong>規範上限 7500 mm</strong>：AASHTO LRFD Art. 5.10.5（外置PT 最大無支撐長度）。</p>
+                            <p>* 超過時須進行<strong>振動分析</strong>，或於橋墩隔板／額外固定點設中間支撐——自由段過長易與活載共振，造成索力疲勞衰減。</p>
+                            <p>* 日本道示未明訂數值（實務 8～12 m，須振動分析）；台灣參照 AASHTO。</p>
                         </div>
                     </div>
 
@@ -1216,7 +1252,12 @@
                         <div class="flex justify-between items-center mb-2">
                             <h3 class="text-sm font-bold text-slate-700 border-l-4 border-blue-500 pl-2">
                                 各節點彎矩及剪力圖</h3>
-                            <div class="flex gap-2">
+                            <div class="flex gap-3 items-center">
+                                <label class="flex items-center gap-1.5 text-sm font-medium text-teal-700 cursor-pointer select-none">
+                                    <input type="checkbox" id="chart-show-post" onchange="renderMomentChart(); renderShearChart();"
+                                        class="w-4 h-4 accent-teal-600 cursor-pointer">
+                                    PT補強後
+                                </label>
                                 <button onclick="switchChart('moment')" id="chart-btn-moment"
                                     class="px-4 py-1.5 text-sm font-medium rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors">
                                     彎矩圖
@@ -1239,6 +1280,10 @@
                             class="py-2 px-4 text-sm font-medium border-b-2 text-slate-600 border-transparent hover:text-slate-800 focus:outline-none transition-colors">所需彎矩及剪力強度</button>
                         <button onclick="switchSubTab(6, 2)" id="subtab-btn-6-2"
                             class="py-2 px-4 text-sm font-medium border-b-2 text-blue-600 border-blue-600 focus:outline-none transition-colors">彎矩及剪力承載力</button>
+                        <button onclick="switchSubTab(6, 3); renderStrengthCheck();" id="subtab-btn-6-3"
+                            class="py-2 px-4 text-sm font-medium border-b-2 text-slate-600 border-transparent hover:text-slate-800 focus:outline-none transition-colors">彎矩及剪力強度檢核(補強前)</button>
+                        <button onclick="switchSubTab(6, 4); renderStrengthCheckPost();" id="subtab-btn-6-4"
+                            class="py-2 px-4 text-sm font-medium border-b-2 text-slate-600 border-transparent hover:text-slate-800 focus:outline-none transition-colors">彎矩及剪力強度檢核(補強後)</button>
                     </div>
 
                     <!-- Sub Tab 1: Required Flexural Strength -->
@@ -1252,7 +1297,7 @@
                                     <div class="flex items-center space-x-2">
                                         <input type="number" id="dead-load-factor" value="1.3" step="0.1" min="0"
                                             class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
-                                            oninput="renderRequiredMomentTable(); renderMomentChart(); renderShearChart();">
+                                            oninput="renderRequiredMomentTable(); renderMomentChart(); renderShearChart(); renderStrengthCheck();">
                                     </div>
                                 </div>
                                 <div class="bg-white p-3 rounded">
@@ -1260,7 +1305,7 @@
                                     <div class="flex items-center space-x-2">
                                         <input type="number" id="live-load-factor" value="2.171" step="0.001" min="0"
                                             class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
-                                            oninput="renderRequiredMomentTable(); renderMomentChart(); renderShearChart();">
+                                            oninput="renderRequiredMomentTable(); renderMomentChart(); renderShearChart(); renderStrengthCheck();">
                                     </div>
                                 </div>
                             </div>
@@ -1282,10 +1327,14 @@
                                                 (tf·m)<br><span class="text-[10px] font-normal">(與分頁2連動)</span></th>
                                             <th class="bg-blue-100 text-blue-700 p-2 border-b border-white">設計車輛載重剪力
                                                 (tf)<br><span class="text-[10px] font-normal">(與分頁2連動)</span></th>
-                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">設計彎矩 (tf·m)
+                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">設計彎矩(載重) (tf·m)
                                             </th>
-                                            <th class="bg-amber-100 text-amber-700 p-2 border-b border-white">設計剪力 (tf)
+                                            <th class="bg-rose-50 text-rose-700 p-2 border-b border-white">M₂ 內置 (tf·m)<br><span class="text-[10px] font-normal">次彎矩(力法)</span></th>
+                                            <th class="bg-amber-200 text-amber-800 p-2 border-b border-white">所需彎矩 (含M₂)<br><span class="text-[10px] font-normal">檢核基準=6-3</span></th>
+                                            <th class="bg-amber-100 text-amber-700 p-2 border-b border-white">設計剪力(載重) (tf)
                                             </th>
+                                            <th class="bg-rose-50 text-rose-700 p-2 border-b border-white">V₂ 內置 (tf)<br><span class="text-[10px] font-normal">次剪力(力法)</span></th>
+                                            <th class="bg-amber-200 text-amber-800 p-2 border-b border-white">所需剪力 (含V₂)<br><span class="text-[10px] font-normal">檢核基準=6-3</span></th>
                                         </tr>
                                     </thead>
                                     <tbody id="requiredMomentTableBody">
@@ -1295,10 +1344,23 @@
                             </div>
                             <p class="text-xs text-slate-500 mt-2">
                                 * 計算公式:<br>
-                                　設計彎矩 = 靜載重係數 × 靜載重彎矩 + 設計車輛載重係數 × 設計車輛載重彎矩<br>
-                                　設計剪力 = 靜載重係數 × 靜載重剪力 + 設計車輛載重係數 × 設計車輛載重剪力<br>
+                                　設計彎矩(載重) = 靜載重係數 × 靜載重彎矩 + 設計車輛載重係數 × 設計車輛載重彎矩<br>
+                                　設計剪力(載重) = 靜載重係數 × 靜載重剪力 + 設計車輛載重係數 × 設計車輛載重剪力<br>
                                 * 靜載重與設計車輛載重彎矩及剪力數值與分頁2連動
                             </p>
+                            <div class="text-xs text-slate-600 mt-2 bg-rose-50 border-l-4 border-rose-400 p-3 rounded">
+                                <div class="font-bold text-rose-800 mb-1">◆ 次彎矩 M₂ / 次剪力 V₂（內置預力）</div>
+                                <ul class="space-y-1 list-disc pl-5">
+                                    <li><strong>成因</strong>：本跨為連續梁<strong>端跨</strong>，以 propped cantilever（橋台端鉸支 N1、橋墩端固接 N30）模型計算，屬 <strong>1 次超靜定</strong>。內置預力使梁起拱，受支承約束而在斷面產生額外彎矩，即次彎矩 M₂（次剪力 V₂ = dM₂/dx）。</li>
+                                    <li><strong>力法</strong>（贅餘力 = 橋台反力，虛擬彎矩圖 m(x)=x，均勻 EI 上下相消）：
+                                        <br>　X₁ = − [ ∫ M₁(x)·x dx ] ÷ [ ∫ x² dx ]　（沿全跨積分，0→L）
+                                        <br>　M₂(x) = X₁ · x　（沿跨線性：橋台端 N1=0、橋墩端 N30 最大）；　V₂ = dM₂/dx = X₁（沿跨常數）
+                                        <br>　主彎矩 M₁(x) = Σ(P · e)（內置預力 × 偏心，即逐節點 Meff = [P<sub>bot</sub>·(Y<sub>bot</sub>−12.5) − P<sub>top</sub>·(Y<sub>top</sub>−12.5)]/100）；積分以梯形法沿實際節點位置計算。</li>
+                                    <li><strong>納入需求（sign-aware，台灣／AASHTO §3.4.3 係數 1.0）</strong>：M₂ 與載重彎矩<strong>同號（不利）才計入</strong>，反號（有利）不採信（欄位灰字）；剪力取 max(|V載重|, |V載重+V₂|)。<br>　<strong>所需彎矩(含M₂) / 所需剪力(含V₂)</strong> 即為 6-3／6-4 實際採用的檢核基準。</li>
+                                    <li><strong>依據</strong>：橋梁知識庫 <em>公式卡_外置預力設計 O1 §7</em>、<em>算例_連續梁次彎矩與服務性應力驗算</em>、<em>算例_端跨propped cantilever次彎矩力法</em>；M₂=M_total−M₁。</li>
+                                    <li>⚠️ 此處僅<strong>內置預力</strong> M₂（補強前）；外置預力 M₂ 於 6-4（補強後）另計。橋墩端固接為近似（2 等跨精確、3 跨以上略偏保守）。</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -1330,14 +1392,493 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <p class="text-xs text-slate-500 mt-2">* <strong>有效鋼腱面積 A<sub>ps</sub> = 預力 ÷ f<sub>pe</sub></strong>（f<sub>pe</sub>=13000 kgf/cm²，扣損後有效應力）。此「頂版有效面積」即 6-3 橋墩負彎矩 <strong>Method A</strong> 反推 A<sub>ps</sub> 之來源（再以 f<sub>ps</sub>=f<sub>pu</sub>(1−kc/d<sub>p</sub>) 算極限彎矩，見 6-3 說明）。</p>
                         </div>
 
                     </div>
-                </div> <!-- End of Subtab 2 -->
+
+                    <!-- Sub Tab 3: Strength Check -->
+                    <div id="subtab-content-6-3" class="subtab-content hidden space-y-6">
+                        <!-- Input Parameters -->
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
+                            <h4 class="text-sm font-bold text-green-900 mb-3">剪力設計輸入參數（竣工圖反算）</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-white p-3 rounded">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">箍筋降伏強度 fsy (tf/cm²)<br><span class="font-normal text-slate-400">（420 MPa = 4.283；計算上限 4.2，§8.20.3）</span></label>
+                                    <input type="number" id="shear-fsy" value="4.283" min="0" step="0.001"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-green-500 text-right font-mono"
+                                        oninput="renderStrengthCheck();">
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <label class="block text-xs font-bold text-rose-700 mb-1">底版有效壓縮寬度 b<sub>bot</sub> (cm)<br><span class="font-normal text-rose-400">⚠ 負彎矩(hogging) M<sub>n</sub> 對此值敏感；b<sub>bot</sub> 越大 → M<sub>n</sub> 越高（偏不保守）</span></label>
+                                    <input type="number" id="shear-bbot" value="1000" min="100" step="50"
+                                        class="w-full px-3 py-2 border border-rose-300 rounded text-sm focus:outline-none focus:border-rose-500 text-right font-mono"
+                                        oninput="renderStrengthCheck();">
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <label class="block text-xs font-bold text-blue-700 mb-1">腹板數 n<sub>web</sub><br><span class="font-normal text-slate-400">剪力由 n 片腹板平均分攤（本橋雙室 = 3：外×2 + 中×1）</span></label>
+                                    <input type="number" id="shear-nweb" value="3" min="1" step="1"
+                                        class="w-full px-3 py-2 border border-blue-300 rounded text-sm focus:outline-none focus:border-blue-500 text-right font-mono"
+                                        oninput="renderStrengthCheck();">
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <label class="block text-xs font-bold text-purple-700 mb-1">頂版鋼腱極限強度 f<sub>pu</sub> (MPa)<br><span class="font-normal text-slate-400">負彎矩 Mn 用（Method A，預設 1860；低鬆弛 fpy/fpu=0.9）</span></label>
+                                    <input type="number" id="hog-fpu" value="1860" min="0" step="10"
+                                        class="w-full px-3 py-2 border border-purple-300 rounded text-sm focus:outline-none focus:border-purple-500 text-right font-mono"
+                                        oninput="renderStrengthCheck();">
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <label class="block text-xs font-bold text-purple-700 mb-1">頂版鋼腱有效應力 f<sub>pe</sub> (kgf/cm²)<br><span class="font-normal text-slate-400">反推 A<sub>ps</sub>=P<sub>top</sub>/f<sub>pe</sub>（與 6-2 一致，預設 13000）</span></label>
+                                    <input type="number" id="hog-fpe" value="13000" min="1" step="100"
+                                        class="w-full px-3 py-2 border border-purple-300 rounded text-sm focus:outline-none focus:border-purple-500 text-right font-mono"
+                                        oninput="renderStrengthCheck();">
+                                </div>
+                            </div>
+
+                            <!-- 箍筋配置：逐節點 N1~N30 於下方「第二道防線：剪力強度」表的「箍筋」欄以下拉選單選擇 -->
+                            <div class="mt-3 pt-3 border-t border-green-200">
+                                <h5 class="text-xs font-bold text-green-900 mb-1">箍筋配置（逐節點 N1~N30，外腹板/中腹板各自選擇）</h5>
+                                <p class="text-xs text-slate-500">於下方「第二道防線：剪力強度」表的「箍筋」欄，逐節點以下拉選單選擇鋼筋（D19 / D22 / D25）；間距固定 @20 cm、肢數 2。</p>
+                            </div>
+
+                            <p class="text-xs text-slate-500 mt-2">
+                                * b'<sub>w</sub> = 腹板全寬 − 8.5 cm（孔道折減）：<strong>外腹板 45→36.5 cm、中腹板 40→31.5 cm</strong>（全長固定）。外腹板×2、中腹板×1，剪力與容量逐腹板分開檢核<br>
+                                * f'c = 40 MPa = 408 kgf/cm²；φ<sub>彎矩</sub> = 0.90、φ<sub>剪力</sub> = 0.90（台灣《公路橋梁設計規範》§8.14 一般預力混凝土；以台灣規範為主。註：AASHTO §5.5.4.2.2 對節塊橋外置/非黏結PT 採 φv=0.85 更嚴）<br>
+                                * d<sub>v</sub> = 0.9h（台灣橋規 §8.20.2 規定 d ≥ 0.8h，此處取 0.9h 為保守估計）；V<sub>p</sub> = 0（忽略鋼腱傾角垂直分力，保守處理）<br>
+                                * 剪力分配：每片腹板 V<sub>u</sub> = V<sub>u,全斷面</sub> ÷ n<sub>web</sub>（外、中需求相同，差異在各自 b'<sub>w</sub> 與箍筋容量；扭矩疊加未計，屬補強前保守檢核）<br>
+                                * 負彎矩區（x &gt; 3L/4）改用<span class="text-rose-600 font-bold">頂版 PT 計算 hogging Mn</span>：T = P<sub>top</sub>；a = T×1000/(0.85·f'c·b<sub>bot</sub>)；d = h−12.5 cm<br>
+                                * 所有計算採 kgf/cm² 制：1 tf = 1000 kgf；1 tf·m = 100000 kgf·cm
+                            </p>
+                        </div>
+
+                        <!-- Moment Strength Check Table -->
+                        <div class="overflow-hidden">
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-purple-500 pl-2">
+                                彎矩強度檢核 (φMn ≥ Mu)</h3>
+                            <div class="bg-purple-50 border border-purple-200 rounded p-3 mb-3 text-xs">
+                                <div class="font-bold text-purple-900 mb-1.5">◆ 計算公式與規範出處</div>
+                                <div class="font-mono text-slate-700 space-y-1 leading-relaxed">
+                                    <div><span class="text-purple-700 font-bold">驗核條件：</span> φM<sub>n</sub> ≥ M<sub>u</sub></div>
+                                    <div><span class="text-purple-700 font-bold">設計彎矩：</span> M<sub>u</sub> = DLF × M<sub>DL</sub> + LLF × M<sub>LL</sub></div>
+                                    <div><span class="text-purple-700 font-bold">強度折減：</span> φ = 0.90（台灣 §8.14 一般預力彎矩；同 AASHTO 非黏結/外置PT φf=0.90）</div>
+                                    <div><span class="text-purple-700 font-bold">標稱強度：</span> M<sub>n</sub> 由等效矩形應力塊預先計算（查表 STRESS_BLOCK_DATA）</div>
+                                    <div><span class="text-purple-700 font-bold">強度比：</span> CR = φM<sub>n</sub> / M<sub>u</sub>（典型值 1.5～1.9；&lt; 1.2 需重審 PT 配置）</div>
+                                    <div class="mt-1 pt-1 border-t border-purple-200">
+                                        <span class="text-teal-700 font-bold">最小強度下限②（ACI §18.8.2）：</span> φM<sub>n</sub> ≥ min(1.33M<sub>u</sub>, 1.2M<sub>cr</sub>)
+                                    </div>
+                                    <div class="pl-3 border-l-2 border-teal-200 ml-1 space-y-0.5">
+                                        <div><span class="text-teal-700">M<sub>cr</sub></span> = S<sub>bot</sub> × (f<sub>r</sub> + f<sub>cpe</sub>)　[kgf·cm] ÷ 100000 → [tf·m]</div>
+                                        <div>f<sub>r</sub> = 2.0√f'<sub>c</sub> (kgf/cm²) = 7.5√f'<sub>c</sub> (psi) = 0.62√f'<sub>c</sub> (MPa, ACI)　≈ <strong>40.4 kgf/cm²</strong>（註：AASHTO LRFD 採 0.97√f'c MPa，較高）</div>
+                                        <div>f<sub>cpe</sub> = f<sub>eff,bot</sub> = 預力產生之底纖維壓應力（含偏心彎矩效應）</div>
+                                    </div>
+                                </div>
+                                <div class="text-slate-500 mt-1.5 border-t border-purple-200 pt-1.5 text-[10px]">
+                                    📖 台灣《公路橋梁設計規範》§8（ACI-318 框架）、§8.14（φ=0.90）；AASHTO LRFD Art. 5.7.3.2（M<sub>n</sub> 計算）；ACI 318 §18.8.2 / AASHTO Art. 5.7.3.3.2（最小彎矩強度下限，防脆性破壞）
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto max-h-[400px] overflow-y-auto border border-slate-200 rounded">
+                                <table class="w-full data-table">
+                                    <thead class="sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                            <th class="bg-slate-100 p-2 border-b border-white">斷面</th>
+                                            <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">Mn (tf·m)</th>
+                                            <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">φMn (tf·m)</th>
+                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">Mu (tf·m)</th>
+                                            <th class="bg-rose-50 text-rose-700 p-2 border-b border-white">M₂內置 (tf·m)<br><span class="font-normal text-rose-400 text-[10px]">次彎矩(不利計入,有利不採)</span></th>
+                                            <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">CR = φMn/Mu</th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定①</th>
+                                            <th class="bg-teal-50 text-teal-700 p-2 border-b border-white">Mcr (tf·m)</th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">min(1.33Mu, 1.2Mcr)</th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定②</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="momentCheckTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* 判定① φMn ≥ Mu（強度需求）；判定② φMn ≥ min(1.33Mu, 1.2Mcr)（最小強度下限，ACI 318 §18.8.2；Mu ≤ 0 時不適用，顯示「—」）；Mcr = Sbot(2.0√f'c + fcpe)，其中 fcpe 為預力在底纖維產生之壓應力</p>
+                            <div class="text-xs text-slate-600 mt-2 bg-purple-50 border-l-4 border-purple-400 p-3 rounded">
+                                <div class="font-bold text-purple-800 mb-1">◆ 橋墩負彎矩 M<sub>n</sub> 算法（Method A — M1 公式卡 fps k 法）</div>
+                                <ul class="space-y-1 list-disc pl-5">
+                                    <li><strong>為何不用有效預力</strong>：極限狀態時黏結鋼腱應力由有效應力 f<sub>pe</sub> 升至接近極限 f<sub>pu</sub>，故抵抗拉力應為 A<sub>ps</sub>·f<sub>ps</sub>（非 P<sub>top</sub>=A<sub>ps</sub>·f<sub>pe</sub>）。原「f<sub>ps</sub>=f<sub>pe</sub>」為 AASHTO §5.7.3.1.3b 容許的保守簡化，會低估約 30~40%、使橋墩誤判 NG。</li>
+                                    <li><strong>公式</strong>（壓力區在底版，寬 b<sub>bot</sub>；黏結鋼腱 k 法）：
+                                        <br>　A<sub>ps</sub> = P<sub>top</sub> ÷ f<sub>pe</sub>（由力反推面積，f<sub>pe</sub> 同 6-2 之 13000 kgf/cm²）
+                                        <br>　k = 2(1.04 − f<sub>py</sub>/f<sub>pu</sub>) = 0.28（低鬆弛）；β₁ = 0.85−0.05(f'c−28)/7（f'c=40→0.764）；d<sub>p</sub> = h − 12.5
+                                        <br>　c = A<sub>ps</sub>·f<sub>pu</sub> ÷ (0.85f'c·β₁·b<sub>bot</sub> + k·A<sub>ps</sub>·f<sub>pu</sub>/d<sub>p</sub>)；　f<sub>ps</sub> = f<sub>pu</sub>(1 − k·c/d<sub>p</sub>)；　a = β₁·c
+                                        <br>　<strong>M<sub>n</sub> = A<sub>ps</sub>·f<sub>ps</sub>·(d<sub>p</sub> − a/2)</strong>
+                                    </li>
+                                    <li><strong>一致性</strong>：與正彎矩（STRESS_BLOCK_DATA 本即採 f<sub>ps</sub>）同基準；A<sub>ps</sub> 來源即 <strong>6-2「有效鋼腱面積」</strong>欄（=P/13000）。輸入 f<sub>pu</sub>、f<sub>pe</sub> 於上方參數區可調。</li>
+                                    <li><strong>依據</strong>：橋梁知識庫 <em>公式卡_極限強度彎曲設計 M1</em>、AASHTO LRFD §5.7.3；橋墩列已顯示中間值 A<sub>ps</sub>/f<sub>ps</sub>/c/a 供驗算。</li>
+                                    <li>⚠️ 採實際 f<sub>ps</sub> 後橋墩餘裕較小（CR 接近 1.0）為真實結果，非不安全；準確度取決於 f<sub>pe</sub>、f<sub>pu</sub> 與黏結假設正確。6-4 補強後沿用同一 M<sub>n</sub>。</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Shear: Principal Tensile Stress -->
+                        <div class="overflow-hidden">
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-orange-500 pl-2">
+                                第一道防線：主拉應力檢核（σ₁ ≤ 0.3√f'c ≈ 6.06 kgf/cm²）</h3>
+                            <div class="bg-orange-50 border border-orange-200 rounded p-3 mb-3 text-xs">
+                                <div class="font-bold text-orange-900 mb-1.5">◆ 計算公式與規範出處</div>
+                                <div class="font-mono text-slate-700 space-y-1 leading-relaxed">
+                                    <div><span class="text-orange-700 font-bold">剪應力：</span> τ = V<sub>u,每片</sub> × 1000 / (b'<sub>w</sub> × d<sub>v</sub>)　[kgf/cm²]</div>
+                                    <div class="pl-3 border-l-2 border-orange-200 ml-1 text-slate-500">V<sub>u,每片</sub> = V<sub>u,全斷面</sub> / n<sub>web</sub>（剪力由 n 片腹板分攤）；σ<sub>x</sub> 用斷面平均 f<sub>pc</sub>（各腹板共有），b'<sub>w</sub> 為單片腹板 → τ 為單片腹板剪應力</div>
+                                    <div><span class="text-orange-700 font-bold">軸向應力：</span> σ<sub>x</sub> = −f<sub>pc</sub> = −(P<sub>頂</sub> + P<sub>底</sub>) × 1000 / A　[kgf/cm²，壓縮為負]</div>
+                                    <div><span class="text-orange-700 font-bold">主拉應力（莫耳圓，σ<sub>y</sub>=0）：</span> σ₁ = σ<sub>x</sub>/2 + √[(σ<sub>x</sub>/2)² + τ²]</div>
+                                    <div><span class="text-orange-700 font-bold">驗核條件：</span> σ₁ ≤ 0.3√f'<sub>c</sub>　[kgf/cm²]　= 0.3 × √408 ≈ <strong>6.06 kgf/cm²</strong></div>
+                                    <div><span class="text-orange-700 font-bold">有效深度：</span> d<sub>v</sub> = 0.9 × (Y<sub>頂</sub> + Y<sub>底</sub>) = 0.9h</div>
+                                </div>
+                                <div class="text-slate-500 mt-1.5 border-t border-orange-200 pt-1.5 text-[10px]">
+                                    📖 台灣《公路橋梁設計規範》§8.20.2（主拉應力容許值 0.3√f'c，f'c 單位 kgf/cm²）；莫耳圓原理（σ<sub>y</sub>=0 簡化式）<br>
+                                    ⚠️ 台灣限值較保守（6.06 kgf/cm² 等效約 0.59 MPa，AASHTO 限值約 1.83 MPa，約 1/3）；σ₁ 超限為常態，需繼續第二道防線設計
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto max-h-[400px] overflow-y-auto border border-slate-200 rounded">
+                                <table class="w-full data-table">
+                                    <thead class="sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                            <th class="bg-slate-100 p-2 border-b border-white">斷面</th>
+                                            <th class="bg-slate-100 p-2 border-b border-white">腹板</th>
+                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">Vu/腹板 (tf)<br><span class="font-normal text-[10px]">= Vu,全斷面 ÷ n<sub>web</sub></span></th>
+                                            <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">b'w (cm)</th>
+                                            <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">τ (kgf/cm²)</th>
+                                            <th class="bg-blue-50 text-blue-700 p-2 border-b border-white">σx (kgf/cm²)</th>
+                                            <th class="bg-orange-50 text-orange-700 p-2 border-b border-white">σ₁ (kgf/cm²)</th>
+                                            <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">限值 (kgf/cm²)</th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shearPrincipalTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* 台灣規範限值 0.3√f'c（kgf/cm²）= 6.06 kgf/cm² ≈ 0.59 MPa，較保守（AASHTO 限值約 1.83 MPa，約 1/3）；σ₁ 超限為預期結果，需繼續第二道防線強度設計；台灣規範 §8.20.2</p>
+                        </div>
+
+                        <!-- Shear: Full Strength Check -->
+                        <div class="overflow-hidden">
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-red-500 pl-2">
+                                第二道防線：剪力強度檢核（φVn ≥ Vu）</h3>
+                            <div class="bg-red-50 border border-red-200 rounded p-3 mb-3 text-xs">
+                                <div class="font-bold text-red-900 mb-1.5">◆ 計算公式與規範出處</div>
+                                <div class="font-mono text-slate-700 space-y-1 leading-relaxed">
+                                    <div><span class="text-red-700 font-bold">驗核條件：</span> φV<sub>n</sub> = φ(V<sub>c</sub> + V<sub>s</sub>) ≥ V<sub>u,每片</sub>，φ = 0.90（台灣《公路橋梁設計規範》§8.14 一般預力剪力）</div>
+                                    <div class="pl-3 border-l-2 border-red-200 ml-1 text-slate-500"><span class="font-bold">每片腹板基準：</span> V<sub>u,每片</sub> = V<sub>u,全斷面</sub> / n<sub>web</sub>（n=腹板數）；V<sub>c</sub>、V<sub>s</sub>、b'<sub>w</sub>、A<sub>v</sub> 均為<strong>單片腹板</strong>，故 A<sub>v</sub> 填單片腹板一道箍筋（雙肢）</div>
+                                    <div><span class="text-red-700 font-bold">混凝土抗剪：</span> V<sub>c</sub> = min(V<sub>ci</sub>, V<sub>cw</sub>)</div>
+                                    <div class="pl-3 border-l-2 border-red-200 ml-1 space-y-0.5">
+                                        <div><span class="text-blue-700">V<sub>cw</sub></span> = (0.3√f'<sub>c</sub> + 0.3·f<sub>pc</sub>)·b'<sub>w</sub>·d<sub>v</sub>　[kgf制] ÷ 1000 → [tf]</div>
+                                        <div><span class="text-green-700">V<sub>ci</sub></span> = 0.16√f'<sub>c</sub>·b'<sub>w</sub>·d<sub>v</sub> + V<sub>d</sub> + V<sub>i</sub>·M<sub>cr</sub>/M<sub>max</sub>　≥ 0.45√f'<sub>c</sub>·b'<sub>w</sub>·d<sub>v</sub></div>
+                                        <div><span class="text-teal-700">M<sub>cr</sub></span> = (I / Y<sub>t</sub>) × (1.6√f'<sub>c</sub> + f<sub>pe</sub> − f<sub>d</sub>)　[kgf·cm制]　（式8-28）</div>
+                                        <div class="text-slate-500">其中 f<sub>pe</sub> = 有效預力在受拉緣產生之壓應力；f<sub>d</sub> = 靜載在受拉緣之應力</div>
+                                    </div>
+                                    <div><span class="text-red-700 font-bold">箍筋抗剪：</span> V<sub>s</sub> = A<sub>v</sub> × f<sub>sy</sub> × d<sub>v</sub> / s　[tf]</div>
+                                    <div class="text-slate-500">V<sub>d</sub> = 靜載剪力（未乘係數）；V<sub>i</sub>/M<sub>max</sub> = 活載剪力/彎矩（含衝擊與超載係數）</div>
+                                </div>
+                                <div class="text-slate-500 mt-1.5 border-t border-red-200 pt-1.5 text-[10px]">
+                                    📖 台灣《公路橋梁設計規範》§8.20.2（V<sub>ci</sub> 式8-27、V<sub>cw</sub>、M<sub>cr</sub> 式8-28；f'c 單位 kgf/cm²）；§8.14（剪力 φv=0.90）、§8.20.3（V<sub>s</sub>）；註：AASHTO §5.5.4.2.2 對節塊橋外置/非黏結PT 採 φv=0.85 更嚴，本工具以台灣為主<br>
+                                    ⚠️ 係數說明：1.6√f'c（kgf/cm²制）= 0.5√f'c（MPa制）× 10.2，兩者等效；0.16√f'c 為 V<sub>ci</sub> 混凝土基礎項（非 0.14 或 0.06）
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto max-h-[400px] overflow-y-auto border border-slate-200 rounded">
+                                <table class="w-full data-table">
+                                    <thead class="sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                            <th class="bg-slate-100 p-2 border-b border-white">斷面</th>
+                                            <th class="bg-slate-100 p-2 border-b border-white">腹板</th>
+                                            <th class="bg-slate-100 text-slate-700 p-2 border-b border-white">箍筋<br><span class="font-normal text-[10px]">D號@間距</span></th>
+                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">Vu/腹板 (tf)<br><span class="font-normal text-[10px]">= Vu,全斷面 ÷ n<sub>web</sub></span></th>
+                                            <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">b'w (cm)</th>
+                                            <th class="bg-blue-50 text-blue-700 p-2 border-b border-white">Vcw (tf)</th>
+                                            <th class="bg-green-50 text-green-700 p-2 border-b border-white">Vci (tf)</th>
+                                            <th class="bg-green-50 text-green-600 p-2 border-b border-white text-[11px]">Vci_min (tf)</th>
+                                            <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">Vc (tf)</th>
+                                            <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">Vs (tf)</th>
+                                            <th class="bg-red-50 text-red-700 p-2 border-b border-white">φVn (tf)</th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shearStrengthTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* Vc = min(Vci, Vcw)；Vci 欄顯示已取下限後之值；Vci_min = 0.45√f'c·b'w·dv（規範下限，§8.20.2）；若 Vci = Vci_min 表示由下限控制；Vs = Av·fsy·dv/s；規範出處：§8.20.2（式8-27、Vcw、式8-28）、§8.20.3（Vs、φ）</p>
+                        </div>
+
+                        <!-- Web-Specific Checks -->
+                        <div class="overflow-hidden">
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-rose-500 pl-2">
+                                第三道防線：腹版專屬補充檢核</h3>
+                            <div class="bg-rose-50 border border-rose-200 rounded p-3 mb-3 text-xs">
+                                <div class="font-bold text-rose-900 mb-1.5">◆ 計算公式與規範出處</div>
+                                <div class="font-mono text-slate-700 space-y-1 leading-relaxed">
+                                    <div><span class="text-rose-700 font-bold">① 腹板剪壓破壞上限：</span> V<sub>u</sub> ≤ φ × 0.25 f'<sub>c</sub> × b'<sub>w</sub> × d<sub>v</sub></div>
+                                    <div class="pl-3 border-l-2 border-rose-200 ml-1 text-slate-500">防止腹板在 V<sub>c</sub>+V<sub>s</sub> 發揮前先產生斜向壓碎；此為最大剪力強度絕對上限，不可用增加箍筋來突破</div>
+                                    <div><span class="text-rose-700 font-bold">② 最小橫向鋼筋量：</span> A<sub>v</sub>/s ≥ 3.5 × b'<sub>w</sub> / f<sub>sy</sub>（台灣橋規 §8.20.3，f<sub>sy</sub> 單位 kgf/cm²）</div>
+                                    <div class="pl-3 border-l-2 border-rose-200 ml-1 space-y-0.5">
+                                        <div>對照 AASHTO §5.8.2.5：A<sub>v</sub>/s ≥ 0.265√f'<sub>c</sub>(kgf/cm²) × b'<sub>w</sub> / f<sub>sy</sub>（≈5.35，較嚴；高強度混凝土宜參採）</div>
+                                        <div class="text-slate-500">確保箍筋在混凝土開裂後仍能有效傳力，防止脆性剪力破壞</div>
+                                    </div>
+                                    <div><span class="text-rose-700 font-bold">③ 箍筋最大間距：</span> s ≤ min(0.75h, 60 cm)；<span class="text-rose-600 font-bold">當 V<sub>s</sub> &gt; 1.06√f'<sub>c</sub>·b'<sub>w</sub>·d<sub>v</sub> 時減半</span> → min(0.375h, 30 cm)</div>
+                                    <div class="pl-3 border-l-2 border-rose-200 ml-1 text-slate-500">確保斜裂縫至少被一排箍筋跨越；h = 全梁高 = Y<sub>頂</sub> + Y<sub>底</sub>；高剪力區（V<sub>s</sub> 大）須加密以控制斜裂縫寬度（台灣 §8.20.3）</div>
+                                    <div><span class="text-rose-700 font-bold">④ 箍筋抗剪上限：</span> V<sub>s</sub> ≤ 2.1√f'<sub>c</sub> × b'<sub>w</sub> × d<sub>v</sub>（kgf 制；V<sub>s</sub> 取自第二道防線）</div>
+                                    <div class="pl-3 border-l-2 border-rose-200 ml-1 text-slate-500">V<sub>s</sub> 超過此值代表箍筋過量、腹板斜壓桿先壓碎，加箍筋無效，須加厚腹板或提高 f'c。與①互補（①管 V<sub>u</sub> 總量、④管 V<sub>s</sub> 分量）</div>
+                                </div>
+                                <div class="text-slate-500 mt-1.5 border-t border-rose-200 pt-1.5 text-[10px]">
+                                    📖 ①壓碎上限：AASHTO LRFD §5.8.3.3（v<sub>u</sub> ≤ 0.25f'<sub>c</sub>）；台灣橋規 §8.20.3<br>
+                                    ②最小鋼筋：台灣橋規 §8.20.3（A<sub>v,min</sub> = 3.5·b'·s/fsy）；AASHTO LRFD §5.8.2.5 對照<br>
+                                    ③最大間距：台灣橋規 §8.20.3；AASHTO LRFD §5.8.2.7<br>
+                                    ④V<sub>s</sub>上限：台灣橋規 §8.20.3（V<sub>s</sub> ≤ 2.1√f'c·b'·d）<br>
+                                    ⚠️ ②③若 A<sub>v</sub> 或 s 未輸入，判定欄顯示「—」
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto max-h-[400px] overflow-y-auto border border-slate-200 rounded">
+                                <table class="w-full data-table text-xs">
+                                    <thead class="sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                            <th class="bg-slate-100 p-2 border-b border-white">斷面</th>
+                                            <th class="bg-slate-100 p-2 border-b border-white">腹板</th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">b'w (cm)</th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">dv (cm)</th>
+                                            <th class="bg-rose-50 text-rose-700 p-2 border-b border-white">φVn,max (tf)</th>
+                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">Vu/腹板 (tf)<br><span class="font-normal text-[10px]">= Vu,全斷面 ÷ n<sub>web</sub></span></th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定①<br><span class="font-normal text-[10px]">壓碎</span></th>
+                                            <th class="bg-indigo-50 text-indigo-700 p-2 border-b border-white">(Av/s)<sub>實際</sub><br><span class="font-normal text-[10px]">(cm²/cm)</span></th>
+                                            <th class="bg-indigo-50 text-indigo-600 p-2 border-b border-white">(Av/s)<sub>min</sub><br><span class="font-normal text-[10px]">(cm²/cm)</span></th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定②<br><span class="font-normal text-[10px]">最小筋</span></th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">s (cm)</th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">s_max (cm)</th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定③<br><span class="font-normal text-[10px]">間距</span></th>
+                                            <th class="bg-rose-50 text-rose-600 p-2 border-b border-white">Vs,max (tf)<br><span class="font-normal text-[10px]">2.1√f'c·b'w·dv</span></th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定④<br><span class="font-normal text-[10px]">Vs上限</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="webCheckTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* ①壓碎：V<sub>u</sub> ≤ φ×0.25f'c×b'w×dv；②最小筋：(A<sub>v</sub>/s)<sub>min</sub> = 3.5×b'w/fsy(kgf)（台灣 §8.20.3）；③間距：s ≤ min(0.75h, 60 cm)，Vs &gt; 1.06√f'c·b'w·dv 時減半為 min(0.375h, 30 cm)（台灣 §8.20.3）；④Vs上限：Vs ≤ 2.1√f'c·b'w·dv（台灣 §8.20.3）；Av/s 或 s 未輸入時顯示「—」</p>
+                        </div>
+                    </div>
+
+                    <!-- Sub Tab 4: Strength check (post-retrofit, 補強後) -->
+                    <div id="subtab-content-6-4" class="subtab-content hidden space-y-6">
+                        <div class="bg-teal-50 border-l-4 border-teal-500 p-4">
+                            <h4 class="text-sm font-bold text-teal-900 mb-2">補強後強度檢核 — 建模假設（與 6-3 補強前對照）</h4>
+                            <ul class="text-xs text-teal-800 space-y-1 list-disc pl-5">
+                                <li><strong>需求</strong>：Mu/Vu 與補強前同載重基準，並加入外置預力次彎矩 M₂<sub>ext</sub>（sign-aware，台灣/AASHTO §3.4.3 係數 1.0；不利才計入）。</li>
+                                <li><strong>彎矩承載力</strong>：外置 PT 採 <strong>fps = fpe</strong>（AASHTO §5.7.3.1.3b 保守簡化，<em>未</em>乘日本 0.70）；外置為底部下垂，<strong>僅正彎矩(跨中)計入貢獻，負彎矩(橋墩)不計入</strong>。</li>
+                                <li><strong>剪力</strong>：fpc 加外置軸壓 → σ₁↓、Vcw↑；φVn 加外置 V<sub>p</sub>（僅錨碇↔轉向塊斜段，集中梁端）。</li>
+                                <li>⚠️ <strong>橋墩負彎矩</strong>：Mn 已改用 <strong>Method A（fps，同 6-3）</strong>，非舊 Peff；但底部外置 PT 對橋墩 hogging <strong>無助益</strong>，且 M₂<sub>ext</sub> 反而加重需求 → 此區補強前後幾乎相同（補強後不改善），餘裕仍小，需頂部 PT 或斷面補強才有效。</li>
+                                <li><strong>第三道防線</strong>（壓碎/最小箍筋/最大間距）與補強前<strong>相同</strong>（箍筋與幾何未變），請見 6-3。</li>
+                            </ul>
+                        </div>
+
+                        <!-- 對照總覽 -->
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 mb-2 border-l-4 border-teal-500 pl-2">補強前 → 補強後 對照總覽（控制指標）</h3>
+                            <div class="overflow-x-auto border border-slate-200 rounded">
+                                <table class="w-full data-table text-xs">
+                                    <thead class="sticky top-0 z-10 shadow-sm"><tr>
+                                        <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                        <th class="bg-slate-100 p-2 border-b border-white">斷面</th>
+                                        <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">φMn 前</th>
+                                        <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">φMn 後</th>
+                                        <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">彎矩判定<br><span class="font-normal text-[10px]">前→後</span></th>
+                                        <th class="bg-orange-50 text-orange-700 p-2 border-b border-white">σ₁ 前<br><span class="font-normal text-[10px]">外腹板</span></th>
+                                        <th class="bg-orange-50 text-orange-700 p-2 border-b border-white">σ₁ 後</th>
+                                        <th class="bg-red-50 text-red-700 p-2 border-b border-white">φVn 前<br><span class="font-normal text-[10px]">外腹板</span></th>
+                                        <th class="bg-red-50 text-red-700 p-2 border-b border-white">φVn 後</th>
+                                        <th class="bg-emerald-50 text-emerald-700 p-2 border-b border-white">φVn 改善</th>
+                                        <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">剪力判定<br><span class="font-normal text-[10px]">前→後</span></th>
+                                    </tr></thead>
+                                    <tbody id="summaryPostTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* σ₁、φVn 取外腹板（控制）；改善% = (後−前)/|前|；判定「前→後」並列，箭頭標出由 NG 轉 OK（綠）或 OK 轉 NG（紅）。</p>
+                        </div>
+
+                        <!-- 彎矩明細 -->
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 mb-2 border-l-4 border-purple-500 pl-2">彎矩強度（補強後）</h3>
+                            <div class="overflow-x-auto border border-slate-200 rounded">
+                                <table class="w-full data-table text-xs">
+                                    <thead class="sticky top-0 z-10 shadow-sm"><tr>
+                                        <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                        <th class="bg-slate-100 p-2 border-b border-white">斷面</th>
+                                        <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">Mn 前</th>
+                                        <th class="bg-teal-50 text-teal-700 p-2 border-b border-white">ΔMn 外置</th>
+                                        <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">φMn 後</th>
+                                        <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">Mu 前</th>
+                                        <th class="bg-rose-50 text-rose-700 p-2 border-b border-white">+M₂ext</th>
+                                        <th class="bg-amber-100 text-amber-800 p-2 border-b border-white">Mu 後</th>
+                                        <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">CR 後</th>
+                                        <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定<br><span class="font-normal text-[10px]">前→後</span></th>
+                                    </tr></thead>
+                                    <tbody id="momentPostTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* ΔMn外置 = 外置 PT 對標稱彎矩貢獻（fps=fpe，正彎矩 = force×(鋼腱距頂)/100，負彎矩=0）。+M₂ext = 外置次彎矩計入需求之增量（sign-aware）。</p>
+                        </div>
+
+                        <!-- 剪力明細 -->
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 mb-2 border-l-4 border-red-500 pl-2">剪力強度（補強後，外腹板×2 / 中腹板×1）</h3>
+                            <div class="overflow-x-auto border border-slate-200 rounded">
+                                <table class="w-full data-table text-xs">
+                                    <thead class="sticky top-0 z-10 shadow-sm"><tr>
+                                        <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                        <th class="bg-slate-100 p-2 border-b border-white">斷面</th>
+                                        <th class="bg-slate-100 p-2 border-b border-white">腹板</th>
+                                        <th class="bg-blue-50 text-blue-700 p-2 border-b border-white">fpc 前</th>
+                                        <th class="bg-blue-100 text-blue-800 p-2 border-b border-white">fpc 後</th>
+                                        <th class="bg-orange-50 text-orange-700 p-2 border-b border-white">σ₁ 後</th>
+                                        <th class="bg-blue-50 text-blue-700 p-2 border-b border-white">Vcw 後</th>
+                                        <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">Vc 後</th>
+                                        <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">Vs</th>
+                                        <th class="bg-teal-50 text-teal-700 p-2 border-b border-white">Vp 外置<br><span class="font-normal text-[10px]">/腹板</span></th>
+                                        <th class="bg-red-50 text-red-700 p-2 border-b border-white">φVn 前</th>
+                                        <th class="bg-red-100 text-red-800 p-2 border-b border-white">φVn 後</th>
+                                        <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">Vu/腹板 後</th>
+                                        <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定<br><span class="font-normal text-[10px]">前→後</span></th>
+                                    </tr></thead>
+                                    <tbody id="shearPostTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* Vp 外置/腹板 = 外置 PT 垂直分量 ÷ n<sub>web</sub>（僅梁端斜段）。φVn 後 = φ(Vc + Vs + Vp外置/腹板)。σ₁ 限值 0.3√f'c = 6.06 kgf/cm²。</p>
+                        </div>
+                    </div>
+                </div> <!-- End of Tab 6 Inner -->
 
             </div>
-        </div>
 
+            <!-- Tab 7 Content (撓度分析) -->
+            <div id="tab-content-7" class="tab-content-wrapper hidden">
+                <div id="tab-content-7-inner" class="tab-content space-y-6">
+
+                    <!-- Sub Tab Navigation -->
+                    <div class="flex border-b border-slate-200 mb-4 mt-2">
+                        <button onclick="switchSubTab(7, 1); renderDeflectionPre();" id="subtab-btn-7-1"
+                            class="py-2 px-4 text-sm font-medium border-b-2 text-blue-600 border-blue-600 focus:outline-none transition-colors">加固前撓度分析</button>
+                        <button onclick="switchSubTab(7, 2); renderDeflectionPost();" id="subtab-btn-7-2"
+                            class="py-2 px-4 text-sm font-medium border-b-2 text-slate-600 border-transparent hover:text-slate-800 focus:outline-none transition-colors">加固後撓度分析</button>
+                    </div>
+
+                    <!-- Subtab 7-1: 加固前撓度分析 -->
+                    <div id="subtab-content-7-1" class="subtab-content space-y-6">
+                        <!-- Formula Box -->
+                        <div class="bg-blue-50 border border-blue-200 rounded p-3 text-xs">
+                            <div class="font-bold text-blue-900 mb-1.5">◆ 計算公式與規範出處</div>
+                            <div class="font-mono text-slate-700 space-y-1 leading-relaxed">
+                                <div><span class="text-blue-700 font-bold">結構邊界：</span>propped cantilever（一端鉸支，一端固定）—— 與分頁2~6 載重模型一致</div>
+                                <div><span class="text-blue-700 font-bold">均佈載重撓度：</span> y(x) = <em>wx</em>/(48EI) × (3Lx² − 2x³ − L³)</div>
+                                <div class="pl-3 border-l-2 border-blue-200 ml-1 space-y-0.5">
+                                    <div>w = 均佈載重 (tf/m)；L = 跨徑 (m)；EI = 彎曲勁度 (tf·m²)</div>
+                                    <div>x = 距鉸支端距離 (m)；正值 = 向上，負值 = 向下</div>
+                                </div>
+                                <div><span class="text-blue-700 font-bold">最大撓度：</span> δ<sub>max</sub> = wL⁴/(185EI)　位於 x ≈ 0.4215L 處</div>
+                                <div><span class="text-blue-700 font-bold">混凝土彈性模數：</span> E<sub>c</sub> = 4700√f'<sub>c</sub> (MPa) → 以 Section 1 之 I 代入</div>
+                                <div><span class="text-blue-700 font-bold">撓度限制：</span> 活載撓度 δ<sub>LL</sub> ≤ L/800</div>
+                            </div>
+                            <div class="text-slate-500 mt-1.5 border-t border-blue-200 pt-1.5 text-[10px]">
+                                📖 ACI 318-19 §19.2.2.1（E<sub>c</sub> 公式）；台灣《公路橋梁設計規範》§3.4（撓度限制 L/800）；Timoshenko &amp; Gere "Theory of Elastic Stability"（propped cantilever 撓度方程）<br>
+                                ⚠️ 本計算採均勻 EI（以 Section 1 代表主跨），不含內置預力拱起量（內置預力效果已反映於 Tab 3 應力分析）
+                            </div>
+                        </div>
+
+                        <!-- EI Info Box -->
+                        <div class="bg-slate-50 border border-slate-200 rounded p-3 text-xs" id="deflection-ei-info">
+                        </div>
+
+                        <!-- Deflection Chart Pre -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">撓度曲線（加固前）</h3>
+                            <div class="bg-white border border-slate-200 rounded p-4">
+                                <canvas id="deflectionPreChart" style="max-height: 300px;"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Deflection Table Pre -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-blue-500 pl-2">各節點撓度表（加固前）</h3>
+                            <div class="overflow-x-auto max-h-[400px] overflow-y-auto border border-slate-200 rounded">
+                                <table class="w-full data-table text-xs">
+                                    <thead class="sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">x (m)</th>
+                                            <th class="bg-green-50 text-green-700 p-2 border-b border-white">δ<sub>DL</sub> (mm)</th>
+                                            <th class="bg-blue-50 text-blue-700 p-2 border-b border-white">δ<sub>LL</sub> 服務 (mm)</th>
+                                            <th class="bg-blue-100 text-blue-800 p-2 border-b border-white">δ<sub>LL</sub> 設計 (mm)</th>
+                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">δ<sub>DL+LL</sub> 設計 (mm)</th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">L/800 限值 (mm)</th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定（服務LL）</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="deflectionPreTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* δ<sub>LL</sub> 服務 = 不含超載係數之活載撓度（用於 L/800 比較）；δ<sub>LL</sub> 設計 = 含衝擊+超載+折減係數；δ 向下為負值（mm）</p>
+                        </div>
+                    </div>
+
+                    <!-- Subtab 7-2: 加固後撓度分析 -->
+                    <div id="subtab-content-7-2" class="subtab-content hidden space-y-6">
+                        <!-- Formula Box -->
+                        <div class="bg-teal-50 border border-teal-200 rounded p-3 text-xs">
+                            <div class="font-bold text-teal-900 mb-1.5">◆ 外置預力撓度效應</div>
+                            <div class="font-mono text-slate-700 space-y-1 leading-relaxed">
+                                <div><span class="text-teal-700 font-bold">等效向上集中力：</span>轉向塊升力 F<sub>i</sub>（來自分頁4計算結果）</div>
+                                <div><span class="text-teal-700 font-bold">集中力撓度（向上 P 於 x=a）：</span></div>
+                                <div class="pl-3 border-l-2 border-teal-200 ml-1 space-y-0.5">
+                                    <div>R<sub>A</sub> = P(L−a)²(2L+a) / (2L³)</div>
+                                    <div>EI·y(x) = R<sub>A</sub>·x³/6 − Pa(L−a)²·x/(4L)　（x ≤ a）</div>
+                                    <div>EI·y(x) = R<sub>A</sub>·x³/6 − P(x−a)³/6 − Pa(L−a)²·x/(4L)　（x &gt; a）</div>
+                                </div>
+                                <div><span class="text-teal-700 font-bold">加固後淨撓度：</span> δ<sub>net</sub> = δ<sub>DL+LL</sub> + δ<sub>外置PT</sub>（外置 PT 為向上 → 減小向下撓度）</div>
+                                <div><span class="text-teal-700 font-bold">改善量：</span> Δδ = δ<sub>外置PT</sub>（mm，正 = 向上）</div>
+                            </div>
+                            <div class="text-slate-500 mt-1.5 border-t border-teal-200 pt-1.5 text-[10px]">
+                                📖 Ghali &amp; Neville "Structural Analysis" Ch.12（等效荷載法）；台灣《公路橋梁設計規範》§3.4（L/800 限值）<br>
+                                ⚠️ 僅計算轉向塊升力之撓度貢獻；錨頭偏心矩效應為次要項，已省略
+                            </div>
+                        </div>
+
+                        <!-- Deflection Chart Post -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-teal-500 pl-2">撓度曲線（加固前後比較）</h3>
+                            <div class="bg-white border border-slate-200 rounded p-4">
+                                <canvas id="deflectionPostChart" style="max-height: 300px;"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Deflection Table Post -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 border-l-4 border-teal-500 pl-2">各節點撓度表（加固前後比較）</h3>
+                            <div class="overflow-x-auto max-h-[400px] overflow-y-auto border border-slate-200 rounded">
+                                <table class="w-full data-table text-xs">
+                                    <thead class="sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th class="bg-slate-100 p-2 border-b border-white">節點</th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">x (m)</th>
+                                            <th class="bg-amber-50 text-amber-700 p-2 border-b border-white">加固前 δ<sub>DL+LL</sub> (mm)</th>
+                                            <th class="bg-teal-50 text-teal-700 p-2 border-b border-white">δ<sub>外置PT</sub> 拱起 (mm)</th>
+                                            <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">加固後 δ<sub>net</sub> (mm)</th>
+                                            <th class="bg-blue-50 text-blue-700 p-2 border-b border-white">δ<sub>LL</sub> 服務 加固後 (mm)</th>
+                                            <th class="bg-slate-50 text-slate-600 p-2 border-b border-white">L/800 限值 (mm)</th>
+                                            <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">判定（LL服務）</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="deflectionPostTableBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">* 加固後 δ<sub>LL</sub> 服務不含外置PT效應（外置PT對活載撓度改善有限，此欄供參考）；δ<sub>外置PT</sub> 為正 = 向上拱起</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
     </main>
 
     <script>
@@ -1496,13 +2037,14 @@
             const content4 = document.getElementById('tab-content-4');
             const content5 = document.getElementById('tab-content-5');
             const content6 = document.getElementById('tab-content-6');
+            const content7 = document.getElementById('tab-content-7');
 
             // Ensure target is visible before animation logic might hide it
             const targetContent = document.getElementById(`tab-content-${tabId}`);
             if (targetContent) targetContent.classList.remove('hidden');
 
             // Setup fade out for others
-            const allContent = [content1, content2, content3, content4, content5, content6];
+            const allContent = [content1, content2, content3, content4, content5, content6, content7];
             const otherContent = allContent.filter((_, i) => i !== tabId - 1);
 
             // Fade out others
@@ -1566,7 +2108,7 @@
             }
 
             // Toggle Buttons
-            ['tab-btn-1', 'tab-btn-2', 'tab-btn-3', 'tab-btn-4', 'tab-btn-5', 'tab-btn-6'].forEach(btnId => {
+            ['tab-btn-1', 'tab-btn-2', 'tab-btn-3', 'tab-btn-4', 'tab-btn-5', 'tab-btn-6', 'tab-btn-7'].forEach(btnId => {
                 document.getElementById(btnId).classList.remove('tab-active');
                 document.getElementById(btnId).classList.add('tab-inactive');
             });
@@ -1579,6 +2121,13 @@
             // Render section info if tab 1
             if (tabId === 1) {
                 renderSectionInfo();
+            }
+
+            // Tab 7: 撓度分析
+            if (tabId === 7) {
+                setTimeout(() => {
+                    renderDeflectionPre();
+                }, 200);
             }
 
             // Unit Control Visibility: Hide on Tab 2
@@ -1603,7 +2152,7 @@
             if (selectedSubTab) selectedSubTab.classList.remove('hidden');
 
             // Update button styles
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 1; i <= 4; i++) {
                 const btn = document.getElementById(`subtab-btn-${tabId}-${i}`);
                 if (btn) {
                     if (i === subTabNum) {
@@ -1917,8 +2466,68 @@
 
             // Sync Table
             renderTable3();
+            renderUnsupportedLengthCheck();   // 無支撐自由段長度檢核 (AASHTO Art. 5.10.5)
             if (state.currentTab === 5) {
                 renderStrengtheningVerifyTable();
+            }
+        }
+
+        // 外置鋼腱無支撐自由段長度檢核（AASHTO LRFD Art. 5.10.5：≤ 7500 mm）
+        // 參考依據：橋梁知識庫 公式卡_外置預力設計(O1) §九、外置PT補強_設計數值速查卡 §C
+        function renderUnsupportedLengthCheck() {
+            const tbody = document.getElementById('unsupportedLengthBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const LIMIT_MM = 7500;            // AASHTO Art. 5.10.5
+            const beamDepthM = 2.78;          // 轉向塊貼梁底（與分力計算一致）
+            const span = state.span;
+            const count = state.extGeometry.deviationBlocks.count;
+            const blocks = state.extGeometry.deviationBlocks.blocks;
+
+            // 鋼腱折點序列：滑動端錨頭 → 各轉向塊 → 固定端錨頭
+            const pts = [{ x: 0, y: state.extGeometry.anchorage.sliding.y / 100, label: 'N1 錨頭' }];
+            for (let i = 0; i < count; i++) {
+                pts.push({ x: blocks[i].x, y: beamDepthM, label: '轉向塊 ' + (i + 1) });
+            }
+            pts.push({ x: span, y: state.extGeometry.anchorage.hinged.y / 100, label: 'N30 錨頭' });
+
+            let anyExceed = false;
+            let maxLenMm = 0;
+            for (let i = 0; i < pts.length - 1; i++) {
+                const dx = pts[i + 1].x - pts[i].x;
+                const dy = pts[i + 1].y - pts[i].y;
+                const lenMm = Math.sqrt(dx * dx + dy * dy) * 1000;   // 沿鋼腱實際自由段長 (mm)
+                maxLenMm = Math.max(maxLenMm, lenMm);
+                const ok = lenMm <= LIMIT_MM;
+                if (!ok) anyExceed = true;
+
+                const tr = document.createElement('tr');
+                tr.className = ok ? '' : 'bg-red-50';
+                tr.innerHTML = `
+                    <td class="border border-slate-200 p-1.5 font-bold">${i + 1}</td>
+                    <td class="border border-slate-200 p-1.5 text-left pl-3 text-slate-600">${pts[i].label} → ${pts[i + 1].label}</td>
+                    <td class="border border-slate-200 p-1.5 font-mono ${ok ? '' : 'text-red-600 font-bold'}">${(lenMm / 1000).toFixed(2)}</td>
+                    <td class="border border-slate-200 p-1.5 font-mono ${ok ? '' : 'text-red-600 font-bold'}">${lenMm.toFixed(0)}</td>
+                    <td class="border border-slate-200 p-1.5 text-slate-500">≤ 7500</td>
+                    <td class="border border-slate-200 p-1.5 font-bold ${ok ? 'text-green-600' : 'text-red-600'}">${ok ? 'OK' : '超限 ×' + (lenMm / LIMIT_MM).toFixed(1)}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            const box = document.getElementById('unsupportedLengthBox');
+            const badge = document.getElementById('unsupportedLengthBadge');
+            const title = document.getElementById('unsupportedLengthTitle');
+            if (anyExceed) {
+                box.className = 'mt-4 border-l-4 border-red-500 bg-red-50 rounded-lg p-3';
+                badge.className = 'text-xs px-2 py-1 rounded bg-red-600 text-white font-bold';
+                badge.innerText = '⚠ 超限（最大 ' + maxLenMm.toFixed(0) + ' mm）';
+                title.className = 'text-xs font-bold text-red-800';
+            } else {
+                box.className = 'mt-4 border-l-4 border-green-500 bg-green-50 rounded-lg p-3';
+                badge.className = 'text-xs px-2 py-1 rounded bg-green-600 text-white font-bold';
+                badge.innerText = '✓ 全段合格';
+                title.className = 'text-xs font-bold text-green-800';
             }
         }
 
@@ -2587,6 +3196,7 @@
             }
 
             renderTable();
+            renderTable3();  // 確保 extEffectiveStress 被填充（stressTableBody 不存在時 renderTable 會提早返回）
 
             renderBendingMomentChart();
 
@@ -2879,6 +3489,7 @@
 
         function renderTable() {
             const tbody = document.getElementById('stressTableBody');
+            if (!tbody) return;  // stressTableBody 不存在時直接返回，不崩潰
             tbody.innerHTML = '';
 
             const tf_to_kn = 9.80665;
@@ -2941,6 +3552,7 @@
 
             if (!state.extEffectiveStress) state.extEffectiveStress = {};
             state.extEffectiveStress = {};
+            state.extNodeData = {};
 
             // 鋼腱高度計算輔助 (cm from top)
             const getCableY = (x) => {
@@ -2994,8 +3606,10 @@
                 const feff_top = fm_top + faxial;
                 const feff_bot = fm_bot + faxial;
 
-                // 儲存數據供 Tab 5 連動使用
+                // 儲存數據供 Tab 5 / Tab 6-4 連動使用
                 state.extEffectiveStress[nodeNum] = { feff_top, feff_bot };
+                // 外置預力主彎矩 M₁_ext(=force·ep_ext, tf·m)、軸向壓應力 faxial(kgf/cm²)、水平力(tf) 供 Tab 6-4 次彎矩與強度檢核用
+                state.extNodeData[nodeNum] = { meff, faxial, force, ep_ext };
 
                 // 建立表格行
                 const tr = document.createElement('tr');
@@ -3105,23 +3719,46 @@
                 return M_design;
             });
 
-            const chartData = {
-                labels: labels,
-                datasets: [{
-                    type: 'line',
-                    label: '設計彎矩 (tf·m)',
-                    data: data,
-                    borderColor: '#4ade80',
-                    backgroundColor: 'rgba(74, 222, 128, 0.2)',
-                    borderWidth: 2,
-                    pointRadius: 3,
-                    pointBackgroundColor: '#4ade80',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 1,
-                    tension: 0.4,
-                    fill: true
-                }]
-            };
+            const datasets = [{
+                type: 'line',
+                label: '設計彎矩 (tf·m)',
+                data: data,
+                borderColor: '#4ade80',
+                backgroundColor: 'rgba(74, 222, 128, 0.2)',
+                borderWidth: 2,
+                pointRadius: 3,
+                pointBackgroundColor: '#4ade80',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 1,
+                tension: 0.4,
+                fill: true
+            }];
+
+            // PT 補強後：疊加 補強後彎矩(含M₂)、次彎矩 M₂(獨立)、外置PT 等效彎矩
+            if (document.getElementById('chart-show-post')?.checked) {
+                calculateExtForces();
+                const sctx = getStrengthContext();
+                const postMu = state.nodes.map((nx, i) => { const r = computeStrengthAtNode(i, sctx, true); return r ? r.Mu : null; });
+                const m2Arr = state.nodes.map((nx, i) => (sctx.sec2int.M2[i] || 0) + (sctx.sec2ext.M2[i] || 0));   // 次彎矩 M₂(內+外置)
+                const meffArr = state.nodes.map((nx, i) => (state.extNodeData && state.extNodeData[i + 1]) ? state.extNodeData[i + 1].meff : 0);
+                datasets.push({
+                    type: 'line', label: '設計彎矩 補強後 (含 M₂)', data: postMu,
+                    borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)',
+                    borderWidth: 2, pointRadius: 2, pointBackgroundColor: '#ef4444', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.4, fill: false
+                });
+                datasets.push({
+                    type: 'line', label: '次彎矩 M₂ (內+外置)', data: m2Arr,
+                    borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.1)',
+                    borderWidth: 2.5, pointRadius: 2, pointBackgroundColor: '#7c3aed', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0, fill: false
+                });
+                datasets.push({
+                    type: 'line', label: '外置PT 等效彎矩 M₁,ext', data: meffArr,
+                    borderColor: '#14b8a6', backgroundColor: 'rgba(20,184,166,0.1)',
+                    borderWidth: 1.5, borderDash: [6, 3], pointRadius: 1.5, pointBackgroundColor: '#14b8a6', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.4, fill: false
+                });
+            }
+
+            const chartData = { labels: labels, datasets: datasets };
 
             if (momentChartInst) {
                 momentChartInst.data = chartData;
@@ -3165,7 +3802,8 @@
                                 bodyFont: { size: 11 },
                                 callbacks: {
                                     label: (context) => {
-                                        return `設計彎矩: ${context.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tf·m`;
+                                        const v = context.raw == null ? '—' : context.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                        return `${context.dataset.label}: ${v} tf·m`;
                                     }
                                 }
                             }
@@ -3204,20 +3842,46 @@
 
             const chartData = {
                 labels: labels,
-                datasets: [{
-                    type: 'line',
-                    label: '設計剪力 (tf)',
-                    data: data,
-                    borderColor: '#f9a8d4',
-                    backgroundColor: 'rgba(249, 168, 212, 0.2)',
-                    borderWidth: 2,
-                    pointRadius: 3,
-                    pointBackgroundColor: '#f9a8d4',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 1,
-                    tension: 0.4,
-                    fill: true
-                }]
+                datasets: (() => {
+                    const ds = [{
+                        type: 'line',
+                        label: '設計剪力 (tf)',
+                        data: data,
+                        borderColor: '#f9a8d4',
+                        backgroundColor: 'rgba(249, 168, 212, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#f9a8d4',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1,
+                        tension: 0.4,
+                        fill: true
+                    }];
+                    // PT 補強後：疊加 補強後剪力(含V₂)、次剪力 V₂(獨立)、外置PT 垂直分力 Vp
+                    if (document.getElementById('chart-show-post')?.checked) {
+                        calculateExtForces();
+                        const sctx = getStrengthContext();
+                        const V2tot = sctx.sec2int.V2 + sctx.sec2ext.V2;   // 次剪力(全斷面,沿跨常數)
+                        const postV = data.map(v => v + V2tot);             // 補強後全斷面剪力(有號)
+                        const VpArr = state.nodes.map((nx, i) => { const r = computeStrengthAtNode(i, sctx, true); return r ? r.Vp_ext_total : 0; });
+                        ds.push({
+                            type: 'line', label: '設計剪力 補強後 (含 V₂)', data: postV,
+                            borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)',
+                            borderWidth: 2, pointRadius: 2, pointBackgroundColor: '#ef4444', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.4, fill: false
+                        });
+                        ds.push({
+                            type: 'line', label: '次剪力 V₂ (內+外置)', data: state.nodes.map(() => V2tot),
+                            borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.1)',
+                            borderWidth: 2.5, pointRadius: 2, pointBackgroundColor: '#7c3aed', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0, fill: false
+                        });
+                        ds.push({
+                            type: 'line', label: '外置PT 垂直分力 Vp', data: VpArr,
+                            borderColor: '#14b8a6', backgroundColor: 'rgba(20,184,166,0.1)',
+                            borderWidth: 1.5, borderDash: [6, 3], pointRadius: 1.5, pointBackgroundColor: '#14b8a6', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.4, fill: false
+                        });
+                    }
+                    return ds;
+                })()
             };
 
             if (shearChartInst) {
@@ -3261,7 +3925,8 @@
                                 bodyFont: { size: 11 },
                                 callbacks: {
                                     label: (context) => {
-                                        return `設計剪力: ${context.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tf`;
+                                        const v = context.raw == null ? '—' : context.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                        return `${context.dataset.label}: ${v} tf`;
                                     }
                                 }
                             }
@@ -3340,6 +4005,9 @@
             const deadLoadFactor = parseFloat(document.getElementById('dead-load-factor')?.value || 1.3);
             const liveLoadFactor = parseFloat(document.getElementById('live-load-factor')?.value || 2.171);
 
+            const sec2 = computeSecondaryMomentInternal();   // 內置預力次彎矩 M₂ / 次剪力 V₂(=X₁ 沿跨常數)
+            const fmt = (v) => v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
             // Iterate through all 30 nodes
             state.nodes.forEach((nodeX, index) => {
                 const nodeNum = index + 1;
@@ -3356,9 +4024,16 @@
                 // Calculate design vehicle load shear force: V_LL(x) = [3/8*w_LL*L - w_LL*x] * factors
                 const V_LL = ((3 / 8) * w_LL_val * L - w_LL_val * nodeX) * ll_factors;
 
-                // Calculate design moment and shear
+                // Calculate design moment and shear (載重)
                 const M_design = deadLoadFactor * M_DL + liveLoadFactor * M_LL;
                 const V_design = deadLoadFactor * V_DL + liveLoadFactor * V_LL;
+
+                // 次彎矩 M₂ / 次剪力 V₂(內置)；sign-aware 係數 1.0：不利才計入需求（同 6-3）
+                const M2 = sec2.M2[index] || 0;
+                const V2 = sec2.V2;
+                const M_req = (M_design * M2 > 0) ? M_design + M2 : M_design;
+                const V_req = Math.abs(V_design) >= Math.abs(V_design + V2) ? V_design : (V_design + V2);
+                const m2cls = (M_design * M2 > 0) ? 'text-rose-600 font-semibold' : 'text-slate-400';
 
                 const tr = document.createElement('tr');
                 if (nodeNum === 1) tr.className = 'bg-amber-50';
@@ -3366,12 +4041,16 @@
 
                 tr.innerHTML = `
                     <td class="p-2 border-r border-white text-center font-mono">N${nodeNum}</td>
-                    <td class="p-2 border-r border-white text-right font-mono text-green-700">${M_DL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="p-2 border-r border-white text-right font-mono text-green-700">${V_DL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="p-2 border-r border-white text-right font-mono text-blue-700">${M_LL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="p-2 border-r border-white text-right font-mono text-blue-700">${V_LL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="p-2 border-r border-white text-right font-mono font-bold text-amber-700">${M_design.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="p-2 text-right font-mono font-bold text-amber-700">${V_design.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-green-700">${fmt(M_DL)}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-green-700">${fmt(V_DL)}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-blue-700">${fmt(M_LL)}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-blue-700">${fmt(V_LL)}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-amber-700">${fmt(M_design)}</td>
+                    <td class="p-2 border-r border-white text-right font-mono ${m2cls}">${fmt(M2)}</td>
+                    <td class="p-2 border-r border-white text-right font-mono font-bold text-amber-800">${fmt(M_req)}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-amber-700">${fmt(V_design)}</td>
+                    <td class="p-2 border-r border-white text-right font-mono text-rose-600 font-semibold">${fmt(V2)}</td>
+                    <td class="p-2 text-right font-mono font-bold text-amber-800">${fmt(V_req)}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -3458,6 +4137,844 @@
                                 }
                             }
                         }
+                    }
+                });
+            }
+        }
+
+        // =====================================================================
+        // 腹板箍筋配置（竣工圖反算）：外腹板×2 / 中腹板×1，分區段、分腹板類型
+        // =====================================================================
+        // D 系列鋼筋標稱斷面積 (cm²)，CNS 560 / JIS G3112（D16=1.986、D32=7.942 經知識庫算例查證）
+        const REBAR_AREA_CM2 = {
+            'D10': 0.7133, 'D13': 1.267, 'D16': 1.986, 'D19': 2.865,
+            'D22': 3.871, 'D25': 5.067, 'D29': 6.424, 'D32': 7.942, 'D36': 10.07
+        };
+        // 箍筋下拉可選鋼筋（Tab 6-3 逐節點選單）與固定間距
+        const STIRRUP_BAR_OPTIONS = ['D19', 'D22', 'D25'];
+        const STIRRUP_FIX_S = 20;   // 間距固定 @20cm
+
+        // 腹板有效寬 b'w：全寬 − 8.5cm 孔道折減（外45→36.5、中40→31.5），全長固定
+        const SHEAR_WEB_BW = { outer: 45 - 8.5, middle: 40 - 8.5 };
+
+        // 逐節點箍筋（N1~N30，index 0 = N1）：外腹板/中腹板各一組 {bar, s, legs}
+        // 間距固定 @20cm、肢數預設 2；鋼筋由 Tab 6-3 第二道剪力表的下拉選單逐節點選擇
+        const STIRRUP_NODES = Array.from({ length: 30 }, () => ({
+            outer:  { bar: 'D19', s: STIRRUP_FIX_S, legs: 2 },
+            middle: { bar: 'D19', s: STIRRUP_FIX_S, legs: 2 }
+        }));
+
+        // 取得某節點某腹板類型的箍筋規格 + Av（肢數 × 單支面積）
+        function getStirrup(nodeNum, webType) {
+            const spec = (STIRRUP_NODES[nodeNum - 1] || STIRRUP_NODES[0])[webType];
+            const Av = (spec.legs || 0) * (REBAR_AREA_CM2[spec.bar] || 0);
+            return { bar: spec.bar, s: spec.s, legs: spec.legs, Av };
+        }
+
+        // 更新某節點某腹板的箍筋鋼筋並重算（間距固定@20、肢數不變）
+        function updateStirrupNode(nodeNum, webType, bar) {
+            const node = STIRRUP_NODES[nodeNum - 1];
+            if (!node) return;
+            node[webType].bar = bar;
+            renderStrengthCheck();
+        }
+
+        // 端跨 propped cantilever 次彎矩（內置預力）力法
+        // 依據：知識庫「算例_端跨propped cantilever次彎矩力法」、O1 §7.2
+        // 座標 x：N1(橋台,鉸支,x=0) → N30(橋墩,固接,x=L)
+        // 贅餘=橋台反力，m(x)=x → X1 = -∫M1·x dx / ∫x² dx（均勻 EI 相消，等價 -3/L³·∫M1x）
+        // 回傳逐節點 M1(主彎矩 Meff)、M2(次彎矩=X1·x)、X1、V2(=dM2/dx=X1 沿跨常數)，單位 tf·m / tf
+        function computeSecondaryMomentInternal() {
+            const xs = state.nodes;            // 各節點位置 (m)
+            const n = xs.length;
+            const M1 = xs.map((nodeX, index) => {
+                const nodeNum = index + 1;
+                const segId = nodeNum === 30 ? 29 : nodeNum;
+                const section = BEAM_SECTIONS.find(s => s.id === getSegmentNode(segId));
+                if (!section) return 0;
+                const P_top = TOP_PRESTRESS_TF[index] || 0;
+                const P_bot = BOTTOM_PRESTRESS_TF[index] || 0;
+                return (P_bot * (section.Y_bot - 12.5) + P_top * (section.Y_top - 12.5) * (-1)) / 100;
+            });
+            let intM1x = 0, intxx = 0;         // 梯形積分（用實際節點位置，非等距）
+            for (let i = 0; i < n - 1; i++) {
+                const dx = xs[i + 1] - xs[i];
+                intM1x += 0.5 * (M1[i] * xs[i] + M1[i + 1] * xs[i + 1]) * dx;
+                intxx  += 0.5 * (xs[i] * xs[i] + xs[i + 1] * xs[i + 1]) * dx;
+            }
+            const X1 = intxx > 0 ? -intM1x / intxx : 0;   // tf（橋台贅餘反力之次反力分量）
+            const M2 = xs.map(x => X1 * x);               // tf·m，線性：橋台端=0、橋墩端最大
+            return { M1, M2, X1, V2: X1 };
+        }
+
+        // 外置預力次彎矩（補強後）力法 —— 同 computeSecondaryMomentInternal，M₁ 改用外置 meff（Tab 4 state.extNodeData）
+        function computeSecondaryMomentExternal() {
+            const xs = state.nodes;
+            const n = xs.length;
+            const M1 = xs.map((nodeX, index) => (state.extNodeData?.[index + 1]?.meff) || 0);  // tf·m
+            let intM1x = 0, intxx = 0;
+            for (let i = 0; i < n - 1; i++) {
+                const dx = xs[i + 1] - xs[i];
+                intM1x += 0.5 * (M1[i] * xs[i] + M1[i + 1] * xs[i + 1]) * dx;
+                intxx  += 0.5 * (xs[i] * xs[i] + xs[i + 1] * xs[i + 1]) * dx;
+            }
+            const X1 = intxx > 0 ? -intM1x / intxx : 0;
+            const M2 = xs.map(x => X1 * x);
+            return { M1, M2, X1, V2: X1 };
+        }
+
+        // Method A：橋墩負彎矩標稱彎矩 Mn（M1 公式卡 黏結鋼腱 fps 之 k 法，壓力區在底版 b_bot）
+        // 由 P_top(tf) 反推 Aps=P_top/fpe，再用 fps=fpu(1−kc/dp) 算極限彎矩，取代原「fps=fpe」保守簡化
+        // 輸入單位：P_top(tf)、dp/b_bot(cm)、f_c_kgf/fpu_kgf/fpe_kgf(kgf/cm²)；回傳 Mn(tf·m)
+        function computeHoggingMn(P_top, dp, b_bot, f_c_kgf, fpu_kgf, fpe_kgf) {
+            const Aps = P_top * 1000 / fpe_kgf;            // 反推頂版鋼腱面積 (cm²)
+            const f_c_MPa = f_c_kgf / 10.197;
+            const beta1 = Math.max(0.65, Math.min(0.85, 0.85 - 0.05 * (f_c_MPa - 28) / 7));
+            const k = 0.28;                                // 2(1.04 − fpy/fpu)，低鬆弛 fpy/fpu=0.9
+            const c = (Aps * fpu_kgf) / (0.85 * f_c_kgf * beta1 * b_bot + k * Aps * fpu_kgf / dp);
+            const fps = fpu_kgf * (1 - k * c / dp);
+            const a = beta1 * c;
+            const Mn = Aps * fps * (dp - a / 2) / 100000;  // kgf·cm → tf·m
+            return { Mn, Aps, fps, c, a, beta1 };
+        }
+
+        // ===== 強度檢核共用計算核心（6-3 補強前 / 6-4 補強後 共用同一套公式）=====
+        // 一次讀取所有 DOM 輸入與兩組次彎矩，避免逐節點重複讀取
+        function getStrengthContext() {
+            const im = parseFloat(document.getElementById('ll-impact-slider')?.value) || 0;
+            const ol = parseFloat(document.getElementById('ll-overload-slider')?.value) || 0;
+            const reduction = parseFloat(document.getElementById('ll-reduction-select')?.value) || 1;
+            const lanes = parseInt(document.getElementById('ll-lanes-slider')?.value) || 2;
+            return {
+                f_c_kgf: 408.0, phi_m: 0.90, phi_v: 0.90,
+                limit_sigma1: 0.3 * Math.sqrt(408.0),
+                fsy: Math.min(parseFloat(document.getElementById('shear-fsy')?.value) || 4.283, 4.2),
+                n_web: parseInt(document.getElementById('shear-nweb')?.value) || 3,
+                b_bot_in: parseFloat(document.getElementById('shear-bbot')?.value) || 1000,
+                fpu_kgf: (parseFloat(document.getElementById('hog-fpu')?.value) || 1860) * 10.197,   // MPa→kgf/cm²
+                fpe_kgf: parseFloat(document.getElementById('hog-fpe')?.value) || 13000,             // kgf/cm²
+                L: state.span,
+                w_DL_val: 35.94 + (parseFloat(document.getElementById('dl-additional')?.value) || 0),
+                w_LL_val: lanes * 0.96,
+                ll_factors: (1 + im) * (1 + ol) * reduction,
+                DLF: parseFloat(document.getElementById('dead-load-factor')?.value) || 1.3,
+                LLF: parseFloat(document.getElementById('live-load-factor')?.value) || 2.171,
+                sec2int: computeSecondaryMomentInternal(),
+                sec2ext: computeSecondaryMomentExternal()
+            };
+        }
+
+        // 逐節點強度計算。inc=false → 補強前(僅內置)；inc=true → 補強後(加外置 fpc/Vp/Mn/ M₂)
+        function computeStrengthAtNode(index, ctx, inc) {
+            const { f_c_kgf, phi_m, phi_v, limit_sigma1, fsy, n_web, b_bot_in, fpu_kgf, fpe_kgf, L, w_DL_val, w_LL_val, ll_factors, DLF, LLF, sec2int, sec2ext } = ctx;
+            const nodeNum = index + 1;
+            const segId = nodeNum === 30 ? 29 : nodeNum;
+            const sectionId = getSegmentNode(segId);
+            const section = BEAM_SECTIONS.find(s => s.id === sectionId);
+            if (!section) return null;
+            const { Area, I: I_zz, Y_top, Y_bot } = section;
+            const dv = 0.9 * (Y_top + Y_bot), Sbot = I_zz / Y_bot, Stop = I_zz / Y_top;
+            const P_top = TOP_PRESTRESS_TF[index] || 0, P_bot = BOTTOM_PRESTRESS_TF[index] || 0;
+            const Meff = (P_bot * (Y_bot - 12.5) + P_top * (Y_top - 12.5) * (-1)) / 100;
+            const faxial_int = (P_top + P_bot) * 1000 / Area;
+            const ext = (state.extNodeData && state.extNodeData[nodeNum]) || { meff: 0, faxial: 0, force: 0, ep_ext: 0 };
+            const extEff = (state.extEffectiveStress && state.extEffectiveStress[nodeNum]) || { feff_top: 0, feff_bot: 0 };
+            const fpc = faxial_int + (inc ? ext.faxial : 0);
+            const feff_bot = (faxial_int + Meff * 100000 / Sbot) + (inc ? extEff.feff_bot : 0);
+            const feff_top = (faxial_int - Meff * 100000 / Stop) + (inc ? extEff.feff_top : 0);
+            // 載重 + 次彎矩需求（sign-aware 係數 1.0）
+            const x = state.nodes[index];
+            const M_DL = (3 / 8) * w_DL_val * L * x - (w_DL_val / 2) * x * x;
+            const V_DL = (3 / 8) * w_DL_val * L - w_DL_val * x;
+            const M_LL = ((3 / 8) * w_LL_val * L * x - (w_LL_val / 2) * x * x) * ll_factors;
+            const V_LL = ((3 / 8) * w_LL_val * L - w_LL_val * x) * ll_factors;
+            const Mu_load = DLF * M_DL + LLF * M_LL;
+            const M2 = (sec2int.M2[index] || 0) + (inc ? (sec2ext.M2[index] || 0) : 0);
+            const M2_applied = (Mu_load * M2 > 0);
+            const Mu = M2_applied ? Mu_load + M2 : Mu_load;
+            const V2 = sec2int.V2 + (inc ? sec2ext.V2 : 0);
+            const V_load_signed = DLF * V_DL + LLF * V_LL;
+            const Vu_total = Math.max(Math.abs(V_load_signed), Math.abs(V_load_signed + V2));
+            const Vu = Vu_total / n_web;
+            // 彎矩承載力
+            const fr_kgf = 2.0 * Math.sqrt(f_c_kgf);
+            const Mcr_sag = Math.max(0, Sbot * (fr_kgf + feff_bot) / 100000);
+            const Mcr_hog = Math.max(0, Stop * (fr_kgf + feff_top) / 100000);
+            const isHogging = Mu <= 0.01;
+            const pos_ext = ext.ep_ext + Y_top;   // 外置鋼腱距頂 (cm)
+            const dMn_ext = (inc && !isHogging) ? ext.force * pos_ext / 100 : 0;  // 外置：fps=fpe；僅正彎矩計入，負彎矩(底部PT無助益)取0
+            let Mn_display, phi_Mn_display, CR, check_M, Mcr_display, Mcr_min_req, check_M_min, isHogCalc = false;
+            let hogDetail = null;
+            if (isHogging && P_top > 0) {
+                const b_bot = b_bot_in, h_cm = Y_top + Y_bot, d_hog = h_cm - 12.5;
+                // Method A：M1 卡 fps 法（取代原 fps=fpe 保守簡化）
+                hogDetail = computeHoggingMn(P_top, d_hog, b_bot, f_c_kgf, fpu_kgf, fpe_kgf);
+                const Mn_hog = hogDetail.Mn + dMn_ext;
+                const phi_Mn_hog = phi_m * Mn_hog, Mu_abs = Math.abs(Mu);
+                CR = Mu_abs > 0.01 ? phi_Mn_hog / Mu_abs : Infinity;
+                check_M = phi_Mn_hog >= Mu_abs ? 'OK' : 'NG';
+                Mn_display = Mn_hog; phi_Mn_display = phi_Mn_hog; Mcr_display = Mcr_hog;
+                Mcr_min_req = Mu_abs > 0.01 ? Math.min(1.33 * Mu_abs, 1.2 * Mcr_hog) : null;
+                check_M_min = Mcr_min_req === null ? 'NA' : (phi_Mn_hog >= Mcr_min_req ? 'OK' : 'NG');
+                isHogCalc = true;
+            } else {
+                const Mn = (STRESS_BLOCK_DATA[segId]?.Mn ?? 0) + dMn_ext;
+                const phi_Mn = phi_m * Mn;
+                CR = Mu > 0.01 ? phi_Mn / Mu : Infinity;
+                check_M = phi_Mn >= Mu ? 'OK' : 'NG';
+                Mcr_display = Mcr_sag;
+                Mcr_min_req = Mu > 0.01 ? Math.min(1.33 * Mu, 1.2 * Mcr_sag) : null;
+                check_M_min = Mcr_min_req === null ? 'NA' : (phi_Mn >= Mcr_min_req ? 'OK' : 'NG');
+                Mn_display = Mn; phi_Mn_display = phi_Mn;
+            }
+            // 剪力前置
+            const fd_bot = M_DL > 0 ? M_DL * 100000 / Sbot : 0;
+            const Mcr_shear = Math.max(0, (I_zz / Y_bot) * (1.6 * Math.sqrt(f_c_kgf) + feff_bot - fd_bot) / 100000);
+            const M_LL_abs = Math.abs(M_LL), V_DL_abs = Math.abs(V_DL) / n_web, V_LL_abs = Math.abs(V_LL) / n_web, h_cm = Y_top + Y_bot;
+            // 外置 Vp（梁端斜段；塊間=0），單束總值
+            let Vp_ext_total = 0;
+            if (inc) {
+                const blocks = state.extGeometry.deviationBlocks.blocks, cnt = state.extGeometry.deviationBlocks.count;
+                const b1x = blocks[0].x, slY = state.extGeometry.anchorage.sliding.y, hgY = state.extGeometry.anchorage.hinged.y, force = ext.force;
+                if (x <= b1x) Vp_ext_total = b1x > 0 ? force * (278 - slY) / (100 * b1x) : 0;
+                else if (cnt === 2 && x <= blocks[1].x) Vp_ext_total = 0;
+                else { const denom = cnt === 2 ? (56.5 - blocks[1].x) : (56.5 - b1x); Vp_ext_total = denom > 0 ? force * Math.abs(278 - hgY) / (100 * denom) : 0; }
+            }
+            const webs = ['outer', 'middle'].map(key => {
+                const bw = SHEAR_WEB_BW[key];
+                const st = getStirrup(nodeNum, key), Av = st.Av, s_v = st.s;
+                const tau = Vu * 1000 / (bw * dv);
+                const sigma_x = -fpc;
+                const sigma_1 = sigma_x / 2 + Math.sqrt(Math.pow(sigma_x / 2, 2) + Math.pow(tau, 2));
+                const check_s1 = sigma_1 <= limit_sigma1 ? 'OK' : 'NG';
+                const Vcw = (0.3 * Math.sqrt(f_c_kgf) + 0.3 * fpc) * bw * dv / 1000;
+                const Vci_min = 0.45 * Math.sqrt(f_c_kgf) * bw * dv / 1000;
+                let Vci = (M_LL_abs > 0.01) ? 0.16 * Math.sqrt(f_c_kgf) * bw * dv / 1000 + V_DL_abs + V_LL_abs * Mcr_shear / M_LL_abs : 0.16 * Math.sqrt(f_c_kgf) * bw * dv / 1000 + V_DL_abs;
+                Vci = Math.max(Vci, Vci_min);
+                const Vc = Math.min(Vci, Vcw);
+                const Vs = s_v > 0 ? Av * fsy * dv / s_v : 0;
+                const Vp_web = inc ? Vp_ext_total / n_web : 0;
+                const phi_Vn = phi_v * (Vc + Vs + Vp_web);
+                const check_V = phi_Vn >= Vu ? 'OK' : 'NG';
+                const phi_Vn_max = phi_v * 0.25 * f_c_kgf * bw * dv / 1000;
+                const check_crush = Vu <= phi_Vn_max ? 'OK' : 'NG';
+                const Av_s_actual = (Av > 0 && s_v > 0) ? Av / s_v : null;
+                const Av_s_min = 3.5 * bw / (fsy * 1000);
+                const check_rebar = Av_s_actual === null ? null : (Av_s_actual >= Av_s_min ? 'OK' : 'NG');
+                const Vs_spacing_thr = 1.06 * Math.sqrt(f_c_kgf) * bw * dv / 1000;
+                const s_halved = Vs > Vs_spacing_thr;
+                const s_max = s_halved ? Math.min(0.375 * h_cm, 30) : Math.min(0.75 * h_cm, 60);
+                const check_spacing = s_v <= 0 ? null : (s_v <= s_max ? 'OK' : 'NG');
+                const Vs_max = 2.1 * Math.sqrt(f_c_kgf) * bw * dv / 1000;
+                const check_Vs = (Av > 0 && s_v > 0) ? (Vs <= Vs_max ? 'OK' : 'NG') : null;
+                return { key, bw, st, Av, s_v, tau, sigma_x, sigma_1, check_s1, Vcw, Vci, Vci_min, Vc, Vs, Vp_web, phi_Vn, check_V, phi_Vn_max, check_crush, Av_s_actual, Av_s_min, check_rebar, s_halved, s_max, check_spacing, Vs_max, check_Vs };
+            });
+            return { nodeNum, sectionId, isHogCalc, isHogging, Mn_display, phi_Mn_display, Mu, Mu_load, M2, M2_applied, dMn_ext, CR, check_M, Mcr_display, Mcr_min_req, check_M_min, fpc, dv, Vu, Vu_total, V2, Vp_ext_total, hogDetail, webs };
+        }
+
+        function renderStrengthCheck() {
+            const momentTbody = document.getElementById('momentCheckTableBody');
+            const principalTbody = document.getElementById('shearPrincipalTableBody');
+            const strengthTbody = document.getElementById('shearStrengthTableBody');
+            const webTbody = document.getElementById('webCheckTableBody');
+            if (!momentTbody || !principalTbody || !strengthTbody) return;
+
+            momentTbody.innerHTML = '';
+            principalTbody.innerHTML = '';
+            strengthTbody.innerHTML = '';
+            if (webTbody) webTbody.innerHTML = '';
+
+            const f_c_kgf = 408.0;
+            const phi_m = 0.90;   // 台灣 §8.14 一般預力 彎矩 φ=0.90（同 AASHTO 表5.5.4.2.2-1 非黏結/外置PT φf=0.90）
+            const phi_v = 0.90;   // 台灣 §8.14 一般預力 剪力 φv=0.90（台灣規範為主；AASHTO 節塊橋外置PT 採 0.85 更嚴，本工具採台灣值）
+            const limit_sigma1 = 0.3 * Math.sqrt(f_c_kgf);
+
+            const fsy_input = parseFloat(document.getElementById('shear-fsy')?.value) || 4.283;
+            const fsy = Math.min(fsy_input, 4.2);   // 台灣 §8.20.3：剪力計算 fsy ≤ 4200 kgf/cm²(=4.2 tf/cm²)
+            const n_web = parseInt(document.getElementById('shear-nweb')?.value) || 3;   // 腹板數（剪力分攤，本橋雙室=3）
+
+            const L = state.span;
+            const w_DL_val = 35.94 + (parseFloat(document.getElementById('dl-additional')?.value) || 0);
+            const lanes    = parseInt(document.getElementById('ll-lanes-slider')?.value) || 2;
+            const im       = parseFloat(document.getElementById('ll-impact-slider')?.value) || 0;
+            const ol       = parseFloat(document.getElementById('ll-overload-slider')?.value) || 0;
+            const reduction = parseFloat(document.getElementById('ll-reduction-select')?.value) || 1;
+            const w_LL_val  = lanes * 0.96;
+            const ll_factors = (1 + im) * (1 + ol) * reduction;
+
+            const DLF = parseFloat(document.getElementById('dead-load-factor')?.value) || 1.3;
+            const LLF = parseFloat(document.getElementById('live-load-factor')?.value) || 2.171;
+
+            const fmtN = (v, d = 2) => isFinite(v) ? v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—';
+            const okNg = (v) => v === 'OK'
+                ? `<span class="font-bold text-green-600">OK</span>`
+                : `<span class="font-bold text-red-600">NG</span>`;
+
+            const sec2 = computeSecondaryMomentInternal();   // 內置預力次彎矩（僅顯示，尚未接入需求）
+
+            state.nodes.forEach((nodeX, index) => {
+                const nodeNum = index + 1;
+                const M2_int = sec2.M2[index] || 0;          // 本節點內置 M₂ (tf·m)
+                const segId = nodeNum === 30 ? 29 : nodeNum;
+
+                const sectionId = getSegmentNode(segId);
+                const section = BEAM_SECTIONS.find(s => s.id === sectionId);
+                if (!section) return;
+
+                const { Area, I: I_zz, Y_top, Y_bot, C: webWidth } = section;
+                const bw   = webWidth - 8.5;   // b'w = 腹板寬度 − 8.5 cm
+                const Sbot = I_zz / Y_bot;
+                const dv   = 0.9 * (Y_top + Y_bot);
+
+                const P_top = TOP_PRESTRESS_TF[index] || 0;
+                const P_bot = BOTTOM_PRESTRESS_TF[index] || 0;
+                const Meff  = (P_bot * (Y_bot - 12.5) + P_top * (Y_top - 12.5) * (-1)) / 100;
+                const faxial   = (P_top + P_bot) * 1000 / Area;
+                const feff_bot = faxial + Meff * 100000 / Sbot;
+                const fpc = faxial;
+
+                const x = nodeX;
+                const M_DL = (3 / 8) * w_DL_val * L * x - (w_DL_val / 2) * x * x;
+                const V_DL = (3 / 8) * w_DL_val * L - w_DL_val * x;
+                const M_LL = ((3 / 8) * w_LL_val * L * x - (w_LL_val / 2) * x * x) * ll_factors;
+                const V_LL = ((3 / 8) * w_LL_val * L - w_LL_val * x) * ll_factors;
+                const Mu_load = DLF * M_DL + LLF * M_LL;             // 載重彎矩（DL+LL）
+                // 次彎矩 M₂ sign-aware（台灣/AASHTO §3.4.3 係數 1.0）：與載重同號(不利)才計入，反號(有利)不採信
+                const M2_applied = (Mu_load * M2_int > 0);          // 與載重彎矩同號(不利)→計入需求
+                const Mu  = M2_applied ? Mu_load + M2_int : Mu_load;   // 全斷面彎矩（彎矩檢核基準，不分攤）
+                const V_load_signed = DLF * V_DL + LLF * V_LL;        // 載重剪力（有號）
+                const V_total_signed = V_load_signed + sec2.V2;      // 加次剪力 V₂(=X₁ 沿跨常數)
+                const Vu_total = Math.max(Math.abs(V_load_signed), Math.abs(V_total_signed));  // sign-aware：V₂ 不利才計入
+                const Vu  = Vu_total / n_web;                         // 每片腹板剪力（τ / φVn 檢核基準）
+
+                // === Moment Strength ===
+                const fr_kgf   = 2.0 * Math.sqrt(f_c_kgf);
+                const Stop     = I_zz / Y_top;                                          // 頂版截面模數 cm³
+                const Mcr_sag  = Math.max(0, Sbot * (fr_kgf + feff_bot) / 100000);     // 正彎矩裂縫彎矩 tf·m
+                // 負彎矩裂縫彎矩：頂版纖維 feff_top = faxial − Meff×100000/Stop
+                const feff_top = faxial - Meff * 100000 / Stop;
+                const Mcr_hog  = Math.max(0, Stop  * (fr_kgf + feff_top) / 100000);    // 負彎矩裂縫彎矩 tf·m
+                const isHogging = Mu <= 0.01;
+
+                let Mn_display, phi_Mn_display, CR, check_M, Mcr_display, Mcr_min_req, check_M_min, isHogCalc = false, hogDetail = null;
+
+                if (isHogging && P_top > 0) {
+                    // 負彎矩區：壓縮區在底版，頂版 PT 提供拉力抵抗
+                    // Method A（M1 公式卡 fps 之 k 法）：Aps=P_top/fpe 反推面積，fps=fpu(1−kc/dp)，Mn=Aps·fps·(d−a/2)
+                    // 取代原「fps=fpe」保守簡化（避免橋墩負彎矩假 NG）；Mcr_hog：Stop×(fr + feff_top)
+                    // Ref: M1 公式卡 / ACI 318-19 §22.2 / AASHTO 5.7.3、5.7.3.3.2（最小強度限）
+                    const b_bot  = parseFloat(document.getElementById('shear-bbot')?.value) || 1000;
+                    const fpu_kgf = (parseFloat(document.getElementById('hog-fpu')?.value) || 1860) * 10.197;
+                    const fpe_kgf = parseFloat(document.getElementById('hog-fpe')?.value) || 13000;
+                    const h_cm   = Y_top + Y_bot;
+                    const d_hog  = h_cm - 12.5;
+                    hogDetail    = computeHoggingMn(P_top, d_hog, b_bot, f_c_kgf, fpu_kgf, fpe_kgf);
+                    const Mn_hog = hogDetail.Mn;
+                    const phi_Mn_hog = phi_m * Mn_hog;
+                    const Mu_abs = Math.abs(Mu);
+                    CR              = Mu_abs > 0.01 ? phi_Mn_hog / Mu_abs : Infinity;
+                    check_M         = phi_Mn_hog >= Mu_abs ? 'OK' : 'NG';
+                    Mn_display      = Mn_hog;
+                    phi_Mn_display  = phi_Mn_hog;
+                    Mcr_display     = Mcr_hog;
+                    Mcr_min_req     = Mu_abs > 0.01 ? Math.min(1.33 * Mu_abs, 1.2 * Mcr_hog) : null;
+                    check_M_min     = Mcr_min_req === null ? 'NA' : (phi_Mn_hog >= Mcr_min_req ? 'OK' : 'NG');
+                    isHogCalc       = true;
+                } else {
+                    // 正彎矩區：沿用既有 STRESS_BLOCK_DATA（底版 PT 控制）
+                    const Mn     = STRESS_BLOCK_DATA[segId]?.Mn ?? 0;
+                    const phi_Mn = phi_m * Mn;
+                    CR             = Mu > 0.01 ? phi_Mn / Mu : Infinity;
+                    check_M        = phi_Mn >= Mu ? 'OK' : 'NG';
+                    Mcr_display    = Mcr_sag;
+                    Mcr_min_req    = Mu > 0.01 ? Math.min(1.33 * Mu, 1.2 * Mcr_sag) : null;
+                    check_M_min    = Mcr_min_req === null ? 'NA' : (phi_Mn >= Mcr_min_req ? 'OK' : 'NG');
+                    Mn_display     = Mn;
+                    phi_Mn_display = phi_Mn;
+                }
+
+                // === 剪力檢核前置（全斷面、與腹板寬無關，供逐腹板迴圈共用）===
+                const fd_bot = M_DL > 0 ? M_DL * 100000 / Sbot : 0;
+                // §8.20.2 式8-28：1.6√f'c（kgf制）= 0.5√f'c（MPa制）×10.2
+                const Mcr_shear = Math.max(0, (I_zz / Y_bot) * (1.6 * Math.sqrt(f_c_kgf) + feff_bot - fd_bot) / 100000);
+                const M_LL_abs = Math.abs(M_LL);              // 全斷面彎矩（Mcr/Mmax 比值用）
+                const V_DL_abs = Math.abs(V_DL) / n_web;      // 每片腹板靜載剪力
+                const V_LL_abs = Math.abs(V_LL) / n_web;      // 每片腹板活載剪力
+
+                const rowClass = nodeNum === 1 ? 'bg-amber-50' : nodeNum === 30 ? 'bg-cyan-50' : '';
+
+                // Moment row
+                const trM = document.createElement('tr');
+                trM.className = isHogCalc ? 'bg-rose-50' : rowClass;
+                const mnLabel  = isHogCalc
+                    ? `<div class="text-[9px] text-rose-400 leading-tight mt-0.5 font-normal">頂版PT↑負彎矩${hogDetail ? `<br>Aps=${fmtN(hogDetail.Aps, 0)}cm² · fps=${fmtN(hogDetail.fps, 0)} · c=${fmtN(hogDetail.c, 1)} · a=${fmtN(hogDetail.a, 1)}` : ''}</div>`
+                    : '';
+                const mnColor  = isHogCalc ? 'text-rose-700' : '';
+                const muColor  = isHogCalc ? 'text-rose-600' : 'text-amber-700';
+                const phiColor = isHogCalc ? 'text-rose-700' : 'text-purple-700';
+                const mcrColor = isHogCalc ? 'text-orange-700' : 'text-teal-700';
+                const mcrNote  = isHogCalc ? '<div class="text-[9px] text-orange-400 font-normal leading-tight mt-0.5">頂版纖維</div>' : '';
+                const lastCells = `
+                    <td class="border border-slate-200 px-2 py-1.5 text-right font-mono ${mcrColor}">${fmtN(Mcr_display)}${mcrNote}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-slate-600">${Mcr_min_req !== null ? fmtN(Mcr_min_req) : '—'}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-center">${check_M_min === 'NA' ? '<span class="text-slate-400">—</span>' : okNg(check_M_min)}</td>`;
+                trM.innerHTML = `
+                    <td class="border border-slate-200 px-2 py-1.5 text-center font-mono font-semibold">N${nodeNum}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-center text-purple-600">${sectionId}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-right font-mono ${mnColor}">${fmtN(Mn_display)}${mnLabel}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-right font-mono font-bold ${phiColor}">${fmtN(phi_Mn_display)}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-right font-mono font-bold ${muColor}">${fmtN(Mu)}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-right font-mono ${M2_applied ? 'text-rose-600 font-semibold' : 'text-slate-400'}">${fmtN(M2_int)}${M2_applied ? '' : '<div class="text-[9px] leading-tight">有利,未計</div>'}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-right font-mono">${isFinite(CR) ? fmtN(CR, 3) : '—'}</td>
+                    <td class="border border-slate-200 px-2 py-1.5 text-center">${okNg(check_M)}</td>
+                    ${lastCells}
+                `;
+                momentTbody.appendChild(trM);
+
+                // ===== 逐腹板剪力檢核：外腹板×2 / 中腹板×1（竣工圖箍筋分區段）=====
+                const h_cm = Y_top + Y_bot;  // 全梁高 (cm)
+                const naCell = (v) => v === null ? `<span class="text-slate-400">—</span>` : okNg(v);
+                const webTypes = [
+                    { key: 'outer',  label: '外腹板', n: 2, color: 'text-amber-700' },
+                    { key: 'middle', label: '中腹板', n: 1, color: 'text-sky-700' }
+                ];
+                webTypes.forEach(wt => {
+                    const bw = SHEAR_WEB_BW[wt.key];
+                    const st = getStirrup(nodeNum, wt.key);
+                    const Av = st.Av, s_v = st.s;
+                    const selBorder = wt.key === 'outer' ? 'border-amber-300' : 'border-sky-300';
+                    const barOpts = STIRRUP_BAR_OPTIONS.map(b => `<option value="${b}" ${b === st.bar ? 'selected' : ''}>${b}</option>`).join('');
+                    const stirrupCell = `<select onchange="updateStirrupNode(${nodeNum},'${wt.key}',this.value)" class="border ${selBorder} rounded px-1 py-0.5 text-[11px] font-mono">${barOpts}</select><span class="text-slate-400">@${fmtN(s_v, 0)}</span><span class="text-slate-400 text-[10px]">(${st.legs}肢)</span>`;
+                    const rc = nodeNum === 1 ? 'bg-amber-50' : nodeNum === 30 ? 'bg-cyan-50' : (wt.key === 'middle' ? 'bg-slate-50' : '');
+                    const webCell = `<td class="border border-slate-200 px-2 py-1.5 text-center font-semibold ${wt.color}">${wt.label}<div class="text-[9px] font-normal text-slate-400">×${wt.n}</div></td>`;
+
+                    // 第一道：主拉應力（τ、σ₁ 隨 bw 不同）
+                    const tau = Vu * 1000 / (bw * dv);
+                    const sigma_x = -fpc;
+                    const sigma_1 = sigma_x / 2 + Math.sqrt(Math.pow(sigma_x / 2, 2) + Math.pow(tau, 2));
+                    const check_s1 = sigma_1 <= limit_sigma1 ? 'OK' : 'NG';
+
+                    // 第二道：剪力強度
+                    const Vcw = (0.3 * Math.sqrt(f_c_kgf) + 0.3 * fpc) * bw * dv / 1000;  // §8.20.2
+                    const Vci_min = 0.45 * Math.sqrt(f_c_kgf) * bw * dv / 1000;            // §8.20.2 式8-27 下限
+                    let Vci = (M_LL_abs > 0.01)
+                        ? 0.16 * Math.sqrt(f_c_kgf) * bw * dv / 1000 + V_DL_abs + V_LL_abs * Mcr_shear / M_LL_abs
+                        : 0.16 * Math.sqrt(f_c_kgf) * bw * dv / 1000 + V_DL_abs;
+                    Vci = Math.max(Vci, Vci_min);
+                    const Vc = Math.min(Vci, Vcw);
+                    const Vs = s_v > 0 ? Av * fsy * dv / s_v : 0;
+                    const phi_Vn = phi_v * (Vc + Vs);
+                    const check_V = phi_Vn >= Vu ? 'OK' : 'NG';
+
+                    // 第三道：腹板補充
+                    const phi_Vn_max = phi_v * 0.25 * f_c_kgf * bw * dv / 1000;            // ①壓碎上限 AASHTO §5.8.3.3
+                    const check_crush = Vu <= phi_Vn_max ? 'OK' : 'NG';
+                    const Av_s_actual = (Av > 0 && s_v > 0) ? Av / s_v : null;
+                    const Av_s_min = 3.5 * bw / (fsy * 1000);                              // ②最小筋 台灣 §8.20.3
+                    const check_rebar = Av_s_actual === null ? null : (Av_s_actual >= Av_s_min ? 'OK' : 'NG');
+                    const Vs_spacing_thr = 1.06 * Math.sqrt(f_c_kgf) * bw * dv / 1000;     // ③間距 台灣 §8.20.3（超過則減半）
+                    const s_halved = Vs > Vs_spacing_thr;
+                    const s_max = s_halved ? Math.min(0.375 * h_cm, 30) : Math.min(0.75 * h_cm, 60);
+                    const check_spacing = s_v <= 0 ? null : (s_v <= s_max ? 'OK' : 'NG');
+                    const Vs_max = 2.1 * Math.sqrt(f_c_kgf) * bw * dv / 1000;              // ④Vs上限 台灣 §8.20.3
+                    const check_Vs = (Av > 0 && s_v > 0) ? (Vs <= Vs_max ? 'OK' : 'NG') : null;
+
+                    // --- 第一道 row ---
+                    const trP = document.createElement('tr'); trP.className = rc;
+                    trP.innerHTML = `
+                        <td class="border border-slate-200 px-2 py-1.5 text-center font-mono font-semibold">N${nodeNum}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-center text-purple-600">${sectionId}</td>
+                        ${webCell}
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-amber-700">${fmtN(Vu)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-slate-600">${fmtN(bw)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono">${fmtN(tau)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-blue-700">${fmtN(sigma_x)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono font-bold text-orange-700">${fmtN(sigma_1)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono">${fmtN(limit_sigma1)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-center">${okNg(check_s1)}</td>`;
+                    principalTbody.appendChild(trP);
+
+                    // --- 第二道 row ---
+                    const trS = document.createElement('tr'); trS.className = rc;
+                    trS.innerHTML = `
+                        <td class="border border-slate-200 px-2 py-1.5 text-center font-mono font-semibold">N${nodeNum}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-center text-purple-600">${sectionId}</td>
+                        ${webCell}
+                        <td class="border border-slate-200 px-2 py-1.5 text-center whitespace-nowrap">${stirrupCell}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-amber-700">${fmtN(Vu)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-slate-600">${fmtN(bw)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-blue-700">${fmtN(Vcw)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-green-700">${isFinite(Vci) ? fmtN(Vci) : '∞'}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-green-600 text-[11px]">${fmtN(Vci_min)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono font-bold text-purple-700">${fmtN(Vc)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono">${fmtN(Vs)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-right font-mono font-bold text-red-700">${fmtN(phi_Vn)}</td>
+                        <td class="border border-slate-200 px-2 py-1.5 text-center">${okNg(check_V)}</td>`;
+                    strengthTbody.appendChild(trS);
+
+                    // --- 第三道 row ---
+                    if (webTbody) {
+                        const trW = document.createElement('tr'); trW.className = rc;
+                        trW.innerHTML = `
+                            <td class="border border-slate-200 px-2 py-1.5 text-center font-mono font-semibold">N${nodeNum}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-center text-purple-600">${sectionId}</td>
+                            ${webCell}
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-slate-600">${fmtN(bw)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-slate-600">${fmtN(dv)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono font-bold text-rose-700">${fmtN(phi_Vn_max)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-amber-700">${fmtN(Vu)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-center">${okNg(check_crush)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-indigo-700">${Av_s_actual !== null ? fmtN(Av_s_actual, 4) : '<span class="text-slate-400">—</span>'}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-indigo-600">${fmtN(Av_s_min, 4)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-center">${naCell(check_rebar)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-slate-600">${s_v > 0 ? fmtN(s_v, 0) : '—'}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-slate-600">${fmtN(s_max, 0)}${s_halved ? '<div class="text-[9px] text-rose-500 leading-tight font-normal">減半</div>' : ''}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-center">${naCell(check_spacing)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-right font-mono text-rose-600">${fmtN(Vs_max)}</td>
+                            <td class="border border-slate-200 px-2 py-1.5 text-center">${naCell(check_Vs)}</td>`;
+                        webTbody.appendChild(trW);
+                    }
+                });
+            });
+        }
+
+        // ===== Tab 6-4 補強後強度檢核（補強前/後對照）=====
+        function renderStrengthCheckPost() {
+            calculateExtForces();   // 刷新外置力量/幾何 → state.extNodeData、extEffectiveStress
+            const sumTbody = document.getElementById('summaryPostTableBody');
+            const momTbody = document.getElementById('momentPostTableBody');
+            const shrTbody = document.getElementById('shearPostTableBody');
+            if (!sumTbody || !momTbody || !shrTbody) return;
+            sumTbody.innerHTML = ''; momTbody.innerHTML = ''; shrTbody.innerHTML = '';
+
+            const ctx = getStrengthContext();
+            const fmtN = (v, d = 2) => isFinite(v) ? v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—';
+            const okNg = (v) => v === 'OK' ? `<span class="font-bold text-green-600">OK</span>` : `<span class="font-bold text-red-600">NG</span>`;
+            const trans = (pre, post) => {
+                const arrow = (pre === 'NG' && post === 'OK') ? '<span class="text-green-600 font-bold">⇗</span>'
+                    : (pre === 'OK' && post === 'NG') ? '<span class="text-red-600 font-bold">⇘</span>' : '→';
+                return `${okNg(pre)} ${arrow} ${okNg(post)}`;
+            };
+            const td = (cls, html) => `<td class="border border-slate-200 px-2 py-1 ${cls}">${html}</td>`;
+
+            state.nodes.forEach((nodeX, index) => {
+                const pre = computeStrengthAtNode(index, ctx, false);
+                const post = computeStrengthAtNode(index, ctx, true);
+                if (!pre || !post) return;
+                const nodeNum = pre.nodeNum;
+                const rc = nodeNum === 1 ? 'bg-amber-50' : nodeNum === 30 ? 'bg-cyan-50' : '';
+                const wPreO = pre.webs[0], wPostO = post.webs[0];   // 外腹板(控制)
+                const dVn = wPreO.phi_Vn > 0 ? (wPostO.phi_Vn - wPreO.phi_Vn) / wPreO.phi_Vn * 100 : 0;
+
+                // 總覽
+                const trS = document.createElement('tr'); trS.className = rc;
+                trS.innerHTML =
+                    td('text-center font-mono font-semibold', `N${nodeNum}`) +
+                    td('text-center text-purple-600', pre.sectionId) +
+                    td('text-right font-mono text-slate-600', fmtN(pre.phi_Mn_display)) +
+                    td('text-right font-mono font-bold text-purple-700', fmtN(post.phi_Mn_display)) +
+                    td('text-center text-[11px]', trans(pre.check_M, post.check_M)) +
+                    td('text-right font-mono', fmtN(wPreO.sigma_1)) +
+                    td('text-right font-mono text-orange-700', fmtN(wPostO.sigma_1)) +
+                    td('text-right font-mono text-slate-600', fmtN(wPreO.phi_Vn)) +
+                    td('text-right font-mono font-bold text-red-700', fmtN(wPostO.phi_Vn)) +
+                    td(`text-right font-mono ${dVn >= 0 ? 'text-emerald-700' : 'text-red-700'}`, `${dVn >= 0 ? '+' : ''}${fmtN(dVn, 1)}%`) +
+                    td('text-center text-[11px]', trans(wPreO.check_V, wPostO.check_V));
+                sumTbody.appendChild(trS);
+
+                // 彎矩明細
+                const trM = document.createElement('tr'); trM.className = post.isHogCalc ? 'bg-rose-50' : rc;
+                const muDelta = post.Mu - pre.Mu;   // 外置 M₂ 對需求增量(sign-aware 後)
+                trM.innerHTML =
+                    td('text-center font-mono font-semibold', `N${nodeNum}`) +
+                    td('text-center text-purple-600', pre.sectionId) +
+                    td('text-right font-mono text-slate-600', fmtN(pre.Mn_display)) +
+                    td('text-right font-mono text-teal-700', post.dMn_ext ? fmtN(post.dMn_ext) : (post.isHogCalc ? '<span class="text-slate-400">0(墩)</span>' : fmtN(0))) +
+                    td('text-right font-mono font-bold text-purple-700', fmtN(post.phi_Mn_display)) +
+                    td('text-right font-mono text-amber-700', fmtN(pre.Mu)) +
+                    td('text-right font-mono text-rose-600', muDelta ? fmtN(muDelta) : '<span class="text-slate-400">0</span>') +
+                    td('text-right font-mono font-bold text-amber-800', fmtN(post.Mu)) +
+                    td('text-right font-mono', isFinite(post.CR) ? fmtN(post.CR, 3) : '—') +
+                    td('text-center text-[11px]', trans(pre.check_M, post.check_M));
+                momTbody.appendChild(trM);
+
+                // 剪力明細（外腹板×2 / 中腹板×1）
+                const webMeta = [{ label: '外腹板', n: 2, color: 'text-amber-700' }, { label: '中腹板', n: 1, color: 'text-sky-700' }];
+                post.webs.forEach((wPost, wi) => {
+                    const wPre = pre.webs[wi];
+                    const trSh = document.createElement('tr');
+                    trSh.className = nodeNum === 1 ? 'bg-amber-50' : nodeNum === 30 ? 'bg-cyan-50' : (wi === 1 ? 'bg-slate-50' : '');
+                    trSh.innerHTML =
+                        td('text-center font-mono font-semibold', `N${nodeNum}`) +
+                        td('text-center text-purple-600', pre.sectionId) +
+                        td(`text-center font-semibold ${webMeta[wi].color}`, `${webMeta[wi].label}<div class="text-[9px] font-normal text-slate-400">×${webMeta[wi].n}</div>`) +
+                        td('text-right font-mono text-slate-500', fmtN(pre.fpc)) +
+                        td('text-right font-mono text-blue-700', fmtN(post.fpc)) +
+                        td(`text-right font-mono font-bold ${wPost.sigma_1 <= ctx.limit_sigma1 ? 'text-orange-700' : 'text-red-600'}`, fmtN(wPost.sigma_1)) +
+                        td('text-right font-mono text-blue-700', fmtN(wPost.Vcw)) +
+                        td('text-right font-mono text-purple-700', fmtN(wPost.Vc)) +
+                        td('text-right font-mono', fmtN(wPost.Vs)) +
+                        td('text-right font-mono text-teal-700', fmtN(wPost.Vp_web)) +
+                        td('text-right font-mono text-slate-500', fmtN(wPre.phi_Vn)) +
+                        td('text-right font-mono font-bold text-red-700', fmtN(wPost.phi_Vn)) +
+                        td('text-right font-mono text-amber-700', fmtN(post.Vu)) +
+                        td('text-center text-[11px]', trans(wPre.check_V, wPost.check_V));
+                    shrTbody.appendChild(trSh);
+                });
+            });
+        }
+
+        // =====================================================================
+        // TAB 7: 撓度分析
+        // =====================================================================
+
+        let deflectionPreChartInst  = null;
+        let deflectionPostChartInst = null;
+
+        function getDeflectionParams() {
+            const f_c_MPa  = 40.0;
+            const E_c_MPa  = 4700 * Math.sqrt(f_c_MPa);          // ACI 318-19 §19.2.2.1b
+            const E_c_tf_m2 = E_c_MPa * 101.972;                  // 1 MPa = 101.972 tf/m²
+
+            // 以 Section 1（主跨代表斷面）計算 EI
+            const sec1 = BEAM_SECTIONS.find(s => s.id === 1);
+            const I1_m4 = sec1.I / 1e8;                           // cm⁴ → m⁴
+            const EI_tf_m2 = E_c_tf_m2 * I1_m4;
+
+            const L   = state.span;                                // m
+            const lim = L / 800 * 1000;                           // mm
+
+            const w_DL  = 35.94 + (parseFloat(document.getElementById('dl-additional')?.value) || 0); // tf/m
+            const lanes = parseInt(document.getElementById('ll-lanes-slider')?.value) || 2;
+            const im    = parseFloat(document.getElementById('ll-impact-slider')?.value) || 0;
+            const ol    = parseFloat(document.getElementById('ll-overload-slider')?.value) || 0;
+            const red   = parseFloat(document.getElementById('ll-reduction-select')?.value) || 1;
+            const w_LL_base    = lanes * 0.96;                     // tf/m，服務活載
+            const w_LL_design  = w_LL_base * (1 + im) * (1 + ol) * red; // tf/m，設計活載
+
+            return { E_c_MPa, E_c_tf_m2, EI_tf_m2, I1_m4, sec1, L, lim, w_DL, w_LL_base, w_LL_design };
+        }
+
+        // Propped cantilever (pin at x=0, fixed at x=L), downward UDL w → deflection at x (m, negative=down)
+        // Formula: y(x) = wx/(48EI) × (3Lx²−2x³−L³)
+        // Ref: Timoshenko "Strength of Materials" Vol.1; 台灣橋規 §3.4
+        function deflUDL(w, x, L, EI) {
+            return w * x / (48 * EI) * (3 * L * x * x - 2 * x * x * x - L * L * L);
+        }
+
+        // Propped cantilever, upward point load P at position a → deflection at x (m, positive=up)
+        // R_A = P(L−a)²(2L+a)/(2L³)；C1 = −Pa(L−a)²/(4L)
+        // Ref: Roark's Formulas for Stress and Strain (8th ed.) Table 8.1, Case 3c
+        function deflPointLoad(P, a, x, L, EI) {
+            const RA = P * Math.pow(L - a, 2) * (2 * L + a) / (2 * Math.pow(L, 3));
+            const C1 = -P * a * Math.pow(L - a, 2) / (4 * L);
+            let EI_y;
+            if (x <= a) {
+                EI_y = RA * Math.pow(x, 3) / 6 + C1 * x;
+            } else {
+                EI_y = RA * Math.pow(x, 3) / 6 - P * Math.pow(x - a, 3) / 6 + C1 * x;
+            }
+            return EI_y / EI;
+        }
+
+        function renderDeflectionPre() {
+            const { E_c_MPa, E_c_tf_m2, EI_tf_m2, I1_m4, sec1, L, lim, w_DL, w_LL_base, w_LL_design } = getDeflectionParams();
+            const f_c_MPa = 40.0;
+
+            // EI info box
+            const eiBox = document.getElementById('deflection-ei-info');
+            if (eiBox) {
+                eiBox.innerHTML = `
+                    <span class="font-bold text-slate-700">計算依據 —</span>
+                    f'c = 40 MPa；
+                    E<sub>c</sub> = 4700√40 = <strong>${E_c_MPa.toFixed(0)} MPa</strong> = ${E_c_tf_m2.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} tf/m²；
+                    I<sub>Section1</sub> = ${(I1_m4).toFixed(4)} m⁴；
+                    <strong>EI = ${(EI_tf_m2/1e6).toFixed(4)} × 10⁶ tf·m²</strong>；
+                    L = ${L} m；L/800 = <strong>${lim.toFixed(1)} mm</strong>；
+                    w<sub>DL</sub> = ${w_DL.toFixed(2)} tf/m；w<sub>LL,服務</sub> = ${w_LL_base.toFixed(2)} tf/m；w<sub>LL,設計</sub> = ${w_LL_design.toFixed(2)} tf/m
+                `;
+            }
+
+            const tbody = document.getElementById('deflectionPreTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const labels = [], dDL = [], dLLsvc = [], dLLdes = [], dTotal = [];
+
+            state.nodes.forEach((x, idx) => {
+                const nodeNum = idx + 1;
+                const yDL   = deflUDL(w_DL,       x, L, EI_tf_m2) * 1000; // mm
+                const yLLs  = deflUDL(w_LL_base,   x, L, EI_tf_m2) * 1000;
+                const yLLd  = deflUDL(w_LL_design,  x, L, EI_tf_m2) * 1000;
+                const yTot  = yDL + yLLd;
+
+                labels.push('N' + nodeNum);
+                dDL.push(parseFloat(yDL.toFixed(3)));
+                dLLsvc.push(parseFloat(yLLs.toFixed(3)));
+                dLLdes.push(parseFloat(yLLd.toFixed(3)));
+                dTotal.push(parseFloat(yTot.toFixed(3)));
+
+                const absLLs = Math.abs(yLLs);
+                const ok = absLLs <= lim ? 'OK' : 'NG';
+                const okHtml = ok === 'OK'
+                    ? `<span class="font-bold text-green-600">OK</span>`
+                    : `<span class="font-bold text-red-600">NG</span>`;
+
+                const rowCls = nodeNum === 1 ? 'bg-amber-50' : nodeNum === 30 ? 'bg-cyan-50' : '';
+                const tr = document.createElement('tr');
+                tr.className = rowCls;
+                tr.innerHTML = `
+                    <td class="border border-slate-200 px-2 py-1 text-center font-mono font-semibold">N${nodeNum}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-slate-500">${x.toFixed(3)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-green-700">${yDL.toFixed(2)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-blue-700">${yLLs.toFixed(2)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-blue-800">${yLLd.toFixed(2)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono font-bold text-amber-700">${yTot.toFixed(2)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-slate-500">±${lim.toFixed(1)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-center">${okHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Chart
+            const ctx = document.getElementById('deflectionPreChart')?.getContext('2d');
+            if (!ctx) return;
+            const chartData = {
+                labels,
+                datasets: [
+                    { label: 'δ_DL (mm)', data: dDL, borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,0.08)', borderWidth: 2, pointRadius: 1, tension: 0.3, fill: false },
+                    { label: 'δ_LL 服務 (mm)', data: dLLsvc, borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.08)', borderWidth: 2, pointRadius: 1, tension: 0.3, fill: false },
+                    { label: 'δ_LL 設計 (mm)', data: dLLdes, borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.08)', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, tension: 0.3, fill: false },
+                    { label: 'δ_DL+LL 設計 (mm)', data: dTotal, borderColor: '#d97706', backgroundColor: 'rgba(217,119,6,0.10)', borderWidth: 2.5, pointRadius: 1, tension: 0.3, fill: false }
+                ]
+            };
+            if (deflectionPreChartInst) { deflectionPreChartInst.data = chartData; deflectionPreChartInst.update(); }
+            else {
+                deflectionPreChartInst = new Chart(ctx, {
+                    type: 'line', data: chartData,
+                    options: {
+                        responsive: true, maintainAspectRatio: true,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: { title: { display: true, text: '節點', font: { size: 11 } } },
+                            y: { title: { display: true, text: '撓度 (mm，負 = 向下)', font: { size: 11 } },
+                                 grid: { color: 'rgba(203,213,225,0.3)' } }
+                        },
+                        plugins: {
+                            legend: { display: true, position: 'top', labels: { font: { size: 11 }, boxWidth: 24 } },
+                            annotation: {
+                                annotations: {
+                                    limPos: { type: 'line', yMin: lim, yMax: lim, borderColor: 'rgba(220,38,38,0.5)', borderWidth: 1, borderDash: [6,3], label: { display: true, content: 'L/800', position: 'end', font: { size: 10 } } },
+                                    limNeg: { type: 'line', yMin: -lim, yMax: -lim, borderColor: 'rgba(220,38,38,0.5)', borderWidth: 1, borderDash: [6,3] }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function renderDeflectionPost() {
+            const { EI_tf_m2, L, lim, w_DL, w_LL_base, w_LL_design } = getDeflectionParams();
+
+            // 從 state.extResults 取得外置 PT 力（需先確認 calculateExtForces 已執行）
+            const b1_x = state.extGeometry.deviationBlocks.blocks[0].x;
+            const count = state.extGeometry.deviationBlocks.count;
+
+            // 計算轉向塊升力（重用 calculateExtForces 邏輯）
+            const P   = state.extGeometry.forceTf;
+            const beamDepthM = 2.78;
+            const n1_y  = state.extGeometry.anchorage.sliding.y / 100;
+            const n30_y = state.extGeometry.anchorage.hinged.y  / 100;
+            const dx1 = b1_x; const dy1 = beamDepthM - n1_y;
+            const L1  = Math.sqrt(dx1*dx1 + dy1*dy1);
+            let b1_lift = L1 > 0 ? P * (dy1 / L1) : 0;
+            let b2_x = b1_x, b2_lift = 0;
+
+            if (count === 1) {
+                const dx2 = L - b1_x; const dy2 = n30_y - beamDepthM;
+                const L2 = Math.sqrt(dx2*dx2 + dy2*dy2);
+                b1_lift += L2 > 0 ? P * ((beamDepthM - n30_y) / L2) : 0;
+            } else {
+                b2_x = state.extGeometry.deviationBlocks.blocks[1].x;
+                const dx_l = b2_x - L; const dy_l = beamDepthM - n30_y;
+                const L_l = Math.sqrt(dx_l*dx_l + dy_l*dy_l);
+                b2_lift = L_l > 0 ? P * ((beamDepthM - n30_y) / L_l) : 0;
+            }
+
+            const tbody = document.getElementById('deflectionPostTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const labels = [], dPre = [], dPT = [], dNet = [], dLLpost = [];
+
+            state.nodes.forEach((x, idx) => {
+                const nodeNum = idx + 1;
+                const yDL  = deflUDL(w_DL,      x, L, EI_tf_m2) * 1000;
+                const yLLd = deflUDL(w_LL_design, x, L, EI_tf_m2) * 1000;
+                const yLLs = deflUDL(w_LL_base,   x, L, EI_tf_m2) * 1000;
+                const preTot = yDL + yLLd;
+
+                // External PT: upward lift at deviation blocks (positive = upward)
+                // deflPointLoad() is derived for downward loads → negate for upward lift
+                let yPT = -deflPointLoad(b1_lift, b1_x, x, L, EI_tf_m2) * 1000;
+                if (count === 2) yPT += -deflPointLoad(b2_lift, b2_x, x, L, EI_tf_m2) * 1000;
+
+                const yNet   = preTot + yPT;   // net (negative = down)
+                const yLLnet = yLLs;            // LL-only deflection (PT mainly offsets DL, not LL)
+
+                labels.push('N' + nodeNum);
+                dPre.push(parseFloat(preTot.toFixed(3)));
+                dPT.push(parseFloat(yPT.toFixed(3)));
+                dNet.push(parseFloat(yNet.toFixed(3)));
+                dLLpost.push(parseFloat(yLLnet.toFixed(3)));
+
+                const absLLnet = Math.abs(yLLnet);
+                const ok = absLLnet <= lim ? 'OK' : 'NG';
+                const okHtml = ok === 'OK'
+                    ? `<span class="font-bold text-green-600">OK</span>`
+                    : `<span class="font-bold text-red-600">NG</span>`;
+
+                const rowCls = nodeNum === 1 ? 'bg-amber-50' : nodeNum === 30 ? 'bg-cyan-50' : '';
+                const tr = document.createElement('tr');
+                tr.className = rowCls;
+                tr.innerHTML = `
+                    <td class="border border-slate-200 px-2 py-1 text-center font-mono font-semibold">N${nodeNum}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-slate-500">${x.toFixed(3)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-amber-700">${preTot.toFixed(2)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-teal-700 font-bold">${yPT >= 0 ? '+' : ''}${yPT.toFixed(2)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono font-bold text-purple-700">${yNet.toFixed(2)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-blue-700">${yLLnet.toFixed(2)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-right font-mono text-slate-500">±${lim.toFixed(1)}</td>
+                    <td class="border border-slate-200 px-2 py-1 text-center">${okHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Chart
+            const ctx = document.getElementById('deflectionPostChart')?.getContext('2d');
+            if (!ctx) return;
+            const chartData = {
+                labels,
+                datasets: [
+                    { label: '加固前 δ_DL+LL (mm)', data: dPre, borderColor: '#d97706', backgroundColor: 'rgba(217,119,6,0.08)', borderWidth: 2, borderDash: [5,3], pointRadius: 0, tension: 0.3, fill: false },
+                    { label: 'δ_外置PT 拱起 (mm)',   data: dPT,  borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.08)', borderWidth: 2, pointRadius: 1, tension: 0.3, fill: false },
+                    { label: '加固後 δ_net (mm)',     data: dNet, borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.10)', borderWidth: 2.5, pointRadius: 1, tension: 0.3, fill: true }
+                ]
+            };
+            if (deflectionPostChartInst) { deflectionPostChartInst.data = chartData; deflectionPostChartInst.update(); }
+            else {
+                deflectionPostChartInst = new Chart(ctx, {
+                    type: 'line', data: chartData,
+                    options: {
+                        responsive: true, maintainAspectRatio: true,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: { title: { display: true, text: '節點', font: { size: 11 } } },
+                            y: { title: { display: true, text: '撓度 (mm，負 = 向下，正 = 向上)', font: { size: 11 } },
+                                 grid: { color: 'rgba(203,213,225,0.3)' } }
+                        },
+                        plugins: { legend: { display: true, position: 'top', labels: { font: { size: 11 }, boxWidth: 24 } } }
                     }
                 });
             }
