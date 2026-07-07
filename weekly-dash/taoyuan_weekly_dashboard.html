@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>桃辦新北辦3個月的週工作追蹤頁</title>
+    <title>桃辦週工作追蹤頁</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -72,8 +71,8 @@
                 <div class="space-y-3">
                     <p class="text-sm font-semibold tracking-[0.2em] uppercase text-stone-500">Taoyuan Weekly Workboard</p>
                     <div>
-                        <h1 class="text-3xl lg:text-5xl font-bold leading-tight">桃辦新北辦3個月的週工作追蹤頁</h1>
-                        <p class="mt-2 text-stone-500">Google Sheet 自動更新。</p>
+                        <h1 class="text-3xl lg:text-5xl font-bold leading-tight">桃辦週工作追蹤頁</h1>
+                        <p class="mt-2 text-stone-500">改成讀外部 JSON，後續就能接 Google Sheet 自動更新。</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 lg:min-w-[360px]">
@@ -88,6 +87,17 @@
                 </div>
             </div>
         </header>
+
+        <section id="auditSummarySection" class="panel rounded-[28px] p-5 lg:p-6 space-y-4 hidden">
+            <div class="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                    <p class="text-sm font-semibold tracking-[0.16em] uppercase text-stone-500">Project Audit</p>
+                    <h2 class="text-2xl font-bold leading-tight">專案稽核摘要</h2>
+                </div>
+                <p id="auditSummaryMeta" class="text-xs text-stone-500"></p>
+            </div>
+            <div id="auditSummaryGrid" class="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-4"></div>
+        </section>
 
         <section class="panel rounded-[28px] p-5 lg:p-6 space-y-5">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">

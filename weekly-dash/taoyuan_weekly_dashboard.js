@@ -12,7 +12,8 @@ const state = {
     weeklyRaw: [],
     dataset: [],
     activeTab: "overview",
-    meta: null
+    meta: null,
+    auditSummary: null
 };
 
 const weekFilter = document.getElementById("weekFilter");
@@ -25,6 +26,25 @@ const topStats = document.getElementById("topStats");
 const dataMeta = document.getElementById("dataMeta");
 const mainContent = document.getElementById("mainContent");
 const tabButtons = Array.from(document.querySelectorAll(".tab-btn"));
+const auditSummarySection = document.getElementById("auditSummarySection");
+const auditSummaryMeta = document.getElementById("auditSummaryMeta");
+const auditSummaryGrid = document.getElementById("auditSummaryGrid");
+
+function escapeHtml(value) {
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function riskToneClass(diff) {
+    if (diff <= 0) return "bg-rose-50 text-rose-700 border-rose-200";
+    if (diff === 1) return "bg-orange-50 text-orange-700 border-orange-200";
+    if (diff <= 3) return "bg-amber-50 text-amber-700 border-amber-200";
+    return "bg-emerald-50 text-emerald-700 border-emerald-200";
+}
 
 function normalizeProjectCode(code) {
     return code ? code.toUpperCase().replace(/\s+/g, "") : "";
@@ -302,6 +322,65 @@ function renderTopStats() {
     `).join("");
 }
 
+function renderAuditSummary() {
+    if (!auditSummarySection || !auditSummaryGrid || !auditSummaryMeta) return;
+    const payload = state.auditSummary;
+    const projects = payload && Array.isArray(payload.projects) ? payload.projects : [];
+
+    if (!projects.length) {
+        auditSummarySection.classList.add("hidden");
+        auditSummaryGrid.innerHTML = "";
+        auditSummaryMeta.textContent = "";
+        return;
+    }
+
+    auditSummarySection.classList.remove("hidden");
+    const metaPieces = [];
+    if (payload.generatedAt) metaPieces.push(`稽核資料更新 ${payload.generatedAt}`);
+    if (payload.source) metaPieces.push(`來源 ${payload.source}`);
+    auditSummaryMeta.textContent = metaPieces.join("｜");
+
+    auditSummaryGrid.innerHTML = projects.map((project) => {
+        const counts = project.riskCounts || {};
+        const urgent = project.topUrgent;
+        const note = project.note ? `<p class="mt-2 text-xs text-stone-500">${escapeHtml(project.note)}</p>` : "";
+        const urgentBlock = urgent
+            ? `
+                <div class="mt-3 rounded-2xl border ${riskToneClass(urgent.diff)} px-3 py-3">
+                    <p class="text-xs font-semibold">${escapeHtml(urgent.statusLight)} ${escapeHtml(urgent.diffLabel)}</p>
+                    <p class="mt-1 text-sm font-semibold leading-snug">${escapeHtml(urgent.task)}</p>
+                    <p class="mt-1 text-xs opacity-80">${escapeHtml(urgent.dueLabel)}</p>
+                </div>
+            `
+            : `
+                <div class="mt-3 rounded-2xl border border-stone-200 bg-stone-50 px-3 py-3">
+                    <p class="text-sm font-semibold text-stone-700">目前無 D-45 項目</p>
+                </div>
+            `;
+
+        return `
+            <article class="summary-card rounded-[22px] p-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h3 class="text-base font-bold leading-snug">${escapeHtml(project.name)}</h3>
+                        <p class="mt-1 text-xs text-stone-500">版本 ${escapeHtml(project.version || "—")}｜稽核日 ${escapeHtml(project.auditDate || "—")}</p>
+                    </div>
+                    <span class="pill bg-stone-100 text-stone-700 border-stone-200">${escapeHtml(project.itemCount || 0)} 項</span>
+                </div>
+                <div class="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
+                    <span class="pill bg-rose-50 text-rose-700 border-rose-200">🔴 ${escapeHtml(counts.red || 0)}</span>
+                    <span class="pill bg-orange-50 text-orange-700 border-orange-200">🟠 ${escapeHtml(counts.orange || 0)}</span>
+                    <span class="pill bg-amber-50 text-amber-700 border-amber-200">🟡 ${escapeHtml(counts.yellow || 0)}</span>
+                    <span class="pill bg-emerald-50 text-emerald-700 border-emerald-200">🟢 ${escapeHtml(counts.green || 0)}</span>
+                </div>
+                ${urgentBlock}
+                <p class="mt-3 text-xs text-stone-500">提醒清單更新 ${escapeHtml(project.modifiedAt || "—")}</p>
+                ${note}
+            </article>
+        `;
+    }).join("");
+}
+
 function renderOverview() {
     const groups = filteredGroups();
     const projects = filteredProjects().slice(0, 10);
@@ -526,6 +605,7 @@ function bindProjectJumpers() {
 }
 
 function renderMain() {
+    renderAuditSummary();
     renderTopStats();
     if (state.activeTab === "overview") {
         mainContent.innerHTML = renderOverview();
@@ -597,11 +677,11 @@ function renderMeta() {
 }
 
 async function loadData() {
-    const response = await fetch("./taoyuan_weekly_data.json", { cache: "no-store" });
-    if (!response.ok) {
-        throw new Error(`無法讀取資料檔：${response.status}`);
+    const weeklyResponse = await fetch("./taoyuan_weekly_data.json", { cache: "no-store" });
+    if (!weeklyResponse.ok) {
+        throw new Error(`無法讀取資料檔：${weeklyResponse.status}`);
     }
-    const payload = await response.json();
+    const payload = await weeklyResponse.json();
     state.groups = payload.groups && payload.groups.length ? payload.groups : [...DEFAULT_GROUPS];
     state.weeklyRaw = payload.weeks || [];
     state.dataset = buildWeekDataset();
@@ -609,6 +689,17 @@ async function loadData() {
         generatedAt: payload.generatedAt || "",
         source: payload.source || null
     };
+
+    try {
+        const auditResponse = await fetch("./project_audit_summary.json", { cache: "no-store" });
+        if (auditResponse.ok) {
+            state.auditSummary = await auditResponse.json();
+        } else {
+            state.auditSummary = null;
+        }
+    } catch (_error) {
+        state.auditSummary = null;
+    }
 }
 
 async function init() {

@@ -1,0 +1,339 @@
+{
+  "generatedAt": "2026-07-07 08:57:56 +0800",
+  "source": "project_reminder_audit.py",
+  "projects": [
+    {
+      "key": "water_a",
+      "name": "水井甲區",
+      "auditDate": "2026-07-07",
+      "version": "V3",
+      "modifiedAt": "2026-06-12 08:41:42",
+      "mode": "active",
+      "note": null,
+      "riskCounts": {
+        "red": 0,
+        "orange": 0,
+        "yellow": 1,
+        "green": 0
+      },
+      "itemCount": 1,
+      "topUrgent": {
+        "task": "115年6月監造月報",
+        "dueLabel": "115/07/10",
+        "diff": 3,
+        "diffLabel": "D-3 提醒",
+        "statusLight": "🟡",
+        "owner": "**林全華**",
+        "manager": "孝智哥 <@911417165373136897>"
+      },
+      "items": [
+        {
+          "task": "115年6月監造月報",
+          "dueLabel": "115/07/10",
+          "diff": 3,
+          "diffLabel": "D-3 提醒",
+          "statusLight": "🟡",
+          "owner": "**林全華**",
+          "manager": "孝智哥 <@911417165373136897>"
+        }
+      ]
+    },
+    {
+      "key": "water_b",
+      "name": "水井乙區",
+      "auditDate": "2026-07-07",
+      "version": "V4",
+      "modifiedAt": "2026-06-12 08:41:42",
+      "mode": "active",
+      "note": null,
+      "riskCounts": {
+        "red": 0,
+        "orange": 0,
+        "yellow": 1,
+        "green": 0
+      },
+      "itemCount": 1,
+      "topUrgent": {
+        "task": "115年6月監造月報",
+        "dueLabel": "115/07/10",
+        "diff": 3,
+        "diffLabel": "D-3 提醒",
+        "statusLight": "🟡",
+        "owner": "**陳建榮**",
+        "manager": "孝智哥 <@911417165373136897>"
+      },
+      "items": [
+        {
+          "task": "115年6月監造月報",
+          "dueLabel": "115/07/10",
+          "diff": 3,
+          "diffLabel": "D-3 提醒",
+          "statusLight": "🟡",
+          "owner": "**陳建榮**",
+          "manager": "孝智哥 <@911417165373136897>"
+        }
+      ]
+    },
+    {
+      "key": "water_c",
+      "name": "水井丙區",
+      "auditDate": "2026-07-07",
+      "version": "V5",
+      "modifiedAt": "2026-06-12 08:41:42",
+      "mode": "active",
+      "note": null,
+      "riskCounts": {
+        "red": 0,
+        "orange": 0,
+        "yellow": 1,
+        "green": 1
+      },
+      "itemCount": 2,
+      "topUrgent": {
+        "task": "115年6月監造月報",
+        "dueLabel": "115/07/10",
+        "diff": 3,
+        "diffLabel": "D-3 提醒",
+        "statusLight": "🟡",
+        "owner": "**達哥**",
+        "manager": "孝智哥 <@911417165373136897>"
+      },
+      "items": [
+        {
+          "task": "115年6月監造月報",
+          "dueLabel": "115/07/10",
+          "diff": 3,
+          "diffLabel": "D-3 提醒",
+          "statusLight": "🟡",
+          "owner": "**達哥**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "進度 75% 監造請款 (第3期)",
+          "dueLabel": "115/07/30",
+          "diff": 23,
+          "diffLabel": "D-23 追蹤",
+          "statusLight": "🟢",
+          "owner": "**達哥**",
+          "manager": "孝智哥 <@911417165373136897>"
+        }
+      ]
+    },
+    {
+      "key": "water_d",
+      "name": "水井丁區",
+      "auditDate": "2026-07-07",
+      "version": "V4",
+      "modifiedAt": "2026-06-12 08:41:42",
+      "mode": "active",
+      "note": null,
+      "riskCounts": {
+        "red": 0,
+        "orange": 0,
+        "yellow": 1,
+        "green": 0
+      },
+      "itemCount": 1,
+      "topUrgent": {
+        "task": "115年6月監造月報",
+        "dueLabel": "115/07/10",
+        "diff": 3,
+        "diffLabel": "D-3 提醒",
+        "statusLight": "🟡",
+        "owner": "**林全華**",
+        "manager": "孝智哥 <@911417165373136897>"
+      },
+      "items": [
+        {
+          "task": "115年6月監造月報",
+          "dueLabel": "115/07/10",
+          "diff": 3,
+          "diffLabel": "D-3 提醒",
+          "statusLight": "🟡",
+          "owner": "**林全華**",
+          "manager": "孝智哥 <@911417165373136897>"
+        }
+      ]
+    },
+    {
+      "key": "aviation_city",
+      "name": "航空城",
+      "auditDate": "2026-07-07",
+      "version": "V5",
+      "modifiedAt": "2026-07-07 08:29:21",
+      "mode": "active",
+      "note": null,
+      "riskCounts": {
+        "red": 0,
+        "orange": 0,
+        "yellow": 0,
+        "green": 2
+      },
+      "itemCount": 2,
+      "topUrgent": {
+        "task": "115年7月設計階段月報彙整日",
+        "dueLabel": "115/08/02",
+        "diff": 26,
+        "diffLabel": "D-26 追蹤",
+        "statusLight": "🟢",
+        "owner": "子銘哥 <@1488800412734849115>",
+        "manager": null
+      },
+      "items": [
+        {
+          "task": "115年7月設計階段月報彙整日",
+          "dueLabel": "115/08/02",
+          "diff": 26,
+          "diffLabel": "D-26 追蹤",
+          "statusLight": "🟢",
+          "owner": "子銘哥 <@1488800412734849115>",
+          "manager": null
+        },
+        {
+          "task": "115年7月整體工作月報 提送截止",
+          "dueLabel": "115/08/05",
+          "diff": 29,
+          "diffLabel": "D-29 追蹤",
+          "statusLight": "🟢",
+          "owner": "**珮婷**",
+          "manager": "囿任哥 <@1516964897404092430>"
+        }
+      ]
+    },
+    {
+      "key": "taipower_69kv",
+      "name": "台電69kV",
+      "auditDate": "2026-07-07",
+      "version": "V1",
+      "modifiedAt": "2026-07-02 16:04:37",
+      "mode": "pending_notice",
+      "note": "待甲方第一期開工通知，收到後啟動倒數列管",
+      "riskCounts": {
+        "red": 0,
+        "orange": 0,
+        "yellow": 0,
+        "green": 0
+      },
+      "itemCount": 0,
+      "topUrgent": null,
+      "items": []
+    },
+    {
+      "key": "agri_bridge",
+      "name": "農業局橋檢案",
+      "auditDate": "2026-07-07",
+      "version": "V1",
+      "modifiedAt": "2026-07-06 17:19:57",
+      "mode": "active",
+      "note": null,
+      "riskCounts": {
+        "red": 1,
+        "orange": 0,
+        "yellow": 0,
+        "green": 3
+      },
+      "itemCount": 4,
+      "topUrgent": {
+        "task": "115年6月工作月報 提送截止",
+        "dueLabel": "115/07/05",
+        "diff": -2,
+        "diffLabel": "逾期2天",
+        "statusLight": "🔴",
+        "owner": "待指派",
+        "manager": null
+      },
+      "items": [
+        {
+          "task": "115年6月工作月報 提送截止",
+          "dueLabel": "115/07/05",
+          "diff": -2,
+          "diffLabel": "逾期2天",
+          "statusLight": "🔴",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "工作執行計畫書（10 份）",
+          "dueLabel": "115/7/12（計時中）",
+          "diff": 5,
+          "diffLabel": "D-5 預告",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": null
+        },
+        {
+          "task": "第一期工作執行計畫書提送截止",
+          "dueLabel": "115/07/12",
+          "diff": 5,
+          "diffLabel": "D-5 預告",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": null
+        },
+        {
+          "task": "115年7月工作月報 提送截止",
+          "dueLabel": "115/08/05",
+          "diff": 29,
+          "diffLabel": "D-29 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        }
+      ]
+    },
+    {
+      "key": "zhuwei",
+      "name": "大園區竹圍市地重劃案",
+      "auditDate": "2026-07-07",
+      "version": "V1",
+      "modifiedAt": "2026-07-06 17:10:31",
+      "mode": "active",
+      "note": null,
+      "riskCounts": {
+        "red": 1,
+        "orange": 0,
+        "yellow": 0,
+        "green": 2
+      },
+      "itemCount": 3,
+      "topUrgent": {
+        "task": "115年6月工作月報及工作紀錄 提送截止",
+        "dueLabel": "115/07/05",
+        "diff": -2,
+        "diffLabel": "逾期2天",
+        "statusLight": "🔴",
+        "owner": "待指派",
+        "manager": null
+      },
+      "items": [
+        {
+          "task": "115年6月工作月報及工作紀錄 提送截止",
+          "dueLabel": "115/07/05",
+          "diff": -2,
+          "diffLabel": "逾期2天",
+          "statusLight": "🔴",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "桃園市地重劃議約（09:00）",
+          "dueLabel": "115/07/13",
+          "diff": 6,
+          "diffLabel": "D-6 預告",
+          "statusLight": "🟢",
+          "owner": "巍耀哥 <@1486270112326615042>",
+          "manager": "**新竹貴婷**"
+        },
+        {
+          "task": "115年7月工作月報及工作紀錄 提送截止",
+          "dueLabel": "115/08/05",
+          "diff": 29,
+          "diffLabel": "D-29 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        }
+      ]
+    }
+  ]
+}
