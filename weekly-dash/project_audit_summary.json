@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09 08:30:18 +0800",
+  "generatedAt": "2026-07-09 09:30:34 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -7,107 +7,62 @@
       "name": "水井甲區",
       "auditDate": "2026-07-09",
       "version": "V3",
-      "modifiedAt": "2026-06-12 08:41:42",
+      "modifiedAt": "2026-07-09 09:27:41",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 1,
+        "orange": 0,
         "yellow": 0,
         "green": 0
       },
-      "itemCount": 1,
-      "topUrgent": {
-        "task": "115年6月監造月報",
-        "dueLabel": "115/07/10",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
-        "owner": "**林全華**",
-        "manager": "孝智哥 <@911417165373136897>"
-      },
-      "items": [
-        {
-          "task": "115年6月監造月報",
-          "dueLabel": "115/07/10",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "**林全華**",
-          "manager": "孝智哥 <@911417165373136897>"
-        }
-      ]
+      "itemCount": 0,
+      "topUrgent": null,
+      "items": []
     },
     {
       "key": "water_b",
       "name": "水井乙區",
       "auditDate": "2026-07-09",
       "version": "V4",
-      "modifiedAt": "2026-06-12 08:41:42",
+      "modifiedAt": "2026-07-09 09:27:41",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 1,
+        "orange": 0,
         "yellow": 0,
         "green": 0
       },
-      "itemCount": 1,
-      "topUrgent": {
-        "task": "115年6月監造月報",
-        "dueLabel": "115/07/10",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
-        "owner": "**陳建榮**",
-        "manager": "孝智哥 <@911417165373136897>"
-      },
-      "items": [
-        {
-          "task": "115年6月監造月報",
-          "dueLabel": "115/07/10",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "**陳建榮**",
-          "manager": "孝智哥 <@911417165373136897>"
-        }
-      ]
+      "itemCount": 0,
+      "topUrgent": null,
+      "items": []
     },
     {
       "key": "water_c",
       "name": "水井丙區",
       "auditDate": "2026-07-09",
       "version": "V5",
-      "modifiedAt": "2026-06-12 08:41:42",
+      "modifiedAt": "2026-07-09 09:27:41",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 1,
+        "orange": 0,
         "yellow": 0,
         "green": 1
       },
-      "itemCount": 2,
+      "itemCount": 1,
       "topUrgent": {
-        "task": "115年6月監造月報",
-        "dueLabel": "115/07/10",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
+        "task": "進度 75% 監造請款 (第3期)",
+        "dueLabel": "115/07/30",
+        "diff": 21,
+        "diffLabel": "D-21 追蹤",
+        "statusLight": "🟢",
         "owner": "**達哥**",
         "manager": "孝智哥 <@911417165373136897>"
       },
       "items": [
-        {
-          "task": "115年6月監造月報",
-          "dueLabel": "115/07/10",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "**達哥**",
-          "manager": "孝智哥 <@911417165373136897>"
-        },
         {
           "task": "進度 75% 監造請款 (第3期)",
           "dueLabel": "115/07/30",
@@ -124,36 +79,18 @@
       "name": "水井丁區",
       "auditDate": "2026-07-09",
       "version": "V4",
-      "modifiedAt": "2026-06-12 08:41:42",
+      "modifiedAt": "2026-07-09 09:27:41",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 1,
+        "orange": 0,
         "yellow": 0,
         "green": 0
       },
-      "itemCount": 1,
-      "topUrgent": {
-        "task": "115年6月監造月報",
-        "dueLabel": "115/07/10",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
-        "owner": "**林全華**",
-        "manager": "孝智哥 <@911417165373136897>"
-      },
-      "items": [
-        {
-          "task": "115年6月監造月報",
-          "dueLabel": "115/07/10",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "**林全華**",
-          "manager": "孝智哥 <@911417165373136897>"
-        }
-      ]
+      "itemCount": 0,
+      "topUrgent": null,
+      "items": []
     },
     {
       "key": "aviation_city",
