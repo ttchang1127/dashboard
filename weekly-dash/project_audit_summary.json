@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10 08:30:26 +0800",
+  "generatedAt": "2026-07-10 13:50:34 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -160,44 +160,26 @@
       "name": "農業局橋檢案",
       "auditDate": "2026-07-10",
       "version": "V1",
-      "modifiedAt": "2026-07-07 16:46:53",
+      "modifiedAt": "2026-07-10 13:50:26",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
         "orange": 0,
-        "yellow": 2,
+        "yellow": 0,
         "green": 1
       },
-      "itemCount": 3,
+      "itemCount": 1,
       "topUrgent": {
-        "task": "工作執行計畫書（10 份）",
-        "dueLabel": "115/7/12（計時中）",
-        "diff": 2,
-        "diffLabel": "D-2 提醒",
-        "statusLight": "🟡",
-        "owner": "囿任哥 <@1516964897404092430>",
-        "manager": null
+        "task": "115年7月工作月報 提送截止",
+        "dueLabel": "115/08/05",
+        "diff": 26,
+        "diffLabel": "D-26 追蹤",
+        "statusLight": "🟢",
+        "owner": "**英麗**",
+        "manager": "囿任哥 <@1516964897404092430>"
       },
       "items": [
-        {
-          "task": "工作執行計畫書（10 份）",
-          "dueLabel": "115/7/12（計時中）",
-          "diff": 2,
-          "diffLabel": "D-2 提醒",
-          "statusLight": "🟡",
-          "owner": "囿任哥 <@1516964897404092430>",
-          "manager": null
-        },
-        {
-          "task": "第一期工作執行計畫書提送截止",
-          "dueLabel": "115/07/12",
-          "diff": 2,
-          "diffLabel": "D-2 提醒",
-          "statusLight": "🟡",
-          "owner": "囿任哥 <@1516964897404092430>",
-          "manager": null
-        },
         {
           "task": "115年7月工作月報 提送截止",
           "dueLabel": "115/08/05",
