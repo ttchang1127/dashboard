@@ -46,6 +46,26 @@ function riskToneClass(diff) {
     return "bg-emerald-50 text-emerald-700 border-emerald-200";
 }
 
+function auditItemSortValue(item) {
+    const diff = Number(item && item.diff);
+    return Number.isFinite(diff) ? diff : 999;
+}
+
+function renderAuditItem(item) {
+    const manager = item.manager ? ` / 副理：${escapeHtml(item.manager)}` : "";
+    const ownerLine = item.owner ? `<p class="mt-1 text-[11px] opacity-75">負責：${escapeHtml(item.owner)}${manager}</p>` : "";
+    return `
+        <li class="rounded-2xl border ${riskToneClass(item.diff)} px-3 py-3">
+            <div class="flex items-start justify-between gap-3">
+                <p class="text-xs font-semibold">${escapeHtml(item.statusLight || "")} ${escapeHtml(item.diffLabel || "")}</p>
+                <p class="shrink-0 text-xs opacity-80">${escapeHtml(item.dueLabel || "—")}</p>
+            </div>
+            <p class="mt-1 text-sm font-semibold leading-snug">${escapeHtml(item.task || "未命名項目")}</p>
+            ${ownerLine}
+        </li>
+    `;
+}
+
 function normalizeProjectCode(code) {
     return code ? code.toUpperCase().replace(/\s+/g, "") : "";
 }
@@ -342,15 +362,13 @@ function renderAuditSummary() {
 
     auditSummaryGrid.innerHTML = projects.map((project) => {
         const counts = project.riskCounts || {};
-        const urgent = project.topUrgent;
+        const items = Array.isArray(project.items) ? [...project.items].sort((a, b) => auditItemSortValue(a) - auditItemSortValue(b)) : [];
         const note = project.note ? `<p class="mt-2 text-xs text-stone-500">${escapeHtml(project.note)}</p>` : "";
-        const urgentBlock = urgent
+        const itemBlock = items.length
             ? `
-                <div class="mt-3 rounded-2xl border ${riskToneClass(urgent.diff)} px-3 py-3">
-                    <p class="text-xs font-semibold">${escapeHtml(urgent.statusLight)} ${escapeHtml(urgent.diffLabel)}</p>
-                    <p class="mt-1 text-sm font-semibold leading-snug">${escapeHtml(urgent.task)}</p>
-                    <p class="mt-1 text-xs opacity-80">${escapeHtml(urgent.dueLabel)}</p>
-                </div>
+                <ul class="mt-3 space-y-2">
+                    ${items.map(renderAuditItem).join("")}
+                </ul>
             `
             : `
                 <div class="mt-3 rounded-2xl border border-stone-200 bg-stone-50 px-3 py-3">
@@ -373,7 +391,7 @@ function renderAuditSummary() {
                     <span class="pill bg-amber-50 text-amber-700 border-amber-200">🟡 ${escapeHtml(counts.yellow || 0)}</span>
                     <span class="pill bg-emerald-50 text-emerald-700 border-emerald-200">🟢 ${escapeHtml(counts.green || 0)}</span>
                 </div>
-                ${urgentBlock}
+                ${itemBlock}
                 <p class="mt-3 text-xs text-stone-500">提醒清單更新 ${escapeHtml(project.modifiedAt || "—")}</p>
                 ${note}
             </article>
