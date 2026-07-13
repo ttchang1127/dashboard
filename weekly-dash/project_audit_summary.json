@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13 17:39:00 +0800",
+  "generatedAt": "2026-07-13 19:35:54 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -277,18 +277,126 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-07-13",
       "version": "V1",
-      "modifiedAt": "2026-07-13 17:38:29",
+      "modifiedAt": "2026-07-13 19:35:31",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 0,
+        "red": 1,
         "orange": 0,
         "yellow": 0,
-        "green": 0
+        "green": 10
       },
-      "itemCount": 0,
-      "topUrgent": null,
-      "items": []
+      "itemCount": 11,
+      "topUrgent": {
+        "task": "投保專業責任險／雇主意外責任險",
+        "dueLabel": "115/07/13 起立即辦理",
+        "diff": 0,
+        "diffLabel": "D-0 逾期",
+        "statusLight": "🔴",
+        "owner": "待指派",
+        "manager": null
+      },
+      "items": [
+        {
+          "task": "投保專業責任險／雇主意外責任險",
+          "dueLabel": "115/07/13 起立即辦理",
+          "diff": 0,
+          "diffLabel": "D-0 逾期",
+          "statusLight": "🔴",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "服務實施計畫書",
+          "dueLabel": "115/07/27（簽約日起 14 日曆天）",
+          "diff": 14,
+          "diffLabel": "D-14 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "基本設計報告及圖說",
+          "dueLabel": "115/08/03（簽約日起 21 日曆天）",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "整體規劃",
+          "dueLabel": "115/08/03（簽約日起 21 日曆天）",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "監造計畫書、設計階段施工中風險評估計畫書",
+          "dueLabel": "115/08/03（簽約日起 21 日曆天，暫列）",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "115年7月工作月報及工作紀錄 提送截止",
+          "dueLabel": "115/08/05",
+          "diff": 23,
+          "diffLabel": "D-23 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "地形測量及地上物調查",
+          "dueLabel": "115/08/12（簽約日起 30 日曆天）",
+          "diff": 30,
+          "diffLabel": "D-30 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "管線調查",
+          "dueLabel": "115/08/12（簽約日起 30 日曆天）",
+          "diff": 30,
+          "diffLabel": "D-30 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "細部設計書圖報告",
+          "dueLabel": "115/08/17（簽約日起 35 日曆天）",
+          "diff": 35,
+          "diffLabel": "D-35 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "地質調查",
+          "dueLabel": "115/08/18（簽約日起 36 日曆天）",
+          "diff": 36,
+          "diffLabel": "D-36 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "出流管制計畫",
+          "dueLabel": "115/08/27（簽約日起 45 日曆天）",
+          "diff": 45,
+          "diffLabel": "D-45 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        }
+      ]
     }
   ]
 }
