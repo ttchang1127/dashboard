@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13 08:30:15 +0800",
+  "generatedAt": "2026-07-13 17:39:00 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -277,45 +277,18 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-07-13",
       "version": "V1",
-      "modifiedAt": "2026-07-07 15:58:56",
+      "modifiedAt": "2026-07-13 17:38:29",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
-        "green": 1
+        "green": 0
       },
-      "itemCount": 2,
-      "topUrgent": {
-        "task": "桃園市地重劃議約（09:00）",
-        "dueLabel": "115/07/13",
-        "diff": 0,
-        "diffLabel": "D-0 逾期",
-        "statusLight": "🔴",
-        "owner": "巍耀哥 <@1486270112326615042>",
-        "manager": "**新竹貴婷**"
-      },
-      "items": [
-        {
-          "task": "桃園市地重劃議約（09:00）",
-          "dueLabel": "115/07/13",
-          "diff": 0,
-          "diffLabel": "D-0 逾期",
-          "statusLight": "🔴",
-          "owner": "巍耀哥 <@1486270112326615042>",
-          "manager": "**新竹貴婷**"
-        },
-        {
-          "task": "115年7月工作月報及工作紀錄 提送截止",
-          "dueLabel": "115/08/05",
-          "diff": 23,
-          "diffLabel": "D-23 追蹤",
-          "statusLight": "🟢",
-          "owner": "待指派",
-          "manager": null
-        }
-      ]
+      "itemCount": 0,
+      "topUrgent": null,
+      "items": []
     }
   ]
 }
