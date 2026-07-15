@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-14 08:30:18 +0800",
+  "generatedAt": "2026-07-15 09:06:08 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
       "key": "water_a",
       "name": "水井甲區",
-      "auditDate": "2026-07-14",
+      "auditDate": "2026-07-15",
       "version": "V3",
       "modifiedAt": "2026-07-10 16:17:40",
       "mode": "active",
@@ -20,8 +20,8 @@
       "topUrgent": {
         "task": "進度 75% 監造請款 (第3期)",
         "dueLabel": "115/07/25",
-        "diff": 11,
-        "diffLabel": "D-11 追蹤",
+        "diff": 10,
+        "diffLabel": "D-10 追蹤",
         "statusLight": "🟢",
         "owner": "**林全華**",
         "manager": "孝智哥 <@911417165373136897>"
@@ -30,8 +30,8 @@
         {
           "task": "進度 75% 監造請款 (第3期)",
           "dueLabel": "115/07/25",
-          "diff": 11,
-          "diffLabel": "D-11 追蹤",
+          "diff": 10,
+          "diffLabel": "D-10 追蹤",
           "statusLight": "🟢",
           "owner": "**林全華**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -39,8 +39,8 @@
         {
           "task": "115年7月監造月報",
           "dueLabel": "115/08/10",
-          "diff": 27,
-          "diffLabel": "D-27 追蹤",
+          "diff": 26,
+          "diffLabel": "D-26 追蹤",
           "statusLight": "🟢",
           "owner": "**林全華**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -50,7 +50,7 @@
     {
       "key": "water_b",
       "name": "水井乙區",
-      "auditDate": "2026-07-14",
+      "auditDate": "2026-07-15",
       "version": "V4",
       "modifiedAt": "2026-07-10 16:17:40",
       "mode": "active",
@@ -65,8 +65,8 @@
       "topUrgent": {
         "task": "進度 75% 監造請款 (第3期)",
         "dueLabel": "115/07/17",
-        "diff": 3,
-        "diffLabel": "D-3 提醒",
+        "diff": 2,
+        "diffLabel": "D-2 提醒",
         "statusLight": "🟡",
         "owner": "**陳建榮**",
         "manager": "孝智哥 <@911417165373136897>"
@@ -75,8 +75,8 @@
         {
           "task": "進度 75% 監造請款 (第3期)",
           "dueLabel": "115/07/17",
-          "diff": 3,
-          "diffLabel": "D-3 提醒",
+          "diff": 2,
+          "diffLabel": "D-2 提醒",
           "statusLight": "🟡",
           "owner": "**陳建榮**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -84,8 +84,8 @@
         {
           "task": "115年7月監造月報",
           "dueLabel": "115/08/10",
-          "diff": 27,
-          "diffLabel": "D-27 追蹤",
+          "diff": 26,
+          "diffLabel": "D-26 追蹤",
           "statusLight": "🟢",
           "owner": "**陳建榮**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -95,7 +95,7 @@
     {
       "key": "water_c",
       "name": "水井丙區",
-      "auditDate": "2026-07-14",
+      "auditDate": "2026-07-15",
       "version": "V5",
       "modifiedAt": "2026-07-10 16:07:48",
       "mode": "active",
@@ -110,8 +110,8 @@
       "topUrgent": {
         "task": "進度 75% 監造請款 (第3期)",
         "dueLabel": "115/07/30",
-        "diff": 16,
-        "diffLabel": "D-16 追蹤",
+        "diff": 15,
+        "diffLabel": "D-15 追蹤",
         "statusLight": "🟢",
         "owner": "**達哥**",
         "manager": "孝智哥 <@911417165373136897>"
@@ -120,8 +120,8 @@
         {
           "task": "進度 75% 監造請款 (第3期)",
           "dueLabel": "115/07/30",
-          "diff": 16,
-          "diffLabel": "D-16 追蹤",
+          "diff": 15,
+          "diffLabel": "D-15 追蹤",
           "statusLight": "🟢",
           "owner": "**達哥**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -129,8 +129,8 @@
         {
           "task": "115年7月監造月報",
           "dueLabel": "115/08/10",
-          "diff": 27,
-          "diffLabel": "D-27 追蹤",
+          "diff": 26,
+          "diffLabel": "D-26 追蹤",
           "statusLight": "🟢",
           "owner": "**達哥**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -140,7 +140,7 @@
     {
       "key": "water_d",
       "name": "水井丁區",
-      "auditDate": "2026-07-14",
+      "auditDate": "2026-07-15",
       "version": "V4",
       "modifiedAt": "2026-07-10 16:07:48",
       "mode": "active",
@@ -155,8 +155,8 @@
       "topUrgent": {
         "task": "115年7月監造月報",
         "dueLabel": "115/08/10",
-        "diff": 27,
-        "diffLabel": "D-27 追蹤",
+        "diff": 26,
+        "diffLabel": "D-26 追蹤",
         "statusLight": "🟢",
         "owner": "**林全華**",
         "manager": "孝智哥 <@911417165373136897>"
@@ -165,8 +165,8 @@
         {
           "task": "115年7月監造月報",
           "dueLabel": "115/08/10",
-          "diff": 27,
-          "diffLabel": "D-27 追蹤",
+          "diff": 26,
+          "diffLabel": "D-26 追蹤",
           "statusLight": "🟢",
           "owner": "**林全華**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -176,7 +176,7 @@
     {
       "key": "aviation_city",
       "name": "航空城",
-      "auditDate": "2026-07-14",
+      "auditDate": "2026-07-15",
       "version": "V5",
       "modifiedAt": "2026-07-07 08:29:21",
       "mode": "active",
@@ -191,8 +191,8 @@
       "topUrgent": {
         "task": "115年7月設計階段月報彙整日",
         "dueLabel": "115/08/02",
-        "diff": 19,
-        "diffLabel": "D-19 追蹤",
+        "diff": 18,
+        "diffLabel": "D-18 追蹤",
         "statusLight": "🟢",
         "owner": "子銘哥 <@1488800412734849115>",
         "manager": null
@@ -201,8 +201,8 @@
         {
           "task": "115年7月設計階段月報彙整日",
           "dueLabel": "115/08/02",
-          "diff": 19,
-          "diffLabel": "D-19 追蹤",
+          "diff": 18,
+          "diffLabel": "D-18 追蹤",
           "statusLight": "🟢",
           "owner": "子銘哥 <@1488800412734849115>",
           "manager": null
@@ -210,8 +210,8 @@
         {
           "task": "115年7月整體工作月報 提送截止",
           "dueLabel": "115/08/05",
-          "diff": 22,
-          "diffLabel": "D-22 追蹤",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
           "statusLight": "🟢",
           "owner": "**珮婷**",
           "manager": "囿任哥 <@1516964897404092430>"
@@ -221,7 +221,7 @@
     {
       "key": "taipower_69kv",
       "name": "台電69kV",
-      "auditDate": "2026-07-14",
+      "auditDate": "2026-07-15",
       "version": "V1",
       "modifiedAt": "2026-07-02 16:04:37",
       "mode": "pending_notice",
@@ -239,33 +239,42 @@
     {
       "key": "agri_bridge",
       "name": "農業局橋檢案",
-      "auditDate": "2026-07-14",
+      "auditDate": "2026-07-15",
       "version": "V1",
-      "modifiedAt": "2026-07-10 13:50:26",
+      "modifiedAt": "2026-07-14 17:18:58",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 0,
+        "orange": 1,
         "yellow": 0,
         "green": 1
       },
-      "itemCount": 1,
+      "itemCount": 2,
       "topUrgent": {
-        "task": "115年7月工作月報 提送截止",
-        "dueLabel": "115/08/05",
-        "diff": 22,
-        "diffLabel": "D-22 追蹤",
-        "statusLight": "🟢",
-        "owner": "**英麗**",
-        "manager": "囿任哥 <@1516964897404092430>"
+        "task": "橋檢簡報",
+        "dueLabel": "115/07/16 10:00",
+        "diff": 1,
+        "diffLabel": "D-1 緊急",
+        "statusLight": "🟠",
+        "owner": "大哥 <@1270639284126220309>",
+        "manager": null
       },
       "items": [
         {
+          "task": "橋檢簡報",
+          "dueLabel": "115/07/16 10:00",
+          "diff": 1,
+          "diffLabel": "D-1 緊急",
+          "statusLight": "🟠",
+          "owner": "大哥 <@1270639284126220309>",
+          "manager": null
+        },
+        {
           "task": "115年7月工作月報 提送截止",
           "dueLabel": "115/08/05",
-          "diff": 22,
-          "diffLabel": "D-22 追蹤",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
           "statusLight": "🟢",
           "owner": "**英麗**",
           "manager": "囿任哥 <@1516964897404092430>"
@@ -275,9 +284,9 @@
     {
       "key": "zhuwei",
       "name": "大園區竹圍市地重劃案",
-      "auditDate": "2026-07-14",
+      "auditDate": "2026-07-15",
       "version": "V1",
-      "modifiedAt": "2026-07-13 19:35:31",
+      "modifiedAt": "2026-07-15 09:03:50",
       "mode": "active",
       "note": null,
       "riskCounts": {
@@ -289,9 +298,9 @@
       "itemCount": 10,
       "topUrgent": {
         "task": "服務實施計畫書",
-        "dueLabel": "115/07/27（簽約日起 14 日曆天）",
-        "diff": 13,
-        "diffLabel": "D-13 追蹤",
+        "dueLabel": "115/07/27（機關指定日基準；暫以 115/07/13 +14 日預排）",
+        "diff": 12,
+        "diffLabel": "D-12 追蹤",
         "statusLight": "🟢",
         "owner": "待指派",
         "manager": null
@@ -299,36 +308,36 @@
       "items": [
         {
           "task": "服務實施計畫書",
-          "dueLabel": "115/07/27（簽約日起 14 日曆天）",
-          "diff": 13,
-          "diffLabel": "D-13 追蹤",
+          "dueLabel": "115/07/27（機關指定日基準；暫以 115/07/13 +14 日預排）",
+          "diff": 12,
+          "diffLabel": "D-12 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
         },
         {
           "task": "基本設計報告及圖說",
-          "dueLabel": "115/08/03（簽約日起 21 日曆天）",
-          "diff": 20,
-          "diffLabel": "D-20 追蹤",
+          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
+          "diff": 19,
+          "diffLabel": "D-19 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
         },
         {
           "task": "整體規劃",
-          "dueLabel": "115/08/03（簽約日起 21 日曆天）",
-          "diff": 20,
-          "diffLabel": "D-20 追蹤",
+          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
+          "diff": 19,
+          "diffLabel": "D-19 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
         },
         {
           "task": "監造計畫書、設計階段施工中風險評估計畫書",
-          "dueLabel": "115/08/03（簽約日起 21 日曆天，暫列）",
-          "diff": 20,
-          "diffLabel": "D-20 追蹤",
+          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
+          "diff": 19,
+          "diffLabel": "D-19 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
@@ -336,33 +345,42 @@
         {
           "task": "115年7月工作月報及工作紀錄 提送截止",
           "dueLabel": "115/08/05",
-          "diff": 22,
-          "diffLabel": "D-22 追蹤",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
         },
         {
           "task": "地形測量及地上物調查",
-          "dueLabel": "115/08/12（簽約日起 30 日曆天）",
-          "diff": 29,
-          "diffLabel": "D-29 追蹤",
+          "dueLabel": "115/08/12（機關指定日基準；暫以 115/07/13 +30 日預排）",
+          "diff": 28,
+          "diffLabel": "D-28 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
         },
         {
           "task": "管線調查",
-          "dueLabel": "115/08/12（簽約日起 30 日曆天）",
-          "diff": 29,
-          "diffLabel": "D-29 追蹤",
+          "dueLabel": "115/08/12（機關指定日基準；暫以 115/07/13 +30 日預排）",
+          "diff": 28,
+          "diffLabel": "D-28 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
         },
         {
           "task": "細部設計書圖報告",
-          "dueLabel": "115/08/17（簽約日起 35 日曆天）",
+          "dueLabel": "115/08/17（機關指定日基準；暫以 115/07/13 +35 日預排）",
+          "diff": 33,
+          "diffLabel": "D-33 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "地質調查",
+          "dueLabel": "115/08/18（機關指定日基準；暫以 115/07/13 +36 日預排）",
           "diff": 34,
           "diffLabel": "D-34 追蹤",
           "statusLight": "🟢",
@@ -370,19 +388,10 @@
           "manager": null
         },
         {
-          "task": "地質調查",
-          "dueLabel": "115/08/18（簽約日起 36 日曆天）",
-          "diff": 35,
-          "diffLabel": "D-35 追蹤",
-          "statusLight": "🟢",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
           "task": "出流管制計畫",
-          "dueLabel": "115/08/27（簽約日起 45 日曆天）",
-          "diff": 44,
-          "diffLabel": "D-44 追蹤",
+          "dueLabel": "115/08/27（機關指定日基準；暫以 115/07/13 +45 日預排）",
+          "diff": 43,
+          "diffLabel": "D-43 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
