@@ -56,9 +56,9 @@ function renderAuditItem(item) {
     const ownerLine = item.owner ? `<p class="mt-1 text-[11px] opacity-75">負責：${escapeHtml(item.owner)}${manager}</p>` : "";
     return `
         <li class="rounded-2xl border ${riskToneClass(item.diff)} px-3 py-3">
-            <div class="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                <p class="shrink-0 whitespace-nowrap text-xs font-semibold">${escapeHtml(item.statusLight || "")} ${escapeHtml(item.diffLabel || "")}</p>
-                <p class="min-w-0 flex-1 break-words text-right text-xs opacity-80">${escapeHtml(item.dueLabel || "—")}</p>
+            <div class="flex items-start justify-between gap-3">
+                <p class="text-xs font-semibold">${escapeHtml(item.statusLight || "")} ${escapeHtml(item.diffLabel || "")}</p>
+                <p class="shrink-0 text-xs opacity-80">${escapeHtml(item.dueLabel || "—")}</p>
             </div>
             <p class="mt-1 text-sm font-semibold leading-snug">${escapeHtml(item.task || "未命名項目")}</p>
             ${ownerLine}
