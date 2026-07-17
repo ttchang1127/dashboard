@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17 08:30:22 +0800",
+  "generatedAt": "2026-07-17 09:51:57 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -7,32 +7,32 @@
       "name": "水井甲區",
       "auditDate": "2026-07-17",
       "version": "V3",
-      "modifiedAt": "2026-07-10 16:17:40",
+      "modifiedAt": "2026-07-17 09:51:29",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 0,
+        "red": 1,
         "orange": 0,
         "yellow": 0,
-        "green": 2
+        "green": 1
       },
       "itemCount": 2,
       "topUrgent": {
         "task": "進度 75% 監造請款 (第3期)",
-        "dueLabel": "115/07/25",
-        "diff": 8,
-        "diffLabel": "D-8 追蹤",
-        "statusLight": "🟢",
+        "dueLabel": "115/07/17",
+        "diff": 0,
+        "diffLabel": "D-0 逾期",
+        "statusLight": "🔴",
         "owner": "**林全華**",
         "manager": "孝智哥 <@911417165373136897>"
       },
       "items": [
         {
           "task": "進度 75% 監造請款 (第3期)",
-          "dueLabel": "115/07/25",
-          "diff": 8,
-          "diffLabel": "D-8 追蹤",
-          "statusLight": "🟢",
+          "dueLabel": "115/07/17",
+          "diff": 0,
+          "diffLabel": "D-0 逾期",
+          "statusLight": "🔴",
           "owner": "**林全華**",
           "manager": "孝智哥 <@911417165373136897>"
         },
