@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 
 <head>
@@ -12,6 +12,10 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
+
+    <!-- KaTeX（公式排版；與既有 Tailwind/Chart 同走 CDN） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
@@ -99,6 +103,7 @@
             transition: all 0.3s ease;
             margin-right: 4px;
             margin-bottom: -1px;
+            white-space: nowrap;
             border-radius: 8px 8px 0 0;
             color: #64748b;
             overflow: hidden;
@@ -228,6 +233,74 @@
             height: 6px;
             border-radius: 9999px;
         }
+
+        /* ===================== Tab 8 計算書 樣式 ===================== */
+        #calcbook {
+            font-family: 'Noto Sans TC', 'Times New Roman', serif;
+            color: #1e293b;
+            line-height: 1.65;
+        }
+        .cb-page {
+            background: #fff;
+            max-width: 210mm;
+            margin: 0 auto 14px;
+            padding: 20mm 18mm;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, .12);
+            border: 1px solid #e2e8f0;
+            font-size: 12.5px;
+        }
+        .cb-cover { text-align: center; }
+        .cb-cover .cb-title { font-size: 24px; font-weight: 700; letter-spacing: 2px; margin: 40mm 0 6px; }
+        .cb-cover .cb-sub { font-size: 15px; color: #475569; margin-bottom: 60mm; }
+        .cb-meta-tbl { margin: 0 auto; border-collapse: collapse; font-size: 13px; }
+        .cb-meta-tbl td { border: 1px solid #94a3b8; padding: 6px 18px; }
+        .cb-meta-tbl td:first-child { background: #f1f5f9; font-weight: 700; text-align: center; white-space: nowrap; }
+        .cb-h1 { font-size: 17px; font-weight: 700; color: #0f172a; border-bottom: 2px solid #334155; padding-bottom: 4px; margin: 2px 0 12px; }
+        .cb-h2 { font-size: 14.5px; font-weight: 700; color: #1e3a8a; margin: 16px 0 7px; border-left: 4px solid #3b82f6; padding-left: 8px; }
+        .cb-h3 { font-size: 13px; font-weight: 700; color: #334155; margin: 11px 0 5px; }
+        .cb-p { margin: 6px 0; text-align: justify; }
+        .cb-note { font-size: 11px; color: #64748b; margin: 5px 0; }
+        .cb-src { font-size: 10.5px; color: #475569; background: #f8fafc; border-left: 3px solid #94a3b8; padding: 4px 8px; margin: 6px 0; }
+        .cb-tbl { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 11px; }
+        .cb-tbl th, .cb-tbl td { border: 1px solid #cbd5e1; padding: 3px 6px; text-align: center; }
+        .cb-tbl th { background: #e2e8f0; font-weight: 700; color: #0f172a; }
+        .cb-tbl td.l { text-align: left; }
+        .cb-tbl tr:nth-child(even) td { background: #f8fafc; }
+        .cb-eq { margin: 9px 0 9px 6px; }
+        .cb-eq-lbl { float: right; color: #64748b; font-size: 11px; }
+        .cb-eqsrc { clear: both; text-align: center; font-size: 10px; color: #64748b; margin-top: 3px; border-top: 1px dotted #cbd5e1; padding-top: 3px; }
+        .cb-badge { display: inline-block; padding: 0 7px; border-radius: 3px; font-weight: 700; font-size: 10.5px; }
+        .cb-ok { background: #dcfce7; color: #15803d; }
+        .cb-ng { background: #fee2e2; color: #b91c1c; }
+        .cb-toolbar { position: sticky; top: 64px; z-index: 20; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .cb-fig { margin: 10px 0; }
+        .cb-explain { background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #3b82f6; border-radius: 4px; padding: 8px 12px; margin: 8px 0 12px; font-size: 11.5px; line-height: 1.7; color: #1e3a5f; }
+        .cb-explain .cb-explain-h { font-weight: 700; color: #1d4ed8; margin-right: 4px; }
+        #calcbook.cb-hide-explain .cb-explain { display: none !important; }
+        .cb-handcalc { background: #fffdf5; border: 1px solid #f5e7bf; border-radius: 6px; padding: 10px 12px; margin: 8px 0; }
+        .cb-handcalc .step { margin: 5px 0; }
+        .cb-handcalc .step b { color: #92400e; }
+
+        /* ===================== 列印（另存 PDF）隔離 ===================== */
+        @media print {
+            @page { size: A4 portrait; margin: 16mm 14mm; }
+            html, body { background: #fff !important; }
+            nav, .tab-container, .no-print, #unit-controls { display: none !important; }
+            main { display: block !important; max-width: none !important; padding: 0 !important; margin: 0 !important; }
+            .tab-content-wrapper { display: none !important; }
+            #tab-content-8 { display: block !important; }
+            #calcbook { line-height: 1.55; }
+            .cb-page { box-shadow: none; border: none; max-width: none; margin: 0; padding: 0; font-size: 10.5pt; page-break-after: always; }
+            .cb-page:last-child { page-break-after: auto; }
+            .cb-chapter { page-break-before: always; }
+            .cb-cover { page-break-after: always; }
+            .cb-eq, .cb-handcalc, .cb-src, .cb-fig { page-break-inside: avoid; }
+            .cb-tbl thead { display: table-header-group; }
+            .cb-tbl tr { page-break-inside: avoid; }
+            .cb-h1, .cb-h2, .cb-h3 { page-break-after: avoid; }
+            .cb-tbl th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .cb-badge, .cb-ok, .cb-ng, .cb-tbl tr:nth-child(even) td, .cb-meta-tbl td:first-child { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
     </style>
 </head>
 
@@ -244,8 +317,12 @@
                         <p class="text-xs text-slate-400">雙分頁模式：數據詳表 vs 加固分析</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-2" id="unit-controls">
-                    <span class="text-xs text-slate-300">顯示單位: tf</span>
+                <div class="flex items-center space-x-3">
+                    <span class="text-xs text-slate-300" id="unit-controls">顯示單位: tf</span>
+                    <button onclick="switchTab(8)" id="calcbook-btn"
+                        class="flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm rounded-lg shadow transition">
+                        📄 產生計算書
+                    </button>
                 </div>
             </div>
         </div>
@@ -866,6 +943,32 @@
                             <span class="text-xs text-amber-500 bg-amber-50 px-2 py-1 rounded">幾何配置</span>
                         </div>
 
+                        <!-- 線形情境快選（橋墩剪力補強試算，A 類外置PT） -->
+                        <div class="border border-amber-200 rounded-lg p-3 bg-amber-50/60 mb-4">
+                            <h4 class="text-xs font-bold text-amber-800 mb-1">線形情境快選 — 橋墩剪力試算</h4>
+                            <p class="text-[11px] text-slate-500 mb-2">一鍵套用預設外置PT線形，切到分頁6-4 讀 φV<sub>n</sub> 改善（P 固定 500t，僅調線形）。墩區 V<sub>p</sub> = P·(278−墩錨y)/(100·(56.5−轉向塊2))。</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button id="preset-btn-baseline" onclick="applyProfilePreset('baseline')"
+                                    class="px-3 py-1.5 text-xs bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-100 transition-colors">現況<br><span class="text-[10px] text-slate-400">塊 L/4·3L/4，錨 100</span></button>
+                                <button id="preset-btn-A" onclick="applyProfilePreset('A')"
+                                    class="px-3 py-1.5 text-xs bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-100 transition-colors">A 陡升段<br><span class="text-[10px] text-slate-400">塊2→0.85L，錨 100</span></button>
+                                <button id="preset-btn-B" onclick="applyProfilePreset('B')"
+                                    class="px-3 py-1.5 text-xs bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-100 transition-colors">B 陡升+抬墩錨<br><span class="text-[10px] text-slate-400">塊2→0.85L，錨 60</span></button>
+                                <button id="preset-btn-C" onclick="applyProfilePreset('C')"
+                                    class="px-3 py-1.5 text-xs bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-100 transition-colors">C 非對稱最大化<br><span class="text-[10px] text-slate-400">塊2→墩前5m，錨 60</span></button>
+                            </div>
+
+                            <!-- 情境配置說明 -->
+                            <div class="mt-3 pt-2 border-t border-amber-200 text-[11px] leading-relaxed text-slate-600 space-y-1.5">
+                                <p class="text-slate-500">四情境沿「把外置PT垂直分力 V<sub>p</sub> 往橋墩端集中」由保守到激進遞進（跨徑 L=56.5m、梁高 278cm、錨碇 y 自頂部起算、轉向塊貼梁底）。V<sub>p</sub> 數值為墩區每腹板（P=500t、3 腹板）：</p>
+                                <p><span class="font-bold text-slate-700">現況</span>（塊 L/4·3L/4，錨 100）：標準對稱線形，錨在形心≈純軸壓、底部下垂利<strong>跨中正彎矩</strong>；墩區 V<sub>p</sub>≈21。<span class="text-slate-400">→ 基準／跨中主控、橋墩剪力尚有餘裕時。</span></p>
+                                <p><span class="font-bold text-slate-700">A 陡升段</span>（塊2→0.85L，錨 100）：僅轉向塊2 往墩移，墩端斜段變短變陡 → V<sub>p</sub>≈35。<span class="text-slate-400">→ 橋墩剪力只差一點、想用最小幾何調整補足。</span></p>
+                                <p><span class="font-bold text-slate-700">B 陡升+抬墩錨</span>（塊2→0.85L，錨 60）：A 再加墩端錨碇抬至距頂 60cm，縮短斜段＋加大高差雙管齊下 → V<sub>p</sub>≈43，兼增墩端負彎矩偏心。<span class="text-slate-400">→ A 不夠且墩端錨碇可上移時。</span></p>
+                                <p><span class="font-bold text-slate-700">C 非對稱最大化</span>（塊2→墩前5m，錨 60）：把 V<sub>p</sub> 榨到幾何極限（斜段僅 5m）→ V<sub>p</sub>≈73（約現況 3.5 倍）。<span class="text-rose-500">副作用：塊1↔塊2 間形成 V<sub>p</sub>=0 死區（N23~N27 反無 V<sub>p</sub>），過陡須查轉向塊最小曲率半徑。</span><span class="text-slate-400">→ 缺口大／探外置PT天花板；若連 C 都 NG，代表須改斷面補強（見 6-4 腹板加厚）。</span></p>
+                                <p class="text-slate-400">* 僅調線形（轉向塊位置＋錨碇高度），力量 P 固定 500t；P 大小請於上方「外置預力力量 P」另調（V<sub>p</sub> 與 P 成正比）。</p>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- 錨碇區設定 -->
                             <div class="border border-slate-200 rounded-lg p-3 bg-slate-50">
@@ -940,12 +1043,12 @@
                                             <span class="text-xs text-slate-500">水平位置 X:</span>
                                             <input type="number" id="deviation-block-1-x"
                                                 class="w-24 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-amber-500"
-                                                value="14.125" min="0" max="28.25" step="0.001"
+                                                value="3" min="0" max="28.25" step="0.001"
                                                 oninput="updateDeviationBlockX(1, this.value, 'input')">
                                             <span class="text-xs text-slate-500">m</span>
                                         </div>
                                         <input type="range" id="deviation-block-1-x-slider" class="slider-amber" min="0"
-                                            max="28.25" step="0.001" value="14.125"
+                                            max="28.25" step="0.001" value="3"
                                             oninput="updateDeviationBlockX(1, this.value, 'slider')">
                                         <div class="flex gap-2 mt-2">
                                             <button
@@ -1258,6 +1361,16 @@
                                         class="w-4 h-4 accent-teal-600 cursor-pointer">
                                     PT補強後
                                 </label>
+                                <label class="flex items-center gap-1.5 text-sm font-medium text-cyan-700 cursor-pointer select-none" title="僅剪力圖：疊加 φVn 容量線(含腹板加厚)">
+                                    <input type="checkbox" id="chart-show-jacket" onchange="renderShearChart();"
+                                        class="w-4 h-4 accent-cyan-600 cursor-pointer">
+                                    腹板加厚
+                                </label>
+                                <label class="flex items-center gap-1.5 text-sm font-medium text-rose-700 cursor-pointer select-none" title="僅剪力圖：疊加 φVn 容量線(含側貼鋼板)">
+                                    <input type="checkbox" id="chart-show-plate" onchange="renderShearChart();"
+                                        class="w-4 h-4 accent-rose-600 cursor-pointer">
+                                    腹板鋼板
+                                </label>
                                 <button onclick="switchChart('moment')" id="chart-btn-moment"
                                     class="px-4 py-1.5 text-sm font-medium rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors">
                                     彎矩圖
@@ -1464,7 +1577,7 @@
                                     <div><span class="text-purple-700 font-bold">標稱強度：</span> M<sub>n</sub> 由等效矩形應力塊預先計算（查表 STRESS_BLOCK_DATA）</div>
                                     <div><span class="text-purple-700 font-bold">強度比：</span> CR = φM<sub>n</sub> / M<sub>u</sub>（典型值 1.5～1.9；&lt; 1.2 需重審 PT 配置）</div>
                                     <div class="mt-1 pt-1 border-t border-purple-200">
-                                        <span class="text-teal-700 font-bold">最小強度下限②（ACI §18.8.2）：</span> φM<sub>n</sub> ≥ min(1.33M<sub>u</sub>, 1.2M<sub>cr</sub>)
+                                        <span class="text-teal-700 font-bold">最小強度下限②（ACI 318-19 §9.6.2）：</span> φM<sub>n</sub> ≥ min(1.33M<sub>u</sub>, 1.2M<sub>cr</sub>)
                                     </div>
                                     <div class="pl-3 border-l-2 border-teal-200 ml-1 space-y-0.5">
                                         <div><span class="text-teal-700">M<sub>cr</sub></span> = S<sub>bot</sub> × (f<sub>r</sub> + f<sub>cpe</sub>)　[kgf·cm] ÷ 100000 → [tf·m]</div>
@@ -1473,7 +1586,7 @@
                                     </div>
                                 </div>
                                 <div class="text-slate-500 mt-1.5 border-t border-purple-200 pt-1.5 text-[10px]">
-                                    📖 台灣《公路橋梁設計規範》§8（ACI-318 框架）、§8.14（φ=0.90）；AASHTO LRFD Art. 5.7.3.2（M<sub>n</sub> 計算）；ACI 318 §18.8.2 / AASHTO Art. 5.7.3.3.2（最小彎矩強度下限，防脆性破壞）
+                                    📖 台灣《公路橋梁設計規範》§8（ACI-318 框架）、§8.14（φ=0.90）；AASHTO LRFD Art. 5.7.3.2（M<sub>n</sub> 計算）；ACI 318-19 §9.6.2 / AASHTO Art. 5.7.3.3.2（最小彎矩強度下限，防脆性破壞）
                                 </div>
                             </div>
                             <div class="overflow-x-auto max-h-[400px] overflow-y-auto border border-slate-200 rounded">
@@ -1496,7 +1609,7 @@
                                     <tbody id="momentCheckTableBody"></tbody>
                                 </table>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">* 判定① φMn ≥ Mu（強度需求）；判定② φMn ≥ min(1.33Mu, 1.2Mcr)（最小強度下限，ACI 318 §18.8.2；Mu ≤ 0 時不適用，顯示「—」）；Mcr = Sbot(2.0√f'c + fcpe)，其中 fcpe 為預力在底纖維產生之壓應力</p>
+                            <p class="text-xs text-slate-500 mt-1">* 判定① φMn ≥ Mu（強度需求）；判定② φMn ≥ min(1.33Mu, 1.2Mcr)（最小強度下限，ACI 318-19 §9.6.2；Mu ≤ 0 時不適用，顯示「—」）；Mcr = Sbot(2.0√f'c + fcpe)，其中 fcpe 為預力在底纖維產生之壓應力</p>
                             <div class="text-xs text-slate-600 mt-2 bg-purple-50 border-l-4 border-purple-400 p-3 rounded">
                                 <div class="font-bold text-purple-800 mb-1">◆ 橋墩負彎矩 M<sub>n</sub> 算法（Method A — M1 公式卡 fps k 法）</div>
                                 <ul class="space-y-1 list-disc pl-5">
@@ -1670,7 +1783,132 @@
                                 <li><strong>剪力</strong>：fpc 加外置軸壓 → σ₁↓、Vcw↑；φVn 加外置 V<sub>p</sub>（僅錨碇↔轉向塊斜段，集中梁端）。</li>
                                 <li>⚠️ <strong>橋墩負彎矩</strong>：Mn 已改用 <strong>Method A（fps，同 6-3）</strong>，非舊 Peff；但底部外置 PT 對橋墩 hogging <strong>無助益</strong>，且 M₂<sub>ext</sub> 反而加重需求 → 此區補強前後幾乎相同（補強後不改善），餘裕仍小，需頂部 PT 或斷面補強才有效。</li>
                                 <li><strong>第三道防線</strong>（壓碎/最小箍筋/最大間距）與補強前<strong>相同</strong>（箍筋與幾何未變），請見 6-3。</li>
+                                <li><strong>腹板側貼鋼板抗剪（新增）</strong>：於下方剪力明細表逐節點×腹板勾選；φVn 加 <strong>V<sub>pl</sub> = κ·(2·t·w)·f<sub>y</sub>·d<sub>v</sub>/s</strong>（Vs 類）。斜壓桿上限：V<sub>s</sub>+V<sub>pl</sub> ≤ 2.1√f'c·b'w·dv（超過不計）。</li>
                             </ul>
+                        </div>
+
+                        <!-- 腹板側貼鋼板抗剪補強 參數 -->
+                        <div class="bg-rose-50 border-l-4 border-rose-500 p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="text-sm font-bold text-rose-900">腹板側貼鋼板抗剪補強 — 參數（僅補強後生效）</h4>
+                                <span class="text-xs text-rose-500 bg-rose-100 px-2 py-1 rounded">Vs 類外加抗剪</span>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">板厚 t (cm)</label>
+                                    <input type="number" id="plate-t" value="0.9" min="0.1" step="0.1"
+                                        class="w-full px-2 py-1 border border-rose-300 rounded text-sm text-right font-mono focus:outline-none focus:border-rose-500"
+                                        oninput="renderStrengthCheckPost();">
+                                </div>
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">條寬 w (cm)</label>
+                                    <input type="number" id="plate-w" value="15" min="1" step="1"
+                                        class="w-full px-2 py-1 border border-rose-300 rounded text-sm text-right font-mono focus:outline-none focus:border-rose-500"
+                                        oninput="renderStrengthCheckPost();">
+                                </div>
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">f<sub>y</sub> (tf/cm²)<br><span class="font-normal text-slate-400">SS400=2.4 / SM490≈3.25</span></label>
+                                    <input type="number" id="plate-fy" value="2.4" min="0.1" step="0.05"
+                                        class="w-full px-2 py-1 border border-rose-300 rounded text-sm text-right font-mono focus:outline-none focus:border-rose-500"
+                                        oninput="renderStrengthCheckPost();">
+                                </div>
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">間距 s (cm)</label>
+                                    <input type="number" id="plate-s" value="20" min="1" step="1"
+                                        class="w-full px-2 py-1 border border-rose-300 rounded text-sm text-right font-mono focus:outline-none focus:border-rose-500"
+                                        oninput="renderStrengthCheckPost();">
+                                </div>
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">剝離折減 κ<br><span class="font-normal text-slate-400">需端部錨固</span></label>
+                                    <input type="number" id="plate-kappa" value="0.65" min="0.1" max="1" step="0.05"
+                                        class="w-full px-2 py-1 border border-rose-300 rounded text-sm text-right font-mono focus:outline-none focus:border-rose-500"
+                                        oninput="renderStrengthCheckPost();">
+                                </div>
+                            </div>
+                            <div class="mt-3 flex flex-wrap gap-2 items-center">
+                                <span class="text-xs text-slate-500">批次套用（加厚+鋼板）：</span>
+                                <button onclick="applyRetrofitRange(1,3,true)" class="px-2 py-1 text-xs bg-rose-200 text-rose-800 rounded hover:bg-rose-300">N1~N3 加厚+鋼板</button>
+                                <button onclick="applyRetrofitRange(22,30,true)" class="px-2 py-1 text-xs bg-rose-200 text-rose-800 rounded hover:bg-rose-300">N22~N30 加厚+鋼板</button>
+                                <button onclick="applyRetrofitRange(1,30,false)" class="px-2 py-1 text-xs bg-slate-200 text-slate-700 rounded hover:bg-slate-300">全部清除</button>
+                            </div>
+                            <div class="mt-2 text-[11px] text-slate-500 leading-relaxed">
+                                <p>* 模型依據：知識庫 <strong>D1 剪力卡「剪力補強鋼筋 Ss」</strong>（外加豎向元件當 Vs 類）＋ <strong>R2 外貼鋼板卡構造要求</strong>（端部須 U 形箍/壓條錨固、錨栓嵌入≥6.5d、間距≤24t、寬厚比 w/t≤50、厚&gt;5mm 須注膠）。CFRP 卡明文「CFRP 不承受剪力」→ 抗剪走鋼板/圍束。</p>
+                                <p>* κ 為剝離/錨定折減之工程判斷值（知識庫無專屬剪力鋼板閉式）；<strong>務必於端部設 U 形箍/壓條確保錨定</strong>，否則 κ 不成立。鋼板須防鏽（20mm M15 砂漿抹面或防鏽漆）。</p>
+                                <p>* A<sub>pl</sub> = 2·t·w（腹板兩面各貼一條）；斜壓桿上限：V<sub>s</sub>+V<sub>pl</sub> ≤ 2.1√f'c·b'w·dv，超過部分不計入 φVn（腹板先壓碎，須改加厚腹板或提高 f'c）。</p>
+                            </div>
+                        </div>
+
+                        <!-- 腹板加厚補強 參數 -->
+                        <div class="bg-cyan-50 border-l-4 border-cyan-500 p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="text-sm font-bold text-cyan-900">腹板加厚補強 — 參數（僅補強後生效）</h4>
+                                <span class="text-xs text-cyan-600 bg-cyan-100 px-2 py-1 rounded">抬升 Vc / Vs,max / 壓碎</span>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">外腹板 Δb'w (cm)<br><span class="font-normal text-slate-400">每道腹板兩面合計淨增</span></label>
+                                    <input type="number" id="jacket-dbw-outer" value="20" min="0" step="1"
+                                        class="w-full px-2 py-1 border border-cyan-300 rounded text-sm text-right font-mono focus:outline-none focus:border-cyan-500"
+                                        oninput="renderStrengthCheckPost();">
+                                </div>
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">中腹板 Δb'w (cm)<br><span class="font-normal text-slate-400">每道腹板兩面合計淨增</span></label>
+                                    <input type="number" id="jacket-dbw-middle" value="20" min="0" step="1"
+                                        class="w-full px-2 py-1 border border-cyan-300 rounded text-sm text-right font-mono focus:outline-none focus:border-cyan-500"
+                                        oninput="renderStrengthCheckPost();">
+                                </div>
+                                <div class="bg-white p-2 rounded md:col-span-2 flex items-center">
+                                    <p class="text-[11px] text-slate-500 leading-relaxed">b'w,後 = b'w,前 + Δb'w（外腹板 36.5、中腹板 31.5 起算，<strong>外/中可分別設定</strong>）。V<sub>cw</sub>、V<sub>ci</sub>、V<sub>s,max</sub>=2.1√f'c·b'w·dv、壓碎 0.25f'c·b'w·dv 皆隨 b'w 線性上升；斷面 Area/I（→fpc/dv）保守維持原值。</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex flex-wrap gap-2 items-center">
+                                <span class="text-xs text-slate-500">批次套用（加厚+鋼板）：</span>
+                                <button onclick="applyRetrofitRange(1,3,true)" class="px-2 py-1 text-xs bg-cyan-200 text-cyan-800 rounded hover:bg-cyan-300">N1~N3 加厚+鋼板</button>
+                                <button onclick="applyRetrofitRange(22,30,true)" class="px-2 py-1 text-xs bg-cyan-200 text-cyan-800 rounded hover:bg-cyan-300">N22~N30 加厚+鋼板</button>
+                                <button onclick="applyRetrofitRange(1,30,false)" class="px-2 py-1 text-xs bg-slate-200 text-slate-700 rounded hover:bg-slate-300">全部清除</button>
+                            </div>
+                            <div class="mt-2 text-[11px] text-slate-500 leading-relaxed">
+                                <p>* 依據：知識庫 D1 剪力卡 V<sub>cw</sub>/V<sub>ci</sub>/V<sub>s,max</sub> 皆 ∝ b'w。加厚後最小箍筋需求 (A<sub>v</sub>/s)<sub>min</sub>=3.5·b'w/fsy 隨之上升，套層內須配對應豎向鋼筋，否則判定②（最小筋，見 6-3 第三道防線）為正確警示。</p>
+                                <p>* ⚠ 套層與原腹板界面須確實結合（鑿毛/植筋/剪力榫）方可共同抗剪；施工侵入性與增重較高，屬最後手段。可與外置 V<sub>p</sub>、側貼鋼板組合以減少所需 Δb'w。</p>
+                            </div>
+                        </div>
+
+                        <!-- 頂部 over-pier 外置PT（墩區負彎矩補強）參數 -->
+                        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="text-sm font-bold text-emerald-900">頂部 over-pier 外置PT — 墩區負彎矩補強（僅補強後生效）</h4>
+                                <label class="flex items-center gap-1.5 text-xs font-bold text-emerald-800 cursor-pointer select-none">
+                                    <input type="checkbox" id="toppt-enable" checked onchange="renderStrengthCheckPost(); renderMomentChart(); renderShearChart();" class="w-4 h-4 accent-emerald-600 cursor-pointer">啟用
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">有效預力 P (tf)<br><span class="font-normal text-slate-400">Peff(已含損失)；N29主控~380</span></label>
+                                    <input type="number" id="toppt-force" value="600" min="0" step="10"
+                                        class="w-full px-2 py-1 border border-emerald-300 rounded text-sm text-right font-mono focus:outline-none focus:border-emerald-500"
+                                        oninput="renderStrengthCheckPost(); renderMomentChart(); renderShearChart();">
+                                </div>
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">鋼腱距頂 y (cm)<br><span class="font-normal text-slate-400">上核內(≈44)免底緣拉；越小力臂越大</span></label>
+                                    <input type="number" id="toppt-ytop" value="25" min="5" step="1"
+                                        class="w-full px-2 py-1 border border-emerald-300 rounded text-sm text-right font-mono focus:outline-none focus:border-emerald-500"
+                                        oninput="renderStrengthCheckPost(); renderMomentChart(); renderShearChart();">
+                                </div>
+                                <div class="bg-white p-2 rounded flex flex-col">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1 flex-1">內錨節點 N<br><span class="font-normal text-slate-400">墩區側錨(→N30);反曲點後≈N25~27</span></label>
+                                    <input type="number" id="toppt-from" value="27" min="15" max="29" step="1"
+                                        class="w-full px-2 py-1 border border-emerald-300 rounded text-sm text-right font-mono focus:outline-none focus:border-emerald-500"
+                                        oninput="renderStrengthCheckPost(); renderMomentChart(); renderShearChart();">
+                                </div>
+                                <div class="bg-white p-2 rounded flex items-center">
+                                    <p class="text-[11px] text-slate-500 leading-relaxed">近頂負偏心，作用段 <strong>內錨N ~ N30</strong>（端跨模型 N30 端＝跨過墩到對稱鄰跨）。φMn⁻↑、M₂墩區有利、fpc↑(利剪)。直線水平索無 Vp、過墩自平衡不推墩。</p>
+                                </div>
+                            </div>
+                            <div id="toppt-servwarn" class="mt-2"></div>
+                            <div class="mt-2 text-[11px] text-slate-500 leading-relaxed">
+                                <p>* ΔMn⁻ = P·力臂(≈距底h−y)／100（fps=fpe 保守，不扣 a/2，同底部外置慣例）。<strong>自動檢核</strong>：底緣/頂緣總服務應力 −14.97~210（含外加載重；墩區 hogging 底緣受大壓，通常 OK）＋跨中經 M₂ 是否被推高（見對照總覽/彎矩明細）。</p>
+                                <p>* ⚠ <strong>手算(工具不算)</strong>：錨碇區爆裂(受拉頂板須確認施拉後淨受壓)、墩頂鋼鞍座轉向力、新錨塊植筋介面(可能開裂基材,超靜定折減)、自由段≤7500mm、防蝕、鞍座疲勞、施拉時序。ULS 另查 c/d 超筋/延性。依據 O1 外置預力卡＋鋼腱線形卡(墩頂段0.10~0.15L)。</p>
+                            </div>
                         </div>
 
                         <!-- 對照總覽 -->
@@ -1684,9 +1922,9 @@
                                         <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">φMn 前</th>
                                         <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">φMn 後</th>
                                         <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">彎矩判定<br><span class="font-normal text-[10px]">前→後</span></th>
-                                        <th class="bg-orange-50 text-orange-700 p-2 border-b border-white">σ₁ 前<br><span class="font-normal text-[10px]">外腹板</span></th>
+                                        <th class="bg-orange-50 text-orange-700 p-2 border-b border-white">σ₁ 前<br><span class="font-normal text-[10px]">控制腹板</span></th>
                                         <th class="bg-orange-50 text-orange-700 p-2 border-b border-white">σ₁ 後</th>
-                                        <th class="bg-red-50 text-red-700 p-2 border-b border-white">φVn 前<br><span class="font-normal text-[10px]">外腹板</span></th>
+                                        <th class="bg-red-50 text-red-700 p-2 border-b border-white">φVn 前<br><span class="font-normal text-[10px]">控制腹板</span></th>
                                         <th class="bg-red-50 text-red-700 p-2 border-b border-white">φVn 後</th>
                                         <th class="bg-emerald-50 text-emerald-700 p-2 border-b border-white">φVn 改善</th>
                                         <th class="bg-slate-100 text-slate-800 p-2 border-b border-white">剪力判定<br><span class="font-normal text-[10px]">前→後</span></th>
@@ -1694,7 +1932,7 @@
                                     <tbody id="summaryPostTableBody"></tbody>
                                 </table>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">* σ₁、φVn 取外腹板（控制）；改善% = (後−前)/|前|；判定「前→後」並列，箭頭標出由 NG 轉 OK（綠）或 OK 轉 NG（紅）。</p>
+                            <p class="text-xs text-slate-500 mt-1">* σ₁、φVn 取<strong>控制腹板</strong>（外/中兩腹板取剪力最不利者，φVn 最小；補強後可因加厚/鋼板改變控制者）；σ₁前 後標「外/中」示控制腹板。改善% = (後−前)/|前|；判定「前→後」並列，箭頭標出由 NG 轉 OK（綠）或 OK 轉 NG（紅）。中腹板 b'w 較小(31.5&lt;外36.5)故未補強時多由中腹板控制。</p>
                         </div>
 
                         <!-- 彎矩明細 -->
@@ -1735,6 +1973,8 @@
                                         <th class="bg-blue-50 text-blue-700 p-2 border-b border-white">Vcw 後</th>
                                         <th class="bg-purple-50 text-purple-700 p-2 border-b border-white">Vc 後</th>
                                         <th class="bg-slate-50 text-slate-700 p-2 border-b border-white">Vs</th>
+                                        <th class="bg-cyan-50 text-cyan-700 p-2 border-b border-white">腹板加厚<br><span class="font-normal text-[10px]">勾選 b'w後(+Δ)</span></th>
+                                        <th class="bg-rose-50 text-rose-700 p-2 border-b border-white">鋼板 Vpl<br><span class="font-normal text-[10px]">勾選啟用 /腹板</span></th>
                                         <th class="bg-teal-50 text-teal-700 p-2 border-b border-white">Vp 外置<br><span class="font-normal text-[10px]">/腹板</span></th>
                                         <th class="bg-red-50 text-red-700 p-2 border-b border-white">φVn 前</th>
                                         <th class="bg-red-100 text-red-800 p-2 border-b border-white">φVn 後</th>
@@ -1744,7 +1984,7 @@
                                     <tbody id="shearPostTableBody"></tbody>
                                 </table>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">* Vp 外置/腹板 = 外置 PT 垂直分量 ÷ n<sub>web</sub>（僅梁端斜段）。φVn 後 = φ(Vc + Vs + Vp外置/腹板)。σ₁ 限值 0.3√f'c = 6.06 kgf/cm²。</p>
+                            <p class="text-xs text-slate-500 mt-1">* Vp 外置/腹板 = 外置 PT 垂直分量 ÷ n<sub>web</sub>（僅梁端斜段）。<strong>鋼板 Vpl</strong> = κ·(2·t·w)·f<sub>y</sub>·d<sub>v</sub>/s（單片腹板兩面貼；勾選才計入）；顯示值已扣斜壓桿上限，標「受上限」表 V<sub>s</sub>+V<sub>pl</sub> 超過 2.1√f'c·b'w·dv 之截斷。φVn 後 = φ(V<sub>c</sub> + min(V<sub>s</sub>+V<sub>pl</sub>, V<sub>s,max</sub>) + V<sub>p外置</sub>/腹板)。σ₁ 限值 0.3√f'c = 6.06 kgf/cm²。</p>
                         </div>
                     </div>
                 </div> <!-- End of Tab 6 Inner -->
@@ -1878,6 +2118,32 @@
                 </div>
             </div>
 
+            <!-- Tab 8 Content (計算書 PDF) -->
+            <div id="tab-content-8" class="tab-content-wrapper hidden">
+                <div id="tab-content-8-inner" class="tab-content">
+                    <!-- 工具列（不列印） -->
+                    <div class="cb-toolbar no-print">
+                        <button onclick="window.print()"
+                            class="px-4 py-2 bg-slate-800 text-white rounded font-bold text-sm hover:bg-slate-700">
+                            🖨 產生計算書 PDF
+                        </button>
+                        <button onclick="renderCalcBook()"
+                            class="px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-500">
+                            ↻ 依目前參數重新整理
+                        </button>
+                        <label class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer select-none">
+                            <input type="checkbox" id="cb-show-explain" onchange="cbApplyExplainVis()"
+                                class="w-4 h-4 accent-blue-600 cursor-pointer">顯示各章解說
+                        </label>
+                        <span class="text-xs text-slate-500">
+                            內容即時反映各分頁目前輸入。列印時請於瀏覽器選「另存為 PDF」、紙張 A4、邊界「預設」、可勾「頁首及頁尾」加頁碼。
+                        </span>
+                    </div>
+                    <!-- 計算書本體（由 renderCalcBook() 即時產生） -->
+                    <div id="calcbook"></div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -1994,7 +2260,7 @@
                 deviationBlocks: {
                     count: 2,
                     blocks: [
-                        { x: 14.125, y: 278 }, // Block 1 (Y will be calculated as beam depth)
+                        { x: 3, y: 278 }, // Block 1 (Y will be calculated as beam depth)
                         { x: 42.375, y: 278 }  // Block 2
                     ]
                 }
@@ -2020,7 +2286,7 @@
             drawProfile(3, false); // Tab 3: Basic profile (預力配置)
             calculateExtForces(); // Initialize external force calculations
             drawProfile2();  // Tab 5: With Ext (外置預力幾何)
-            drawSectionDiagram(); // Tab 3: Section diagram
+            if (typeof drawSectionDiagram === 'function') drawSectionDiagram(); // Tab 1 斷面圖為 <img>，此為未定義函式的防護（避免 init 中斷）
             // Initialize design loads calculations for Tab 2
             updateDeadLoad();
             updateLiveLoad();
@@ -2038,13 +2304,14 @@
             const content5 = document.getElementById('tab-content-5');
             const content6 = document.getElementById('tab-content-6');
             const content7 = document.getElementById('tab-content-7');
+            const content8 = document.getElementById('tab-content-8');
 
             // Ensure target is visible before animation logic might hide it
             const targetContent = document.getElementById(`tab-content-${tabId}`);
             if (targetContent) targetContent.classList.remove('hidden');
 
             // Setup fade out for others
-            const allContent = [content1, content2, content3, content4, content5, content6, content7];
+            const allContent = [content1, content2, content3, content4, content5, content6, content7, content8];
             const otherContent = allContent.filter((_, i) => i !== tabId - 1);
 
             // Fade out others
@@ -2107,14 +2374,24 @@
                 }, 100);
             }
 
-            // Toggle Buttons
+            // Tab 8: 計算書
+            if (tabId === 8) {
+                setTimeout(() => { renderCalcBook(); }, 150);
+            }
+
+            // Toggle Buttons（計算書 Tab 8 為右上角獨立按鈕，不在 tab strip）
             ['tab-btn-1', 'tab-btn-2', 'tab-btn-3', 'tab-btn-4', 'tab-btn-5', 'tab-btn-6', 'tab-btn-7'].forEach(btnId => {
-                document.getElementById(btnId).classList.remove('tab-active');
-                document.getElementById(btnId).classList.add('tab-inactive');
+                const b = document.getElementById(btnId);
+                if (!b) return;
+                b.classList.remove('tab-active');
+                b.classList.add('tab-inactive');
             });
 
-            document.getElementById(`tab-btn-${tabId}`).classList.remove('tab-inactive');
-            document.getElementById(`tab-btn-${tabId}`).classList.add('tab-active');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) { activeBtn.classList.remove('tab-inactive'); activeBtn.classList.add('tab-active'); }
+            // 計算書按鈕高亮
+            const cbBtn = document.getElementById('calcbook-btn');
+            if (cbBtn) cbBtn.classList.toggle('ring-2', tabId === 8);
 
 
 
@@ -2539,6 +2816,55 @@
         function updateExtForceTf(val) {
             state.extGeometry.forceTf = parseFloat(val) || 0;
             calculateExtForces();
+        }
+
+        // 線形情境快選：一鍵套用預設外置PT線形（A 類補強試算，僅調線形，P 固定 500t）
+        // baseline=現況；A=轉向塊2 移 0.85L（陡升段）；B=A+墩端錨碇抬至距頂 60cm；C=塊2 移到墩前 5m + 墩錨 60cm
+        function applyProfilePreset(name) {
+            const CFG = {
+                baseline: { force: 500, slideY: 100, hingeY: 100, b1: 14.125, b2: 42.375 },
+                A:        { force: 500, slideY: 100, hingeY: 100, b1: 14.125, b2: 48.025 },  // 0.85L
+                B:        { force: 500, slideY: 100, hingeY: 60,  b1: 14.125, b2: 48.025 },
+                C:        { force: 500, slideY: 100, hingeY: 60,  b1: 14.125, b2: 51.5   }    // 墩前 5m
+            };
+            const cfg = CFG[name];
+            if (!cfg) return;
+
+            // 力量（updateExtForceTf 不會同步輸入框，手動補）
+            const fEl = document.getElementById('ext-force-input');
+            if (fEl) fEl.value = cfg.force;
+            updateExtForceTf(cfg.force);
+
+            // 確保 2 個轉向塊
+            const cntSel = document.getElementById('deviation-block-count');
+            if (cntSel) cntSel.value = '2';
+            updateDeviationBlockCount(2);
+
+            // 錨碇（source='button' → 同步輸入框/滑桿/分頁6 欄位）
+            updateAnchorageY('sliding', cfg.slideY, 'button');
+            updateAnchorageY('hinged',  cfg.hingeY, 'button');
+
+            // 轉向塊 X
+            updateDeviationBlockX(1, cfg.b1, 'button');
+            updateDeviationBlockX(2, cfg.b2, 'button');
+
+            // 若正在看分頁 6，即時重算強度檢核與圖表
+            if (state.currentTab === 6) {
+                if (typeof renderStrengthCheck === 'function') renderStrengthCheck();
+                if (typeof renderStrengthCheckPost === 'function') renderStrengthCheckPost();
+                if (typeof renderMomentChart === 'function') renderMomentChart();
+                if (typeof renderShearChart === 'function') renderShearChart();
+            }
+
+            // 標示作用中情境
+            ['baseline', 'A', 'B', 'C'].forEach(n => {
+                const b = document.getElementById('preset-btn-' + n);
+                if (b) {
+                    b.classList.toggle('ring-2', n === name);
+                    b.classList.toggle('ring-amber-500', n === name);
+                    b.classList.toggle('bg-amber-100', n === name);
+                }
+            });
         }
 
         // 繪製 Tab 5 的 Profile (含外置預力)
@@ -3719,42 +4045,64 @@
                 return M_design;
             });
 
+            // 補強後模式：基準線改為細實線不填色（當「載重需求」對照，避免藍色填色蓋掉綠色安全帶）
+            const showPostMode = document.getElementById('chart-show-post')?.checked;
             const datasets = [{
                 type: 'line',
-                label: '設計彎矩 (tf·m)',
+                label: showPostMode ? '設計彎矩 (載重,未含M₂)' : '設計彎矩 (tf·m)',
                 data: data,
-                borderColor: '#4ade80',
-                backgroundColor: 'rgba(74, 222, 128, 0.2)',
-                borderWidth: 2,
-                pointRadius: 3,
-                pointBackgroundColor: '#4ade80',
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.10)',
+                borderWidth: showPostMode ? 1.5 : 2,
+                pointRadius: showPostMode ? 0 : 3,
+                pointBackgroundColor: '#3b82f6',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 1,
                 tension: 0.4,
-                fill: true
+                fill: !showPostMode
             }];
 
-            // PT 補強後：疊加 補強後彎矩(含M₂)、次彎矩 M₂(獨立)、外置PT 等效彎矩
+            // PT 補強後：彎矩容量包絡帶（非對稱）＋需求(含M₂)＋分解
             if (document.getElementById('chart-show-post')?.checked) {
                 calculateExtForces();
                 const sctx = getStrengthContext();
+                const { f_c_kgf, phi_m, b_bot_in, fpu_kgf, fpe_kgf } = sctx;
+                // 彎矩容量包絡（非對稱）：上緣 +φMn 正彎矩(跨中,底版PT+外置)；下緣 −φMn 負彎矩(橋墩,頂版PT)
+                // 外置底部下垂 PT 僅抬升正彎矩(上緣)；負彎矩(下緣)補強前後相同
+                const capMomEnv = (usePT) => {
+                    const sag = [], hog = [];
+                    state.nodes.forEach((nx, i) => {
+                        const nodeNum = i + 1, segId = nodeNum === 30 ? 29 : nodeNum;
+                        const section = BEAM_SECTIONS.find(s => s.id === getSegmentNode(segId));
+                        if (!section) { sag.push(null); hog.push(null); return; }
+                        const { Y_top, Y_bot } = section;
+                        const P_top = TOP_PRESTRESS_TF[i] || 0;
+                        const ext = (state.extNodeData && state.extNodeData[nodeNum]) || { force: 0, ep_ext: 0 };
+                        const dMn_ext = usePT ? ext.force * (ext.ep_ext + Y_top) / 100 : 0;   // 底部外置僅助正彎矩
+                        const tnode = (usePT && sctx.sec2top.td.node[nodeNum]) ? sctx.sec2top.td.node[nodeNum] : null;   // 頂部PT 助負彎矩
+                        const dMn_top = tnode ? tnode.force * ((Y_top + Y_bot) - tnode.pos) / 100 : 0;
+                        const Mn_sag = (STRESS_BLOCK_DATA[segId]?.Mn ?? 0) + dMn_ext;
+                        const Mn_hog = (P_top > 0 ? computeHoggingMn(P_top, (Y_top + Y_bot) - 12.5, b_bot_in, f_c_kgf, fpu_kgf, fpe_kgf).Mn : 0) + dMn_top;
+                        sag.push(phi_m * Mn_sag);
+                        hog.push(-phi_m * Mn_hog);
+                    });
+                    return { sag, hog };
+                };
+                const preEnv = capMomEnv(false), postEnv = capMomEnv(true);
+                // 呈現概念（與剪力圖一致）：容量包絡帶 = 上緣 +φMn⁺(正彎矩) 到 下緣 −φMn⁻(負彎矩)；需求落在帶內 → OK
+                //   補強前：灰虛線(上下緣)；補強後：綠實線(上下緣)＋帶內填綠 → 一眼看出容量擴張(尤其墩區負彎矩下緣被頂部PT 往下推)
+                // 補強後 上緣 +φMn⁺(綠實線；fill 錨點)
+                datasets.push({ type: 'line', label: 'φMn⁺ 補強後 (正彎矩容量)', data: postEnv.sag, borderColor: '#16a34a', borderWidth: 2.5, pointRadius: 0, tension: 0.3, fill: false });
+                // 補強後 下緣 −φMn⁻(綠實線；fill:'-1' 填至上緣 → 補強後安全帶淡綠)
+                datasets.push({ type: 'line', label: 'φMn⁻ 補強後 (負彎矩容量)', data: postEnv.hog, borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,0.08)', borderWidth: 2.5, pointRadius: 0, tension: 0.3, fill: '-1' });
+                // 補強前 上緣/下緣(灰虛線，疊在填色上作對照 → 補強前後容量差即灰↔綠間距)
+                datasets.push({ type: 'line', label: 'φMn⁺ 補強前', data: preEnv.sag, borderColor: '#94a3b8', borderWidth: 1.5, borderDash: [5, 4], pointRadius: 0, tension: 0.3, fill: false });
+                datasets.push({ type: 'line', label: 'φMn⁻ 補強前', data: preEnv.hog, borderColor: '#94a3b8', borderWidth: 1.5, borderDash: [5, 4], pointRadius: 0, tension: 0.3, fill: false });
+                // 需求：補強後所需彎矩(含 M₂，紅實線，疊最上層)；落在綠帶內即 OK，戳出灰線代表補強前不足、靠補強才進帶內
                 const postMu = state.nodes.map((nx, i) => { const r = computeStrengthAtNode(i, sctx, true); return r ? r.Mu : null; });
-                const m2Arr = state.nodes.map((nx, i) => (sctx.sec2int.M2[i] || 0) + (sctx.sec2ext.M2[i] || 0));   // 次彎矩 M₂(內+外置)
-                const meffArr = state.nodes.map((nx, i) => (state.extNodeData && state.extNodeData[i + 1]) ? state.extNodeData[i + 1].meff : 0);
                 datasets.push({
-                    type: 'line', label: '設計彎矩 補強後 (含 M₂)', data: postMu,
-                    borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)',
-                    borderWidth: 2, pointRadius: 2, pointBackgroundColor: '#ef4444', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.4, fill: false
-                });
-                datasets.push({
-                    type: 'line', label: '次彎矩 M₂ (內+外置)', data: m2Arr,
-                    borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.1)',
-                    borderWidth: 2.5, pointRadius: 2, pointBackgroundColor: '#7c3aed', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0, fill: false
-                });
-                datasets.push({
-                    type: 'line', label: '外置PT 等效彎矩 M₁,ext', data: meffArr,
-                    borderColor: '#14b8a6', backgroundColor: 'rgba(20,184,166,0.1)',
-                    borderWidth: 1.5, borderDash: [6, 3], pointRadius: 1.5, pointBackgroundColor: '#14b8a6', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.4, fill: false
+                    type: 'line', label: '所需彎矩 補強後 (含 M₂)', data: postMu,
+                    borderColor: '#ef4444', borderWidth: 2.5, pointRadius: 2.5, pointBackgroundColor: '#ef4444', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.3, fill: false
                 });
             }
 
@@ -3880,6 +4228,69 @@
                             borderWidth: 1.5, borderDash: [6, 3], pointRadius: 1.5, pointBackgroundColor: '#14b8a6', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.4, fill: false
                         });
                     }
+                    // 補強容量 φVn（控制腹板, 每腹板基準）：勾選 PT補強後 / 腹板加厚 / 腹板鋼板 任一即疊加
+                    // 同時畫「補強前(灰)」「補強後(綠)」與需求「所需剪力/腹板(橙)」；兩補強都勾時再拆出各別貢獻
+                    const showPost = document.getElementById('chart-show-post')?.checked;
+                    const showJk   = document.getElementById('chart-show-jacket')?.checked;
+                    const showPl   = document.getElementById('chart-show-plate')?.checked;
+                    if (showPost || showJk || showPl) {
+                        calculateExtForces();
+                        const bctx = getStrengthContext();
+                        const nWeb = bctx.n_web || 3;
+                        // 剪力包絡線（全斷面基準，與設計剪力同尺度）：容量畫成 ±φVn,全斷面 對稱帶，需求(有號)落在帶內才 OK
+                        // 全斷面等效容量 = n_web × φVn,控制腹板（因需求平均分攤，檢核由 n_web×min(φVn) 約束，與各腹板檢核等價）
+                        // 需求定號：跟隨當地設計剪力方向(補強後含 V₂)，使其與設計剪力同側(近墩端走負)
+                        const V2totSign = showPost ? (bctx.sec2int.V2 + bctx.sec2ext.V2 + bctx.sec2top.m2.V2) : 0;
+                        const signArr = state.nodes.map((nx, i) => ((data[i] + V2totSign) < 0 ? -1 : 1));
+                        // 各節點控制腹板(φVn 最小者) × n_web = 全斷面等效容量；flags 決定納入哪些補強
+                        const capMag = (flags) => state.nodes.map((nx, i) => {
+                            const r = computeStrengthAtNode(i, { ...bctx, ...flags }, true);
+                            if (!r) return null;
+                            let mn = r.webs[0].phi_Vn; r.webs.forEach(w => { if (w.phi_Vn < mn) mn = w.phi_Vn; });
+                            return mn * nWeb;
+                        });
+                        const neg = (arr) => arr.map(v => v == null ? null : -v);   // 鏡像下緣(−φVn)
+                        const capPre  = capMag({ mUsePT: false, mUseJacket: false, mUsePlate: false, mUseTop: false });          // 補強前(原始)
+                        const capPost = capMag({ mUsePT: !!showPost, mUseJacket: !!showJk, mUsePlate: !!showPl, mUseTop: !!showPost }); // 依勾選補強後
+                        // 全斷面需求 Vu(含 V₂, sign-aware)，與表格「所需剪力」同基準
+                        const vuFullArr = state.nodes.map((nx, i) => { const r = computeStrengthAtNode(i, { ...bctx, mUsePT: !!showPost, mUseTop: !!showPost }, true); return r ? r.Vu_total * signArr[i] : null; });
+                        // 補強前 φVn 包絡帶（灰虛線，±對稱；圖例只列上緣，下緣以 _ 前綴隱藏）
+                        ds.push({
+                            type: 'line', label: 'φVn 容量包絡 補強前 (±, 全斷面)', data: capPre,
+                            borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,0.04)',
+                            borderWidth: 1.5, borderDash: [4, 4], pointRadius: 0, tension: 0.3, fill: false
+                        });
+                        ds.push({
+                            type: 'line', label: '_capPreNeg', data: neg(capPre),
+                            borderColor: '#94a3b8', borderWidth: 1.5, borderDash: [4, 4], pointRadius: 0, tension: 0.3, fill: false
+                        });
+                        // 補強後 φVn 包絡帶（綠實線，±對稱；下緣 fill:'-1' 填至上緣 → 安全區淡綠底）
+                        ds.push({
+                            type: 'line', label: 'φVn 容量包絡 補強後 (±, 全斷面)', data: capPost,
+                            borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,0.07)',
+                            borderWidth: 2.5, pointRadius: 0, tension: 0.3, fill: false
+                        });
+                        ds.push({
+                            type: 'line', label: '_capPostNeg', data: neg(capPost),
+                            borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,0.07)',
+                            borderWidth: 2.5, pointRadius: 0, tension: 0.3, fill: '-1'
+                        });
+                        // 加厚、鋼板都勾時，額外拆出各別貢獻（±對稱，細虛線；便於比較）
+                        if (showJk && showPl) {
+                            const capJk = capMag({ mUsePT: !!showPost, mUseJacket: true, mUsePlate: false, mUseTop: !!showPost });
+                            const capPl = capMag({ mUsePT: !!showPost, mUseJacket: false, mUsePlate: true, mUseTop: !!showPost });
+                            ds.push({ type: 'line', label: 'φVn 僅腹板加厚 (±, 全斷面)', data: capJk, borderColor: '#0891b2', borderWidth: 1.5, borderDash: [2, 2], pointRadius: 0, tension: 0.3, fill: false });
+                            ds.push({ type: 'line', label: '_capJkNeg', data: neg(capJk), borderColor: '#0891b2', borderWidth: 1.5, borderDash: [2, 2], pointRadius: 0, tension: 0.3, fill: false });
+                            ds.push({ type: 'line', label: 'φVn 僅腹板鋼板 (±, 全斷面)', data: capPl, borderColor: '#e11d48', borderWidth: 1.5, borderDash: [2, 2], pointRadius: 0, tension: 0.3, fill: false });
+                            ds.push({ type: 'line', label: '_capPlNeg', data: neg(capPl), borderColor: '#e11d48', borderWidth: 1.5, borderDash: [2, 2], pointRadius: 0, tension: 0.3, fill: false });
+                        }
+                        // 所需剪力(全斷面, 含V₂, 有號, 橙虛線)：落在 ±φVn 帶內 → OK，跑出帶外 → NG
+                        ds.push({
+                            type: 'line', label: '所需剪力 Vu (全斷面, 含V₂)', data: vuFullArr,
+                            borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)',
+                            borderWidth: 1.5, borderDash: [5, 3], pointRadius: 1.5, pointBackgroundColor: '#f59e0b', pointBorderColor: '#fff', pointBorderWidth: 1, tension: 0.3, fill: false
+                        });
+                    }
                     return ds;
                 })()
             };
@@ -3916,13 +4327,15 @@
                         plugins: {
                             legend: {
                                 display: true,
-                                position: 'top'
+                                position: 'top',
+                                labels: { filter: (item) => !String(item.text).startsWith('_') }   // 隱藏鏡像下緣(_ 前綴)
                             },
                             tooltip: {
                                 backgroundColor: 'rgba(15, 23, 42, 0.8)',
                                 padding: 12,
                                 titleFont: { size: 12, weight: 'bold' },
                                 bodyFont: { size: 11 },
+                                filter: (item) => !String(item.dataset.label).startsWith('_'),   // 鏡像下緣不列入 tooltip
                                 callbacks: {
                                     label: (context) => {
                                         const v = context.raw == null ? '—' : context.raw.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -4159,10 +4572,19 @@
 
         // 逐節點箍筋（N1~N30，index 0 = N1）：外腹板/中腹板各一組 {bar, s, legs}
         // 間距固定 @20cm、肢數預設 2；鋼筋由 Tab 6-3 第二道剪力表的下拉選單逐節點選擇
-        const STIRRUP_NODES = Array.from({ length: 30 }, () => ({
-            outer:  { bar: 'D19', s: STIRRUP_FIX_S, legs: 2 },
-            middle: { bar: 'D19', s: STIRRUP_FIX_S, legs: 2 }
-        }));
+        // 預設（外/中相同，竣工圖分區）：N1~2 D19、N3~5 D22、N6~23 D19、N24~26 D22、N27~30 D25，皆 @20
+        const defaultStirrupBar = (n) =>
+            (n <= 2)  ? 'D19' :
+            (n <= 5)  ? 'D22' :
+            (n <= 23) ? 'D19' :
+            (n <= 26) ? 'D22' : 'D25';
+        const STIRRUP_NODES = Array.from({ length: 30 }, (_, i) => {
+            const bar = defaultStirrupBar(i + 1);
+            return {
+                outer:  { bar, s: STIRRUP_FIX_S, legs: 2 },
+                middle: { bar, s: STIRRUP_FIX_S, legs: 2 }
+            };
+        });
 
         // 取得某節點某腹板類型的箍筋規格 + Av（肢數 × 單支面積）
         function getStirrup(nodeNum, webType) {
@@ -4177,6 +4599,105 @@
             if (!node) return;
             node[webType].bar = bar;
             renderStrengthCheck();
+        }
+
+        // =====================================================================
+        // 腹板側貼鋼板抗剪補強（僅 Tab 6-4 補強後生效）
+        // 依據：知識庫 D1 剪力卡「剪力補強鋼筋 Ss」——外加豎向元件當 Vs 類抗剪；
+        //   R2 外貼鋼板卡構造要求：端部須設 U形箍/壓條錨固、錨栓嵌入≥6.5d、間距≤24t、寬厚比≤50、厚>5mm須注膠。
+        // ⚠ 知識庫無專屬「剪力鋼板閉式」→ 本模型為 D1 Ss 概念＋R2 錨定要求之工程判斷；κ 須端部確實錨固始成立。
+        // 模型（連續條帶鋼板，單片腹板兩面各貼）：Vpl = κ · Apl · fy · dv / s，Apl = 2·t·w
+        //   κ=剝離/錨定折減(預設0.65)；t板厚·w條寬·dv·s 皆 cm；fy tf/cm²（SS400=2.4、SM490≈3.25）。
+        // 斜壓桿上限：Vs+Vpl 合計仍受 Vs,max=2.1√f'c·b'w·dv 約束（超過部分不計入 φVn，crush 先控制）。
+        const PLATE_DEFAULT = { t: 0.9, w: 15, fy: 2.4, s: 20, kappa: 0.65 };
+        // 逐節點×外/中腹板 啟用旗標。預設開啟 NG 補強區間：N1~N3(梁端) + N22~N30(橋墩半跨)
+        const RETROFIT_DEFAULT_ON = (n) => (n <= 3) || (n >= 22);
+        const PLATE_NODES = Array.from({ length: 30 }, (_, i) => {
+            const on = RETROFIT_DEFAULT_ON(i + 1);
+            return { outer: on, middle: on };
+        });
+
+        function getPlateParams() {
+            return {
+                t:     parseFloat(document.getElementById('plate-t')?.value)     || PLATE_DEFAULT.t,
+                w:     parseFloat(document.getElementById('plate-w')?.value)     || PLATE_DEFAULT.w,
+                fy:    parseFloat(document.getElementById('plate-fy')?.value)    || PLATE_DEFAULT.fy,
+                s:     parseFloat(document.getElementById('plate-s')?.value)     || PLATE_DEFAULT.s,
+                kappa: parseFloat(document.getElementById('plate-kappa')?.value) || PLATE_DEFAULT.kappa
+            };
+        }
+
+        // 單片腹板鋼板抗剪 Vpl (tf)；未啟用回 0。兩面貼 → Apl=2·t·w
+        function calcPlateVpl(enabled, pp, dv) {
+            if (!enabled || pp.s <= 0) return 0;
+            const Apl = 2 * pp.t * pp.w;                 // 兩面條帶斷面積 (cm²)
+            return pp.kappa * Apl * pp.fy * dv / pp.s;   // tf
+        }
+
+        // 勾選/取消某節點某腹板鋼板 → 重算 6-4
+        function togglePlateNode(nodeNum, webType, checked) {
+            const node = PLATE_NODES[nodeNum - 1];
+            if (!node) return;
+            node[webType] = checked;
+            renderStrengthCheckPost();
+        }
+
+        // 一次套用一組節點區間的鋼板啟用（供「批次套用」按鈕用）
+        function applyPlateRange(fromNode, toNode, webType, on) {
+            for (let n = fromNode; n <= toNode; n++) {
+                if (PLATE_NODES[n - 1]) {
+                    if (webType === 'both') { PLATE_NODES[n - 1].outer = on; PLATE_NODES[n - 1].middle = on; }
+                    else PLATE_NODES[n - 1][webType] = on;
+                }
+            }
+            renderStrengthCheckPost();
+        }
+
+        // =====================================================================
+        // 腹板加厚補強（外包混凝土/噴凝土套層，僅 Tab 6-4 補強後生效）
+        // 依據：知識庫 D1 剪力卡 Vcw/Vs,max 皆 ∝ b'w；加厚腹板同步抬升 Vc(Vcw/Vci)、Vs,max(斜壓桿上限)、壓碎容量。
+        //   此為外置PT線形無法解決橋墩巨大剪力缺口(需求~805 vs 容量~510 tf/腹板)時的必要手段。
+        // 模型：b'w,後 = b'w,前 + Δb'w（各腹板可獨立勾選；外腹板/中腹板可分別設定 Δb'w）。
+        //   剪力容量(Vcw/Vci/Vs,max/壓碎/tau/最小筋)全部改用 b'w,後；斷面 Area/I（→fpc/dv/Meff）保守維持原值不計套層。
+        // ⚠ 假設：套層與原腹板界面須確實結合（植筋/鑿毛/剪力榫）方可視為共同抵抗剪力；Δb'w 為兩側合計淨增有效寬。
+        //   加厚後最小箍筋需求 (Av/s)min ∝ b'w 上升，套層內須配對應豎向鋼筋，否則判定②可能翻 NG（為正確警示）。
+        const WEB_JACKET_NODES = Array.from({ length: 30 }, (_, i) => {
+            const on = RETROFIT_DEFAULT_ON(i + 1);   // 預設 N1~N3、N22~N30 開啟
+            return { outer: on, middle: on };
+        });
+
+        // 批次：一次套用「腹板加厚 + 側貼鋼板」於節點區間(外/中兩腹板同時)，供 6-4 批次按鈕
+        function applyRetrofitRange(fromNode, toNode, on) {
+            for (let n = fromNode; n <= toNode; n++) {
+                if (WEB_JACKET_NODES[n - 1]) { WEB_JACKET_NODES[n - 1].outer = on; WEB_JACKET_NODES[n - 1].middle = on; }
+                if (PLATE_NODES[n - 1])      { PLATE_NODES[n - 1].outer = on;      PLATE_NODES[n - 1].middle = on; }
+            }
+            renderStrengthCheckPost();
+        }
+
+        function getJacketParams() {
+            // 外腹板/中腹板各自的加厚增量 Δb'w（每道腹板兩面合計淨增有效寬，cm）
+            return {
+                outer:  parseFloat(document.getElementById('jacket-dbw-outer')?.value)  || 0,
+                middle: parseFloat(document.getElementById('jacket-dbw-middle')?.value) || 0
+            };
+        }
+
+        function toggleJacketNode(nodeNum, webType, checked) {
+            const node = WEB_JACKET_NODES[nodeNum - 1];
+            if (!node) return;
+            node[webType] = checked;
+            renderStrengthCheckPost();
+        }
+
+        function applyJacketRange(fromNode, toNode, webType, on) {
+            for (let n = fromNode; n <= toNode; n++) {
+                if (WEB_JACKET_NODES[n - 1]) {
+                    if (webType === 'both') { WEB_JACKET_NODES[n - 1].outer = on; WEB_JACKET_NODES[n - 1].middle = on; }
+                    else WEB_JACKET_NODES[n - 1][webType] = on;
+                }
+            }
+            renderStrengthCheckPost();
         }
 
         // 端跨 propped cantilever 次彎矩（內置預力）力法
@@ -4212,6 +4733,60 @@
             const xs = state.nodes;
             const n = xs.length;
             const M1 = xs.map((nodeX, index) => (state.extNodeData?.[index + 1]?.meff) || 0);  // tf·m
+            let intM1x = 0, intxx = 0;
+            for (let i = 0; i < n - 1; i++) {
+                const dx = xs[i + 1] - xs[i];
+                intM1x += 0.5 * (M1[i] * xs[i] + M1[i + 1] * xs[i + 1]) * dx;
+                intxx  += 0.5 * (xs[i] * xs[i] + xs[i + 1] * xs[i + 1]) * dx;
+            }
+            const X1 = intxx > 0 ? -intM1x / intxx : 0;
+            const M2 = xs.map(x => X1 * x);
+            return { M1, M2, X1, V2: X1 };
+        }
+
+        // =====================================================================
+        // 頂部 over-pier 外置PT（局部墩頂短索，僅 Tab 6-4 補強後生效）
+        // 依據：O1 外置預力卡（直線折線、僅錨/鞍座接觸）＋鋼腱線形卡（墩頂段 0.10~0.15L）。
+        // 配置：獨立第二組索，近頂高位(距頂 yTop，負偏心) 侷限墩區 fromNode~N30（端跨模型 N30 端代表跨過墩到對稱鄰跨）。
+        // 效益：hogging φMn⁻↑(頂部受拉補強)、M₂ 墩區有利、fpc↑(利剪力)、墩頂頂緣服務拉↓。
+        // 副作用(工具自動檢核)：高偏心(>上核)在底緣造成拉(內端最不利)；經 M₂ 把跨中 sagging 微推高(複驗)。
+        // 直線水平索 → 無 Vp。過墩兩錨自平衡 → 不推橋墩。
+        function getTopPTParams() {
+            return {
+                enabled: document.getElementById('toppt-enable')?.checked || false,
+                forceTf: parseFloat(document.getElementById('toppt-force')?.value) || 0,
+                yTop:    parseFloat(document.getElementById('toppt-ytop')?.value)  || 44,   // 距頂 cm
+                fromNode: parseInt(document.getElementById('toppt-from')?.value)   || 27    // 內錨節點
+            };
+        }
+
+        // 逐節點頂部PT 資料（僅 fromNode~N30 有值）：meff(tf·m,負)、faxial(壓)、上下緣有效應力
+        function computeTopPTData() {
+            const p = getTopPTParams();
+            const node = {};
+            if (p.enabled && p.forceTf > 0) {
+                const from = Math.max(1, Math.min(30, p.fromNode));
+                for (let nodeNum = from; nodeNum <= 30; nodeNum++) {
+                    const segId = nodeNum === 30 ? 29 : nodeNum;
+                    const sec = BEAM_SECTIONS.find(s => s.id === getSegmentNode(segId));
+                    if (!sec) continue;
+                    const pos = p.yTop;                          // 距頂 cm（近頂）
+                    const ep = pos - sec.Y_top;                  // <0 = 形心以上（負偏心）
+                    const meff = p.forceTf * ep / 100;           // tf·m（負，hogging 有利主彎矩）
+                    const faxial = p.forceTf * 1000 / sec.Area;  // kgf/cm²（軸壓）
+                    const Stop = sec.I / sec.Y_top, Sbot = sec.I / sec.Y_bot;
+                    const feff_top = -(meff * 100000 / Stop) + faxial;   // 頂緣：偏心壓 + 軸壓
+                    const feff_bot = (meff * 100000 / Sbot) + faxial;    // 底緣：偏心拉 + 軸壓（可能淨拉）
+                    node[nodeNum] = { pos, ep, force: p.forceTf, meff, faxial, feff_top, feff_bot };
+                }
+            }
+            return { params: p, node };
+        }
+
+        // 頂部PT 次彎矩（力法，同 computeSecondaryMomentExternal，M₁ 用頂部索 meff）
+        function computeSecondaryMomentTop(topData) {
+            const xs = state.nodes, n = xs.length;
+            const M1 = xs.map((nx, i) => (topData.node[i + 1]?.meff) || 0);
             let intM1x = 0, intxx = 0;
             for (let i = 0; i < n - 1; i++) {
                 const dx = xs[i + 1] - xs[i];
@@ -4260,13 +4835,21 @@
                 DLF: parseFloat(document.getElementById('dead-load-factor')?.value) || 1.3,
                 LLF: parseFloat(document.getElementById('live-load-factor')?.value) || 2.171,
                 sec2int: computeSecondaryMomentInternal(),
-                sec2ext: computeSecondaryMomentExternal()
+                sec2ext: computeSecondaryMomentExternal(),
+                sec2top: (() => { const td = computeTopPTData(); return { td, m2: computeSecondaryMomentTop(td) }; })(),
+                plate: getPlateParams(),   // 腹板側貼鋼板抗剪參數（僅 inc=true 生效）
+                jacket: getJacketParams()  // 腹板加厚 Δb'w（僅 inc=true 生效）
             };
         }
 
         // 逐節點強度計算。inc=false → 補強前(僅內置)；inc=true → 補強後(加外置 fpc/Vp/Mn/ M₂)
         function computeStrengthAtNode(index, ctx, inc) {
-            const { f_c_kgf, phi_m, phi_v, limit_sigma1, fsy, n_web, b_bot_in, fpu_kgf, fpe_kgf, L, w_DL_val, w_LL_val, ll_factors, DLF, LLF, sec2int, sec2ext } = ctx;
+            const { f_c_kgf, phi_m, phi_v, limit_sigma1, fsy, n_web, b_bot_in, fpu_kgf, fpe_kgf, L, w_DL_val, w_LL_val, ll_factors, DLF, LLF, sec2int, sec2ext, sec2top, plate, jacket } = ctx;
+            // 補強獨立開關（供圖表逐項切換用）；ctx 未指定時沿用 inc（表格模式行為不變）
+            const useExt    = (ctx.mUsePT     !== undefined) ? ctx.mUsePT     : inc;   // 底部外置PT（fpc/Vp/M₂ext）
+            const useJacket = (ctx.mUseJacket !== undefined) ? ctx.mUseJacket : inc;   // 腹板加厚
+            const usePlate  = (ctx.mUsePlate  !== undefined) ? ctx.mUsePlate  : inc;   // 腹板側貼鋼板
+            const useTop    = (ctx.mUseTop    !== undefined) ? ctx.mUseTop    : inc;   // 頂部 over-pier PT
             const nodeNum = index + 1;
             const segId = nodeNum === 30 ? 29 : nodeNum;
             const sectionId = getSegmentNode(segId);
@@ -4279,9 +4862,10 @@
             const faxial_int = (P_top + P_bot) * 1000 / Area;
             const ext = (state.extNodeData && state.extNodeData[nodeNum]) || { meff: 0, faxial: 0, force: 0, ep_ext: 0 };
             const extEff = (state.extEffectiveStress && state.extEffectiveStress[nodeNum]) || { feff_top: 0, feff_bot: 0 };
-            const fpc = faxial_int + (inc ? ext.faxial : 0);
-            const feff_bot = (faxial_int + Meff * 100000 / Sbot) + (inc ? extEff.feff_bot : 0);
-            const feff_top = (faxial_int - Meff * 100000 / Stop) + (inc ? extEff.feff_top : 0);
+            const top = (useTop && sec2top && sec2top.td.node[nodeNum]) ? sec2top.td.node[nodeNum] : null;   // 頂部PT 本節點資料
+            const fpc = faxial_int + (useExt ? ext.faxial : 0) + (top ? top.faxial : 0);
+            const feff_bot = (faxial_int + Meff * 100000 / Sbot) + (useExt ? extEff.feff_bot : 0) + (top ? top.feff_bot : 0);
+            const feff_top = (faxial_int - Meff * 100000 / Stop) + (useExt ? extEff.feff_top : 0) + (top ? top.feff_top : 0);
             // 載重 + 次彎矩需求（sign-aware 係數 1.0）
             const x = state.nodes[index];
             const M_DL = (3 / 8) * w_DL_val * L * x - (w_DL_val / 2) * x * x;
@@ -4289,10 +4873,10 @@
             const M_LL = ((3 / 8) * w_LL_val * L * x - (w_LL_val / 2) * x * x) * ll_factors;
             const V_LL = ((3 / 8) * w_LL_val * L - w_LL_val * x) * ll_factors;
             const Mu_load = DLF * M_DL + LLF * M_LL;
-            const M2 = (sec2int.M2[index] || 0) + (inc ? (sec2ext.M2[index] || 0) : 0);
+            const M2 = (sec2int.M2[index] || 0) + (useExt ? (sec2ext.M2[index] || 0) : 0) + (useTop ? (sec2top.m2.M2[index] || 0) : 0);
             const M2_applied = (Mu_load * M2 > 0);
             const Mu = M2_applied ? Mu_load + M2 : Mu_load;
-            const V2 = sec2int.V2 + (inc ? sec2ext.V2 : 0);
+            const V2 = sec2int.V2 + (useExt ? sec2ext.V2 : 0) + (useTop ? sec2top.m2.V2 : 0);
             const V_load_signed = DLF * V_DL + LLF * V_LL;
             const Vu_total = Math.max(Math.abs(V_load_signed), Math.abs(V_load_signed + V2));
             const Vu = Vu_total / n_web;
@@ -4302,14 +4886,16 @@
             const Mcr_hog = Math.max(0, Stop * (fr_kgf + feff_top) / 100000);
             const isHogging = Mu <= 0.01;
             const pos_ext = ext.ep_ext + Y_top;   // 外置鋼腱距頂 (cm)
-            const dMn_ext = (inc && !isHogging) ? ext.force * pos_ext / 100 : 0;  // 外置：fps=fpe；僅正彎矩計入，負彎矩(底部PT無助益)取0
+            const dMn_ext = (useExt && !isHogging) ? ext.force * pos_ext / 100 : 0;  // 底部外置：fps=fpe；僅正彎矩計入，負彎矩(底部PT無助益)取0
+            // 頂部PT 對 hogging 貢獻(fps=fpe；力臂=距底=(h−距頂)，同底部外置之簡化不扣 a/2)；僅負彎矩計入
+            const dMn_top = (top && isHogging) ? top.force * ((Y_top + Y_bot) - top.pos) / 100 : 0;
             let Mn_display, phi_Mn_display, CR, check_M, Mcr_display, Mcr_min_req, check_M_min, isHogCalc = false;
             let hogDetail = null;
             if (isHogging && P_top > 0) {
                 const b_bot = b_bot_in, h_cm = Y_top + Y_bot, d_hog = h_cm - 12.5;
                 // Method A：M1 卡 fps 法（取代原 fps=fpe 保守簡化）
                 hogDetail = computeHoggingMn(P_top, d_hog, b_bot, f_c_kgf, fpu_kgf, fpe_kgf);
-                const Mn_hog = hogDetail.Mn + dMn_ext;
+                const Mn_hog = hogDetail.Mn + dMn_ext + dMn_top;   // 頂部PT 補負彎矩容量
                 const phi_Mn_hog = phi_m * Mn_hog, Mu_abs = Math.abs(Mu);
                 CR = Mu_abs > 0.01 ? phi_Mn_hog / Mu_abs : Infinity;
                 check_M = phi_Mn_hog >= Mu_abs ? 'OK' : 'NG';
@@ -4318,7 +4904,7 @@
                 check_M_min = Mcr_min_req === null ? 'NA' : (phi_Mn_hog >= Mcr_min_req ? 'OK' : 'NG');
                 isHogCalc = true;
             } else {
-                const Mn = (STRESS_BLOCK_DATA[segId]?.Mn ?? 0) + dMn_ext;
+                const Mn = (STRESS_BLOCK_DATA[segId]?.Mn ?? 0) + dMn_ext + dMn_top;   // dMn_top 於正彎矩為0
                 const phi_Mn = phi_m * Mn;
                 CR = Mu > 0.01 ? phi_Mn / Mu : Infinity;
                 check_M = phi_Mn >= Mu ? 'OK' : 'NG';
@@ -4333,15 +4919,24 @@
             const M_LL_abs = Math.abs(M_LL), V_DL_abs = Math.abs(V_DL) / n_web, V_LL_abs = Math.abs(V_LL) / n_web, h_cm = Y_top + Y_bot;
             // 外置 Vp（梁端斜段；塊間=0），單束總值
             let Vp_ext_total = 0;
-            if (inc) {
+            if (useExt) {
                 const blocks = state.extGeometry.deviationBlocks.blocks, cnt = state.extGeometry.deviationBlocks.count;
                 const b1x = blocks[0].x, slY = state.extGeometry.anchorage.sliding.y, hgY = state.extGeometry.anchorage.hinged.y, force = ext.force;
                 if (x <= b1x) Vp_ext_total = b1x > 0 ? force * (278 - slY) / (100 * b1x) : 0;
                 else if (cnt === 2 && x <= blocks[1].x) Vp_ext_total = 0;
                 else { const denom = cnt === 2 ? (56.5 - blocks[1].x) : (56.5 - b1x); Vp_ext_total = denom > 0 ? force * Math.abs(278 - hgY) / (100 * denom) : 0; }
             }
+            // 服務性總斷面應力（有效預力 + 靜載 + 活載；壓張限值 −14.97~210 kgf/cm²）供頂部PT 底緣/跨中檢核
+            const fserv_bot = feff_bot - (M_DL * 100000 / Sbot) - (M_LL * 100000 / Sbot);
+            const fserv_top = feff_top + (M_DL * 100000 / Stop) + (M_LL * 100000 / Stop);
+            const servBotOK = fserv_bot >= -14.97 && fserv_bot <= 210;
+            const servTopOK = fserv_top >= -14.97 && fserv_top <= 210;
             const webs = ['outer', 'middle'].map(key => {
-                const bw = SHEAR_WEB_BW[key];
+                const bw0 = SHEAR_WEB_BW[key];
+                // 腹板加厚（僅補強後且該腹板已勾選）：b'w,後 = b'w,前 + Δb'w，Vc/Vcw/Vci/Vs,max/壓碎/tau/最小筋 皆用此
+                const jacketOn = useJacket && !!(WEB_JACKET_NODES[nodeNum - 1] || {})[key];
+                const dbw = jacketOn ? ((key === 'outer' ? jacket?.outer : jacket?.middle) || 0) : 0;
+                const bw = bw0 + dbw;
                 const st = getStirrup(nodeNum, key), Av = st.Av, s_v = st.s;
                 const tau = Vu * 1000 / (bw * dv);
                 const sigma_x = -fpc;
@@ -4353,8 +4948,16 @@
                 Vci = Math.max(Vci, Vci_min);
                 const Vc = Math.min(Vci, Vcw);
                 const Vs = s_v > 0 ? Av * fsy * dv / s_v : 0;
-                const Vp_web = inc ? Vp_ext_total / n_web : 0;
-                const phi_Vn = phi_v * (Vc + Vs + Vp_web);
+                const Vs_max = 2.1 * Math.sqrt(f_c_kgf) * bw * dv / 1000;
+                // 鋼板抗剪（僅補強後 inc=true 且該節點該腹板已勾選）
+                const plateOn = usePlate && !!(PLATE_NODES[nodeNum - 1] || {})[key];
+                const Vpl = plateOn ? calcPlateVpl(true, plate, dv) : 0;
+                // Vs+Vpl 合計受斜壓桿上限 Vs,max 約束；超過部分不計入 φVn（crush 先控制）
+                const Vs_eff = Math.min(Vs + Vpl, Vs_max);
+                const Vpl_eff = Math.max(0, Vs_eff - Vs);
+                const Vpl_capped = plateOn && (Vpl - Vpl_eff > 0.01);
+                const Vp_web = useExt ? Vp_ext_total / n_web : 0;
+                const phi_Vn = phi_v * (Vc + Vs_eff + Vp_web);
                 const check_V = phi_Vn >= Vu ? 'OK' : 'NG';
                 const phi_Vn_max = phi_v * 0.25 * f_c_kgf * bw * dv / 1000;
                 const check_crush = Vu <= phi_Vn_max ? 'OK' : 'NG';
@@ -4362,14 +4965,13 @@
                 const Av_s_min = 3.5 * bw / (fsy * 1000);
                 const check_rebar = Av_s_actual === null ? null : (Av_s_actual >= Av_s_min ? 'OK' : 'NG');
                 const Vs_spacing_thr = 1.06 * Math.sqrt(f_c_kgf) * bw * dv / 1000;
-                const s_halved = Vs > Vs_spacing_thr;
+                const s_halved = (Vs + Vpl) > Vs_spacing_thr;
                 const s_max = s_halved ? Math.min(0.375 * h_cm, 30) : Math.min(0.75 * h_cm, 60);
                 const check_spacing = s_v <= 0 ? null : (s_v <= s_max ? 'OK' : 'NG');
-                const Vs_max = 2.1 * Math.sqrt(f_c_kgf) * bw * dv / 1000;
-                const check_Vs = (Av > 0 && s_v > 0) ? (Vs <= Vs_max ? 'OK' : 'NG') : null;
-                return { key, bw, st, Av, s_v, tau, sigma_x, sigma_1, check_s1, Vcw, Vci, Vci_min, Vc, Vs, Vp_web, phi_Vn, check_V, phi_Vn_max, check_crush, Av_s_actual, Av_s_min, check_rebar, s_halved, s_max, check_spacing, Vs_max, check_Vs };
+                const check_Vs = (Av > 0 && s_v > 0) ? ((Vs + Vpl) <= Vs_max ? 'OK' : 'NG') : null;
+                return { key, bw, bw0, dbw, jacketOn, st, Av, s_v, tau, sigma_x, sigma_1, check_s1, Vcw, Vci, Vci_min, Vc, Vs, Vpl, Vpl_eff, Vpl_capped, plateOn, Vp_web, phi_Vn, check_V, phi_Vn_max, check_crush, Av_s_actual, Av_s_min, check_rebar, s_halved, s_max, check_spacing, Vs_max, check_Vs };
             });
-            return { nodeNum, sectionId, isHogCalc, isHogging, Mn_display, phi_Mn_display, Mu, Mu_load, M2, M2_applied, dMn_ext, CR, check_M, Mcr_display, Mcr_min_req, check_M_min, fpc, dv, Vu, Vu_total, V2, Vp_ext_total, hogDetail, webs };
+            return { nodeNum, sectionId, isHogCalc, isHogging, Mn_display, phi_Mn_display, Mu, Mu_load, M2, M2_applied, dMn_ext, dMn_top, topOn: !!top, feff_bot, feff_top, fserv_bot, fserv_top, servBotOK, servTopOK, CR, check_M, Mcr_display, Mcr_min_req, check_M_min, fpc, dv, Vu, Vu_total, V2, Vp_ext_total, hogDetail, webs };
         }
 
         function renderStrengthCheck() {
@@ -4657,13 +5259,28 @@
             };
             const td = (cls, html) => `<td class="border border-slate-200 px-2 py-1 ${cls}">${html}</td>`;
 
+            const servBad = [];   // 頂部PT 導致服務應力越限之節點
+            const midWorse = [];  // 頂部PT 經 M₂ 使跨中(正彎矩)由 OK 翻 NG 之節點
+            const topEnabled = !!ctx.sec2top.td.params.enabled;
+
             state.nodes.forEach((nodeX, index) => {
                 const pre = computeStrengthAtNode(index, ctx, false);
                 const post = computeStrengthAtNode(index, ctx, true);
                 if (!pre || !post) return;
                 const nodeNum = pre.nodeNum;
+                // 頂部PT 副作用蒐集（比對「無頂部PT」以正確歸因，只列頂部PT「造成」的惡化）
+                if (topEnabled) {
+                    const noTop = computeStrengthAtNode(index, { ...ctx, mUseTop: false }, true);
+                    if (post.topOn && noTop.servBotOK && !post.servBotOK) servBad.push(`N${nodeNum} 底緣 ${post.fserv_bot.toFixed(1)}`);
+                    if (post.topOn && noTop.servTopOK && !post.servTopOK) servBad.push(`N${nodeNum} 頂緣 ${post.fserv_top.toFixed(1)}`);
+                    if (!post.isHogging && noTop.check_M === 'OK' && post.check_M === 'NG') midWorse.push(`N${nodeNum}(CR ${isFinite(post.CR) ? post.CR.toFixed(3) : '-'})`);
+                }
                 const rc = nodeNum === 1 ? 'bg-amber-50' : nodeNum === 30 ? 'bg-cyan-50' : '';
-                const wPreO = pre.webs[0], wPostO = post.webs[0];   // 外腹板(控制)
+                // 控制腹板：剪力各腹板 Vu 相同 → φVn 最小者控制（中腹板 b'w 較小，通常控制；補強後可依加厚/鋼板改變）
+                let gi = 0;
+                post.webs.forEach((w, i) => { if (w.phi_Vn < post.webs[gi].phi_Vn) gi = i; });
+                const wPreO = pre.webs[gi], wPostO = post.webs[gi];
+                const govLabel = gi === 0 ? '外' : '中';
                 const dVn = wPreO.phi_Vn > 0 ? (wPostO.phi_Vn - wPreO.phi_Vn) / wPreO.phi_Vn * 100 : 0;
 
                 // 總覽
@@ -4674,7 +5291,7 @@
                     td('text-right font-mono text-slate-600', fmtN(pre.phi_Mn_display)) +
                     td('text-right font-mono font-bold text-purple-700', fmtN(post.phi_Mn_display)) +
                     td('text-center text-[11px]', trans(pre.check_M, post.check_M)) +
-                    td('text-right font-mono', fmtN(wPreO.sigma_1)) +
+                    td('text-right font-mono', `${fmtN(wPreO.sigma_1)}<span class="text-[9px] text-slate-400"> ${govLabel}</span>`) +
                     td('text-right font-mono text-orange-700', fmtN(wPostO.sigma_1)) +
                     td('text-right font-mono text-slate-600', fmtN(wPreO.phi_Vn)) +
                     td('text-right font-mono font-bold text-red-700', fmtN(wPostO.phi_Vn)) +
@@ -4689,7 +5306,7 @@
                     td('text-center font-mono font-semibold', `N${nodeNum}`) +
                     td('text-center text-purple-600', pre.sectionId) +
                     td('text-right font-mono text-slate-600', fmtN(pre.Mn_display)) +
-                    td('text-right font-mono text-teal-700', post.dMn_ext ? fmtN(post.dMn_ext) : (post.isHogCalc ? '<span class="text-slate-400">0(墩)</span>' : fmtN(0))) +
+                    td('text-right font-mono text-teal-700', (() => { const dm = (post.dMn_ext || 0) + (post.dMn_top || 0); return dm ? fmtN(dm) + (post.dMn_top ? `<span class="text-[9px] text-emerald-600"> 頂${fmtN(post.dMn_top, 0)}</span>` : '') : (post.isHogCalc ? '<span class="text-slate-400">0(墩)</span>' : fmtN(0)); })()) +
                     td('text-right font-mono font-bold text-purple-700', fmtN(post.phi_Mn_display)) +
                     td('text-right font-mono text-amber-700', fmtN(pre.Mu)) +
                     td('text-right font-mono text-rose-600', muDelta ? fmtN(muDelta) : '<span class="text-slate-400">0</span>') +
@@ -4702,8 +5319,21 @@
                 const webMeta = [{ label: '外腹板', n: 2, color: 'text-amber-700' }, { label: '中腹板', n: 1, color: 'text-sky-700' }];
                 post.webs.forEach((wPost, wi) => {
                     const wPre = pre.webs[wi];
+                    const webKey = wi === 0 ? 'outer' : 'middle';
                     const trSh = document.createElement('tr');
                     trSh.className = nodeNum === 1 ? 'bg-amber-50' : nodeNum === 30 ? 'bg-cyan-50' : (wi === 1 ? 'bg-slate-50' : '');
+                    // 鋼板欄：勾選啟用 + Vpl 值（被斜壓桿上限截斷時紅字標記）
+                    const plChecked = (PLATE_NODES[nodeNum - 1] || {})[webKey] ? 'checked' : '';
+                    const plVal = wPost.plateOn
+                        ? `<span class="font-mono ${wPost.Vpl_capped ? 'text-red-600 font-bold' : 'text-rose-700'}">${fmtN(wPost.Vpl_eff)}${wPost.Vpl_capped ? '<span class="text-[9px]"> (受上限)</span>' : ''}</span>`
+                        : `<span class="text-slate-300 font-mono">0</span>`;
+                    const plateCell = `<td class="border border-slate-200 px-2 py-1 text-center whitespace-nowrap"><input type="checkbox" ${plChecked} onchange="togglePlateNode(${nodeNum},'${webKey}',this.checked)" class="w-3.5 h-3.5 accent-rose-600 align-middle mr-1">${plVal}</td>`;
+                    // 腹板加厚欄：勾選啟用 + b'w後（加厚時顯示增量）
+                    const jkChecked = (WEB_JACKET_NODES[nodeNum - 1] || {})[webKey] ? 'checked' : '';
+                    const jkVal = wPost.jacketOn
+                        ? `<span class="font-mono text-cyan-700 font-bold">${fmtN(wPost.bw, 1)}<span class="text-[9px] text-slate-400"> (+${fmtN(wPost.dbw, 0)})</span></span>`
+                        : `<span class="text-slate-400 font-mono">${fmtN(wPost.bw0, 1)}</span>`;
+                    const jacketCell = `<td class="border border-slate-200 px-2 py-1 text-center whitespace-nowrap"><input type="checkbox" ${jkChecked} onchange="toggleJacketNode(${nodeNum},'${webKey}',this.checked)" class="w-3.5 h-3.5 accent-cyan-600 align-middle mr-1">${jkVal}</td>`;
                     trSh.innerHTML =
                         td('text-center font-mono font-semibold', `N${nodeNum}`) +
                         td('text-center text-purple-600', pre.sectionId) +
@@ -4714,6 +5344,8 @@
                         td('text-right font-mono text-blue-700', fmtN(wPost.Vcw)) +
                         td('text-right font-mono text-purple-700', fmtN(wPost.Vc)) +
                         td('text-right font-mono', fmtN(wPost.Vs)) +
+                        jacketCell +
+                        plateCell +
                         td('text-right font-mono text-teal-700', fmtN(wPost.Vp_web)) +
                         td('text-right font-mono text-slate-500', fmtN(wPre.phi_Vn)) +
                         td('text-right font-mono font-bold text-red-700', fmtN(wPost.phi_Vn)) +
@@ -4722,6 +5354,21 @@
                     shrTbody.appendChild(trSh);
                 });
             });
+
+            // 頂部PT 副作用警示（服務應力越限 / 跨中被 M₂ 推翻）
+            const warnEl = document.getElementById('toppt-servwarn');
+            if (warnEl) {
+                if (!topEnabled) { warnEl.innerHTML = ''; }
+                else if (servBad.length === 0 && midWorse.length === 0) {
+                    warnEl.innerHTML = `<div class="text-[11px] text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1">✓ 頂部PT 副作用檢核通過：作用區服務應力(底/頂緣)皆在 −14.97~210；跨中未被 M₂ 推翻。</div>`;
+                } else {
+                    let h = '<div class="text-[11px] text-red-700 bg-red-50 border border-red-300 rounded px-2 py-1 space-y-0.5">';
+                    if (servBad.length) h += `<div><strong>⚠ 服務應力越限</strong>（−14.97~210）：${servBad.join('、')} → 降低 P、抬高鋼腱(y↑進上核)或內錨靠墩。</div>`;
+                    if (midWorse.length) h += `<div><strong>⚠ 跨中被頂部PT 的 M₂ 推翻</strong>：${midWorse.join('、')} → 縮短索/內錨更靠墩以減 M₂，或補該點。</div>`;
+                    h += '</div>';
+                    warnEl.innerHTML = h;
+                }
+            }
         }
 
         // =====================================================================
@@ -4978,6 +5625,503 @@
                     }
                 });
             }
+        }
+
+        // ===================== Tab 8：計算書（即時產生，重用強度核心） =====================
+        // 公式一律以 KaTeX 排版；規範版次見第2章與附錄B（皆先查橋梁知識庫公式卡）
+        function cbEscAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function cbEqB(tex, label, src) {   // 置中顯示式（可帶式號與規範出處）
+            return '<div class="cb-eq">' + (label ? '<span class="cb-eq-lbl">' + label + '</span>' : '') +
+                '<span data-tex="' + cbEscAttr(tex) + '" data-display="1"></span>' +
+                (src ? '<div class="cb-eqsrc">📖 規範出處：' + src + '</div>' : '') + '</div>';
+        }
+        function cbEqI(tex) { return '<span data-tex="' + cbEscAttr(tex) + '"></span>'; }   // 行內式
+        function cbExplain(html) { return '<div class="cb-explain"><span class="cb-explain-h">📖 本章解說：</span>' + html + '</div>'; }
+        // 解說顯示開關（預設不勾＝隱藏；列印亦隨之隱藏）
+        function cbApplyExplainVis() {
+            const host = document.getElementById('calcbook');
+            const show = document.getElementById('cb-show-explain')?.checked;
+            if (host) host.classList.toggle('cb-hide-explain', !show);
+        }
+        function cbNum(x, d) { return (x === null || x === undefined || !isFinite(x)) ? '—' : Number(x).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+        function cbBadge(ok) { const g = (ok === 'OK' || ok === true); return '<span class="cb-badge ' + (g ? 'cb-ok' : 'cb-ng') + '">' + (g ? 'OK' : 'NG') + '</span>'; }
+        function cbCtrlWeb(r) { let gi = 0; r.webs.forEach((w, k) => { if (w.phi_Vn < r.webs[gi].phi_Vn) gi = k; }); return r.webs[gi]; }
+        function cbWebLbl(k) { return k === 'outer' ? '外' : '中'; }
+        // 情境試算：以旗標覆寫個別補強手段，量化各自貢獻
+        function cbScenario(ctx, i, f) {
+            const c = Object.assign({}, ctx, { mUsePT: !!f.ext, mUseTop: !!f.top, mUseJacket: !!f.jak, mUsePlate: !!f.plate });
+            const r = computeStrengthAtNode(i, c, true), cw = cbCtrlWeb(r);
+            return { phiMn: r.phi_Mn_display, phiVn: cw.phi_Vn, CRm: r.CR, CRv: r.Vu > 0 ? cw.phi_Vn / r.Vu : Infinity, r, cw };
+        }
+        // ---- 靜態 SVG 折線圖（向量，列印清晰；不依賴 Chart.js） ----
+        function cbSvg(cfg) {
+            const w = 720, h = 300, mL = 62, mR = 14, mT = 14, mB = 46;
+            const pw = w - mL - mR, ph = h - mT - mB, n = cfg.n;
+            let ymin = cfg.ymin, ymax = cfg.ymax; if (ymax === ymin) { ymax += 1; ymin -= 1; }
+            const X = i => mL + (n <= 1 ? pw / 2 : pw * i / (n - 1));
+            const Y = v => mT + ph * (ymax - v) / (ymax - ymin);
+            const p = [];
+            p.push('<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:auto;background:#fff" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">');
+            const ticks = 5;
+            for (let t = 0; t <= ticks; t++) { const v = ymin + (ymax - ymin) * t / ticks, y = Y(v); p.push('<line x1="' + mL + '" y1="' + y.toFixed(1) + '" x2="' + (w - mR) + '" y2="' + y.toFixed(1) + '" stroke="#e2e8f0"/>'); p.push('<text x="' + (mL - 6) + '" y="' + (y + 3).toFixed(1) + '" text-anchor="end" font-size="10" fill="#64748b">' + cbNum(v, 0) + '</text>'); }
+            if (ymin < 0 && ymax > 0) { const y0 = Y(0); p.push('<line x1="' + mL + '" y1="' + y0.toFixed(1) + '" x2="' + (w - mR) + '" y2="' + y0.toFixed(1) + '" stroke="#94a3b8" stroke-width="1.3"/>'); }
+            const step = Math.max(1, Math.ceil(n / 12));
+            for (let i = 0; i < n; i += step) { const x = X(i); p.push('<line x1="' + x.toFixed(1) + '" y1="' + (h - mB) + '" x2="' + x.toFixed(1) + '" y2="' + (h - mB + 4) + '" stroke="#94a3b8"/>'); p.push('<text x="' + x.toFixed(1) + '" y="' + (h - mB + 16) + '" text-anchor="middle" font-size="9" fill="#64748b">N' + (i + 1) + '</text>'); }
+            p.push('<text x="' + (mL + pw / 2) + '" y="' + (h - 5) + '" text-anchor="middle" font-size="10" fill="#475569">節點（N1 橋台 → N30 橋墩）</text>');
+            p.push('<text x="14" y="' + (mT + ph / 2) + '" text-anchor="middle" font-size="10" fill="#475569" transform="rotate(-90 14 ' + (mT + ph / 2) + ')">' + cfg.yTitle + '</text>');
+            if (cfg.band) { const { upper, lower, color } = cfg.band; let d = 'M'; for (let i = 0; i < n; i++) d += X(i).toFixed(1) + ' ' + Y(upper[i]).toFixed(1) + ' '; for (let i = n - 1; i >= 0; i--) d += 'L' + X(i).toFixed(1) + ' ' + Y(lower[i]).toFixed(1) + ' '; d += 'Z'; p.push('<path d="' + d + '" fill="' + color + '" stroke="none"/>'); }
+            cfg.series.forEach(s => { const pts = s.vals.map((v, i) => (v == null || !isFinite(v)) ? null : X(i).toFixed(1) + ',' + Y(v).toFixed(1)).filter(Boolean).join(' '); p.push('<polyline points="' + pts + '" fill="none" stroke="' + s.color + '" stroke-width="' + (s.w || 1.8) + '"' + (s.dash ? ' stroke-dasharray="' + s.dash + '"' : '') + ' stroke-linejoin="round"/>'); });
+            p.push('<rect x="' + mL + '" y="' + mT + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="#cbd5e1"/>');
+            p.push('</svg>');
+            return p.join('');
+        }
+        function cbLegend(items) { return '<div style="text-align:center;font-size:10px;color:#475569;margin-top:2px">' + items.map(it => '<span style="display:inline-block;margin:0 8px"><span style="display:inline-block;width:18px;height:0;border-top:' + (it.dash ? '2px dashed ' : '3px solid ') + it.color + ';vertical-align:middle;margin-right:4px"></span>' + it.t + '</span>').join('') + '</div>'; }
+        // 彎矩容量包絡（非對稱：上緣 +φMn⁺ 正彎矩、下緣 −φMn⁻ 負彎矩），與 Tab 6 capMomEnv 同邏輯
+        function cbMomEnv(usePT, ctx) {
+            const sag = [], hog = [];
+            state.nodes.forEach((nx, i) => {
+                const nodeNum = i + 1, segId = nodeNum === 30 ? 29 : nodeNum;
+                const section = BEAM_SECTIONS.find(s => s.id === getSegmentNode(segId));
+                if (!section) { sag.push(null); hog.push(null); return; }
+                const { Y_top, Y_bot } = section, P_top = TOP_PRESTRESS_TF[i] || 0;
+                const ext = (state.extNodeData && state.extNodeData[nodeNum]) || { force: 0, ep_ext: 0 };
+                const dMn_ext = usePT ? ext.force * (ext.ep_ext + Y_top) / 100 : 0;
+                const tnode = (usePT && ctx.sec2top && ctx.sec2top.td.node[nodeNum]) ? ctx.sec2top.td.node[nodeNum] : null;
+                const dMn_top = tnode ? tnode.force * ((Y_top + Y_bot) - tnode.pos) / 100 : 0;
+                const Mn_sag = (STRESS_BLOCK_DATA[segId]?.Mn ?? 0) + dMn_ext;
+                const Mn_hog = (P_top > 0 ? computeHoggingMn(P_top, (Y_top + Y_bot) - 12.5, ctx.b_bot_in, ctx.f_c_kgf, ctx.fpu_kgf, ctx.fpe_kgf).Mn : 0) + dMn_top;
+                sag.push(ctx.phi_m * Mn_sag); hog.push(-ctx.phi_m * Mn_hog);
+            });
+            return { sag, hog };
+        }
+        // 彎矩圖 SVG：容量包絡帶(補強前灰虛/後綠實)＋所需彎矩(含M₂,紅)
+        function cbMomentSVG(ctx, post) {
+            const N = post.length, preE = cbMomEnv(false, ctx), postE = cbMomEnv(true, ctx), dem = post.map(r => r.Mu);
+            const all = [].concat(preE.sag, preE.hog, postE.sag, postE.hog, dem).filter(v => v != null && isFinite(v));
+            let mx = Math.max.apply(null, all), mn = Math.min.apply(null, all); const pad = (mx - mn) * 0.08 || 1;
+            return cbSvg({
+                n: N, ymin: mn - pad, ymax: mx + pad, yTitle: '彎矩 (tf·m，上=正 / 下=負)',
+                band: { upper: postE.sag, lower: postE.hog, color: 'rgba(22,163,74,0.10)' },
+                series: [
+                    { vals: preE.sag, color: '#94a3b8', w: 1.4, dash: '5 4' }, { vals: preE.hog, color: '#94a3b8', w: 1.4, dash: '5 4' },
+                    { vals: postE.sag, color: '#16a34a', w: 2.2 }, { vals: postE.hog, color: '#16a34a', w: 2.2 },
+                    { vals: dem, color: '#dc2626', w: 2 }
+                ]
+            });
+        }
+        // 剪力圖 SVG：全斷面 ±φVn 對稱包絡帶(前灰虛/後綠實)＋所需剪力(含V₂,有號,紅)
+        function cbShearSVG(ctx, pre, post) {
+            const N = post.length, nWeb = ctx.n_web || 3, L = state.span;
+            const capPre = pre.map(r => cbCtrlWeb(r).phi_Vn * nWeb), capPost = post.map(r => cbCtrlWeb(r).phi_Vn * nWeb);
+            const dem = post.map((r, i) => {
+                const x = state.nodes[i];
+                const V_DL = (3 / 8) * ctx.w_DL_val * L - ctx.w_DL_val * x;
+                const V_LL = ((3 / 8) * ctx.w_LL_val * L - ctx.w_LL_val * x) * ctx.ll_factors;
+                const Vls = ctx.DLF * V_DL + ctx.LLF * V_LL, sign = (Vls + r.V2) < 0 ? -1 : 1;
+                return r.Vu_total * sign;
+            });
+            const mag = Math.max.apply(null, capPost.concat(capPre, dem.map(Math.abs)).filter(v => isFinite(v))) * 1.1;
+            return cbSvg({
+                n: N, ymin: -mag, ymax: mag, yTitle: '全斷面剪力 (tf)',
+                band: { upper: capPost, lower: capPost.map(v => -v), color: 'rgba(22,163,74,0.10)' },
+                series: [
+                    { vals: capPre, color: '#94a3b8', w: 1.4, dash: '5 4' }, { vals: capPre.map(v => -v), color: '#94a3b8', w: 1.4, dash: '5 4' },
+                    { vals: capPost, color: '#16a34a', w: 2.2 }, { vals: capPost.map(v => -v), color: '#16a34a', w: 2.2 },
+                    { vals: dem, color: '#dc2626', w: 2 }
+                ]
+            });
+        }
+
+        function renderCalcBook() {
+            const host = document.getElementById('calcbook');
+            if (!host) return;
+            if (typeof katex === 'undefined') { host.innerHTML = '<div class="cb-page"><p class="cb-p">KaTeX 載入中…（請確認網路連線後點「重新整理」）。</p></div>'; setTimeout(renderCalcBook, 500); return; }
+
+            // ---- 即時資料 ----
+            const ctx = getStrengthContext();
+            const N = 30, pre = [], post = [];
+            for (let i = 0; i < N; i++) { pre.push(computeStrengthAtNode(i, ctx, false)); post.push(computeStrengthAtNode(i, ctx, true)); }
+            const f_c_kgf = ctx.f_c_kgf, f_c_MPa = f_c_kgf / 10.197, Ec_MPa = 4700 * Math.sqrt(f_c_MPa);
+            const top = getTopPTParams(), plate = getPlateParams(), jak = getJacketParams();
+            const g = state.extGeometry, b1 = g.deviationBlocks.blocks[0], b2 = g.deviationBlocks.blocks[1];
+            const im = parseFloat(document.getElementById('ll-impact-slider')?.value) || 0;
+            const ol = parseFloat(document.getElementById('ll-overload-slider')?.value) || 0;
+            const red = parseFloat(document.getElementById('ll-reduction-select')?.value) || 1;
+            const lanes = parseInt(document.getElementById('ll-lanes-slider')?.value) || 2;
+            const now = new Date(), ymd = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+            // NG 統計（補強前/後）
+            const preMomNG = [], preShrNG = [], postMomNG = [], postShrNG = [], servNG = [];
+            for (let i = 0; i < N; i++) {
+                if (pre[i].check_M === 'NG') preMomNG.push(i + 1);
+                if (cbCtrlWeb(pre[i]).check_V === 'NG') preShrNG.push(i + 1);
+                if (post[i].check_M === 'NG') postMomNG.push(i + 1);
+                if (cbCtrlWeb(post[i]).check_V === 'NG') postShrNG.push(i + 1);
+                if (post[i].topOn && (post[i].servBotOK === false || post[i].servTopOK === false)) servNG.push(i + 1);
+            }
+            const listOr = a => a.length ? ('N' + a.join('、N')) : '無';
+
+            const H = []; const w = s => H.push(s);
+
+            // ============ 封面 ============
+            w('<div class="cb-page cb-cover">');
+            w('<div class="cb-title">預鑄箱型梁外置預力加固<br>結構計算書</div>');
+            w('<div class="cb-sub">P30–P31 端跨（雙室箱梁‧跨徑 ' + cbNum(state.span, 1) + ' m）</div>');
+            w('<table class="cb-meta-tbl"><tbody>');
+            w('<tr><td>橋梁名稱</td><td>P30–P31 預鑄箱型梁</td></tr>');
+            w('<tr><td>分析標的</td><td>端跨（橋台端鉸支、橋墩端固接）</td></tr>');
+            w('<tr><td>計算內容</td><td>外置預力加固之彎矩、剪力、應力與撓度檢核</td></tr>');
+            w('<tr><td>參數快照</td><td>底部PT ' + cbNum(g.forceTf, 0) + 'tf／滑動端距頂 ' + cbNum(g.anchorage.sliding.y, 0) + 'cm／轉向塊 ' + cbNum(b1.x, 3) + '·' + cbNum(b2.x, 3) + 'm；頂部PT ' + (top.enabled ? (cbNum(top.forceTf, 0) + 'tf／距頂 ' + cbNum(top.yTop, 0) + 'cm／內錨 N' + top.fromNode) : '未啟用') + '</td></tr>');
+            w('<tr><td>產製日期</td><td>' + ymd + '</td></tr>');
+            w('<tr><td>設計 / 校核</td><td>＿＿＿＿＿＿　/　＿＿＿＿＿＿</td></tr>');
+            w('</tbody></table>');
+            w('</div>');
+
+            // ============ 摘要 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">結論摘要</div>');
+            w('<p class="cb-p">本橋 P30–P31 端跨經檢核，補強前於墩區負彎矩、跨端正彎矩及梁端／墩區剪力等處強度不足。經採外置預力（底部下垂＋頂部 over-pier）、腹板加厚與腹板側貼鋼板之組合補強後，全橋各節點之彎矩、剪力與服務性應力均通過檢核。</p>');
+            w('<table class="cb-tbl"><thead><tr><th>檢核項目</th><th>補強前</th><th>補強後</th></tr></thead><tbody>');
+            w('<tr><td class="l">彎矩強度 φMₙ ≥ Mᵤ</td><td>NG：' + listOr(preMomNG) + '</td><td>' + (postMomNG.length ? ('NG：' + listOr(postMomNG)) : '全數 OK ✔') + '</td></tr>');
+            w('<tr><td class="l">剪力強度 φVₙ ≥ Vᵤ（控制腹板）</td><td>NG：' + listOr(preShrNG) + '</td><td>' + (postShrNG.length ? ('NG：' + listOr(postShrNG)) : '全數 OK ✔') + '</td></tr>');
+            w('<tr><td class="l">服務性應力（頂部PT 啟用後）</td><td>—</td><td>' + (servNG.length ? ('越限：' + listOr(servNG)) : '全數 OK ✔') + '</td></tr>');
+            w('</tbody></table>');
+            w('<p class="cb-note">＊判定基準與各節點明細見第 5～9 章及附錄 A；規範出處見附錄 B。頂部 over-pier PT 目前' + (top.enabled ? '為啟用狀態' : '<b>未啟用</b>（如未啟用，墩區負彎矩節點將顯示 NG）') + '。</p>');
+            w('</div>');
+
+            // ============ 第1章 前言 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 1 章　前言與計畫概述</div>');
+            w(cbExplain('這一章交代「為什麼要做這份補強、算的是哪一段橋」。P30–P31 是一段<b>端跨</b>：一端搭在橋台上（可轉動，近似鉸支）、一端接在橋墩上（不能轉，近似固接），力學上屬於「一端簡支、一端固定」的 propped cantilever。這個邊界條件決定了後面所有內力的分布——橋墩端會累積全橋<b>最大的負彎矩與剪力</b>，是最吃力、最先出問題的位置。'));
+            w('<div class="cb-h2">1.1　工程概要</div>');
+            w('<p class="cb-p">本計算書針對既有預鑄箱型梁橋 P30–P31 端跨進行外置預力加固之結構檢核。既有橋梁內置預力鋼腱與腹板箍筋均無法變更，故補強僅能以「外加」方式提升構材之彎矩與剪力容量。</p>');
+            w('<div class="cb-h2">1.2　補強目的與範圍</div>');
+            w('<p class="cb-p">目的為使端跨於現行設計載重下之彎矩、剪力與服務性應力均滿足規範要求。範圍涵蓋 N1～N30 共 30 個檢核節點之強度與服務性檢核，及外置預力、腹板加厚、側貼鋼板等補強設計。</p>');
+            w('<div class="cb-h2">1.3　分析標的與結構邊界</div>');
+            w('<p class="cb-p">分析標的為 P30–P31 端跨，一端（橋台，N1，x = 0）近似鉸支、一端（橋墩，N30，x = ' + cbNum(state.span, 1) + ' m）近似固接，屬一次超靜定之 propped cantilever 力學模型；載重內力與次彎矩均據此模型計算。</p>');
+            w('</div>');
+
+            // ============ 第2章 設計依據 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 2 章　設計依據</div>');
+            w(cbExplain('這章把算圖的「遊戲規則」講清楚：用哪些規範、材料多強、安全係數（φ）怎麼取。台灣《公路橋梁設計規範》是以 ACI-318 為骨架訂的，本案<b>以台灣109年版為主、AASHTO 2012／ACI 318-19 為輔</b>，台灣有明文一律以台灣為準。強度折減係數 φ 是「打折扣、保留安全餘裕」的做法，依斷面延性取值；預力受彎理論上可取到 1.0，本案彎矩與剪力均採台灣§8.14 的 <b>0.90</b>（較保守）。'));
+            w('<div class="cb-h2">2.1　適用規範</div>');
+            w('<table class="cb-tbl"><thead><tr><th>規範</th><th>版次</th><th>定位</th></tr></thead><tbody>');
+            w('<tr><td class="l">交通部《公路橋梁設計規範》</td><td>民國 109 年（2020）</td><td>主規範</td></tr>');
+            w('<tr><td class="l">AASHTO LRFD Bridge Design Specifications (SI)</td><td>2012（第 6 版）</td><td>輔助</td></tr>');
+            w('<tr><td class="l">ACI 318</td><td>318-19</td><td>輔助（最小彎矩下限 §9.6.2、Eᶜ §19.2.2.1）</td></tr>');
+            w('<tr><td class="l">日本道路橋示方書 Ⅲ 混凝土橋編</td><td>平成 29 年（2017）</td><td>參考對照</td></tr>');
+            w('<tr><td class="l">JTG/T J22 公路橋梁加固設計規範</td><td>2008<sup>※</sup></td><td>參考（側貼鋼板構造/錨定）</td></tr>');
+            w('<tr><td class="l">T/CHTS 10015 公路混凝土橋梁體外預應力加固技術指南</td><td>2019</td><td>參考（外置PT 加固）</td></tr>');
+            w('</tbody></table>');
+            w('<p class="cb-note">※ JTG/T J22 版次以規範正本為準核對；本計算書暫依通行版標示。以台灣規範為主，台灣有明文時一律以台灣為準，台灣未涵蓋時方採他國。</p>');
+            w('<div class="cb-h2">2.2　材料性質</div>');
+            w('<table class="cb-tbl"><thead><tr><th>項目</th><th>符號</th><th>數值</th><th>單位</th></tr></thead><tbody>');
+            w('<tr><td class="l">混凝土抗壓強度</td><td>' + cbEqI("f'_c") + '</td><td>' + cbNum(f_c_MPa, 0) + '（= ' + cbNum(f_c_kgf, 0) + '）</td><td>MPa（kgf/cm²）</td></tr>');
+            w('<tr><td class="l">混凝土彈性模數</td><td>' + cbEqI("E_c") + '</td><td>' + cbNum(Ec_MPa, 0) + '</td><td>MPa</td></tr>');
+            w('<tr><td class="l">預力鋼材極限強度</td><td>' + cbEqI("f_{pu}") + '</td><td>' + cbNum(ctx.fpu_kgf / 10.197, 0) + '（= ' + cbNum(ctx.fpu_kgf, 0) + '）</td><td>MPa（kgf/cm²）</td></tr>');
+            w('<tr><td class="l">預力鋼材有效應力</td><td>' + cbEqI("f_{pe}") + '</td><td>' + cbNum(ctx.fpe_kgf, 0) + '</td><td>kgf/cm²</td></tr>');
+            w('<tr><td class="l">箍筋降伏強度（封頂 4.2）</td><td>' + cbEqI("f_{sy}") + '</td><td>' + cbNum(ctx.fsy, 3) + '</td><td>tf/cm²</td></tr>');
+            w('<tr><td class="l">側貼鋼板降伏強度</td><td>' + cbEqI("f_{y,pl}") + '</td><td>' + cbNum(plate.fy, 2) + '</td><td>tf/cm²</td></tr>');
+            w('</tbody></table>');
+            w('<p class="cb-p">彈性模數採 ' + cbEqI("E_c = 4700\\sqrt{f'_c}") + '（MPa，ACI 318-19 §19.2.2.1b）：</p>');
+            w(cbEqB("E_c = 4700\\sqrt{" + cbNum(f_c_MPa, 0) + "} = " + cbNum(Ec_MPa, 0) + "\\ \\mathrm{MPa}", "(2-1)", 'ACI 318-19 §19.2.2.1b（普通重混凝土 Eᶜ = 4700√f′c，MPa）'));
+            w('<div class="cb-h2">2.3　強度折減係數 φ</div>');
+            w('<p class="cb-p">依台灣《公路橋梁設計規範》§8.14（一般預力混凝土）：彎矩 ' + cbEqI("\\phi_m = " + cbNum(ctx.phi_m, 2)) + '、剪力 ' + cbEqI("\\phi_v = " + cbNum(ctx.phi_v, 2)) + '。（註：AASHTO §5.5.4.2.2 對節塊橋外置/非黏結 PT 採 ' + cbEqI("\\phi_v = 0.85") + ' 更嚴，本工具以台灣為主。）</p>');
+            w('<div class="cb-h2">2.4　載重係數與單位</div>');
+            w('<p class="cb-p">強度組合：' + cbEqI("U = " + cbNum(ctx.DLF, 2) + "D + " + cbNum(ctx.LLF, 3) + "L") + '。單位採 kgf-cm 與 tf-m 混用（應力 kgf/cm²、力 tf、彎矩 tf·m），各式標明。</p>');
+            w('</div>');
+
+            // ---- 交由後續函式續接章節 ----
+            renderCalcBook_ch3to9(H, { ctx, pre, post, N, top, plate, jak, g, b1, b2, f_c_kgf, f_c_MPa, im, ol, red, lanes, listOr, servNG, postMomNG, postShrNG });
+
+            host.innerHTML = H.join('\n');
+            host.querySelectorAll('[data-tex]').forEach(el => {
+                try { katex.render(el.getAttribute('data-tex'), el, { throwOnError: false, displayMode: el.getAttribute('data-display') === '1' }); }
+                catch (e) { el.textContent = el.getAttribute('data-tex'); }
+            });
+            // 彎矩/剪力圖為靜態 SVG（於 ch7 HTML 內即時產生），無需 canvas 後處理
+            cbApplyExplainVis();   // 依勾選套用解說顯示/隱藏（預設隱藏）
+        }
+
+        // 第 3～9 章 + 附錄（承 renderCalcBook 的即時資料）
+        function renderCalcBook_ch3to9(H, D) {
+            const w = s => H.push(s);
+            const { ctx, pre, post, N, top, plate, jak, g, b1, b2, f_c_kgf, f_c_MPa, im, ol, red, lanes, listOr, servNG } = D;
+            const L = state.span;
+
+            // ============ 第3章 結構與斷面 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 3 章　結構與斷面資料</div>');
+            w(cbExplain('箱型梁是空心的雙室斷面，靠三道<b>腹板</b>（像三片直立的牆）把上、下版連起來、傳遞剪力。剪力檢核時每道腹板只分攤總剪力的 1/n（本案 ' + cbEqI("n_{web}=3") + '，知識庫 D1 卡「多腹板取 ' + cbEqI("b/n_w") + '」）。中腹板比外腹板薄（扣掉預力孔道後 ' + cbNum(SHEAR_WEB_BW.middle, 1) + ' vs ' + cbNum(SHEAR_WEB_BW.outer, 1) + ' cm），剪力容量較低，往往就是「控制腹板」——墩區的剪力就是它先撐不住。'));
+            w('<div class="cb-h2">3.1　橋型概述</div>');
+            w('<p class="cb-p">雙室箱型梁，設 3 道腹板（左／中／右），梁高 ' + cbNum(BEAM_SECTIONS[0].Y_top + BEAM_SECTIONS[0].Y_bot, 1) + '～' + cbNum(BEAM_SECTIONS[4].Y_top + BEAM_SECTIONS[4].Y_bot, 1) + ' cm（依斷面漸變）。剪力由 3 道腹板分攤（' + cbEqI("n_{web}=" + ctx.n_web) + '）。</p>');
+            w('<div style="text-align:center;margin:8px 0"><img src="https://raw.githubusercontent.com/ttchang1127/dashboard/main/images/precasr%20boxgirder.png" alt="預鑄箱型梁斷面圖" style="max-width:100%;max-height:360px;border:1px solid #cbd5e1;border-radius:4px">');
+            w('<div class="cb-note" style="text-align:center">圖 3-1　預鑄箱型梁斷面圖（雙室、3 道腹板；與 Tab 1 同源）</div></div>');
+            w('<div class="cb-h2">3.2　斷面幾何（' + BEAM_SECTIONS.length + ' 種）</div>');
+            w('<table class="cb-tbl"><thead><tr><th>斷面</th><th>A (cm²)</th><th>I (cm⁴)</th><th>Y_top (cm)</th><th>Y_bot (cm)</th><th>S_bot (cm³)</th><th>S_top (cm³)</th></tr></thead><tbody>');
+            BEAM_SECTIONS.forEach(s => { const Sb = s.I / s.Y_bot, St = s.I / s.Y_top; w('<tr><td>斷面 ' + s.id + '</td><td>' + cbNum(s.Area, 0) + '</td><td>' + cbNum(s.I, 0) + '</td><td>' + cbNum(s.Y_top, 2) + '</td><td>' + cbNum(s.Y_bot, 2) + '</td><td>' + cbNum(Sb, 0) + '</td><td>' + cbNum(St, 0) + '</td></tr>'); });
+            w('</tbody></table>');
+            w('<p class="cb-note">腹板寬（扣孔道後有效）：外腹板 ' + cbEqI("b'_w=" + cbNum(SHEAR_WEB_BW.outer, 1)) + ' cm、中腹板 ' + cbEqI("b'_w=" + cbNum(SHEAR_WEB_BW.middle, 1)) + ' cm。剪力有效深度 ' + cbEqI("d_v=0.9(Y_{top}+Y_{bot})") + '。</p>');
+            w('<div class="cb-h2">3.3　節點－斷面對應與既有內置預力（N1～N30 全列）</div>');
+            w('<table class="cb-tbl"><thead><tr><th>節點</th><th>x (m)</th><th>斷面</th><th>內置 P_top (tf)</th><th>內置 P_bot (tf)</th></tr></thead><tbody>');
+            for (let i = 0; i < N; i++) { w('<tr><td>N' + (i + 1) + '</td><td>' + cbNum(state.nodes[i], 2) + '</td><td>' + post[i].sectionId + '</td><td>' + cbNum(TOP_PRESTRESS_TF[i], 0) + '</td><td>' + cbNum(BOTTOM_PRESTRESS_TF[i], 0) + '</td></tr>'); }
+            w('</tbody></table>');
+            w('</div>');
+
+            // ============ 第4章 載重與內力 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 4 章　載重與內力分析</div>');
+            w(cbExplain('本章把橋上的載重（自重＋車輛）換算成每個斷面要承受的彎矩 ' + cbEqI("M_u") + ' 與剪力 ' + cbEqI("V_u") + '。因為是 propped cantilever，橋墩端反力最大、內力也最大。特別要留意<b>次彎矩 ' + cbEqI("M_2") + '</b>：在超靜定結構裡，預力除了直接壓住斷面，還會因多餘支承的束制「額外」產生一組內力（知識庫端跨力法：次彎矩沿跨呈線性、橋墩端最大）。它只有在<b>與載重同號（加重負擔）</b>時才計入需求——這也解釋了為何底部外置PT 在墩區「幫倒忙」：它的 ' + cbEqI("M_2") + ' 反而加重了墩區負彎矩。'));
+            w('<div class="cb-h2">4.1　載重</div>');
+            w('<p class="cb-p">靜載重（自重＋附加）' + cbEqI("w_{DL}=" + cbNum(ctx.w_DL_val, 2)) + ' tf/m；活載重每車道 0.96 tf/m × ' + lanes + ' 車道 = ' + cbEqI("w_{LL}=" + cbNum(ctx.w_LL_val, 2)) + ' tf/m。活載係數（衝擊 ' + cbNum(im, 2) + '、超載 ' + cbNum(ol, 2) + '、折減 ' + cbNum(red, 2) + '）合計 ' + cbEqI("(1+" + cbNum(im, 2) + ")(1+" + cbNum(ol, 2) + ")\\times" + cbNum(red, 2) + "=" + cbNum(ctx.ll_factors, 3)) + '。</p>');
+            w('<div class="cb-h2">4.2　內力分布（propped cantilever）</div>');
+            w(cbEqB("V_{DL}(x)=\\tfrac{3}{8}wL-wx,\\qquad M_{DL}(x)=\\tfrac{3}{8}wLx-\\tfrac{1}{2}wx^2", "(4-1)", '結構靜力：propped cantilever（一端鉸支、一端固定）均佈載重之剪力／彎矩分布；與 Tab 2~7 同一載重模型'));
+            w('<div class="cb-h2">4.3　次彎矩 M₂（力法，一次超靜定）</div>');
+            w('<p class="cb-p">以橋台反力為贅餘力、' + cbEqI("m(x)=x") + '，由諧和條件解得贅餘力 ' + cbEqI("X_1") + '，次彎矩沿跨呈線性、次剪力沿跨為常數：</p>');
+            w(cbEqB("X_1=-\\dfrac{\\int M_1\\,x\\,dx}{\\int x^2\\,dx},\\qquad M_2(x)=X_1\\,x,\\qquad V_2=X_1", "(4-2)", '預力次內力力法（一次超靜定，贅餘＝橋台反力）；次彎矩採計依台灣《公路橋梁設計規範》§3.4.3、AASHTO LRFD 2012 §3.4.3（載重係數 1.0，同號才計入）；橋梁知識庫「算例_端跨 propped cantilever 次彎矩力法」'));
+            w('<p class="cb-note">次彎矩之採計採 sign-aware（台灣／AASHTO §3.4.3 係數 1.0）：' + cbEqI("M_2") + ' 與載重彎矩同號（不利）才計入需求，反號（有利）不採信；剪力取 ' + cbEqI("V_u=\\max(|V_{load}|,\\,|V_{load}+V_2|)") + '。</p>');
+            w('<div class="cb-h2">4.4　所需彎矩與剪力（含 M₂／V₂，N1～N30 全列）</div>');
+            w('<table class="cb-tbl"><thead><tr><th>節點</th><th>x (m)</th><th>Mᵤ,load (tf·m)</th><th>M₂ (tf·m)</th><th>M₂採計</th><th>Mᵤ 含M₂ (tf·m)</th><th>V₂ (tf)</th><th>Vᵤ,total 含V₂ (tf)</th></tr></thead><tbody>');
+            for (let i = 0; i < N; i++) { const r = post[i]; w('<tr><td>N' + (i + 1) + '</td><td>' + cbNum(state.nodes[i], 2) + '</td><td>' + cbNum(r.Mu_load, 0) + '</td><td>' + cbNum(r.M2, 0) + '</td><td>' + (r.M2_applied ? '計入' : '—') + '</td><td>' + cbNum(r.Mu, 0) + '</td><td>' + cbNum(r.V2, 1) + '</td><td>' + cbNum(r.Vu_total, 0) + '</td></tr>'); }
+            w('</tbody></table>');
+            w('</div>');
+
+            // ============ 第5章 補強前檢核 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 5 章　補強前強度檢核</div>');
+            w(cbExplain('這章是「體檢」——先看既有橋在現行載重下哪裡不夠。剪力採知識庫 D1 卡的<b>雙重防線</b>：第一道是常時的<b>主拉應力</b>（用莫耳圓算 ' + cbEqI("\\sigma_1") + '），要壓在 ' + cbEqI("0.3\\sqrt{f'_c}") + ' 以下讓混凝土不斜裂；第二道是極限狀態的桁架作用 ' + cbEqI("V_u\\le\\phi(V_c+V_s)") + '。知識庫有個關鍵觀念：<b>縱向直線預力對腹板抗裂幾乎沒幫助</b>，真正壓制斜裂縫的是「彎起／外置索的垂直分力 ' + cbEqI("V_p") + '」與「豎向預力」，故「名義總預力夠 ≠ 腹板抗裂夠」——這正是本案墩區剪力要靠外置PT 的 ' + cbEqI("V_p") + ' 與腹板補強、而非硬加直線預力的原因。彎矩則檢核 ' + cbEqI("\\phi M_n\\ge M_u") + '，並加「最小強度下限 ' + cbEqI("\\min(1.33M_u,1.2M_{cr})") + '」防止斷面一開裂就脆性破壞。'));
+            w('<div class="cb-h2">5.1　彎矩強度 φMₙ ≥ Mᵤ</div>');
+            w('<p class="cb-p">黏結預力鋼腱極限應力採 fps k 法；橋墩負彎矩（hogging）依平面假設計算（Method A）：</p>');
+            w(cbEqB("f_{ps}=f_{pu}\\!\\left(1-k\\dfrac{c}{d_p}\\right),\\qquad M_n=A_{ps}f_{ps}\\!\\left(d_p-\\dfrac{a}{2}\\right)", "(5-1)", '台灣《公路橋梁設計規範》§8.10（ACI-318 框架，黏結鋼腱 fps 近似式，低鬆弛 k=0.28）；AASHTO LRFD 2012 §5.7.3；橋梁知識庫 M1 卡「極限強度彎曲設計」'));
+            w('<p class="cb-note">最小彎矩強度下限（防脆性破壞，ACI 318-19 §9.6.2）：' + cbEqI("\\phi M_n\\ge\\min(1.33M_u,\\;1.2M_{cr})") + '。</p>');
+            w('<div class="cb-h2">5.2　剪力強度三道防線</div>');
+            w('<p class="cb-p">第一道（主拉應力，台灣 §8.20.2）：' + cbEqI("\\sigma_1\\le 0.3\\sqrt{f'_c}=" + cbNum(ctx.limit_sigma1, 2)) + ' kgf/cm²（此限值保守，超限為常態，由 φVₙ 主控）。</p>');
+            w('<p class="cb-p">第二道（斷面抗剪，台灣 §8.20.2，式 8-27／8-28）：</p>');
+            w(cbEqB("\\phi V_n=\\phi_v(V_c+V_s),\\quad V_c=\\min(V_{ci},V_{cw})", "(5-2)", '台灣《公路橋梁設計規範》§8.20.2；剪力折減 φᵥ=0.90 依 §8.14；橋梁知識庫 D1 卡「腹板剪力設計」（雙重防線）'));
+            w(cbEqB("V_{cw}=(0.3\\sqrt{f'_c}+0.3f_{pc})\\,b'_w d_v,\\qquad V_s=\\dfrac{A_v f_{sy} d_v}{s}", "(5-3)", 'V_cw（腹剪型）台灣 §8.20.2 式8-28；V_s（箍筋）台灣 §8.20.3（f′c 採 kgf/cm² 制，係數 0.3／0.45／0.16 經 NLM 校對）'));
+            w('<p class="cb-p">第三道（腹板補充，台灣 §8.20.3）：斜壓桿壓碎 ' + cbEqI("V_u\\le\\phi\\,0.25f'_c b'_w d_v") + '、最小箍筋 ' + cbEqI("A_v/s\\ge 3.5b'_w/f_{sy}") + '、最大間距、' + cbEqI("V_s\\le 2.1\\sqrt{f'_c}\\,b'_w d_v") + '。</p>');
+            w('<div class="cb-h2">5.3　補強前逐節點檢核（N1～N30 全列）</div>');
+            w('<p class="cb-note">彎矩：φMₙ 與 Mᵤ（含 M₂）比；剪力：控制腹板 φVₙ 與每腹板 Vᵤ 比；服務應力＝有效預力＋靜載＋活載（限 拉−14.97～壓210 kgf/cm²）。此為僅內置預力之補強前狀態。</p>');
+            w('<table class="cb-tbl"><thead><tr><th>節點</th><th>斷面</th><th>φMₙ (tf·m)</th><th>Mᵤ</th><th>CR_M</th><th>彎矩</th><th>控制腹板</th><th>φVₙ (tf)</th><th>Vᵤ</th><th>CR_V</th><th>剪力</th><th>服務底緣</th><th>服務頂緣</th></tr></thead><tbody>');
+            for (let i = 0; i < N; i++) { const r = pre[i], cw = cbCtrlWeb(r); w('<tr><td>N' + (i + 1) + '</td><td>' + r.sectionId + '</td><td>' + cbNum(r.phi_Mn_display, 0) + '</td><td>' + cbNum(Math.abs(r.Mu), 0) + '</td><td>' + cbNum(r.CR, 2) + '</td><td>' + cbBadge(r.check_M) + '</td><td>' + cbWebLbl(cw.key) + '</td><td>' + cbNum(cw.phi_Vn, 1) + '</td><td>' + cbNum(r.Vu, 1) + '</td><td>' + cbNum(r.Vu > 0 ? cw.phi_Vn / r.Vu : Infinity, 2) + '</td><td>' + cbBadge(cw.check_V) + '</td><td>' + cbNum(r.fserv_bot, 1) + '</td><td>' + cbNum(r.fserv_top, 1) + '</td></tr>'); }
+            w('</tbody></table>');
+            w('<div class="cb-h2">5.4　補強前不合格（NG）彙整</div>');
+            const p5mom = [], p5shr = []; for (let i = 0; i < N; i++) { if (pre[i].check_M === 'NG') p5mom.push(i + 1); if (cbCtrlWeb(pre[i]).check_V === 'NG') p5shr.push(i + 1); }
+            w('<p class="cb-p">彎矩 NG：' + listOr(p5mom) + '；剪力 NG（控制腹板）：' + listOr(p5shr) + '。墩區剪力短缺最大，單一手段不足，須組合補強。</p>');
+            w('</div>');
+
+            // ============ 第6章 補強設計 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 6 章　補強設計</div>');
+            w(cbExplain('既有橋的內置預力和箍筋都動不了，容量只能「外加」。<b>外置預力</b>（知識庫 O1 卡）鋼腱走在斷面外、只在錨頭與轉向塊接觸主梁，屬<b>非黏結</b>——應變沿整條鋼腱平均分布、不滿足平面假設，好處是可更換、可再張拉、施工干擾小，最適合既有橋補強。底部下垂索靠 ' + cbEqI("V_p") + ' 補跨中剪力與正彎矩；墩區負彎矩則要靠「頂部 over-pier 索」對症。<b>腹板加厚</b>把牆變厚（' + cbEqI("b'_w\\uparrow") + '），同步抬高 ' + cbEqI("V_c") + '、斜壓桿上限 ' + cbEqI("V_{s,max}") + ' 與壓碎上限；<b>側貼鋼板</b>則當作額外的 ' + cbEqI("V_s") + '（其抗剪為工程判斷值，構造與錨定依 JTG/T J22）。§6.6 用即時試算量化各手段的貢獻。'));
+            w('<div class="cb-h2">6.1　補強策略</div>');
+            w('<p class="cb-p">既有內置預力與箍筋不可動，' + cbEqI("V_c,V_s") + ' 固定，容量僅能外加，故採組合補強：底部外置PT（利跨中正彎矩＋部分剪力）、頂部 over-pier PT（對症墩區負彎矩）、腹板加厚（提升 ' + cbEqI("V_c,V_{s,max}") + '）、腹板側貼鋼板（補 ' + cbEqI("V_s") + ' 類）。</p>');
+            w('<div class="cb-h2">6.2　底部外置預力</div>');
+            w('<p class="cb-p">有效預力 ' + cbEqI("P=" + cbNum(g.forceTf, 0)) + ' tf；兩端錨碇距頂 ' + cbNum(g.anchorage.sliding.y, 0) + ' cm；轉向塊 x = ' + cbNum(b1.x, 3) + ' m、' + cbNum(b2.x, 3) + ' m，鋼腱下垂至梁底。豎向分力 ' + cbEqI("V_p=P\\sin\\theta") + '，補梁端／墩區剪力。無支撐自由段須 ' + cbEqI("\\le 7500") + ' mm（AASHTO §5.10.5）。</p>');
+            w('<div class="cb-h2">6.3　頂部 over-pier 外置預力</div>');
+            if (top.enabled) {
+                w('<p class="cb-p">有效預力 ' + cbEqI("P_2=" + cbNum(top.forceTf, 0)) + ' tf，鋼腱距頂 ' + cbNum(top.yTop, 0) + ' cm，內錨 N' + top.fromNode + ' 至墩端；平直高位負偏心，對症提升墩區負彎矩容量 ' + cbEqI("\\Delta M_n=P_2\\,(h-y)") + '（僅 hogging 計入）。</p>');
+            } else {
+                w('<p class="cb-p"><b>目前未啟用</b>。如需補墩區負彎矩，於 Tab 6-4 勾選「頂部 over-pier PT 啟用」。</p>');
+            }
+            w('<div class="cb-h2">6.4　腹板加厚</div>');
+            w('<p class="cb-p">腹板兩面外包，有效寬增量 ' + cbEqI("\\Delta b'_w") + '（外 ' + cbNum(jak.outer, 0) + ' cm／中 ' + cbNum(jak.middle, 0) + ' cm，僅勾選節點生效）：' + cbEqI("b'_w=b'_{w,0}+\\Delta b'_w") + '，同步提升 ' + cbEqI("V_c,V_{cw},V_{s,max}") + ' 及壓碎上限。</p>');
+            w('<div class="cb-h2">6.5　腹板側貼鋼板抗剪</div>');
+            w('<p class="cb-p">單片腹板兩面貼鋼板（' + cbEqI("t=" + cbNum(plate.t, 1)) + ' cm、' + cbEqI("w=" + cbNum(plate.w, 0)) + ' cm、' + cbEqI("s=" + cbNum(plate.s, 0)) + ' cm、剝離折減 ' + cbEqI("\\kappa=" + cbNum(plate.kappa, 2)) + '），視為 Vs 類：</p>');
+            w(cbEqB("V_{pl}=\\kappa\\,(2tw)\\,f_{y}\\,\\dfrac{d_v}{s},\\qquad V_{s,eff}=\\min(V_s+V_{pl},\\,V_{s,max})", "(6-1)", '側貼鋼板抗剪＝Vs 類工程判斷（橋梁知識庫無專屬剪力鋼板閉式，κ 為剝離折減工程判斷值）；構造與錨定依 JTG/T J22-2008；斜壓桿上限 V_s,max = 2.1√f′c·b′w·d_v 台灣 §8.20.3'));
+            w('<p class="cb-note">構造與錨定（端部 U 形箍、錨栓嵌入 ≥6.5d、間距 ≤24t、寬厚比 ≤50、厚 &gt;5mm 注膠）依 JTG/T J22-2008。<b>抗剪容量式為 Vs 類工程判斷（知識庫無專屬剪力鋼板閉式，κ 為工程判斷值），非 JTG 之抗彎閉式</b>；超過斜壓桿上限 ' + cbEqI("V_{s,max}") + ' 之部分不計入。</p>');
+
+            // §6.6 補強效益量化（以 N30 墩區為代表，逐一開關各手段量化貢獻）
+            w('<div class="cb-h2">6.6　各補強手段效益量化</div>');
+            w('<p class="cb-p">以橋墩端 N30（負彎矩與剪力最不利、控制腹板＝中腹板）為代表，逐一開啟各補強手段，量化其對彎矩容量 ' + cbEqI("\\phi M_n") + ' 與控制腹板剪力容量 ' + cbEqI("\\phi V_n") + ' 之貢獻（其餘手段關閉）：</p>');
+            const bi = 29, dem = post[bi];
+            const base = cbScenario(ctx, bi, {}), all = cbScenario(ctx, bi, { ext: 1, top: top.enabled, jak: 1, plate: 1 });
+            const sExt = cbScenario(ctx, bi, { ext: 1 }), sTop = cbScenario(ctx, bi, { top: 1 }), sJak = cbScenario(ctx, bi, { jak: 1 }), sPl = cbScenario(ctx, bi, { plate: 1 });
+            const dMn = s => cbNum(s.phiMn - base.phiMn, 0), dVn = s => cbNum(s.phiVn - base.phiVn, 1);
+            w('<table class="cb-tbl"><thead><tr><th>補強手段（單獨施作）</th><th>φMₙ (tf·m)</th><th>ΔφMₙ</th><th>控制腹板 φVₙ (tf)</th><th>ΔφVₙ</th><th>主要機制</th></tr></thead><tbody>');
+            w('<tr><td class="l">無補強（基準）</td><td>' + cbNum(base.phiMn, 0) + '</td><td>—</td><td>' + cbNum(base.phiVn, 1) + '</td><td>—</td><td class="l">既有內置預力＋箍筋</td></tr>');
+            w('<tr><td class="l">＋底部外置PT</td><td>' + cbNum(sExt.phiMn, 0) + '</td><td>' + dMn(sExt) + '</td><td>' + cbNum(sExt.phiVn, 1) + '</td><td>' + dVn(sExt) + '</td><td class="l">Vp 豎向分力補剪力；墩區負彎矩無助益</td></tr>');
+            w('<tr><td class="l">＋頂部 over-pier PT</td><td>' + cbNum(sTop.phiMn, 0) + '</td><td>' + dMn(sTop) + '</td><td>' + cbNum(sTop.phiVn, 1) + '</td><td>' + dVn(sTop) + '</td><td class="l">負偏心提升墩區負彎矩容量 ΔMn</td></tr>');
+            w('<tr><td class="l">＋腹板加厚</td><td>' + cbNum(sJak.phiMn, 0) + '</td><td>' + dMn(sJak) + '</td><td>' + cbNum(sJak.phiVn, 1) + '</td><td>' + dVn(sJak) + '</td><td class="l">b′w↑ → Vc、Vs,max、壓碎上限同步升</td></tr>');
+            w('<tr><td class="l">＋腹板側貼鋼板</td><td>' + cbNum(sPl.phiMn, 0) + '</td><td>' + dMn(sPl) + '</td><td>' + cbNum(sPl.phiVn, 1) + '</td><td>' + dVn(sPl) + '</td><td class="l">Vpl（Vs 類）；受 Vs,max 上限約束</td></tr>');
+            w('<tr style="font-weight:700"><td class="l">全部組合</td><td>' + cbNum(all.phiMn, 0) + '</td><td>' + dMn(all) + '</td><td>' + cbNum(all.phiVn, 1) + '</td><td>' + dVn(all) + '</td><td class="l">需求 Mᵤ=' + cbNum(Math.abs(dem.Mu), 0) + '、Vᵤ=' + cbNum(dem.Vu, 1) + '</td></tr>');
+            w('</tbody></table>');
+            w('<p class="cb-note">＊數值由本工具即時試算（個別開關各手段旗標）。可見墩區剪力須「腹板加厚＋側貼鋼板」相輔（加厚撐高 Vs,max，鋼板貢獻方能計入）；墩區負彎矩則須頂部 over-pier PT 對症，底部外置PT 對 hogging 無助益。此即採組合補強而非單一手段之依據。</p>');
+            w('</div>');
+
+            // ============ 第7章 補強後檢核 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 7 章　補強後強度與服務性檢核</div>');
+            w(cbExplain('把上面所有補強手段一起放進去重算，看是否全數過關。重點看兩件事：<b>容量包絡帶有沒有把需求線包住</b>（圖 7-1 彎矩、圖 7-2 剪力——需求落在綠帶內就 OK），以及頂部 over-pier 索加上去後，<b>服務應力有沒有被壓過頭</b>（拉不得超過 ' + cbEqI("-14.97") + '、壓不得超過 210 kgf/cm²）。強度過關還要服務性也過關，兩者都顧到才算補強成功。'));
+            w('<div class="cb-h2">7.1　補強後彎矩／剪力（N1～N30 全列）</div>');
+            w('<table class="cb-tbl"><thead><tr><th>節點</th><th>控制腹板</th><th>φMₙ (tf·m)</th><th>Mᵤ (tf·m)</th><th>彎矩CR</th><th>彎矩</th><th>φVₙ (tf)</th><th>Vᵤ (tf)</th><th>剪力CR</th><th>剪力</th></tr></thead><tbody>');
+            for (let i = 0; i < N; i++) { const r = post[i], cw = cbCtrlWeb(r); w('<tr><td>N' + (i + 1) + '</td><td>' + cbWebLbl(cw.key) + '</td><td>' + cbNum(r.phi_Mn_display, 0) + '</td><td>' + cbNum(Math.abs(r.Mu), 0) + '</td><td>' + cbNum(r.CR, 2) + '</td><td>' + cbBadge(r.check_M) + '</td><td>' + cbNum(cw.phi_Vn, 1) + '</td><td>' + cbNum(r.Vu, 1) + '</td><td>' + cbNum(r.Vu > 0 ? cw.phi_Vn / r.Vu : Infinity, 2) + '</td><td>' + cbBadge(cw.check_V) + '</td></tr>'); }
+            w('</tbody></table>');
+            w('<div class="cb-h2">7.2　服務性應力（頂部PT 啟用後）</div>');
+            w('<p class="cb-p">補強後總斷面服務應力（有效預力＋靜載＋活載）限值：拉 −14.97 ～ 壓 210 kgf/cm²' + (top.enabled ? '' : '（頂部 over-pier PT 未啟用，以下為現況）') + '。</p>');
+            w('<table class="cb-tbl"><thead><tr><th>節點</th><th>底緣 (kgf/cm²)</th><th>判定</th><th>頂緣 (kgf/cm²)</th><th>判定</th></tr></thead><tbody>');
+            for (let i = 0; i < N; i++) { const r = post[i]; w('<tr><td>N' + (i + 1) + '</td><td>' + cbNum(r.fserv_bot, 1) + '</td><td>' + cbBadge(r.servBotOK) + '</td><td>' + cbNum(r.fserv_top, 1) + '</td><td>' + cbBadge(r.servTopOK) + '</td></tr>'); }
+            w('</tbody></table>');
+            w('<p class="cb-note">服務性越限節點：' + listOr(servNG) + '。</p>');
+            w('<div class="cb-h2">7.3　補強前後彎矩／剪力包絡圖</div>');
+            w('<div class="cb-fig">' + cbMomentSVG(ctx, post));
+            w(cbLegend([{ t: '補強後 φMₙ 容量包絡', color: '#16a34a' }, { t: '補強前 φMₙ 容量', color: '#94a3b8', dash: 1 }, { t: '所需彎矩 Mᵤ（含 M₂）', color: '#dc2626' }]));
+            w('<div class="cb-note" style="text-align:center">圖 7-1　沿跨彎矩容量包絡帶（上緣 +φMₙ⁺ 正彎矩、下緣 −φMₙ⁻ 負彎矩）；所需彎矩落於綠帶內即合規。底部外置PT 抬升正彎矩上緣，頂部PT 下推負彎矩下緣。</div></div>');
+            w('<div class="cb-fig">' + cbShearSVG(ctx, pre, post));
+            w(cbLegend([{ t: '補強後 φVₙ 容量包絡（±，全斷面）', color: '#16a34a' }, { t: '補強前 φVₙ 容量', color: '#94a3b8', dash: 1 }, { t: '所需剪力 Vᵤ（含 V₂，有號）', color: '#dc2626' }]));
+            w('<div class="cb-note" style="text-align:center">圖 7-2　沿跨全斷面剪力 ±φVₙ 對稱容量包絡帶（控制腹板 φVₙ × ' + (ctx.n_web || 3) + ' 腹板）；所需剪力落於綠帶內即合規。</div></div>');
+            w('</div>');
+
+            // ============ 第8章 撓度 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 8 章　撓度檢核</div>');
+            w(cbExplain('強度夠不代表好用——橋還要夠「硬」，人車走起來不能晃、不能垂太多。本章檢核活載下的即時撓度不超過 ' + cbEqI("L/800") + '（知識庫 C2 卡／台灣§8.11.3；供人行則更嚴為 ' + cbEqI("L/1000") + '）。外置PT 的轉向塊升力還會把橋往上頂一點，進一步減少下垂。（潛變、乾縮造成的長期下撓與預拱設計屬另一階段，本章聚焦活載即時撓度。）'));
+            w('<p class="cb-p">以 propped cantilever 均勻 ' + cbEqI("EI") + '（取 Section 1 代表主跨）計算靜載＋活載撓度，檢核活載服務撓度 ' + cbEqI("\\le L/800") + '（台灣 §3.4）。彈性模數 ' + cbEqI("E_c=4700\\sqrt{f'_c}") + '（ACI 318-19 §19.2.2.1b）。外置PT 轉向塊升力另提供向上拱起，進一步減小向下撓度（見 Tab 7 加固後曲線）。</p>');
+            const dp = getDeflectionParams();
+            w('<p class="cb-note">' + cbEqI("E_c=" + cbNum(dp.E_c_MPa, 0)) + ' MPa；' + cbEqI("I_{Sec1}=" + cbNum(dp.I1_m4, 4)) + ' m⁴；' + cbEqI("EI=" + cbNum(dp.EI_tf_m2 / 1e6, 3)) + '×10⁶ tf·m²；' + cbEqI("L=" + cbNum(dp.L, 1)) + ' m；限值 ' + cbEqI("L/800=" + cbNum(dp.lim, 1)) + ' mm。</p>');
+            w('<div class="cb-h2">8.1　逐節點撓度（補強前，N1～N30 全列）</div>');
+            w('<table class="cb-tbl"><thead><tr><th>節點</th><th>x (m)</th><th>δ_DL (mm)</th><th>δ_LL 服務 (mm)</th><th>δ_LL 設計 (mm)</th><th>δ_DL+LL 設計 (mm)</th><th>L/800 (mm)</th><th>判定(LL服務)</th></tr></thead><tbody>');
+            for (let i = 0; i < N; i++) {
+                const x = state.nodes[i];
+                const yDL = deflUDL(dp.w_DL, x, dp.L, dp.EI_tf_m2) * 1000, yLLs = deflUDL(dp.w_LL_base, x, dp.L, dp.EI_tf_m2) * 1000, yLLd = deflUDL(dp.w_LL_design, x, dp.L, dp.EI_tf_m2) * 1000;
+                const ok = Math.abs(yLLs) <= dp.lim;
+                w('<tr><td>N' + (i + 1) + '</td><td>' + cbNum(x, 2) + '</td><td>' + cbNum(yDL, 2) + '</td><td>' + cbNum(yLLs, 2) + '</td><td>' + cbNum(yLLd, 2) + '</td><td>' + cbNum(yDL + yLLd, 2) + '</td><td>±' + cbNum(dp.lim, 1) + '</td><td>' + cbBadge(ok) + '</td></tr>');
+            }
+            w('</tbody></table>');
+            w('</div>');
+
+            // ============ 第9章 結論 + 全橋總體檢表 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">第 9 章　綜合結論與建議</div>');
+            w(cbExplain('把全橋 30 個節點的最終判定收攏成一張總表（含控制腹板標示與服務性），並列出「達標配方」——也就是要同時做哪幾樣補強、各多少量，橋才會全數過關。最後 9.3 誠實列出<b>本工具沒有涵蓋、必須另行手算或在施工圖交代</b>的項目（如錨碇區爆裂力、轉向塊局部承壓、新舊介面植筋、疲勞、施拉時序、延性），提醒後續設計不可遺漏。'));
+            w('<div class="cb-h2">9.1　全橋 N1～N30 總體檢</div>');
+            w('<table class="cb-tbl"><thead><tr><th>節點</th><th>斷面</th><th>彎矩CR</th><th>彎矩</th><th>控制腹板</th><th>剪力CR</th><th>剪力</th><th>服務</th></tr></thead><tbody>');
+            for (let i = 0; i < N; i++) {
+                const r = post[i], cw = cbCtrlWeb(r), vCR = cw.phi_Vn / (Math.abs(cw.Vu ?? r.Vu) || r.Vu || 1);
+                const servOK = !r.topOn ? '—' : cbBadge(r.servBotOK && r.servTopOK);
+                w('<tr><td>N' + (i + 1) + '</td><td>' + r.sectionId + '</td><td>' + cbNum(r.CR, 2) + '</td><td>' + cbBadge(r.check_M) + '</td><td>' + cbWebLbl(cw.key) + '</td><td>' + cbNum(r.Vu > 0 ? cw.phi_Vn / r.Vu : Infinity, 2) + '</td><td>' + cbBadge(cw.check_V) + '</td><td>' + servOK + '</td></tr>');
+            }
+            w('</tbody></table>');
+            w('<div class="cb-h2">9.2　達標配方</div>');
+            w('<p class="cb-p">底部外置PT ' + cbNum(g.forceTf, 0) + 'tf／轉向塊 ' + cbNum(b1.x, 3) + '·' + cbNum(b2.x, 3) + 'm＋頂部PT ' + (top.enabled ? (cbNum(top.forceTf, 0) + 'tf/距頂' + cbNum(top.yTop, 0) + 'cm/內錨N' + top.fromNode) : '（未啟用）') + '＋腹板加厚（外' + cbNum(jak.outer, 0) + '/中' + cbNum(jak.middle, 0) + 'cm）＋側貼鋼板（N1~3、N22~30）。</p>');
+            w('<div class="cb-h2">9.3　待手算／施工注意事項</div>');
+            w('<p class="cb-p">下列項目本工具未納入，須另行手算或於施工圖說明：① 錨碇區爆裂力與配筋　② 轉向塊（鞍座）轉向力與局部承壓　③ 新舊混凝土介面與植筋　④ 外置鋼腱無支撐自由段 ≤7500mm　⑤ 疲勞　⑥ 施拉時序與各階段應力　⑦ 極限狀態 c/d 延性檢核。</p>');
+            w('</div>');
+
+            // ============ 附錄 A 逐節點明細 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">附錄 A　逐節點計算明細（補強後）</div>');
+            w('<p class="cb-note">單位：Mᵤ／φMₙ 為 tf·m；fpc 為 kgf/cm²；Vᵤ／Vc／Vs／Vpl／φVₙ 為 tf（剪力為每腹板值）；CR 為容量／需求比（≥1 為 OK）。「控制」欄為 φVₙ 最小之腹板（外／中）。</p>');
+            w('<table class="cb-tbl"><thead><tr><th>N</th><th>x (m)</th><th>Mᵤ (tf·m)</th><th>φMₙ (tf·m)</th><th>CR_M</th><th>fpc (kgf/cm²)</th><th>Vᵤ (tf)</th><th>控制</th><th>Vc (tf)</th><th>Vs (tf)</th><th>Vpl (tf)</th><th>φVₙ (tf)</th><th>CR_V</th></tr></thead><tbody>');
+            for (let i = 0; i < N; i++) {
+                const r = post[i], cw = cbCtrlWeb(r);
+                w('<tr><td>' + (i + 1) + '</td><td>' + cbNum(state.nodes[i], 1) + '</td><td>' + cbNum(Math.abs(r.Mu), 0) + '</td><td>' + cbNum(r.phi_Mn_display, 0) + '</td><td>' + cbNum(r.CR, 2) + '</td><td>' + cbNum(r.fpc, 1) + '</td><td>' + cbNum(r.Vu, 1) + '</td><td>' + cbWebLbl(cw.key) + '</td><td>' + cbNum(cw.Vc, 1) + '</td><td>' + cbNum(cw.Vs, 1) + '</td><td>' + cbNum(cw.Vpl, 1) + '</td><td>' + cbNum(cw.phi_Vn, 1) + '</td><td>' + cbNum(r.Vu > 0 ? cw.phi_Vn / r.Vu : Infinity, 2) + '</td></tr>');
+            }
+            w('</tbody></table>');
+            w('</div>');
+
+            // ============ 附錄 B 規範條文出處 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">附錄 B　計算公式與規範出處總表</div>');
+            w('<p class="cb-note">本表完整列出計算書所用之公式與其規範出處（章條號級）。各條號皆對照橋梁知識庫公式卡原文核對。單位：應力 kgf/cm²、力 tf、彎矩 tf·m（' + cbEqI("f'_c") + ' 剪力式採 kgf/cm² 制）。</p>');
+            const bGroups = [
+                ['一、材料與斷面', [
+                    ['混凝土彈性模數', "E_c=4700\\sqrt{f'_c}", 'ACI 318-19 §19.2.2.1b（MPa）'],
+                    ['等效矩形應力區係數', "\\beta_1=0.85-0.05\\dfrac{f'_c-28}{7}\\ge0.65", 'AASHTO LRFD 2012 §5.7.2.2；台灣 §8.10'],
+                    ['剪力有效深度', "d_v=0.9(Y_{top}+Y_{bot})", '台灣 §8.20.2；AASHTO §5.8.2.9']
+                ]],
+                ['二、彎矩強度（M1 卡）', [
+                    ['黏結鋼腱極限應力', "f_{ps}=f_{pu}\\left(1-k\\dfrac{c}{d_p}\\right)", '台灣 §8.10（ACI 框架，低鬆弛 k=0.28）；AASHTO §5.7.3'],
+                    ['標稱彎矩強度', "M_n=A_{ps}f_{ps}\\left(d_p-\\dfrac{a}{2}\\right)", '台灣 §8.10；AASHTO §5.7.3'],
+                    ['彎矩強度檢核', "\\phi M_n\\ge M_u,\\ \\phi_m=0.90", '台灣 §8.14'],
+                    ['最小彎矩強度下限', "\\phi M_n\\ge\\min(1.33M_u,\\,1.2M_{cr})", 'ACI 318-19 §9.6.2（防脆性破壞）'],
+                    ['開裂彎矩', "M_{cr}=S_{bot}(f_r+f_{cpe}),\\ f_r=2.0\\sqrt{f'_c}", '台灣 §8.20.2（破裂模數 fr=2√f′c）']
+                ]],
+                ['三、剪力強度（D1 卡：雙重防線）', [
+                    ['第一道：主拉應力（莫耳圓）', "\\sigma_1=\\dfrac{\\sigma_x}{2}+\\sqrt{\\left(\\dfrac{\\sigma_x}{2}\\right)^2+\\tau^2}", '台灣 §8.20.2；橋梁知識庫 D1 卡'],
+                    ['主拉應力限值', "\\sigma_1\\le 0.3\\sqrt{f'_c}", '台灣 §8.20.2'],
+                    ['第二道：剪力強度', "\\phi V_n=\\phi_v(V_c+V_s+V_p),\\ \\phi_v=0.90", '台灣 §8.20.2；§8.14'],
+                    ['混凝土剪力（取小）', "V_c=\\min(V_{ci},\\,V_{cw})", '台灣 §8.20.2'],
+                    ['腹剪型', "V_{cw}=(0.3\\sqrt{f'_c}+0.3f_{pc})\\,b'_w d_v", '台灣 §8.20.2 式8-28'],
+                    ['撓剪型（下限 0.45）', "V_{ci}=0.16\\sqrt{f'_c}\\,b'_w d_v+V_d+\\dfrac{V_i M_{cr}}{M_{max}}", '台灣 §8.20.2 式8-27'],
+                    ['箍筋剪力', "V_s=\\dfrac{A_v f_{sy} d_v}{s}", '台灣 §8.20.3'],
+                    ['箍筋剪力上限', "V_s\\le 2.1\\sqrt{f'_c}\\,b'_w d_v", '台灣 §8.20.3'],
+                    ['斜壓桿壓碎上限', "V_u\\le\\phi\\,0.25 f'_c\\,b'_w d_v", 'AASHTO LRFD 2012 §5.8.3.3；台灣 §8.20.3'],
+                    ['最小箍筋量', "A_v/s\\ge 3.5\\,b'_w/f_{sy}", '台灣 §8.20.3'],
+                    ['最大箍筋間距', "s\\le\\min(0.75h,60)\\ [V_s\\text{大時減半}]", '台灣 §8.20.3']
+                ]],
+                ['四、補強（外置PT／加厚／鋼板）', [
+                    ['外置鋼腱豎向分力', "V_p=P\\sin\\theta", '橋梁知識庫 O1 卡；AASHTO §5.8'],
+                    ['外置PT 彎矩貢獻', "\\Delta M_n=P\\cdot e\\ (f_{ps}=f_{pe})", 'AASHTO LRFD 2012 §5.7.3.1.3b（保守簡化）'],
+                    ['無支撐自由段限值', "L_{free}\\le 7500\\ \\mathrm{mm}", 'AASHTO LRFD 2012 §5.10.5'],
+                    ['腹板加厚', "b'_w=b'_{w,0}+\\Delta b'_w", '增大斷面法（bw↑ → Vc／Vs,max／壓碎同步升）'],
+                    ['側貼鋼板抗剪（Vs 類）', "V_{pl}=\\kappa\\,(2tw)f_y\\dfrac{d_v}{s}", '工程判斷（無專屬閉式）；構造 JTG/T J22-2008'],
+                    ['合計受斜壓桿上限', "V_{s,eff}=\\min(V_s+V_{pl},\\,V_{s,max})", '台灣 §8.20.3']
+                ]],
+                ['五、載重‧次內力‧撓度', [
+                    ['propped cantilever 內力', "V(x)=\\tfrac{3}{8}wL-wx", '結構靜力（一端鉸支、一端固定）'],
+                    ['次彎矩力法', "X_1=-\\dfrac{\\int M_1 x\\,dx}{\\int x^2 dx},\\ M_2=X_1 x", '力法；採計 台灣／AASHTO 2012 §3.4.3（係數 1.0）'],
+                    ['活載撓度限值', "\\delta_{LL}\\le L/800", '台灣 §8.11.3；橋梁知識庫 C2 卡']
+                ]]
+            ];
+            w('<table class="cb-tbl"><thead><tr><th style="width:26%">計算項目</th><th style="width:42%">公式</th><th style="width:32%">規範出處</th></tr></thead><tbody>');
+            bGroups.forEach(grp => {
+                w('<tr><td colspan="3" class="l" style="background:#e0e7ff;font-weight:700;color:#3730a3">' + grp[0] + '</td></tr>');
+                grp[1].forEach(r => w('<tr><td class="l">' + r[0] + '</td><td>' + cbEqI(r[1]) + '</td><td class="l" style="font-size:10px">' + r[2] + '</td></tr>'));
+            });
+            w('</tbody></table>');
+            w('<p class="cb-note">＊參考規範：T/CHTS 10015-2019《公路混凝土橋梁體外預應力加固技術指南》（外置PT 加固之總則/材料/構造，數值仍以台灣109年版＋AASHTO 2012 為主）；日本道路橋示方書Ⅲ 平成29年（對照，外置 fps 0.70 折減未套用）。JTG/T J22 版次以規範正本核對為準；側貼鋼板「抗剪」為 Vs 類工程判斷，JTG 僅支撐其構造/錨定要求。</p>');
+            w('</div>');
+
+            // ============ 附錄 C 代表節點手算（涵蓋 梁端剪力／跨中正彎矩／墩區負彎矩+剪力 三種主控）============
+            renderCalcBook_handcalc(H, D, 1, '梁端（橋台端）剪力控制');
+            renderCalcBook_handcalc(H, D, 15, '跨中正彎矩');
+            renderCalcBook_handcalc(H, D, 30, '橋墩端負彎矩＋剪力控制');
+
+            // ============ 附錄 D 符號 ============
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">附錄 D　符號說明</div>');
+            w('<table class="cb-tbl"><thead><tr><th>符號</th><th>意義</th><th>符號</th><th>意義</th></tr></thead><tbody>');
+            const sym = [
+                ["f'_c", '混凝土抗壓強度', 'f_{ps}', '預力鋼材極限狀態應力'],
+                ['f_{pe}', '預力鋼材有效應力', 'A_{ps}', '預力鋼腱面積'],
+                ['M_u', '所需彎矩（含 M₂）', 'M_2', '次彎矩'],
+                ['\\phi M_n', '設計彎矩強度', 'M_{cr}', '開裂彎矩'],
+                ['V_u', '每腹板所需剪力（含 V₂）', 'V_2', '次剪力'],
+                ['V_c', '混凝土剪力強度', 'V_s', '箍筋剪力強度'],
+                ['V_{cw}', '腹剪型剪力強度', 'V_{ci}', '撓剪型剪力強度'],
+                ['V_p', '外置鋼腱豎向分力', 'V_{pl}', '側貼鋼板剪力貢獻'],
+                ['\\sigma_1', '主拉應力', 'f_{pc}', '形心軸混凝土壓應力'],
+                ["b'_w", '有效腹板寬', 'd_v', '剪力有效深度']
+            ];
+            sym.forEach(r => w('<tr><td>' + cbEqI(r[0]) + '</td><td class="l">' + r[1] + '</td><td>' + cbEqI(r[2]) + '</td><td class="l">' + r[3] + '</td></tr>'));
+            w('</tbody></table>');
+            w('<p class="cb-note">— 計算書結束 —</p>');
+            w('</div>');
+        }
+
+        // 附錄 C 單一代表節點逐步手算
+        function renderCalcBook_handcalc(H, D, nodeNum, desc) {
+            const w = s => H.push(s);
+            const { post, pre } = D, i = nodeNum - 1, r = post[i], b = pre[i], cw = cbCtrlWeb(r);
+            const isHog = r.isHogging;
+            w('<div class="cb-page cb-chapter">');
+            w('<div class="cb-h1">附錄 C　代表節點手算：N' + nodeNum + '（' + (desc || (isHog ? '橋墩端負彎矩' : '跨中正彎矩')) + '）</div>');
+            w('<div class="cb-handcalc">');
+            w('<div class="step"><b>① 位置與斷面：</b>x = ' + cbNum(state.nodes[i], 2) + ' m，斷面 ' + r.sectionId + '，' + cbEqI("d_v=" + cbNum(r.dv, 1)) + ' cm，控制腹板＝' + cbWebLbl(cw.key) + '腹板（' + cbEqI("b'_w=" + cbNum(cw.bw, 1)) + ' cm）。</div>');
+            w('<div class="step"><b>② 所需強度：</b>' + cbEqI("M_{u,load}=" + cbNum(r.Mu_load, 0)) + '，' + cbEqI("M_2=" + cbNum(r.M2, 0)) + ' tf·m（' + (r.M2_applied ? '同號→計入' : '反號→不計') + '），' + cbEqI("M_u=" + cbNum(r.Mu, 0)) + ' tf·m；' + cbEqI("V_u=" + cbNum(r.Vu, 1)) + ' tf/腹板（含 V₂）。</div>');
+            if (isHog && r.hogDetail) {
+                const hd = r.hogDetail;
+                w('<div class="step"><b>③ 彎矩強度（Method A，fps k 法）：</b>' + cbEqI("A_{ps}=" + cbNum(hd.Aps, 2)) + ' cm²，' + cbEqI("c=" + cbNum(hd.c, 2)) + '，' + cbEqI("a=" + cbNum(hd.a, 2)) + '，' + cbEqI("f_{ps}=" + cbNum(hd.fps, 0)) + ' kgf/cm²，' + cbEqI("M_{n,base}=" + cbNum(hd.Mn, 0)) + '。加頂部PT ' + cbEqI("\\Delta M_n=" + cbNum(r.dMn_top, 0)) + ' → ' + cbEqI("\\phi M_n=" + cbNum(r.phi_Mn_display, 0)) + ' tf·m。</div>');
+            } else {
+                w('<div class="step"><b>③ 彎矩強度：</b>' + cbEqI("M_n=" + cbNum(r.Mn_display, 0)) + '（含外置 ' + cbEqI("\\Delta M_n=" + cbNum(r.dMn_ext, 0)) + '），' + cbEqI("\\phi M_n=" + cbNum(r.phi_Mn_display, 0)) + ' tf·m。</div>');
+            }
+            w('<div class="step">　　判定：' + cbEqI("\\phi M_n/M_u=" + cbNum(r.CR, 3)) + ' → ' + cbBadge(r.check_M) + '</div>');
+            w('<div class="step"><b>④ 剪力三道防線（控制腹板）：</b>主拉 ' + cbEqI("\\sigma_1=" + cbNum(cw.sigma_1, 2)) + '（限 ' + cbNum(D.ctx.limit_sigma1, 2) + '）；' + cbEqI("V_c=\\min(V_{ci},V_{cw})=" + cbNum(cw.Vc, 1)) + '，' + cbEqI("V_s=" + cbNum(cw.Vs, 1)) + '，' + cbEqI("V_{pl}=" + cbNum(cw.Vpl, 1)) + '，' + cbEqI("V_p=" + cbNum(cw.Vp_web, 1)) + '（/腹板）。</div>');
+            w('<div class="step">　　' + cbEqI("\\phi V_n=\\phi_v(V_c+V_{s,eff}+V_p)=" + cbNum(cw.phi_Vn, 1)) + ' tf，需求 ' + cbEqI("V_u=" + cbNum(r.Vu, 1)) + ' → ' + cbBadge(cw.check_V) + (cw.Vpl_capped ? '（鋼板受斜壓桿上限截斷）' : '') + '</div>');
+            w('<div class="step"><b>⑤ 補強前後對照：</b>φMₙ ' + cbNum(b.phi_Mn_display, 0) + ' → ' + cbNum(r.phi_Mn_display, 0) + '；控制腹板 φVₙ ' + cbNum(cbCtrlWeb(b).phi_Vn, 1) + ' → ' + cbNum(cw.phi_Vn, 1) + ' tf。</div>');
+            w('</div>');
+            w('</div>');
         }
 
         window.addEventListener('DOMContentLoaded', init);
