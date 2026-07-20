@@ -883,5 +883,19 @@
     ],
     "salary": "#N/A",
     "seniority": "#N/A"
+  },
+  {
+    "name": "徐嘉妤",
+    "group": "無組別",
+    "role": "",
+    "education": "#N/A",
+    "certificates": [
+      {
+        "name": "#N/A",
+        "number": ""
+      }
+    ],
+    "salary": "#N/A",
+    "seniority": "#N/A"
   }
 ]
