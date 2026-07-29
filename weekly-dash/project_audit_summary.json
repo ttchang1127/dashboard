@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29 08:30:12 +0800",
+  "generatedAt": "2026-07-29 13:15:29 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -7,40 +7,40 @@
       "name": "水井甲區",
       "auditDate": "2026-07-29",
       "version": "V3",
-      "modifiedAt": "2026-07-17 09:51:29",
+      "modifiedAt": "2026-07-29 10:40:03",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
-        "green": 1
+        "green": 2
       },
       "itemCount": 2,
       "topUrgent": {
-        "task": "進度 75% 監造請款 (第3期)",
-        "dueLabel": "115/07/17",
-        "diff": -12,
-        "diffLabel": "逾期12天",
-        "statusLight": "🔴",
+        "task": "115年7月監造月報",
+        "dueLabel": "115/08/10",
+        "diff": 12,
+        "diffLabel": "D-12 追蹤",
+        "statusLight": "🟢",
         "owner": "**林全華**",
         "manager": "孝智哥 <@911417165373136897>"
       },
       "items": [
         {
-          "task": "進度 75% 監造請款 (第3期)",
-          "dueLabel": "115/07/17",
-          "diff": -12,
-          "diffLabel": "逾期12天",
-          "statusLight": "🔴",
-          "owner": "**林全華**",
-          "manager": "孝智哥 <@911417165373136897>"
-        },
-        {
           "task": "115年7月監造月報",
           "dueLabel": "115/08/10",
           "diff": 12,
           "diffLabel": "D-12 追蹤",
+          "statusLight": "🟢",
+          "owner": "**林全華**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "進度 75% 監造請款 (第3期)",
+          "dueLabel": "115/08/30",
+          "diff": 32,
+          "diffLabel": "D-32 追蹤",
           "statusLight": "🟢",
           "owner": "**林全華**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -52,40 +52,40 @@
       "name": "水井乙區",
       "auditDate": "2026-07-29",
       "version": "V4",
-      "modifiedAt": "2026-07-10 16:17:40",
+      "modifiedAt": "2026-07-29 10:40:48",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
-        "green": 1
+        "green": 2
       },
       "itemCount": 2,
       "topUrgent": {
-        "task": "進度 75% 監造請款 (第3期)",
-        "dueLabel": "115/07/17",
-        "diff": -12,
-        "diffLabel": "逾期12天",
-        "statusLight": "🔴",
+        "task": "115年7月監造月報",
+        "dueLabel": "115/08/10",
+        "diff": 12,
+        "diffLabel": "D-12 追蹤",
+        "statusLight": "🟢",
         "owner": "**陳建榮**",
         "manager": "孝智哥 <@911417165373136897>"
       },
       "items": [
         {
-          "task": "進度 75% 監造請款 (第3期)",
-          "dueLabel": "115/07/17",
-          "diff": -12,
-          "diffLabel": "逾期12天",
-          "statusLight": "🔴",
-          "owner": "**陳建榮**",
-          "manager": "孝智哥 <@911417165373136897>"
-        },
-        {
           "task": "115年7月監造月報",
           "dueLabel": "115/08/10",
           "diff": 12,
           "diffLabel": "D-12 追蹤",
+          "statusLight": "🟢",
+          "owner": "**陳建榮**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "進度 75% 監造請款 (第3期)",
+          "dueLabel": "115/08/30",
+          "diff": 32,
+          "diffLabel": "D-32 追蹤",
           "statusLight": "🟢",
           "owner": "**陳建榮**",
           "manager": "孝智哥 <@911417165373136897>"
@@ -97,35 +97,26 @@
       "name": "水井丙區",
       "auditDate": "2026-07-29",
       "version": "V5",
-      "modifiedAt": "2026-07-10 16:07:48",
+      "modifiedAt": "2026-07-29 10:37:16",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 1,
+        "orange": 0,
         "yellow": 0,
         "green": 1
       },
-      "itemCount": 2,
+      "itemCount": 1,
       "topUrgent": {
-        "task": "進度 75% 監造請款 (第3期)",
-        "dueLabel": "115/07/30",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
+        "task": "115年7月監造月報",
+        "dueLabel": "115/08/10",
+        "diff": 12,
+        "diffLabel": "D-12 追蹤",
+        "statusLight": "🟢",
         "owner": "**達哥**",
         "manager": "孝智哥 <@911417165373136897>"
       },
       "items": [
-        {
-          "task": "進度 75% 監造請款 (第3期)",
-          "dueLabel": "115/07/30",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "**達哥**",
-          "manager": "孝智哥 <@911417165373136897>"
-        },
         {
           "task": "115年7月監造月報",
           "dueLabel": "115/08/10",
@@ -253,6 +244,69 @@
       "itemCount": 0,
       "topUrgent": null,
       "items": []
+    },
+    {
+      "key": "taipower_4in1",
+      "name": "台電4合1",
+      "auditDate": "2026-07-29",
+      "version": "V1",
+      "modifiedAt": "2026-07-29 13:12:48",
+      "mode": "active",
+      "note": null,
+      "riskCounts": {
+        "red": 0,
+        "orange": 0,
+        "yellow": 0,
+        "green": 4
+      },
+      "itemCount": 4,
+      "topUrgent": {
+        "task": "管理人員及品管/職安資格證明送審",
+        "dueLabel": "115/08/21（決標次日+14日曆天）",
+        "diff": 23,
+        "diffLabel": "D-23 追蹤",
+        "statusLight": "🟢",
+        "owner": "**巧晴姐**",
+        "manager": "孝智哥 <@911417165373136897>"
+      },
+      "items": [
+        {
+          "task": "管理人員及品管/職安資格證明送審",
+          "dueLabel": "115/08/21（決標次日+14日曆天）",
+          "diff": 23,
+          "diffLabel": "D-23 追蹤",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "起始會議召開",
+          "dueLabel": "115/08/24（決標後15日內，原約115/08/22遇假日順延）",
+          "diff": 26,
+          "diffLabel": "D-26 追蹤",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "已決標施工標案之修正監造計畫",
+          "dueLabel": "115/08/27（決標次日+20日曆天）",
+          "diff": 29,
+          "diffLabel": "D-29 追蹤",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "監造計畫（含工安/品質/環保）及監督查核計畫",
+          "dueLabel": "115/08/27（決標次日+20日曆天）",
+          "diff": 29,
+          "diffLabel": "D-29 追蹤",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        }
+      ]
     },
     {
       "key": "agri_bridge",
