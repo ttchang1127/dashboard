@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30 14:56:47 +0800",
+  "generatedAt": "2026-07-30 15:26:42 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -249,19 +249,19 @@
       "key": "taipower_4in1",
       "name": "台電4合1",
       "auditDate": "2026-07-30",
-      "version": "V1",
-      "modifiedAt": "2026-07-30 14:00:33",
+      "version": "V2",
+      "modifiedAt": "2026-07-30 15:26:19",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
         "orange": 0,
         "yellow": 0,
-        "green": 6
+        "green": 9
       },
-      "itemCount": 6,
+      "itemCount": 9,
       "topUrgent": {
-        "task": "管理人員及品管/職安資格證明送審",
+        "task": "受僱勞工名冊及勞保投保資料",
         "dueLabel": "115/08/21（決標次日+14日曆天）",
         "diff": 22,
         "diffLabel": "D-22 追蹤",
@@ -271,8 +271,26 @@
       },
       "items": [
         {
-          "task": "管理人員及品管/職安資格證明送審",
+          "task": "受僱勞工名冊及勞保投保資料",
           "dueLabel": "115/08/21（決標次日+14日曆天）",
+          "diff": 22,
+          "diffLabel": "D-22 追蹤",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "服務實施計畫書",
+          "dueLabel": "115/08/21（決標次日+14日曆天）",
+          "diff": 22,
+          "diffLabel": "D-22 追蹤",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "管理人員及品管/職安資格證明送審",
+          "dueLabel": "115/08/21（決標次日+14日曆天，遇假日順延）",
           "diff": 22,
           "diffLabel": "D-22 追蹤",
           "statusLight": "🟢",
@@ -322,6 +340,15 @@
           "diffLabel": "D-28 追蹤",
           "statusLight": "🟢",
           "owner": "**尚東**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "專業技師簽證執行計畫",
+          "dueLabel": "115/09/06（決標次日+30日）",
+          "diff": 38,
+          "diffLabel": "D-38 追蹤",
+          "statusLight": "🟢",
+          "owner": "**張增糴**",
           "manager": "孝智哥 <@911417165373136897>"
         }
       ]
