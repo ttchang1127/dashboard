@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30 16:27:38 +0800",
+  "generatedAt": "2026-07-30 20:45:32 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -250,7 +250,7 @@
       "name": "台電4合1",
       "auditDate": "2026-07-30",
       "version": "V2",
-      "modifiedAt": "2026-07-30 16:26:51",
+      "modifiedAt": "2026-07-30 20:45:02",
       "mode": "active",
       "note": null,
       "riskCounts": {
@@ -348,7 +348,7 @@
           "diff": 38,
           "diffLabel": "D-38 追蹤",
           "statusLight": "🟢",
-          "owner": "**張增糴**",
+          "owner": "**巧晴姐**",
           "manager": "孝智哥 <@911417165373136897>"
         }
       ]
