@@ -45,6 +45,10 @@ function renderStat(label, value, tone) {
     `;
 }
 
+function renderRiskCounts(counts = {}) {
+    return `🔴 ${counts.red || 0}　🟠 ${counts.orange || 0}　🟡 ${counts.yellow || 0}　🟢 ${counts.green || 0}`;
+}
+
 function sectionTabLabel(section, index) {
     return `Tab ${index} ${section.title}`;
 }
@@ -65,9 +69,9 @@ function renderSummary() {
         renderStat("已啟動項目", `${summary.active || 0} 項`, "text-teal-700"),
         renderStat("待觸發項目", `${summary.pending || 0} 項`, "text-stone-700"),
         renderStat("重大事項", `${summary.major || 0} 項`, "text-rose-700"),
-        renderStat("紅燈", `${summary.red || 0}`, "text-rose-700"),
-        renderStat("橘燈", `${summary.orange || 0}`, "text-orange-700"),
-        renderStat("黃燈", `${summary.yellow || 0}`, "text-amber-700")
+        renderStat("🔴 紅燈", `${summary.red || 0} 項`, "text-rose-700"),
+        renderStat("🟠 橘燈", `${summary.orange || 0} 項`, "text-orange-700"),
+        renderStat("🟡 黃燈", `${summary.yellow || 0} 項`, "text-amber-700")
     ].join("");
 }
 
@@ -82,6 +86,7 @@ function renderAnchors() {
             <span class="block text-xs font-bold uppercase tracking-[0.12em] opacity-70">Tab ${tabIndex}</span>
             <span class="mt-1 block text-sm font-bold leading-snug">${escapeHtml(label)}</span>
             <span class="mt-1 block text-xs opacity-80">已啟動 ${section.counts?.active || 0}｜待觸發 ${section.counts?.pending || 0}</span>
+            <span class="mt-1 block text-xs font-bold leading-relaxed opacity-90">${renderRiskCounts(section.counts)}</span>
         </button>
     `;
     }).join("");
@@ -149,6 +154,7 @@ function renderSection(section) {
                     <div class="rounded-2xl bg-rose-50 p-3 text-center text-rose-800"><p class="text-xs">重大</p><p class="text-xl font-bold">${section.counts?.major || 0}</p></div>
                 </div>
             </div>
+            <div class="mt-4 rounded-2xl border border-stone-200 bg-white/70 px-4 py-3 text-sm font-bold text-stone-700">${renderRiskCounts(section.counts)}</div>
 
             <div class="mt-6 grid grid-cols-1 gap-5 xl:grid-cols-[0.85fr,1.15fr]">
                 <div>

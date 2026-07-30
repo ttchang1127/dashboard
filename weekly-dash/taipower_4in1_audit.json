@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30 21:07:46 +0800",
+  "generatedAt": "2026-07-30 21:13:49 +0800",
   "source": "台電4合1提醒清單_V2.md",
   "project": {
     "name": "台電4合1",
@@ -32,7 +32,11 @@
       "counts": {
         "active": 5,
         "pending": 48,
-        "major": 20
+        "major": 20,
+        "red": 0,
+        "orange": 0,
+        "yellow": 0,
+        "green": 5
       },
       "activeItems": [
         {
@@ -40,7 +44,7 @@
           "dueLabel": "115/08/21（決標次日+14日曆天）",
           "diff": 22,
           "diffLabel": "D-22 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": false
@@ -50,7 +54,7 @@
           "dueLabel": "115/08/21（決標次日+14日曆天）",
           "diff": 22,
           "diffLabel": "D-22 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
@@ -60,7 +64,7 @@
           "dueLabel": "115/08/21（決標次日+14日曆天，遇假日順延）",
           "diff": 22,
           "diffLabel": "D-22 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
@@ -70,7 +74,7 @@
           "dueLabel": "115/08/24（決標後15日內，原約115/08/22遇假日順延）",
           "diff": 25,
           "diffLabel": "D-25 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
@@ -80,7 +84,7 @@
           "dueLabel": "115/09/06（決標次日+30日）",
           "diff": 38,
           "diffLabel": "D-38 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
@@ -626,7 +630,11 @@
       "counts": {
         "active": 2,
         "pending": 5,
-        "major": 2
+        "major": 2,
+        "red": 0,
+        "orange": 0,
+        "yellow": 0,
+        "green": 2
       },
       "activeItems": [
         {
@@ -634,7 +642,7 @@
           "dueLabel": "115/08/27（決標次日+20日曆天）",
           "diff": 28,
           "diffLabel": "D-28 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
           "major": false
@@ -644,7 +652,7 @@
           "dueLabel": "115/08/27（決標次日+20日曆天）",
           "diff": 28,
           "diffLabel": "D-28 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
           "major": true
@@ -717,7 +725,11 @@
       "counts": {
         "active": 2,
         "pending": 5,
-        "major": 2
+        "major": 2,
+        "red": 0,
+        "orange": 0,
+        "yellow": 0,
+        "green": 2
       },
       "activeItems": [
         {
@@ -725,7 +737,7 @@
           "dueLabel": "115/08/27（決標次日+20日曆天）",
           "diff": 28,
           "diffLabel": "D-28 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
           "major": false
@@ -735,7 +747,7 @@
           "dueLabel": "115/08/27（決標次日+20日曆天）",
           "diff": 28,
           "diffLabel": "D-28 追蹤",
-          "statusLight": "",
+          "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
           "major": true
@@ -808,7 +820,11 @@
       "counts": {
         "active": 0,
         "pending": 3,
-        "major": 1
+        "major": 1,
+        "red": 0,
+        "orange": 0,
+        "yellow": 0,
+        "green": 0
       },
       "activeItems": [],
       "pendingItems": [
@@ -856,7 +872,11 @@
       "counts": {
         "active": 0,
         "pending": 3,
-        "major": 1
+        "major": 1,
+        "red": 0,
+        "orange": 0,
+        "yellow": 0,
+        "green": 0
       },
       "activeItems": [],
       "pendingItems": [
