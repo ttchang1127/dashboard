@@ -45,6 +45,11 @@ function renderStat(label, value, tone) {
     `;
 }
 
+function sectionTabLabel(section, index) {
+    if (section.key === "common") return "共同項目";
+    return `Tab ${index} ${section.title}`;
+}
+
 function renderSummary() {
     const payload = state.payload;
     const project = payload.project || {};
@@ -69,16 +74,23 @@ function renderSummary() {
 
 function renderAnchors() {
     const sections = state.payload.sections || [];
-    anchorBar.innerHTML = sections.map((section) => `
-        <button class="section-anchor ${section.key === state.activeSection ? "active" : ""} rounded-full border border-stone-300 bg-stone-100 px-4 py-2 text-sm font-bold text-stone-700 transition" data-section="${escapeHtml(section.key)}">
-            ${escapeHtml(section.title)}
+    let caseIndex = 0;
+    anchorBar.innerHTML = sections.map((section) => {
+        if (section.key !== "common") caseIndex += 1;
+        const label = sectionTabLabel(section, caseIndex);
+        const selected = section.key === state.activeSection;
+        return `
+        <button id="tab-${escapeHtml(section.key)}" class="tab-button ${selected ? "active" : ""}" data-section="${escapeHtml(section.key)}" role="tab" aria-selected="${selected}" aria-controls="section-panel">
+            <span class="block text-xs font-bold uppercase tracking-[0.12em] opacity-70">${section.key === "common" ? "Common" : `Case ${caseIndex}`}</span>
+            <span class="mt-1 block text-sm font-bold leading-snug">${escapeHtml(label)}</span>
+            <span class="mt-1 block text-xs opacity-80">已啟動 ${section.counts?.active || 0}｜待觸發 ${section.counts?.pending || 0}</span>
         </button>
-    `).join("");
+    `;
+    }).join("");
     anchorBar.querySelectorAll("[data-section]").forEach((button) => {
         button.addEventListener("click", () => {
             state.activeSection = button.dataset.section;
             render();
-            document.getElementById(`section-${state.activeSection}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
         });
     });
 }
@@ -123,7 +135,7 @@ function renderSection(section) {
     const pendingItems = section.pendingItems || [];
     const note = section.note ? `<p class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">${escapeHtml(section.note)}</p>` : "";
     return `
-        <section id="section-${escapeHtml(section.key)}" class="panel rounded-[28px] p-5 lg:p-6">
+        <section id="section-panel" class="panel rounded-[28px] p-5 lg:p-6" role="tabpanel" aria-labelledby="tab-${escapeHtml(section.key)}">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                     <div class="flex flex-wrap items-center gap-2">
@@ -160,7 +172,13 @@ function renderSection(section) {
 
 function renderSections() {
     const sections = state.payload.sections || [];
-    sectionsRoot.innerHTML = sections.map(renderSection).join("");
+    const active = sections.find((section) => section.key === state.activeSection) || sections[0];
+    if (!active) {
+        sectionsRoot.innerHTML = `<div class="panel rounded-[24px] p-6 text-stone-500">目前沒有分頁資料</div>`;
+        return;
+    }
+    state.activeSection = active.key;
+    sectionsRoot.innerHTML = renderSection(active);
 }
 
 function render() {
