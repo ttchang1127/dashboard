@@ -1,0 +1,899 @@
+{
+  "generatedAt": "2026-07-30 16:42:37 +0800",
+  "source": "台電4合1提醒清單_V2.md",
+  "project": {
+    "name": "台電4合1",
+    "version": "V2",
+    "auditDate": "2026-07-30",
+    "modifiedAt": "2026-07-30 16:26:51",
+    "riskCounts": {
+      "red": 0,
+      "orange": 0,
+      "yellow": 0,
+      "green": 9
+    }
+  },
+  "summary": {
+    "active": 9,
+    "pending": 64,
+    "major": 26,
+    "red": 0,
+    "orange": 0,
+    "yellow": 0,
+    "green": 9
+  },
+  "sections": [
+    {
+      "key": "common",
+      "title": "共同項目",
+      "subtitle": "四案共通的簽約、開工前、施工、驗收與請款列管",
+      "status": "active",
+      "note": "",
+      "counts": {
+        "active": 5,
+        "pending": 48,
+        "major": 20
+      },
+      "activeItems": [
+        {
+          "task": "受僱勞工名冊及勞保投保資料",
+          "dueLabel": "115/08/21（決標次日+14日曆天）",
+          "diff": 22,
+          "diffLabel": "D-22 追蹤",
+          "statusLight": "",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": false
+        },
+        {
+          "task": "服務實施計畫書",
+          "dueLabel": "115/08/21（決標次日+14日曆天）",
+          "diff": 22,
+          "diffLabel": "D-22 追蹤",
+          "statusLight": "",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true
+        },
+        {
+          "task": "管理人員及品管/職安資格證明送審",
+          "dueLabel": "115/08/21（決標次日+14日曆天，遇假日順延）",
+          "diff": 22,
+          "diffLabel": "D-22 追蹤",
+          "statusLight": "",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true
+        },
+        {
+          "task": "起始會議召開",
+          "dueLabel": "115/08/24（決標後15日內，原約115/08/22遇假日順延）",
+          "diff": 25,
+          "diffLabel": "D-25 追蹤",
+          "statusLight": "",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true
+        },
+        {
+          "task": "專業技師簽證執行計畫",
+          "dueLabel": "115/09/06（決標次日+30日）",
+          "diff": 38,
+          "diffLabel": "D-38 追蹤",
+          "statusLight": "",
+          "owner": "張增糴",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true
+        }
+      ],
+      "pendingItems": [
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "監造人員登錄表函報",
+          "dueLabel": "開工前；工程標已開工則決標後7日內",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.15.1",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "履約保證金繳納",
+          "dueLabel": "簽約時",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "—",
+          "basis": "投標須知第83條",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "雇主意外責任險/團體傷害險送執",
+          "dueLabel": "通知開工後30日內",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": true,
+          "fine": "2,500/日",
+          "basis": "契約第10條",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "開工前施工說明會",
+          "dueLabel": "開工前",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": true,
+          "fine": "2,000/次",
+          "basis": "工作說明書4.1.4",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "施工計畫書審查",
+          "dueLabel": "施工廠商提送次日+7日",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "品質計畫審查",
+          "dueLabel": "施工廠商提送次日+7日",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "職業安全衛生管理計畫審查",
+          "dueLabel": "施工廠商提送次日+7日",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "施工預定進度表/網狀圖審查",
+          "dueLabel": "施工廠商提送次日+7日",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "工程保險審查",
+          "dueLabel": "施工廠商提送次日+7日",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "營建剩餘土石方處理計畫審查",
+          "dueLabel": "施工廠商提送次日+7日",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "環境保護/生態檢核執行計畫審查",
+          "dueLabel": "施工廠商提送次日+7日",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "重大公共工程開工管制條件檢核表",
+          "dueLabel": "開工前",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "工作說明書4.2.4",
+          "status": "待觸發"
+        },
+        {
+          "heading": "四、待觸發列管事項",
+          "task": "開工報告單",
+          "dueLabel": "開工日+3日內送甲方",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": true,
+          "fine": "3,000/日",
+          "basis": "罰則13.1",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "工作月報",
+          "dueLabel": "開工後依每月次月5日前列管",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/日",
+          "basis": "工作說明書4.2.8／罰則13.2",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "監造報表（日/週報）",
+          "dueLabel": "開工後逐日或每週遞交前一週",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/日",
+          "basis": "罰則13.5",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "施工日誌審查",
+          "dueLabel": "開工後每日或監造次日審查",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/日",
+          "basis": "罰則13.5",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "出勤配置計畫（排班）",
+          "dueLabel": "監造計畫核定後按月五日前列管",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/日",
+          "basis": "工作說明書7.3.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "差勤簽到退及時數統計表",
+          "dueLabel": "開工後按月五日前列管",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "5,000/人日；不實5,000/人次",
+          "basis": "工作說明書7.6.1/7.6.12",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "施工標案受罰一覽表",
+          "dueLabel": "開工後按月五日前或事實發生3日內列管",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/次",
+          "basis": "工作說明書4.1.32",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "材料設備送審",
+          "dueLabel": "施工廠商提送次日+7日，進版3日",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "材料試驗結果查察",
+          "dueLabel": "施工廠商提送次日+7日",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "2,000/次",
+          "basis": "罰則13.12",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "檢驗停留點/施工品質抽查",
+          "dueLabel": "依核定監造計畫",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/次",
+          "basis": "罰則13.13",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "工安抽查/環保生態抽查",
+          "dueLabel": "開工後每週列管",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/日",
+          "basis": "工作說明書4.2.2",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "CCTV即時影像抽看",
+          "dueLabel": "開工後每日列管",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "依安衛罰款標準",
+          "basis": "工作說明書9.23.8",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "施工協調會/工進會議",
+          "dueLabel": "開工後每半個月列管",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/次",
+          "basis": "工作說明書4.1.28",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "內部稽核",
+          "dueLabel": "開工後每3個月列管",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "暫停估驗款",
+          "basis": "工作說明書3.5.17.8",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "估驗計價審核",
+          "dueLabel": "施工廠商提送次日+7工作天",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "千分之一/日",
+          "basis": "工作說明書4.1.19／契約13條",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "工期展延/趕工計畫審查",
+          "dueLabel": "提送次日+7日",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "展延10,000/日",
+          "basis": "罰則13.17",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "設計/契約變更審查",
+          "dueLabel": "甲方通知後10日內",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "工程施工查核小組查核配合",
+          "dueLabel": "依查核小組通知",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "乙等10萬/丙等30萬+扣點",
+          "basis": "罰則13.15",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "災害/緊急事件速報",
+          "dueLabel": "第一時間，最遲1小時內",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "2,000/次",
+          "basis": "罰則13.9",
+          "status": "待觸發"
+        },
+        {
+          "heading": "五、施工階段待觸發事項",
+          "task": "技術專刊",
+          "dueLabel": "每年列管，待實際期程確認",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/日",
+          "basis": "工作說明書4.2.7.2",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "各案竣工確認/核計總工期",
+          "dueLabel": "竣工日+3日或提送次日+7日",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "3,000/日；5,000/次",
+          "basis": "罰則13.1/13.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "設備功能運轉測試監督",
+          "dueLabel": "依機關需求",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/次",
+          "basis": "罰則13.13",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "工程驗收（初驗）到場",
+          "dueLabel": "依機關通知",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "建築師/技師未到場5,000/人次",
+          "basis": "契約7.3.11",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "驗收缺失改善督導",
+          "dueLabel": "依驗收紀錄限期",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "2,000/日",
+          "basis": "罰則13.16",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "複驗",
+          "dueLabel": "依機關通知",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "5,000/人次",
+          "basis": "契約7.3.11",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "服務成果報告書",
+          "dueLabel": "結算驗收證明書核定次日+30日曆天",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "2,000/日",
+          "basis": "工作說明書4.2.7／罰則13.2",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "監造竣工報告書",
+          "dueLabel": "結算驗收證明書核定次日+30日曆天",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "2,000/日",
+          "basis": "工作說明書4.2.9／罰則13.2",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "監造簽證報告",
+          "dueLabel": "結算驗收證明書核定次日+30日曆天",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "5,000/次",
+          "basis": "工作說明書4.2.7.1",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "技術專刊彙編成冊",
+          "dueLabel": "工作完成後",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/日",
+          "basis": "工作說明書4.2.7.2",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "財產清冊/移交/智財權讓與",
+          "dueLabel": "驗收合格後或結案前",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "依13.28~13.30",
+          "basis": "工作說明書15.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "勞務驗收準備（大事紀整理）",
+          "dueLabel": "勞務履約期限結束前",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "—",
+          "basis": "契約第12條",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "勞務驗收申請",
+          "dueLabel": "全部工程驗收合格結算後",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "—",
+          "basis": "契約第12條",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "每月估驗請款",
+          "dueLabel": "施工階段每月，待實際請款期程確認",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "—",
+          "basis": "工作說明書11.5",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "第1次估驗",
+          "dueLabel": "保險及監造計畫核定後",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "—",
+          "basis": "工作說明書11.5.2",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "尾款（含保留款）",
+          "dueLabel": "全部驗收合格結算後一次結付",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "—",
+          "basis": "工作說明書11.5.3",
+          "status": "待觸發"
+        },
+        {
+          "heading": "七、完工驗收、結案與付款待觸發事項",
+          "task": "履約保證金分次發還",
+          "dueLabel": "依投標須知第83條",
+          "owner": "由各分標主任分配",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "—",
+          "basis": "投標須知第83條",
+          "status": "待觸發"
+        }
+      ]
+    },
+    {
+      "key": "guanyin",
+      "title": "觀音中大案",
+      "subtitle": "161kV大潭（乙）~觀音線改接至中大",
+      "status": "active",
+      "note": "",
+      "counts": {
+        "active": 2,
+        "pending": 5,
+        "major": 2
+      },
+      "activeItems": [
+        {
+          "task": "已決標施工標案之修正監造計畫（觀音中大案）",
+          "dueLabel": "115/08/27（決標次日+20日曆天）",
+          "diff": 28,
+          "diffLabel": "D-28 追蹤",
+          "statusLight": "",
+          "owner": "巍耀哥 <@1486270112326615042>",
+          "manager": "巍耀哥 <@1486270112326615042>",
+          "major": false
+        },
+        {
+          "task": "監造計畫（觀音中大案，含工安/品質/環保）及監督查核計畫",
+          "dueLabel": "115/08/27（決標次日+20日曆天）",
+          "diff": 28,
+          "diffLabel": "D-28 追蹤",
+          "statusLight": "",
+          "owner": "巍耀哥 <@1486270112326615042>",
+          "manager": "巍耀哥 <@1486270112326615042>",
+          "major": true
+        }
+      ],
+      "pendingItems": [
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "大潭觀音各期工期管控",
+          "dueLabel": "自開工日起算",
+          "owner": "巍耀",
+          "manager": "巍耀",
+          "major": false,
+          "fine": "展延10,000/日",
+          "basis": "工作說明書5.2.4／罰則13.17",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "大潭觀音推管/直井/涵洞/人孔隱蔽部分檢驗停留點",
+          "dueLabel": "埋入物或澆置前",
+          "owner": "巍耀",
+          "manager": "巍耀",
+          "major": false,
+          "fine": "2,000/次",
+          "basis": "罰則13.13",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "大潭觀音道路挖掘許可證申請/協調/繳回",
+          "dueLabel": "依道路主管機關",
+          "owner": "巍耀",
+          "manager": "巍耀",
+          "major": false,
+          "fine": "暫停估驗款",
+          "basis": "工作說明書3.5.17.9",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "大潭觀音沿線施工障礙物遷移申請/協調",
+          "dueLabel": "施工前",
+          "owner": "巍耀",
+          "manager": "巍耀",
+          "major": false,
+          "fine": "暫停估驗款",
+          "basis": "工作說明書3.5.17.12",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "大潭觀音竣工圖資/結算彙總/分項驗收",
+          "dueLabel": "依機關通知",
+          "owner": "巍耀",
+          "manager": "巍耀",
+          "major": true,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        }
+      ]
+    },
+    {
+      "key": "longxian",
+      "title": "龍顯聖亭案",
+      "subtitle": "161kV龍顯~聖亭線（第五工區）",
+      "status": "active",
+      "note": "",
+      "counts": {
+        "active": 2,
+        "pending": 5,
+        "major": 2
+      },
+      "activeItems": [
+        {
+          "task": "已決標施工標案之修正監造計畫（龍顯聖亭案）",
+          "dueLabel": "115/08/27（決標次日+20日曆天）",
+          "diff": 28,
+          "diffLabel": "D-28 追蹤",
+          "statusLight": "",
+          "owner": "尚東",
+          "manager": "囿任哥 <@1516964897404092430>",
+          "major": false
+        },
+        {
+          "task": "監造計畫（龍顯聖亭案，含工安/品質/環保）及監督查核計畫",
+          "dueLabel": "115/08/27（決標次日+20日曆天）",
+          "diff": 28,
+          "diffLabel": "D-28 追蹤",
+          "statusLight": "",
+          "owner": "尚東",
+          "manager": "囿任哥 <@1516964897404092430>",
+          "major": true
+        }
+      ],
+      "pendingItems": [
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "龍顯各期工期管控",
+          "dueLabel": "自開工日起算",
+          "owner": "尚東",
+          "manager": "囿任",
+          "major": false,
+          "fine": "展延10,000/日",
+          "basis": "工作說明書5.2.3／罰則13.17",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "龍顯推管/直井/涵洞/人孔隱蔽部分檢驗停留點",
+          "dueLabel": "埋入物或澆置前",
+          "owner": "尚東",
+          "manager": "囿任",
+          "major": false,
+          "fine": "2,000/次",
+          "basis": "罰則13.13",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "龍顯道路挖掘許可證申請/協調/繳回",
+          "dueLabel": "依道路主管機關",
+          "owner": "尚東",
+          "manager": "囿任",
+          "major": false,
+          "fine": "暫停估驗款",
+          "basis": "工作說明書3.5.17.9",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "龍顯沿線施工障礙物遷移申請/協調",
+          "dueLabel": "施工前",
+          "owner": "尚東",
+          "manager": "囿任",
+          "major": false,
+          "fine": "暫停估驗款",
+          "basis": "工作說明書3.5.17.12",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "龍顯竣工圖資/結算彙總/分項驗收",
+          "dueLabel": "依機關通知",
+          "owner": "尚東",
+          "manager": "囿任",
+          "major": true,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        }
+      ]
+    },
+    {
+      "key": "guangfeng",
+      "title": "廣豐D/S案",
+      "subtitle": "廣豐D/S新建工程（土建統包）",
+      "status": "recruiting",
+      "note": "",
+      "counts": {
+        "active": 0,
+        "pending": 3,
+        "major": 1
+      },
+      "activeItems": [],
+      "pendingItems": [
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "廣豐各期工期起訖管控",
+          "dueLabel": "自開工日起算",
+          "owner": "廣豐主任（招募中）",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "展延10,000/日",
+          "basis": "工作說明書5.2.2／罰則13.17",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "廣豐大樓結構體/RC澆置檢驗停留點",
+          "dueLabel": "隱蔽部分澆置前",
+          "owner": "廣豐主任（招募中）",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/次",
+          "basis": "罰則13.13",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "廣豐使用執照/綠建築標章及機電消防竣工簽證",
+          "dueLabel": "第4期期程內",
+          "owner": "廣豐主任（招募中）",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        }
+      ]
+    },
+    {
+      "key": "nangang",
+      "title": "南港P/S案",
+      "subtitle": "南港P/S改建工程（土建統包）",
+      "status": "paused",
+      "note": "預計 118 年執行後派駐，現階段只顯示案況與待觸發清單，不啟動專屬工作稽核。",
+      "counts": {
+        "active": 0,
+        "pending": 3,
+        "major": 1
+      },
+      "activeItems": [],
+      "pendingItems": [
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "南港各期工期起訖管控",
+          "dueLabel": "自開工日起算",
+          "owner": "南港主任（118年派駐）",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "展延10,000/日",
+          "basis": "工作說明書5.2.1／罰則13.17",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "南港大樓結構體/RC澆置檢驗停留點",
+          "dueLabel": "隱蔽部分澆置前",
+          "owner": "南港主任（118年派駐）",
+          "manager": "視該員副理",
+          "major": false,
+          "fine": "2,000/次",
+          "basis": "罰則13.13",
+          "status": "待觸發"
+        },
+        {
+          "heading": "六、分案施工階段待觸發事項",
+          "task": "南港使用執照/綠建築標章及機電消防竣工簽證",
+          "dueLabel": "第4期期程內",
+          "owner": "南港主任（118年派駐）",
+          "manager": "視該員副理",
+          "major": true,
+          "fine": "5,000/次",
+          "basis": "罰則13.3",
+          "status": "待觸發"
+        }
+      ]
+    }
+  ]
+}
