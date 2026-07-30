@@ -46,7 +46,6 @@ function renderStat(label, value, tone) {
 }
 
 function sectionTabLabel(section, index) {
-    if (section.key === "common") return "共同項目";
     return `Tab ${index} ${section.title}`;
 }
 
@@ -74,14 +73,13 @@ function renderSummary() {
 
 function renderAnchors() {
     const sections = state.payload.sections || [];
-    let caseIndex = 0;
-    anchorBar.innerHTML = sections.map((section) => {
-        if (section.key !== "common") caseIndex += 1;
-        const label = sectionTabLabel(section, caseIndex);
+    anchorBar.innerHTML = sections.map((section, index) => {
+        const tabIndex = index + 1;
+        const label = sectionTabLabel(section, tabIndex);
         const selected = section.key === state.activeSection;
         return `
         <button id="tab-${escapeHtml(section.key)}" class="tab-button ${selected ? "active" : ""}" data-section="${escapeHtml(section.key)}" role="tab" aria-selected="${selected}" aria-controls="section-panel">
-            <span class="block text-xs font-bold uppercase tracking-[0.12em] opacity-70">${section.key === "common" ? "Common" : `Case ${caseIndex}`}</span>
+            <span class="block text-xs font-bold uppercase tracking-[0.12em] opacity-70">Tab ${tabIndex}</span>
             <span class="mt-1 block text-sm font-bold leading-snug">${escapeHtml(label)}</span>
             <span class="mt-1 block text-xs opacity-80">已啟動 ${section.counts?.active || 0}｜待觸發 ${section.counts?.pending || 0}</span>
         </button>
