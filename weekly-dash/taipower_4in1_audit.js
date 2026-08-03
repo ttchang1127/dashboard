@@ -133,10 +133,38 @@ function renderPendingItem(item) {
     `;
 }
 
+function renderStaffing(section) {
+    const staffing = section.staffing || [];
+    if (!staffing.length) return "";
+    return `
+        <div class="mt-6">
+            <h4 class="text-sm font-bold uppercase tracking-[0.14em] text-stone-500">人力表與對應人員</h4>
+            <div class="mt-3 overflow-hidden rounded-2xl border border-stone-200 bg-white/80">
+                <div class="grid grid-cols-[1.25fr,0.75fr] bg-stone-100 px-4 py-2 text-xs font-bold text-stone-500">
+                    <div>職務</div>
+                    <div>人員</div>
+                </div>
+                <div class="divide-y divide-stone-100">
+                    ${staffing.map((item) => {
+                        const recruiting = item.person === "招募中";
+                        return `
+                            <div class="grid grid-cols-[1.25fr,0.75fr] gap-3 px-4 py-3 text-sm">
+                                <div class="font-semibold text-stone-700">${escapeHtml(item.role)}</div>
+                                <div class="font-bold ${recruiting ? "text-rose-700" : "text-teal-700"}">${escapeHtml(item.person)}</div>
+                            </div>
+                        `;
+                    }).join("")}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 function renderSection(section) {
     const activeItems = section.activeItems || [];
     const pendingItems = section.pendingItems || [];
     const note = section.note ? `<p class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">${escapeHtml(section.note)}</p>` : "";
+    const staffing = renderStaffing(section);
     return `
         <section id="section-panel" class="panel rounded-[28px] p-5 lg:p-6" role="tabpanel" aria-labelledby="tab-${escapeHtml(section.key)}">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -155,6 +183,7 @@ function renderSection(section) {
                 </div>
             </div>
             <div class="mt-4 rounded-2xl border border-stone-200 bg-white/70 px-4 py-3 text-sm font-bold text-stone-700">${renderRiskCounts(section.counts)}</div>
+            ${staffing}
 
             <div class="mt-6 grid grid-cols-1 gap-5 xl:grid-cols-[0.85fr,1.15fr]">
                 <div>

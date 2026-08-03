@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-03 13:30:18 +0800",
+  "generatedAt": "2026-08-03 17:14:42 +0800",
   "source": "台電4合1提醒清單_V2.md",
   "project": {
     "name": "台電4合1",
@@ -29,6 +29,7 @@
       "subtitle": "四案共通的簽約、開工前、施工、驗收與請款列管",
       "status": "active",
       "note": "",
+      "staffing": [],
       "counts": {
         "active": 5,
         "pending": 48,
@@ -627,6 +628,32 @@
       "subtitle": "161kV大潭（乙）~觀音線改接至中大",
       "status": "active",
       "note": "",
+      "staffing": [
+        {
+          "role": "監造主任",
+          "person": "巍耀"
+        },
+        {
+          "role": "主辦監造工程師",
+          "person": "招募中"
+        },
+        {
+          "role": "協辦監造工程師",
+          "person": "詩雨"
+        },
+        {
+          "role": "協辦監造工程員",
+          "person": "招募中"
+        },
+        {
+          "role": "文書人員(工務助理)",
+          "person": "招募中"
+        },
+        {
+          "role": "職業安全衛生管理員",
+          "person": "潘國揚"
+        }
+      ],
       "counts": {
         "active": 2,
         "pending": 5,
@@ -722,6 +749,32 @@
       "subtitle": "161kV龍顯~聖亭線（第五工區）",
       "status": "active",
       "note": "",
+      "staffing": [
+        {
+          "role": "監造主任",
+          "person": "尚東"
+        },
+        {
+          "role": "主辦監造工程師",
+          "person": "招募中"
+        },
+        {
+          "role": "協辦監造工程師",
+          "person": "品圻"
+        },
+        {
+          "role": "協辦監造工程員",
+          "person": "招募中"
+        },
+        {
+          "role": "文書人員(工務助理)",
+          "person": "招募中"
+        },
+        {
+          "role": "職業安全衛生管理員",
+          "person": "招募中"
+        }
+      ],
       "counts": {
         "active": 2,
         "pending": 5,
@@ -817,6 +870,32 @@
       "subtitle": "廣豐D/S新建工程（土建統包）",
       "status": "recruiting",
       "note": "",
+      "staffing": [
+        {
+          "role": "監造主任",
+          "person": "招募中"
+        },
+        {
+          "role": "主辦監造工程師",
+          "person": "招募中"
+        },
+        {
+          "role": "協辦監造工程師",
+          "person": "招募中"
+        },
+        {
+          "role": "協辦監造工程員",
+          "person": "招募中"
+        },
+        {
+          "role": "文書人員(工務助理)",
+          "person": "招募中"
+        },
+        {
+          "role": "職業安全衛生管理員",
+          "person": "招募中"
+        }
+      ],
       "counts": {
         "active": 0,
         "pending": 3,
@@ -869,6 +948,7 @@
       "subtitle": "南港P/S改建工程（土建統包）",
       "status": "paused",
       "note": "預計 118 年執行後派駐，現階段只顯示案況與待觸發清單，不啟動專屬工作稽核。",
+      "staffing": [],
       "counts": {
         "active": 0,
         "pending": 3,
