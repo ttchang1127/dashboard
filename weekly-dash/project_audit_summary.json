@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-05 21:21:38 +0800",
+  "generatedAt": "2026-08-05 21:33:15 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -169,44 +169,26 @@
       "name": "航空城",
       "auditDate": "2026-08-05",
       "version": "V5",
-      "modifiedAt": "2026-07-07 08:29:21",
+      "modifiedAt": "2026-08-05 21:33:06",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 2,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 2
       },
-      "itemCount": 4,
+      "itemCount": 2,
       "topUrgent": {
-        "task": "115年7月設計階段月報彙整日",
-        "dueLabel": "115/08/02",
-        "diff": -3,
-        "diffLabel": "逾期3天",
-        "statusLight": "🔴",
+        "task": "115年8月設計階段月報彙整日",
+        "dueLabel": "115/09/02",
+        "diff": 28,
+        "diffLabel": "D-28 追蹤",
+        "statusLight": "🟢",
         "owner": "子銘哥 <@1488800412734849115>",
         "manager": null
       },
       "items": [
-        {
-          "task": "115年7月設計階段月報彙整日",
-          "dueLabel": "115/08/02",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "子銘哥 <@1488800412734849115>",
-          "manager": null
-        },
-        {
-          "task": "115年7月整體工作月報 提送截止",
-          "dueLabel": "115/08/05",
-          "diff": 0,
-          "diffLabel": "D-0 逾期",
-          "statusLight": "🔴",
-          "owner": "**珮婷**",
-          "manager": "囿任哥 <@1516964897404092430>"
-        },
         {
           "task": "115年8月設計階段月報彙整日",
           "dueLabel": "115/09/02",
@@ -358,35 +340,26 @@
       "name": "農業局橋檢案",
       "auditDate": "2026-08-05",
       "version": "V1",
-      "modifiedAt": "2026-07-16 08:03:21",
+      "modifiedAt": "2026-08-05 21:29:08",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 1
       },
-      "itemCount": 2,
+      "itemCount": 1,
       "topUrgent": {
-        "task": "115年7月工作月報 提送截止",
-        "dueLabel": "115/08/05",
-        "diff": 0,
-        "diffLabel": "D-0 逾期",
-        "statusLight": "🔴",
+        "task": "115年8月工作月報 提送截止",
+        "dueLabel": "115/09/05",
+        "diff": 31,
+        "diffLabel": "D-31 追蹤",
+        "statusLight": "🟢",
         "owner": "**英麗**",
         "manager": "囿任哥 <@1516964897404092430>"
       },
       "items": [
-        {
-          "task": "115年7月工作月報 提送截止",
-          "dueLabel": "115/08/05",
-          "diff": 0,
-          "diffLabel": "D-0 逾期",
-          "statusLight": "🔴",
-          "owner": "**英麗**",
-          "manager": "囿任哥 <@1516964897404092430>"
-        },
         {
           "task": "115年8月工作月報 提送截止",
           "dueLabel": "115/09/05",
@@ -403,35 +376,26 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-08-05",
       "version": "V1",
-      "modifiedAt": "2026-07-15 09:03:50",
+      "modifiedAt": "2026-08-05 21:26:48",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 6
       },
-      "itemCount": 7,
+      "itemCount": 6,
       "topUrgent": {
-        "task": "115年7月工作月報及工作紀錄 提送截止",
-        "dueLabel": "115/08/05",
-        "diff": 0,
-        "diffLabel": "D-0 逾期",
-        "statusLight": "🔴",
+        "task": "地形測量及地上物調查",
+        "dueLabel": "115/08/12（機關指定日基準；暫以 115/07/13 +30 日預排）",
+        "diff": 7,
+        "diffLabel": "D-7 預告",
+        "statusLight": "🟢",
         "owner": "待指派",
         "manager": null
       },
       "items": [
-        {
-          "task": "115年7月工作月報及工作紀錄 提送截止",
-          "dueLabel": "115/08/05",
-          "diff": 0,
-          "diffLabel": "D-0 逾期",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
         {
           "task": "地形測量及地上物調查",
           "dueLabel": "115/08/12（機關指定日基準；暫以 115/07/13 +30 日預排）",
