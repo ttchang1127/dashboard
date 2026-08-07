@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07 11:20:46 +0800",
+  "generatedAt": "2026-08-07 16:05:16 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -214,32 +214,32 @@
       "name": "台電4合1",
       "auditDate": "2026-08-07",
       "version": "V3",
-      "modifiedAt": "2026-08-07 11:20:23",
+      "modifiedAt": "2026-08-07 16:04:51",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
         "orange": 0,
-        "yellow": 1,
-        "green": 11
+        "yellow": 0,
+        "green": 12
       },
       "itemCount": 12,
       "topUrgent": {
         "task": "資格證明文件正本送發包單位核對",
-        "dueLabel": "115/08/10（決標日或通知決標日次日+3日，遇假日順延）",
-        "diff": 3,
-        "diffLabel": "D-3 提醒",
-        "statusLight": "🟡",
+        "dueLabel": "115/08/12（發包單位通知期限）",
+        "diff": 5,
+        "diffLabel": "D-5 預告",
+        "statusLight": "🟢",
         "owner": "**雲岳**",
         "manager": "**雲岳**"
       },
       "items": [
         {
           "task": "資格證明文件正本送發包單位核對",
-          "dueLabel": "115/08/10（決標日或通知決標日次日+3日，遇假日順延）",
-          "diff": 3,
-          "diffLabel": "D-3 提醒",
-          "statusLight": "🟡",
+          "dueLabel": "115/08/12（發包單位通知期限）",
+          "diff": 5,
+          "diffLabel": "D-5 預告",
+          "statusLight": "🟢",
           "owner": "**雲岳**",
           "manager": "**雲岳**"
         },
