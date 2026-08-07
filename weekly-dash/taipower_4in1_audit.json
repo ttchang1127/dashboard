@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-07 10:49:51 +0800",
+  "generatedAt": "2026-08-07 11:02:30 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-07",
-    "modifiedAt": "2026-08-07 10:48:15",
+    "modifiedAt": "2026-08-07 11:01:36",
     "riskCounts": {
       "red": 0,
       "orange": 0,
@@ -46,7 +46,7 @@
           "diff": 3,
           "diffLabel": "D-3 提醒",
           "statusLight": "🟡",
-          "owner": "巧晴姐",
+          "owner": "雲岳",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
         },
@@ -56,7 +56,7 @@
           "diff": 7,
           "diffLabel": "D-7 預告",
           "statusLight": "🟢",
-          "owner": "巧晴姐",
+          "owner": "雲岳",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
         },
@@ -66,7 +66,7 @@
           "diff": 14,
           "diffLabel": "D-14 追蹤",
           "statusLight": "🟢",
-          "owner": "巧晴姐",
+          "owner": "雲岳",
           "manager": "孝智哥 <@911417165373136897>",
           "major": false
         },
@@ -76,7 +76,7 @@
           "diff": 14,
           "diffLabel": "D-14 追蹤",
           "statusLight": "🟢",
-          "owner": "巧晴姐",
+          "owner": "雲岳",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
         },
