@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07 09:35:28 +0800",
+  "generatedAt": "2026-08-07 10:49:51 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -214,29 +214,56 @@
       "name": "台電4合1",
       "auditDate": "2026-08-07",
       "version": "V3",
-      "modifiedAt": "2026-08-07 09:35:05",
+      "modifiedAt": "2026-08-07 10:48:15",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
         "orange": 0,
-        "yellow": 0,
-        "green": 9
+        "yellow": 1,
+        "green": 11
       },
-      "itemCount": 9,
+      "itemCount": 12,
       "topUrgent": {
-        "task": "受僱勞工名冊及勞保投保資料",
-        "dueLabel": "115/08/21（決標次日+14日曆天）",
-        "diff": 14,
-        "diffLabel": "D-14 追蹤",
-        "statusLight": "🟢",
+        "task": "資格證明文件正本送發包單位核對",
+        "dueLabel": "115/08/10（決標日或通知決標日次日+3日，遇假日順延）",
+        "diff": 3,
+        "diffLabel": "D-3 提醒",
+        "statusLight": "🟡",
         "owner": "**巧晴姐**",
         "manager": "孝智哥 <@911417165373136897>"
       },
       "items": [
         {
+          "task": "資格證明文件正本送發包單位核對",
+          "dueLabel": "115/08/10（決標日或通知決標日次日+3日，遇假日順延）",
+          "diff": 3,
+          "diffLabel": "D-3 提醒",
+          "statusLight": "🟡",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "辦理訂約手續",
+          "dueLabel": "115/08/14（決標日或通知決標日次日+7日）",
+          "diff": 7,
+          "diffLabel": "D-7 預告",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
           "task": "受僱勞工名冊及勞保投保資料",
           "dueLabel": "115/08/21（決標次日+14日曆天）",
+          "diff": 14,
+          "diffLabel": "D-14 追蹤",
+          "statusLight": "🟢",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "履約保證金繳納",
+          "dueLabel": "115/08/21（決標日次日+14日內）",
           "diff": 14,
           "diffLabel": "D-14 追蹤",
           "statusLight": "🟢",

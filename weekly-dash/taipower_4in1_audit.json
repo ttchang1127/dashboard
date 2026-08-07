@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2026-08-07 09:36:33 +0800",
+  "generatedAt": "2026-08-07 10:49:51 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-07",
-    "modifiedAt": "2026-08-07 09:35:05",
+    "modifiedAt": "2026-08-07 10:48:15",
     "riskCounts": {
       "red": 0,
       "orange": 0,
-      "yellow": 0,
-      "green": 9
+      "yellow": 1,
+      "green": 11
     }
   },
   "summary": {
-    "active": 9,
-    "pending": 111,
-    "major": 39,
+    "active": 12,
+    "pending": 110,
+    "major": 42,
     "red": 0,
     "orange": 0,
-    "yellow": 0,
-    "green": 9
+    "yellow": 1,
+    "green": 11
   },
   "sections": [
     {
@@ -31,15 +31,35 @@
       "note": "",
       "staffing": [],
       "counts": {
-        "active": 5,
-        "pending": 72,
-        "major": 25,
+        "active": 8,
+        "pending": 71,
+        "major": 28,
         "red": 0,
         "orange": 0,
-        "yellow": 0,
-        "green": 5
+        "yellow": 1,
+        "green": 7
       },
       "activeItems": [
+        {
+          "task": "資格證明文件正本送發包單位核對",
+          "dueLabel": "115/08/10（決標日或通知決標日次日+3日，遇假日順延）",
+          "diff": 3,
+          "diffLabel": "D-3 提醒",
+          "statusLight": "🟡",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true
+        },
+        {
+          "task": "辦理訂約手續",
+          "dueLabel": "115/08/14（決標日或通知決標日次日+7日）",
+          "diff": 7,
+          "diffLabel": "D-7 預告",
+          "statusLight": "🟢",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true
+        },
         {
           "task": "受僱勞工名冊及勞保投保資料",
           "dueLabel": "115/08/21（決標次日+14日曆天）",
@@ -49,6 +69,16 @@
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": false
+        },
+        {
+          "task": "履約保證金繳納",
+          "dueLabel": "115/08/21（決標日次日+14日內）",
+          "diff": 14,
+          "diffLabel": "D-14 追蹤",
+          "statusLight": "🟢",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true
         },
         {
           "task": "服務實施計畫書",
@@ -101,17 +131,6 @@
           "major": false,
           "fine": "5,000/人日",
           "basis": "工作說明書7.3.15.1",
-          "status": "待觸發"
-        },
-        {
-          "heading": "四、開工前待觸發列管事項",
-          "task": "履約保證金繳納",
-          "dueLabel": "簽約時",
-          "owner": "巧晴",
-          "manager": "孝智",
-          "major": false,
-          "fine": "—",
-          "basis": "投標須知第83條",
           "status": "待觸發"
         },
         {
