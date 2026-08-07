@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-07 16:05:16 +0800",
+  "generatedAt": "2026-08-07 16:39:07 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-07",
-    "modifiedAt": "2026-08-07 16:04:51",
+    "modifiedAt": "2026-08-07 16:38:48",
     "riskCounts": {
       "red": 0,
       "orange": 0,
@@ -48,6 +48,16 @@
           "statusLight": "🟢",
           "owner": "雲岳",
           "manager": "雲岳",
+          "major": true
+        },
+        {
+          "task": "起始會議召開",
+          "dueLabel": "115/08/14（暫訂）",
+          "diff": 7,
+          "diffLabel": "D-7 預告",
+          "statusLight": "🟢",
+          "owner": "張增糴",
+          "manager": "",
           "major": true
         },
         {
@@ -98,16 +108,6 @@
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
-          "major": true
-        },
-        {
-          "task": "起始會議召開",
-          "dueLabel": "115/08/24（決標後15日內，原約115/08/22遇假日順延）",
-          "diff": 17,
-          "diffLabel": "D-17 追蹤",
-          "statusLight": "🟢",
-          "owner": "張增糴",
-          "manager": "",
           "major": true
         },
         {
