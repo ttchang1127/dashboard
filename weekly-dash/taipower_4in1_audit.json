@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-07 11:07:09 +0800",
+  "generatedAt": "2026-08-07 11:20:46 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-07",
-    "modifiedAt": "2026-08-07 11:06:25",
+    "modifiedAt": "2026-08-07 11:20:23",
     "riskCounts": {
       "red": 0,
       "orange": 0,
@@ -106,8 +106,8 @@
           "diff": 17,
           "diffLabel": "D-17 追蹤",
           "statusLight": "🟢",
-          "owner": "巧晴姐",
-          "manager": "孝智哥 <@911417165373136897>",
+          "owner": "張增糴",
+          "manager": "",
           "major": true
         },
         {

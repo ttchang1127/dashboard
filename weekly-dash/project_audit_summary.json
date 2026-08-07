@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07 11:07:09 +0800",
+  "generatedAt": "2026-08-07 11:20:46 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -214,7 +214,7 @@
       "name": "台電4合1",
       "auditDate": "2026-08-07",
       "version": "V3",
-      "modifiedAt": "2026-08-07 11:06:25",
+      "modifiedAt": "2026-08-07 11:20:23",
       "mode": "active",
       "note": null,
       "riskCounts": {
@@ -294,8 +294,8 @@
           "diff": 17,
           "diffLabel": "D-17 追蹤",
           "statusLight": "🟢",
-          "owner": "**巧晴姐**",
-          "manager": "孝智哥 <@911417165373136897>"
+          "owner": "**張增糴**",
+          "manager": null
         },
         {
           "task": "已決標施工標案之修正監造計畫（觀音中大案）",
