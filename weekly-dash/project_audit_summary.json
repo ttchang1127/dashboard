@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07 08:30:28 +0800",
+  "generatedAt": "2026-08-07 09:35:28 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -214,7 +214,7 @@
       "name": "台電4合1",
       "auditDate": "2026-08-07",
       "version": "V3",
-      "modifiedAt": "2026-08-05 21:20:57",
+      "modifiedAt": "2026-08-07 09:35:05",
       "mode": "active",
       "note": null,
       "riskCounts": {
