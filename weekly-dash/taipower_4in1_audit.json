@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2026-08-10 13:30:19 +0800",
+  "generatedAt": "2026-08-10 19:57:50 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-10",
-    "modifiedAt": "2026-08-07 16:38:48",
+    "modifiedAt": "2026-08-10 19:57:08",
     "riskCounts": {
       "red": 0,
       "orange": 0,
       "yellow": 1,
-      "green": 11
+      "green": 10
     }
   },
   "summary": {
-    "active": 12,
+    "active": 11,
     "pending": 110,
-    "major": 42,
+    "major": 41,
     "red": 0,
     "orange": 0,
     "yellow": 1,
-    "green": 11
+    "green": 10
   },
   "sections": [
     {
@@ -31,13 +31,13 @@
       "note": "",
       "staffing": [],
       "counts": {
-        "active": 8,
+        "active": 7,
         "pending": 71,
-        "major": 28,
+        "major": 27,
         "red": 0,
         "orange": 0,
         "yellow": 1,
-        "green": 7
+        "green": 6
       },
       "activeItems": [
         {
@@ -58,16 +58,6 @@
           "statusLight": "🟢",
           "owner": "張增糴",
           "manager": "",
-          "major": true
-        },
-        {
-          "task": "辦理訂約手續",
-          "dueLabel": "115/08/14（決標日或通知決標日次日+7日）",
-          "diff": 4,
-          "diffLabel": "D-4 預告",
-          "statusLight": "🟢",
-          "owner": "雲岳",
-          "manager": "雲岳",
           "major": true
         },
         {
