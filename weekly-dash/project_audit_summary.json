@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-11 08:30:17 +0800",
+  "generatedAt": "2026-08-11 13:07:10 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -340,44 +340,26 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-08-11",
       "version": "V1",
-      "modifiedAt": "2026-08-05 21:26:48",
+      "modifiedAt": "2026-08-11 13:06:51",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 2,
+        "orange": 0,
         "yellow": 0,
-        "green": 4
+        "green": 5
       },
-      "itemCount": 6,
+      "itemCount": 5,
       "topUrgent": {
-        "task": "地形測量及地上物調查",
-        "dueLabel": "115/08/12（機關指定日基準；暫以 115/07/13 +30 日預排）",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
+        "task": "細部設計書圖報告",
+        "dueLabel": "115/08/17（機關指定日基準；暫以 115/07/13 +35 日預排）",
+        "diff": 6,
+        "diffLabel": "D-6 預告",
+        "statusLight": "🟢",
         "owner": "待指派",
         "manager": null
       },
       "items": [
-        {
-          "task": "地形測量及地上物調查",
-          "dueLabel": "115/08/12（機關指定日基準；暫以 115/07/13 +30 日預排）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "管線調查",
-          "dueLabel": "115/08/12（機關指定日基準；暫以 115/07/13 +30 日預排）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
         {
           "task": "細部設計書圖報告",
           "dueLabel": "115/08/17（機關指定日基準；暫以 115/07/13 +35 日預排）",
@@ -388,28 +370,37 @@
           "manager": null
         },
         {
-          "task": "地質調查",
-          "dueLabel": "115/08/18（機關指定日基準；暫以 115/07/13 +36 日預排）",
-          "diff": 7,
-          "diffLabel": "D-7 預告",
-          "statusLight": "🟢",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "出流管制計畫",
-          "dueLabel": "115/08/27（機關指定日基準；暫以 115/07/13 +45 日預排）",
-          "diff": 16,
-          "diffLabel": "D-16 追蹤",
-          "statusLight": "🟢",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
           "task": "115年8月工作月報及工作紀錄 提送截止",
           "dueLabel": "115/09/05",
           "diff": 25,
           "diffLabel": "D-25 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "地形測量及地上物調查",
+          "dueLabel": "115/09/12（機關指定日基準；暫以 115/08/13 +30 日預排）",
+          "diff": 32,
+          "diffLabel": "D-32 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "管線調查",
+          "dueLabel": "115/09/12（機關指定日基準；暫以 115/08/13 +30 日預排）",
+          "diff": 32,
+          "diffLabel": "D-32 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "地質調查",
+          "dueLabel": "115/09/18（機關指定日基準；暫以 115/08/13 +36 日預排）",
+          "diff": 38,
+          "diffLabel": "D-38 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
