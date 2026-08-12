@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-12 08:30:19 +0800",
+  "generatedAt": "2026-08-12 09:46:10 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-12",
-    "modifiedAt": "2026-08-10 19:57:08",
+    "modifiedAt": "2026-08-12 09:45:40",
     "riskCounts": {
       "red": 1,
       "orange": 0,
@@ -52,7 +52,7 @@
         },
         {
           "task": "起始會議召開",
-          "dueLabel": "115/08/14（暫訂）",
+          "dueLabel": "115/08/14 14:30（已確認）",
           "diff": 2,
           "diffLabel": "D-2 提醒",
           "statusLight": "🟡",
