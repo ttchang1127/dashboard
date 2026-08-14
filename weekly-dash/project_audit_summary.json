@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-14 16:09:00 +0800",
+  "generatedAt": "2026-08-14 17:34:16 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -119,22 +119,49 @@
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 0,
+        "red": 4,
         "orange": 0,
         "yellow": 0,
         "green": 2
       },
-      "itemCount": 2,
+      "itemCount": 5,
       "topUrgent": {
-        "task": "115年8月設計階段月報彙整日",
-        "dueLabel": "115/09/02",
-        "diff": 19,
-        "diffLabel": "D-19 追蹤",
-        "statusLight": "🟢",
-        "owner": "子銘哥 <@1488800412734849115>",
-        "manager": null
+        "task": "受僱勞工名冊",
+        "dueLabel": "115/05/01",
+        "diff": -105,
+        "diffLabel": "逾期105天",
+        "statusLight": "🔴",
+        "owner": "**巧晴姐**",
+        "manager": "孝智哥 <@911417165373136897>"
       },
       "items": [
+        {
+          "task": "受僱勞工名冊",
+          "dueLabel": "115/05/01",
+          "diff": -105,
+          "diffLabel": "逾期105天",
+          "statusLight": "🔴",
+          "owner": "**巧晴姐**",
+          "manager": "孝智哥 <@911417165373136897>"
+        },
+        {
+          "task": "至航空城工程處與總工開會（15:00）",
+          "dueLabel": "115/06/03",
+          "diff": -72,
+          "diffLabel": "逾期72天",
+          "statusLight": "🔴",
+          "owner": "**大哥**",
+          "manager": "**總工 / 相關人員**"
+        },
+        {
+          "task": "招標文件審查（09:30）",
+          "dueLabel": "115/06/08",
+          "diff": -67,
+          "diffLabel": "逾期67天",
+          "statusLight": "🔴",
+          "owner": "**蝦哥**",
+          "manager": null
+        },
         {
           "task": "115年8月設計階段月報彙整日",
           "dueLabel": "115/09/02",
@@ -353,22 +380,31 @@
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 5,
+        "red": 6,
         "orange": 0,
         "yellow": 1,
         "green": 5
       },
-      "itemCount": 11,
+      "itemCount": 12,
       "topUrgent": {
-        "task": "投保專業責任險／雇主意外責任險",
-        "dueLabel": "115/07/13 起立即辦理（簽約日基準）",
-        "diff": -32,
-        "diffLabel": "逾期32天",
+        "task": "目前於招標／決標前置階段（今天）",
+        "dueLabel": "115/06/22",
+        "diff": -53,
+        "diffLabel": "逾期53天",
         "statusLight": "🔴",
-        "owner": "待指派",
-        "manager": null
+        "owner": "**大哥**",
+        "manager": "**相關人員**"
       },
       "items": [
+        {
+          "task": "目前於招標／決標前置階段（今天）",
+          "dueLabel": "115/06/22",
+          "diff": -53,
+          "diffLabel": "逾期53天",
+          "statusLight": "🔴",
+          "owner": "**大哥**",
+          "manager": "**相關人員**"
+        },
         {
           "task": "投保專業責任險／雇主意外責任險",
           "dueLabel": "115/07/13 起立即辦理（簽約日基準）",
