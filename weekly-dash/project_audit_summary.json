@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-14 08:30:19 +0800",
+  "generatedAt": "2026-08-14 16:09:00 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -182,22 +182,31 @@
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 2,
         "orange": 0,
         "yellow": 1,
         "green": 9
       },
-      "itemCount": 11,
+      "itemCount": 12,
       "topUrgent": {
-        "task": "起始會議召開",
-        "dueLabel": "115/08/14 14:30（已確認）",
-        "diff": 0,
-        "diffLabel": "D-0 逾期",
+        "task": "資格證明文件正本送發包單位核對",
+        "dueLabel": "115/08/12（發包單位通知期限）",
+        "diff": -2,
+        "diffLabel": "逾期2天",
         "statusLight": "🔴",
-        "owner": "**張增糴**",
-        "manager": null
+        "owner": "**雲岳**",
+        "manager": "**雲岳**"
       },
       "items": [
+        {
+          "task": "資格證明文件正本送發包單位核對",
+          "dueLabel": "115/08/12（發包單位通知期限）",
+          "diff": -2,
+          "diffLabel": "逾期2天",
+          "statusLight": "🔴",
+          "owner": "**雲岳**",
+          "manager": "**雲岳**"
+        },
         {
           "task": "起始會議召開",
           "dueLabel": "115/08/14 14:30（已確認）",
@@ -344,22 +353,67 @@
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 0,
+        "red": 5,
         "orange": 0,
         "yellow": 1,
         "green": 5
       },
-      "itemCount": 6,
+      "itemCount": 11,
       "topUrgent": {
-        "task": "細部設計書圖報告",
-        "dueLabel": "115/08/17（機關指定日基準；暫以 115/07/13 +35 日預排）",
-        "diff": 3,
-        "diffLabel": "D-3 提醒",
-        "statusLight": "🟡",
+        "task": "投保專業責任險／雇主意外責任險",
+        "dueLabel": "115/07/13 起立即辦理（簽約日基準）",
+        "diff": -32,
+        "diffLabel": "逾期32天",
+        "statusLight": "🔴",
         "owner": "待指派",
         "manager": null
       },
       "items": [
+        {
+          "task": "投保專業責任險／雇主意外責任險",
+          "dueLabel": "115/07/13 起立即辦理（簽約日基準）",
+          "diff": -32,
+          "diffLabel": "逾期32天",
+          "statusLight": "🔴",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "服務實施計畫書",
+          "dueLabel": "115/07/27（機關指定日基準；暫以 115/07/13 +14 日預排）",
+          "diff": -18,
+          "diffLabel": "逾期18天",
+          "statusLight": "🔴",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "基本設計報告及圖說",
+          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
+          "diff": -11,
+          "diffLabel": "逾期11天",
+          "statusLight": "🔴",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "整體規劃",
+          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
+          "diff": -11,
+          "diffLabel": "逾期11天",
+          "statusLight": "🔴",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "監造計畫書、設計階段施工中風險評估計畫書",
+          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
+          "diff": -11,
+          "diffLabel": "逾期11天",
+          "statusLight": "🔴",
+          "owner": "待指派",
+          "manager": null
+        },
         {
           "task": "細部設計書圖報告",
           "dueLabel": "115/08/17（機關指定日基準；暫以 115/07/13 +35 日預排）",

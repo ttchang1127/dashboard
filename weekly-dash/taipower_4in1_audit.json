@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-14 13:30:17 +0800",
+  "generatedAt": "2026-08-14 16:09:00 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
@@ -7,17 +7,17 @@
     "auditDate": "2026-08-14",
     "modifiedAt": "2026-08-13 05:53:22",
     "riskCounts": {
-      "red": 1,
+      "red": 2,
       "orange": 0,
       "yellow": 1,
       "green": 9
     }
   },
   "summary": {
-    "active": 11,
+    "active": 12,
     "pending": 110,
-    "major": 41,
-    "red": 1,
+    "major": 42,
+    "red": 2,
     "orange": 0,
     "yellow": 1,
     "green": 9
@@ -31,15 +31,25 @@
       "note": "",
       "staffing": [],
       "counts": {
-        "active": 7,
+        "active": 8,
         "pending": 71,
-        "major": 27,
-        "red": 1,
+        "major": 28,
+        "red": 2,
         "orange": 0,
         "yellow": 1,
         "green": 5
       },
       "activeItems": [
+        {
+          "task": "資格證明文件正本送發包單位核對",
+          "dueLabel": "115/08/12（發包單位通知期限）",
+          "diff": -2,
+          "diffLabel": "逾期2天",
+          "statusLight": "🔴",
+          "owner": "雲岳",
+          "manager": "雲岳",
+          "major": true
+        },
         {
           "task": "起始會議召開",
           "dueLabel": "115/08/14 14:30（已確認）",
