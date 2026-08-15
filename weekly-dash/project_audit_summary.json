@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-15 09:48:32 +0800",
+  "generatedAt": "2026-08-15 15:49:45 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -205,16 +205,16 @@
       "name": "台電4合1",
       "auditDate": "2026-08-15",
       "version": "V3",
-      "modifiedAt": "2026-08-15 09:47:40",
+      "modifiedAt": "2026-08-15 15:49:33",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
         "orange": 0,
         "yellow": 1,
-        "green": 9
+        "green": 10
       },
-      "itemCount": 10,
+      "itemCount": 11,
       "topUrgent": {
         "task": "起始會議紀錄及簽到簿提送甲方確認",
         "dueLabel": "115/08/17（會後3日內，比照4.1.28趕工會議標準）",
@@ -305,6 +305,15 @@
           "statusLight": "🟢",
           "owner": "**尚東**",
           "manager": "囿任哥 <@1516964897404092430>"
+        },
+        {
+          "task": "觀音中大線監造派駐啟動",
+          "dueLabel": "115/09/01（起始會議確認）",
+          "diff": 17,
+          "diffLabel": "D-17 追蹤",
+          "statusLight": "🟢",
+          "owner": "巍耀哥 <@1486270112326615042>",
+          "manager": "巍耀哥 <@1486270112326615042>"
         },
         {
           "task": "專業技師簽證執行計畫",

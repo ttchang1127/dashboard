@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2026-08-15 09:48:32 +0800",
+  "generatedAt": "2026-08-15 15:49:45 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-15",
-    "modifiedAt": "2026-08-15 09:47:40",
+    "modifiedAt": "2026-08-15 15:49:33",
     "riskCounts": {
       "red": 0,
       "orange": 0,
       "yellow": 1,
-      "green": 9
+      "green": 10
     }
   },
   "summary": {
-    "active": 10,
+    "active": 11,
     "pending": 110,
-    "major": 40,
+    "major": 41,
     "red": 0,
     "orange": 0,
     "yellow": 1,
-    "green": 9
+    "green": 10
   },
   "sections": [
     {
@@ -918,13 +918,13 @@
         }
       ],
       "counts": {
-        "active": 2,
+        "active": 3,
         "pending": 13,
-        "major": 5,
+        "major": 6,
         "red": 0,
         "orange": 0,
         "yellow": 0,
-        "green": 2
+        "green": 3
       },
       "activeItems": [
         {
@@ -942,6 +942,16 @@
           "dueLabel": "115/08/27（決標次日+20日曆天）",
           "diff": 12,
           "diffLabel": "D-12 追蹤",
+          "statusLight": "🟢",
+          "owner": "巍耀哥 <@1486270112326615042>",
+          "manager": "巍耀哥 <@1486270112326615042>",
+          "major": true
+        },
+        {
+          "task": "觀音中大線監造派駐啟動",
+          "dueLabel": "115/09/01（起始會議確認）",
+          "diff": 17,
+          "diffLabel": "D-17 追蹤",
           "statusLight": "🟢",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
@@ -1361,8 +1371,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐各期工期起訖管控",
           "dueLabel": "自開工日起算",
-          "owner": "廣豐主任（招募中）",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（預計115",
+          "manager": "10/01派駐）/視該員副理",
           "major": false,
           "fine": "展延10,000/日",
           "basis": "工作說明書5.2.2／罰則13.17",
@@ -1372,8 +1382,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐大樓結構體/RC澆置檢驗停留點",
           "dueLabel": "隱蔽部分澆置前",
-          "owner": "廣豐主任（招募中）",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（預計115",
+          "manager": "10/01派駐）/視該員副理",
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
@@ -1383,8 +1393,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐機電/消防設備廠驗及功能測試",
           "dueLabel": "依廠驗項目",
-          "owner": "廣豐主任（招募中）",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（預計115",
+          "manager": "10/01派駐）/視該員副理",
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
@@ -1394,8 +1404,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐使用執照/綠建築標章及機電消防竣工簽證",
           "dueLabel": "第4期期程內",
-          "owner": "廣豐主任（招募中）",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（預計115",
+          "manager": "10/01派駐）/視該員副理",
           "major": true,
           "fine": "5,000/次",
           "basis": "罰則13.3",
@@ -1405,8 +1415,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐竣工報告單/竣工圖說/工程結算審查",
           "dueLabel": "竣工日+3日或提送次日+7日",
-          "owner": "廣豐主任（招募中）",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（預計115",
+          "manager": "10/01派駐）/視該員副理",
           "major": false,
           "fine": "3,000/日；5,000/次",
           "basis": "罰則13.1/13.3",
@@ -1416,8 +1426,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐分項初驗/複驗到場",
           "dueLabel": "依機關通知",
-          "owner": "廣豐主任（招募中）",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（預計115",
+          "manager": "10/01派駐）/視該員副理",
           "major": true,
           "fine": "建築師/技師未到場5,000/人次",
           "basis": "契約7.3.11",
