@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-15 15:56:13 +0800",
+  "generatedAt": "2026-08-15 16:09:33 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -340,35 +340,26 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-08-15",
       "version": "V1",
-      "modifiedAt": "2026-08-11 13:06:51",
+      "modifiedAt": "2026-08-15 16:09:08",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 6,
+        "red": 1,
         "orange": 0,
-        "yellow": 1,
-        "green": 5
+        "yellow": 0,
+        "green": 10
       },
-      "itemCount": 12,
+      "itemCount": 11,
       "topUrgent": {
-        "task": "目前於招標／決標前置階段（今天）",
-        "dueLabel": "115/06/22",
-        "diff": -54,
-        "diffLabel": "逾期54天",
+        "task": "投保專業責任險／雇主意外責任險",
+        "dueLabel": "115/07/13 起立即辦理（簽約日基準）",
+        "diff": -33,
+        "diffLabel": "逾期33天",
         "statusLight": "🔴",
-        "owner": "**大哥**",
-        "manager": "**相關人員**"
+        "owner": "待指派",
+        "manager": null
       },
       "items": [
-        {
-          "task": "目前於招標／決標前置階段（今天）",
-          "dueLabel": "115/06/22",
-          "diff": -54,
-          "diffLabel": "逾期54天",
-          "statusLight": "🔴",
-          "owner": "**大哥**",
-          "manager": "**相關人員**"
-        },
         {
           "task": "投保專業責任險／雇主意外責任險",
           "dueLabel": "115/07/13 起立即辦理（簽約日基準）",
@@ -380,52 +371,43 @@
         },
         {
           "task": "服務實施計畫書",
-          "dueLabel": "115/07/27（機關指定日基準；暫以 115/07/13 +14 日預排）",
-          "diff": -19,
-          "diffLabel": "逾期19天",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "基本設計報告及圖說",
-          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
-          "diff": -12,
-          "diffLabel": "逾期12天",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "整體規劃",
-          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
-          "diff": -12,
-          "diffLabel": "逾期12天",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "監造計畫書、設計階段施工中風險評估計畫書",
-          "dueLabel": "115/08/03（機關指定日基準；暫以 115/07/13 +21 日預排）",
-          "diff": -12,
-          "diffLabel": "逾期12天",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "細部設計書圖報告",
-          "dueLabel": "115/08/17（機關指定日基準；暫以 115/07/13 +35 日預排）",
-          "diff": 2,
-          "diffLabel": "D-2 提醒",
-          "statusLight": "🟡",
-          "owner": "待指派",
+          "dueLabel": "115/08/24（機關指定日基準；機關指定日 115/08/10 +14 日）",
+          "diff": 9,
+          "diffLabel": "D-9 追蹤",
+          "statusLight": "🟢",
+          "owner": "**新竹貴婷**",
           "manager": null
         },
         {
           "task": "115年8月工作月報及工作紀錄 提送截止",
           "dueLabel": "115/09/05",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "基本設計報告及圖說",
+          "dueLabel": "115/09/05（機關指定日基準；尚未指定，暫以 115/08/15 +21 日預排）",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "整體規劃",
+          "dueLabel": "115/09/05（機關指定日基準；尚未指定，暫以 115/08/15 +21 日預排）",
+          "diff": 21,
+          "diffLabel": "D-21 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "監造計畫書、設計階段施工中風險評估計畫書",
+          "dueLabel": "115/09/05（機關指定日基準；尚未指定，暫以 115/08/15 +21 日預排）",
           "diff": 21,
           "diffLabel": "D-21 追蹤",
           "statusLight": "🟢",
@@ -455,6 +437,15 @@
           "dueLabel": "115/09/18（機關指定日基準；暫以 115/08/13 +36 日預排）",
           "diff": 34,
           "diffLabel": "D-34 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "細部設計書圖報告",
+          "dueLabel": "115/09/19（機關指定日基準；尚未指定，暫以 115/08/15 +35 日預排）",
+          "diff": 35,
+          "diffLabel": "D-35 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
