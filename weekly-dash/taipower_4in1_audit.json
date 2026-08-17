@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2026-08-17 13:30:18 +0800",
+  "generatedAt": "2026-08-17 14:14:18 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-17",
-    "modifiedAt": "2026-08-15 15:49:33",
+    "modifiedAt": "2026-08-17 14:14:06",
     "riskCounts": {
-      "red": 1,
+      "red": 0,
       "orange": 0,
       "yellow": 0,
-      "green": 12
+      "green": 11
     }
   },
   "summary": {
-    "active": 13,
+    "active": 11,
     "pending": 110,
-    "major": 43,
-    "red": 1,
+    "major": 41,
+    "red": 0,
     "orange": 0,
     "yellow": 0,
-    "green": 12
+    "green": 11
   },
   "sections": [
     {
@@ -31,25 +31,15 @@
       "note": "",
       "staffing": [],
       "counts": {
-        "active": 6,
+        "active": 4,
         "pending": 71,
-        "major": 26,
-        "red": 1,
+        "major": 24,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
-        "green": 5
+        "green": 4
       },
       "activeItems": [
-        {
-          "task": "起始會議紀錄及簽到簿提送甲方確認",
-          "dueLabel": "115/08/17（會後3日內，比照4.1.28趕工會議標準）",
-          "diff": 0,
-          "diffLabel": "D-0 逾期",
-          "statusLight": "🔴",
-          "owner": "張增糴",
-          "manager": "",
-          "major": true
-        },
         {
           "task": "受僱勞工名冊及勞保投保資料",
           "dueLabel": "115/08/21（決標次日+14日曆天）",
@@ -59,16 +49,6 @@
           "owner": "雲岳",
           "manager": "雲岳",
           "major": false
-        },
-        {
-          "task": "履約保證金繳納",
-          "dueLabel": "115/08/21（決標日次日+14日內）",
-          "diff": 4,
-          "diffLabel": "D-4 預告",
-          "statusLight": "🟢",
-          "owner": "雲岳",
-          "manager": "雲岳",
-          "major": true
         },
         {
           "task": "服務實施計畫書",
