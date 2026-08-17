@@ -135,8 +135,8 @@ function renderPendingItem(item) {
 
 function renderStaffing(section) {
     const staffingPlan = section.staffingPlan || [];
-    if (staffingPlan.length) {
-        return `
+    const staffing = section.staffing || [];
+    const planMarkup = staffingPlan.length ? `
             <div class="mt-6">
                 <h4 class="text-sm font-bold uppercase tracking-[0.14em] text-stone-500">監造人員派駐計畫</h4>
                 <div class="mt-3 overflow-hidden rounded-2xl border border-stone-200 bg-white/80">
@@ -154,15 +154,12 @@ function renderStaffing(section) {
                     </div>
                 </div>
             </div>
-        `;
-    }
+        ` : "";
 
-    const staffing = section.staffing || [];
-    if (!staffing.length) return "";
-    return `
-        <div class="mt-6">
-            <h4 class="text-sm font-bold uppercase tracking-[0.14em] text-stone-500">人力表與對應人員</h4>
-            <div class="mt-3 overflow-hidden rounded-2xl border border-stone-200 bg-white/80">
+    const peopleMarkup = staffing.length ? `
+        <details class="mt-4 overflow-hidden rounded-2xl border border-stone-200 bg-white/80">
+            <summary class="cursor-pointer bg-stone-100 px-4 py-3 text-sm font-bold text-stone-700">人員表（點擊展開）</summary>
+            <div>
                 <div class="grid grid-cols-[1.25fr,0.75fr] bg-stone-100 px-4 py-2 text-xs font-bold text-stone-500">
                     <div>職務</div>
                     <div>人員</div>
@@ -179,8 +176,10 @@ function renderStaffing(section) {
                     }).join("")}
                 </div>
             </div>
-        </div>
-    `;
+        </details>
+    ` : "";
+
+    return planMarkup || peopleMarkup ? `${planMarkup}${peopleMarkup}` : "";
 }
 
 function renderSection(section) {
