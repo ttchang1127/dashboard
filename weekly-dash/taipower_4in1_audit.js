@@ -134,6 +134,29 @@ function renderPendingItem(item) {
 }
 
 function renderStaffing(section) {
+    const staffingPlan = section.staffingPlan || [];
+    if (staffingPlan.length) {
+        return `
+            <div class="mt-6">
+                <h4 class="text-sm font-bold uppercase tracking-[0.14em] text-stone-500">監造人員派駐計畫</h4>
+                <div class="mt-3 overflow-hidden rounded-2xl border border-stone-200 bg-white/80">
+                    <div class="grid grid-cols-[0.58fr,1.42fr] bg-stone-100 px-4 py-2 text-xs font-bold text-stone-500">
+                        <div>階段</div>
+                        <div>派駐編組</div>
+                    </div>
+                    <div class="divide-y divide-stone-100">
+                        ${staffingPlan.map((item) => `
+                            <div class="grid grid-cols-[0.58fr,1.42fr] gap-3 px-4 py-3 text-sm">
+                                <div class="font-bold text-teal-700">${escapeHtml(item.phase)}</div>
+                                <div class="font-semibold leading-relaxed text-stone-700">${escapeHtml(item.plan)}</div>
+                            </div>
+                        `).join("")}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     const staffing = section.staffing || [];
     if (!staffing.length) return "";
     return `

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17 14:14:18 +0800",
+  "generatedAt": "2026-08-17 15:34:48 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
@@ -30,6 +30,7 @@
       "status": "active",
       "note": "",
       "staffing": [],
+      "staffingPlan": [],
       "counts": {
         "active": 4,
         "pending": 71,
@@ -897,6 +898,16 @@
           "person": "潘國揚"
         }
       ],
+      "staffingPlan": [
+        {
+          "phase": "開工前",
+          "plan": "1管理人員 + 1主任 + 1協辦監造 + 1文書"
+        },
+        {
+          "phase": "開工後",
+          "plan": "1管理人員 + 1主任 + 1主辦監造 + 1協辦監造 + 1協辦監造員 + 1職安 + 1文書"
+        }
+      ],
       "counts": {
         "active": 3,
         "pending": 13,
@@ -1114,6 +1125,16 @@
         {
           "role": "職業安全衛生管理員",
           "person": "招募中"
+        }
+      ],
+      "staffingPlan": [
+        {
+          "phase": "開工前",
+          "plan": "1管理人員 + 1主任 + 1協辦監造 + 1文書"
+        },
+        {
+          "phase": "開工後",
+          "plan": "1管理人員 + 1主任 + 1主辦監造 + 1協辦監造 + 1協辦監造員 + 1職安 + 1文書"
         }
       ],
       "counts": {
@@ -1346,6 +1367,16 @@
           "person": "招募中"
         }
       ],
+      "staffingPlan": [
+        {
+          "phase": "開工前2個月",
+          "plan": "1主任 + 2主辦監造（建築、機電） + 1文書"
+        },
+        {
+          "phase": "開工後",
+          "plan": "1主任 + 2主辦監造（建築、機電） + 1協辦監造（建築） + 1協辦監造員 + 1文書 + 1職安"
+        }
+      ],
       "counts": {
         "active": 1,
         "pending": 6,
@@ -1443,6 +1474,7 @@
       "status": "paused",
       "note": "預計 118 年執行後派駐，現階段只顯示案況與待觸發清單，不啟動專屬工作稽核。",
       "staffing": [],
+      "staffingPlan": [],
       "counts": {
         "active": 0,
         "pending": 6,
