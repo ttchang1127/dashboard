@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-08-20 13:30:16 +0800",
+  "generatedAt": "2026-08-21 08:30:23 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
-    "auditDate": "2026-08-20",
+    "auditDate": "2026-08-21",
     "modifiedAt": "2026-08-17 14:14:06",
     "riskCounts": {
-      "red": 0,
-      "orange": 3,
+      "red": 3,
+      "orange": 0,
       "yellow": 0,
       "green": 8
     }
@@ -17,8 +17,8 @@
     "active": 11,
     "pending": 110,
     "major": 41,
-    "red": 0,
-    "orange": 3,
+    "red": 3,
+    "orange": 0,
     "yellow": 0,
     "green": 8
   },
@@ -35,8 +35,8 @@
         "active": 4,
         "pending": 71,
         "major": 24,
-        "red": 0,
-        "orange": 3,
+        "red": 3,
+        "orange": 0,
         "yellow": 0,
         "green": 1
       },
@@ -44,9 +44,9 @@
         {
           "task": "受僱勞工名冊及勞保投保資料",
           "dueLabel": "115/08/21（決標次日+14日曆天）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
+          "diff": 0,
+          "diffLabel": "D-0 逾期",
+          "statusLight": "🔴",
           "owner": "雲岳",
           "manager": "雲岳",
           "major": false
@@ -54,9 +54,9 @@
         {
           "task": "服務實施計畫書",
           "dueLabel": "115/08/21（決標次日+14日曆天）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
+          "diff": 0,
+          "diffLabel": "D-0 逾期",
+          "statusLight": "🔴",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
@@ -64,9 +64,9 @@
         {
           "task": "管理人員及品管/職安資格證明送審",
           "dueLabel": "115/08/21（決標次日+14日曆天，遇假日順延）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
+          "diff": 0,
+          "diffLabel": "D-0 逾期",
+          "statusLight": "🔴",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true
@@ -74,8 +74,8 @@
         {
           "task": "專業技師簽證執行計畫",
           "dueLabel": "115/09/06（決標次日+30日）",
-          "diff": 17,
-          "diffLabel": "D-17 追蹤",
+          "diff": 16,
+          "diffLabel": "D-16 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -925,8 +925,8 @@
         {
           "task": "已決標施工標案之修正監造計畫（觀音中大案）",
           "dueLabel": "115/08/27（決標次日+20日曆天）",
-          "diff": 7,
-          "diffLabel": "D-7 預告",
+          "diff": 6,
+          "diffLabel": "D-6 預告",
           "statusLight": "🟢",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
@@ -935,8 +935,8 @@
         {
           "task": "監造計畫（觀音中大案，含工安/品質/環保）及監督查核計畫",
           "dueLabel": "115/08/27（決標次日+20日曆天）",
-          "diff": 7,
-          "diffLabel": "D-7 預告",
+          "diff": 6,
+          "diffLabel": "D-6 預告",
           "statusLight": "🟢",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
@@ -945,8 +945,8 @@
         {
           "task": "觀音中大線監造派駐啟動",
           "dueLabel": "115/09/01（起始會議確認）",
-          "diff": 12,
-          "diffLabel": "D-12 追蹤",
+          "diff": 11,
+          "diffLabel": "D-11 追蹤",
           "statusLight": "🟢",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
@@ -1158,8 +1158,8 @@
         {
           "task": "已決標施工標案之修正監造計畫（龍顯聖亭案）",
           "dueLabel": "115/08/27（決標次日+20日曆天）",
-          "diff": 7,
-          "diffLabel": "D-7 預告",
+          "diff": 6,
+          "diffLabel": "D-6 預告",
           "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
@@ -1168,8 +1168,8 @@
         {
           "task": "監造計畫（龍顯聖亭案，含工安/品質/環保）及監督查核計畫",
           "dueLabel": "115/08/27（決標次日+20日曆天）",
-          "diff": 7,
-          "diffLabel": "D-7 預告",
+          "diff": 6,
+          "diffLabel": "D-6 預告",
           "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
@@ -1178,8 +1178,8 @@
         {
           "task": "龍顯聖亭線監造派駐啟動",
           "dueLabel": "115/10/01（起始會議確認）",
-          "diff": 42,
-          "diffLabel": "D-42 追蹤",
+          "diff": 41,
+          "diffLabel": "D-41 追蹤",
           "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
@@ -1406,8 +1406,8 @@
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/10/01（起始會議確認）",
-          "diff": 42,
-          "diffLabel": "D-42 追蹤",
+          "diff": 41,
+          "diffLabel": "D-41 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
