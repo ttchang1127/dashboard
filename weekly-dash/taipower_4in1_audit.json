@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-08-24 08:30:21 +0800",
+  "generatedAt": "2026-08-24 11:34:02 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-08-24",
-    "modifiedAt": "2026-08-17 14:14:06",
+    "modifiedAt": "2026-08-24 11:33:28",
     "riskCounts": {
-      "red": 3,
+      "red": 0,
       "orange": 0,
       "yellow": 4,
       "green": 5
     }
   },
   "summary": {
-    "active": 12,
+    "active": 9,
     "pending": 110,
-    "major": 42,
-    "red": 3,
+    "major": 40,
+    "red": 0,
     "orange": 0,
     "yellow": 4,
     "green": 5
@@ -32,45 +32,15 @@
       "staffing": [],
       "staffingPlan": [],
       "counts": {
-        "active": 5,
+        "active": 2,
         "pending": 71,
-        "major": 25,
-        "red": 3,
+        "major": 23,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 2
       },
       "activeItems": [
-        {
-          "task": "受僱勞工名冊及勞保投保資料",
-          "dueLabel": "115/08/21（決標次日+14日曆天）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "雲岳",
-          "manager": "雲岳",
-          "major": false
-        },
-        {
-          "task": "服務實施計畫書",
-          "dueLabel": "115/08/21（決標次日+14日曆天）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "巧晴姐",
-          "manager": "孝智哥 <@911417165373136897>",
-          "major": true
-        },
-        {
-          "task": "管理人員及品管/職安資格證明送審",
-          "dueLabel": "115/08/21（決標次日+14日曆天，遇假日順延）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "巧晴姐",
-          "manager": "孝智哥 <@911417165373136897>",
-          "major": true
-        },
         {
           "task": "專業技師簽證執行計畫",
           "dueLabel": "115/09/06（決標次日+30日）",

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24 08:30:21 +0800",
+  "generatedAt": "2026-08-24 11:34:02 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -313,53 +313,26 @@
       "name": "台電4合1",
       "auditDate": "2026-08-24",
       "version": "V3",
-      "modifiedAt": "2026-08-17 14:14:06",
+      "modifiedAt": "2026-08-24 11:33:28",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 3,
+        "red": 0,
         "orange": 0,
         "yellow": 4,
         "green": 5
       },
-      "itemCount": 12,
+      "itemCount": 9,
       "topUrgent": {
-        "task": "受僱勞工名冊及勞保投保資料",
-        "dueLabel": "115/08/21（決標次日+14日曆天）",
-        "diff": -3,
-        "diffLabel": "逾期3天",
-        "statusLight": "🔴",
-        "owner": "**雲岳**",
-        "manager": "**雲岳**"
+        "task": "已決標施工標案之修正監造計畫（觀音中大案）",
+        "dueLabel": "115/08/27（決標次日+20日曆天）",
+        "diff": 3,
+        "diffLabel": "D-3 提醒",
+        "statusLight": "🟡",
+        "owner": "巍耀哥 <@1486270112326615042>",
+        "manager": "巍耀哥 <@1486270112326615042>"
       },
       "items": [
-        {
-          "task": "受僱勞工名冊及勞保投保資料",
-          "dueLabel": "115/08/21（決標次日+14日曆天）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "**雲岳**",
-          "manager": "**雲岳**"
-        },
-        {
-          "task": "服務實施計畫書",
-          "dueLabel": "115/08/21（決標次日+14日曆天）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "**巧晴姐**",
-          "manager": "孝智哥 <@911417165373136897>"
-        },
-        {
-          "task": "管理人員及品管/職安資格證明送審",
-          "dueLabel": "115/08/21（決標次日+14日曆天，遇假日順延）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "**巧晴姐**",
-          "manager": "孝智哥 <@911417165373136897>"
-        },
         {
           "task": "已決標施工標案之修正監造計畫（觀音中大案）",
           "dueLabel": "115/08/27（決標次日+20日曆天）",
