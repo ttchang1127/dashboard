@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26 08:30:16 +0800",
+  "generatedAt": "2026-08-26 11:11:03 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -313,62 +313,26 @@
       "name": "台電4合1",
       "auditDate": "2026-08-26",
       "version": "V3",
-      "modifiedAt": "2026-08-24 14:09:36",
+      "modifiedAt": "2026-08-26 11:07:30",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 4,
+        "orange": 0,
         "yellow": 0,
         "green": 5
       },
-      "itemCount": 9,
+      "itemCount": 5,
       "topUrgent": {
-        "task": "已決標施工標案之修正監造計畫（觀音中大案）",
-        "dueLabel": "115/08/27（決標次日+20日曆天）",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
+        "task": "觀音中大線監造派駐啟動",
+        "dueLabel": "115/09/01（起始會議確認）",
+        "diff": 6,
+        "diffLabel": "D-6 預告",
+        "statusLight": "🟢",
         "owner": "巍耀哥 <@1486270112326615042>",
         "manager": "巍耀哥 <@1486270112326615042>"
       },
       "items": [
-        {
-          "task": "已決標施工標案之修正監造計畫（觀音中大案）",
-          "dueLabel": "115/08/27（決標次日+20日曆天）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "巍耀哥 <@1486270112326615042>",
-          "manager": "巍耀哥 <@1486270112326615042>"
-        },
-        {
-          "task": "已決標施工標案之修正監造計畫（龍顯聖亭案）",
-          "dueLabel": "115/08/27（決標次日+20日曆天）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "**尚東**",
-          "manager": "囿任哥 <@1516964897404092430>"
-        },
-        {
-          "task": "監造計畫（觀音中大案，含工安/品質/環保）及監督查核計畫",
-          "dueLabel": "115/08/27（決標次日+20日曆天）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "巍耀哥 <@1486270112326615042>",
-          "manager": "巍耀哥 <@1486270112326615042>"
-        },
-        {
-          "task": "監造計畫（龍顯聖亭案，含工安/品質/環保）及監督查核計畫",
-          "dueLabel": "115/08/27（決標次日+20日曆天）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "**尚東**",
-          "manager": "囿任哥 <@1516964897404092430>"
-        },
         {
           "task": "觀音中大線監造派駐啟動",
           "dueLabel": "115/09/01（起始會議確認）",
@@ -466,44 +430,26 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-08-26",
       "version": "V1",
-      "modifiedAt": "2026-08-15 16:09:08",
+      "modifiedAt": "2026-08-26 11:10:41",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 2,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 10
       },
-      "itemCount": 12,
+      "itemCount": 10,
       "topUrgent": {
-        "task": "投保專業責任險／雇主意外責任險",
-        "dueLabel": "115/07/13 起立即辦理（簽約日基準）",
-        "diff": -44,
-        "diffLabel": "逾期44天",
-        "statusLight": "🔴",
+        "task": "115年8月工作月報及工作紀錄 提送截止",
+        "dueLabel": "115/09/05",
+        "diff": 10,
+        "diffLabel": "D-10 追蹤",
+        "statusLight": "🟢",
         "owner": "待指派",
         "manager": null
       },
       "items": [
-        {
-          "task": "投保專業責任險／雇主意外責任險",
-          "dueLabel": "115/07/13 起立即辦理（簽約日基準）",
-          "diff": -44,
-          "diffLabel": "逾期44天",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "服務實施計畫書",
-          "dueLabel": "115/08/24（機關指定日基準；機關指定日 115/08/10 +14 日）",
-          "diff": -2,
-          "diffLabel": "逾期2天",
-          "statusLight": "🔴",
-          "owner": "**新竹貴婷**",
-          "manager": null
-        },
         {
           "task": "115年8月工作月報及工作紀錄 提送截止",
           "dueLabel": "115/09/05",
