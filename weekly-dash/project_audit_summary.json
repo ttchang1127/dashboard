@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27 08:30:20 +0800",
+  "generatedAt": "2026-08-27 17:09:11 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -385,7 +385,7 @@
       "name": "農業局橋檢案",
       "auditDate": "2026-08-27",
       "version": "V1",
-      "modifiedAt": "2026-08-05 21:29:08",
+      "modifiedAt": "2026-08-27 17:08:27",
       "mode": "active",
       "note": null,
       "riskCounts": {
