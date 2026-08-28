@@ -1,6 +1,6 @@
 (function () {
   const sets = window.QUIZ_SETS || [];
-  const storageKey = id => `tpc4in1-training:v1:${id}`;
+  const storageKey = id => `tpc4in1-training:v2:${id}`;
   const load = id => {
     try { return JSON.parse(localStorage.getItem(storageKey(id))) || {}; }
     catch (_) { return {}; }
