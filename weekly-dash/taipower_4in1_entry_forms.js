@@ -116,7 +116,7 @@
   ];
   const el=id=>document.getElementById(id);
   const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  let state=load();let active=forms[0].id;let filter="all";let search="";
+  let state=load();const requestedForm=new URLSearchParams(location.search).get("form");let active=forms.some(form=>form.id===requestedForm)?requestedForm:forms[0].id;let filter="all";let search="";
   function load(){try{const x=JSON.parse(localStorage.getItem(STORE));if(x&&x.forms)return x}catch(e){}return {version:VERSION,forms:{}}}
   function persist(){state.version=VERSION;localStorage.setItem(STORE,JSON.stringify(state))}
   function formState(id){if(!state.forms[id]){const def=forms.find(form=>form.id===id);state.forms[id]={status:def?.source==="taipower"?"待台電格式":"未開始",values:{},tables:{},updatedAt:null}}return state.forms[id]}
