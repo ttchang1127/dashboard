@@ -23,7 +23,7 @@
     ]},
     {id:"f03",group:"pre",source:"internal",title:"人員資格送審封面及個人附件檢核表",timing:"人員送審／補件前",owner:"人資＋文書",reviewer:"管理人員／監造主任",description:"每位派駐人員一冊，確認職務、到職、投保、資格與回訓資料完整。",sections:[
       S("人員資料",Fields(F("name","姓名"),F("role","送審職務"),F("arrival","到職日","date"),F("dispatch","預定派駐日","date"),F("employee_no","員工編號"),F("phone","聯絡電話"),F("replacement","是否替換原送審人員","select",false,["否","是"]),F("reason","異動原因／說明","textarea",true))),
-      S("附件檢核",Checks("attachments","個人附件",["公司正式派任文件","學經歷表","身分證明必要遮蔽版本","最高學歷證明","相關工作經歷證明","專業證照正反面","證照有效期限已核對","品管／職安回訓證明","到職與勞動契約資料","勞保／就保／健保／職災保險","勞退提繳資料","12小時職前訓練證明","健康／尿檢及進場證件","個資文件未放入公開網頁"])),
+      S("附件檢核",Checks("attachments","個人附件",["公司正式派任文件","學經歷表","身分證明必要遮蔽版本","最高學歷證明","相關工作經歷證明","專業證照正反面","證照有效期限已核對","品管／職安回訓證明","到職與書面勞動契約資料","勞保／就保／健保／職災保險","勞退提繳資料","12小時監造職前訓練證明","一般安全衛生教育訓練證明","健康檢查適用性及紀錄","尿液採驗僅在台電另行書面要求時檢附","工作證／臨時工作證","個資文件未放入公開網頁"])),
       S("送審結果",Fields(F("sent_date","送出日","date"),F("doc_no","文號"),F("review_result","台電審查結果","select",false,["待送","審查中","退補件","核准"]),F("approved_date","核准日","date"),F("supplement","退補件內容","textarea",true)))
     ]},
     {id:"f04",group:"pre",source:"internal",title:"人員異動及新舊資格比較表",timing:"名單與原送審不一致時",owner:"人資／專案管理",reviewer:"管理人員",description:"呈現原人員、新人員與契約條件的等同或更優比較，取得台電同意後才派駐。",sections:[
@@ -64,10 +64,10 @@
       S("緊急聯絡網",Table("contacts","通報聯絡",[Col("role","單位／角色"),Col("name","姓名"),Col("phone","電話"),Col("backup","第二聯絡"),Col("trigger","通知條件"),Col("order","通報順序")],8)),
       S("啟用確認",Checks("office","啟用項目",["電腦及合法文書軟體","網路／電信","A3彩色事務機及耗材","文件收發及版次管理","緊急聯絡網上牆","事故1小時速報路徑","停電／斷網備援","個資與證照存放權限"]))
     ]},
-    {id:"f12",group:"pre",source:"internal",title:"D-1正式派駐放行表",timing:"115/08/31",owner:"監造主任",reviewer:"管理人員",description:"在進場前一天做最後Go／No-Go判斷；任何重大門檻未完成，必須取得台電書面暫行指示。",sections:[
-      S("放行會議",Fields(F("date","會議日期","date"),F("chair","主持人"),F("participants","參與人員"),F("decision","結論","select",false,["待確認","放行","附條件放行","不放行"]))),
+    {id:"f12",group:"pre",source:"internal",title:"D-1正式派駐放行表",timing:"115/08/31",owner:"監造主任",reviewer:"管理人員",description:"在進場前一天做最後Go／No-Go判斷；正式派駐門檻未完成時，只能依有權代表書面指示執行限定前置工作，不能視為正式派駐。",sections:[
+      S("放行會議",Fields(F("date","會議日期","date"),F("chair","主持人"),F("participants","參與人員"),F("decision","結論","select",false,["待確認","放行","限定前置進場（非正式派駐）","不放行"]))),
       S("門檻檢核",Table("gates","D-1檢核",[Col("item","檢核事項"),Col("result","結果","select",["未檢核","是","否","不適用"]),Col("evidence","證據／文號"),Col("owner","主責"),Col("deadline","補正期限","date"),Col("comment","限制／備註")],12)),
-      S("決議",Fields(F("allowed","允許執行範圍","textarea",true),F("prohibited","禁止執行範圍","textarea",true),F("instruction","暫行書面指示文號／有效期","textarea",true),F("sign","監造主任／管理人員簽認","textarea",true)))
+      S("決議",Fields(F("allowed","允許執行範圍","textarea",true),F("prohibited","禁止執行範圍","textarea",true),F("instruction","限定前置作業書面指示文號／有效期","textarea",true),F("sign","監造主任／管理人員簽認","textarea",true)))
     ]},
     {id:"f13",group:"day1",source:"internal",title:"9/1進場首日紀錄表",timing:"115/09/01當日",owner:"文書管理人員",reviewer:"監造主任",description:"記錄實到人員、工作內容、文件點交、照片與異常，建立正式履約起日證據。",sections:[
       S("首日基本資料",Fields(F("date","進場日期","date"),F("notice","台電開工／進場通知文號"),F("site","地點"),F("weather","天候"),F("start","開始時間","time"),F("end","結束時間","time"))),
@@ -75,10 +75,10 @@
       S("工作與點交",Table("tasks","首日工作",[Col("time","時間"),Col("item","工作／點交項目"),Col("from","交付人／單位"),Col("to","接收人"),Col("result","結果"),Col("evidence","照片／文件位置")],7)),
       S("異常與結論",Fields(F("abnormal","異常、缺件及限制","textarea",true),F("action","處置與追蹤","textarea",true),F("photo_index","照片索引","textarea",true),F("review","監造主任簽認","textarea",true)))
     ]},
-    {id:"f14",group:"pre",source:"internal",title:"監造計畫未核定之暫行書面指示紀錄",timing:"門檻未完成但台電要求先進場時",owner:"管理人員",reviewer:"有權甲方人員",description:"清楚記錄暫行工作範圍、禁止事項、有效期與核定後銜接，不以口頭同意取代。",sections:[
-      S("待核定事項",Fields(F("pending","尚未核定／核可項目","textarea",true),F("instruction_source","台電指示人員／單位"),F("date","指示日期","date"),F("docno","書面文號／會議紀錄"),F("valid","有效期限","date"))),
-      S("暫行界線",Fields(F("allowed","暫時允許工作","textarea",true),F("prohibited","不得執行工作","textarea",true),F("responsibility","責任與查驗簽認界線","textarea",true),F("transition","正式核定後銜接／補正方式","textarea",true))),
-      S("簽認",Table("signatures","簽認紀錄",[Col("unit","單位"),Col("role","職稱"),Col("name","姓名"),Col("date","日期","date"),Col("signature","簽名／文號")],4),Note("未取得台電有權單位書面指示前，只能做設備建置、文件點交、現勘、協調、教育訓練及資料整理。",true))
+    {id:"f14",group:"pre",source:"internal",title:"正式派駐門檻未齊之限定前置作業書面指示紀錄",timing:"門檻未完成但台電要求先做前置工作時",owner:"管理人員",reviewer:"有權甲方人員",description:"清楚記錄代表權、工作範圍、禁止事項、有效期及計價方式；本表不能取代台電正式指示或免除契約義務。",sections:[
+      S("待核定事項",Fields(F("pending","尚未核定／核可項目","textarea",true),F("instruction_source","台電指示人員／單位"),F("authority","代表權／授權依據"),F("date","指示日期","date"),F("docno","正式文號／會議紀錄"),F("valid","有效期限","date"))),
+      S("前置作業界線",Fields(F("classification","性質是否明載為非正式派駐","select",false,["待確認","是","否"]),F("billing","計價方式","select",false,["待確認","明載不計價","明載可計價","另依契約核定"]),F("allowed","暫時允許工作","textarea",true),F("prohibited","不得執行、查驗、簽認及計價範圍","textarea",true),F("responsibility","責任與監造簽認界線","textarea",true),F("transition","正式核定後銜接／補正方式","textarea",true))),
+      S("簽認",Table("signatures","簽認紀錄",[Col("unit","單位"),Col("role","職稱"),Col("name","姓名"),Col("date","日期","date"),Col("signature","簽名／文號")],4),Note("技術服務契約第8條要求先確認指示者有權且指示未逾越契約。未取得合格書面指示前，不得將任何現場活動認定為正式派駐或據以請款。",true))
     ]},
     {id:"c01",group:"day1",source:"contract",title:"附表1 監造組織人員差勤管制督導紀錄表",timing:"派駐後由甲方督導使用",owner:"甲方督導人員",reviewer:"監造主任／代理人",description:"依工作說明書附表1重製的參考預覽；正式使用以契約附件及甲方要求為準。",sections:[
       S("督導資料",Fields(F("date","機關督導日期","date"),F("time","時間","time"))),
@@ -96,16 +96,31 @@
       S("監造事項",Fields(F("progress_detail","一、工程進行情況","textarea",true),F("inspection","二、監督施工圖及檢驗停留點／抽查","textarea",true),F("quality","三、材料規格、品質及抽（試）驗","textarea",true),F("safety","四、職業安全衛生督導","textarea",true),F("other","五、其他約定監造事項","textarea",true))),
       S("簽章",Fields(F("signature","監造單位簽章","textarea",true)),Note("施工尚未正式開工時不得提前填報為已執行。"))
     ]},
+    {id:"c04",group:"pre",source:"contract",title:"附表三 監造單位現場人員登錄表",timing:"施工標案開工前／人員異動／工程竣工",owner:"監造單位",reviewer:"甲方核定並上網登錄",description:"依公共工程施工品質管理作業要點附表三及工作說明書7.3.15.1建立；正式送件以原附件版面為準。",sections:[
+      S("工程與機關資料",Fields(F("report_date","填報日期","date"),F("project","工程標案名稱"),F("project_no","工程標案電腦編號"),F("location","工程地點"),F("start_date","開工日期","date"),F("planned_finish","預計完工日期","date"),F("award_amount","決標金額（千元）","number"),F("supervision_fee","監造費用（千元）","number"),F("site_contact","工地聯絡人及電話"),F("owner","工程主辦機關"),F("owner_contact","承辦人姓名及電話"),F("supervisor_company","監造單位／廠商"))),
+      S("受訓合格現場人員",Table("staff","人員登錄",[Col("name","姓名"),Col("specialty","專長"),Col("id_no","身分證號"),Col("training","受訓期別"),Col("entry_leave","進駐／解職日期"),Col("refresher","回訓期別")],5)),
+      S("登錄性質與附件",Fields(F("type","登錄類型","select",false,["第一次登錄","異動","工程竣工"]),F("reason","異動原因")),Checks("attachments","第一次登錄／異動附件",["品管訓練結業證書或回訓證明影本","證書正本提出相驗","相關學經歷一覽表（含工作內容）","本登錄表","函請甲方核定及上網登錄"]),Note("本表含身分證號，不得將填寫資料發布至公開網頁；正式檔須存於受控卷宗。",true))
+    ]},
+    {id:"c05",group:"pre",source:"contract",title:"附表三 輸供系統承攬商工作人員工作證申請表",timing:"進入工地工作前",owner:"承攬商",reviewer:"甲方權責部門",description:"契約安全衛生附件已附正式申請表；本頁是欄位預覽，須另確認監造人員適用職類與最新版。",sections:[
+      S("申請資料",Fields(F("vendor","廠商名稱"),F("apply_date","申請日期","date"),F("name","姓名"),F("birth","出生日期","date"),F("id_no","身分證號"),F("category","申請職類／顏色"),F("license_no","證照號碼"),F("photo","3個月內照片檔名／受控位置"))),
+      S("檢覈項目",Checks("review","證明文件及相片",["合格證照或職類資格","身分證件／外籍人員合法工作文件","勞工保險投保資料","安全衛生教育訓練紀錄／臺灣職安卡","3個月內照片電子檔","個資告知暨同意書","雇主意外責任險","未遭停權查證","正本已由甲方當場核對","影本蓋與正本相符戳章及認章"])),
+      S("審查與用印",Fields(F("vendor_stamp","廠商蓋章／經辦","textarea",true),F("owner_review","甲方經辦／課長／經理","textarea",true)),Note("身分證號、照片及保險資料屬個資；本預覽不能取代契約附件原表及甲方核發程序。",true))
+    ]},
+    {id:"c06",group:"pre",source:"contract",title:"附表一 輸變電工程處承攬商工作人員臨時工作證申請表",timing:"臨時短暫工作或等待正式工作證期間",owner:"承攬商",reviewer:"工程或勞務主辦部門",description:"臨時證每人原則限6工作日；營造工程必要時得展延1次，非營造工程不得展延。",sections:[
+      S("申請資料",Fields(F("vendor","廠商名稱"),F("apply_date","申請日期","date"),F("start","預定使用起日","date"),F("end","預定使用末日","date"),F("work_type","工程／勞務及工作內容","textarea",true))),
+      S("申請人員",Table("people","臨時工作證申請",[Col("name","姓名"),Col("birth","出生日期","date"),Col("id_no","身分證號"),Col("license","合格證照"),Col("identity","身分證件"),Col("insurance","勞保投保資料"),Col("training","安全衛生教育訓練"),Col("hazard","危害告知"),Col("result","審核結果")],4)),
+      S("審查確認",Checks("temporary","送件前確認",["證明文件正本備供當場核對","影本蓋與正本相符戳章及認章","營造工程未逾6工作日或已有核准展延","非營造工程未逾6工作日且未申請展延","由工程或勞務主辦部門核發"]),Fields(F("owner_review","甲方經辦／課長／經理","textarea",true)),Note("臨時工作證有次數及期間限制，不得反覆使用取代正式工作證。",true))
+    ]},
     {id:"t01",group:"taipower",source:"taipower",title:"本工作（監造技術服務）開工報告單－格式取得追蹤",timing:"9/1填寫、開工日起3日內送達",owner:"文書管理人員",reviewer:"監造主任",description:"不得以自製表取代台電制式開工報告單；本卡只追蹤格式、通知、預填、用印與核定。",sections:[
       S("取得與送審",Fields(F("request_date","向台電索取日期","date"),F("contact","台電窗口"),F("received_date","取得最新版日期","date"),F("version","表單版次／來源"),F("start_notice","開工通知文號／日期"),F("start_date","實際開工日","date"),F("deadline","最遲送達日","date"),F("sent","實際送出日","date"),F("docno","發文字號"),F("approved","台電核定日","date"))),
       S("追蹤檢核",Checks("opening","必要步驟",["取得台電制式空白表單","取得填寫範例及送審窗口","依9/1實況完成預填","監造主任覆核","公司用印","正式函送並取得收文證明","退補件保留版本","核定函歸檔"]),Note("此處不呈現仿製表單；未取得正式格式前狀態應維持『待台電格式』。",true))
     ]},
-    {id:"t02",group:"taipower",source:"taipower",title:"工作證／臨時工作證申請格式取得追蹤",timing:"進入管制工區前",owner:"職安人員",reviewer:"監造主任",description:"追蹤輸供系統工作證或輸變電工程處臨時工作證的最新版申請格式及附件。",sections:[
+    {id:"t02",group:"taipower",source:"taipower",title:"工作證／臨時工作證適用類型與最新版確認",timing:"進入工地工作前",owner:"職安人員",reviewer:"監造主任",description:"契約附件已有C05、C06格式；本卡改為確認監造人員適用正式證或臨時證、甲方窗口、最新版與核發結果。",sections:[
       S("格式與窗口",Fields(F("type","證件類型","select",false,["待確認","輸供系統工作證","輸變電工程處臨時工作證","其他"]),F("contact","台電窗口"),F("request","索取日","date"),F("received","取得格式日","date"),F("version","版次／來源"),F("deadline","申請期限","date"))),
       S("申請人員",Table("people","證件追蹤",[Col("name","姓名"),Col("role","職務"),Col("training","安衛訓練紀錄"),Col("hazard","危害告知"),Col("photo","照片／附件"),Col("sent","申請日","date"),Col("issued","核發日","date"),Col("valid","有效期"),Col("note","備註")],8)),
       S("提醒",Note("工作證申請所附安全衛生教育訓練，不能取代契約要求的12小時監造職前訓練。",true))
     ]},
-    {id:"t03",group:"taipower",source:"taipower",title:"監造人員／公共工程雲端登錄追蹤",timing:"正式派駐前",owner:"文書管理人員",reviewer:"監造主任",description:"記錄台電指定系統、登錄欄位、完成畫面與核定依據，不在公開頁保存帳密。",sections:[
+    {id:"t03",group:"taipower",source:"taipower",title:"監造人員／公共工程雲端登錄追蹤",timing:"施工標案開工前／異動／竣工",owner:"文書管理人員",reviewer:"監造主任",description:"正式紙本格式見C04；本卡追蹤甲方核定、雲端登錄時點、完成畫面與權責，不在公開頁保存帳密。",sections:[
       S("系統資料",Fields(F("system","系統名稱／網址"),F("contact","台電窗口"),F("required","要求文號／期限"),F("account_owner","公司帳號保管人"),F("note","不得記錄密碼；權限與操作說明","textarea",true))),
       S("人員登錄",Table("registration","登錄狀態",[Col("name","姓名"),Col("role","職務"),Col("approved","資格核准日","date"),Col("registered","登錄日","date"),Col("screenshot","完成畫面位置"),Col("result","狀態","select",["待核准","待登錄","已登錄","退補件"]),Col("note","備註")],8))
     ]},
