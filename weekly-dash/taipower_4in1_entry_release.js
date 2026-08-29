@@ -1,6 +1,6 @@
 (function(){
   "use strict";
-  const VERSION="2026-08-29-R3";
+  const VERSION="2026-08-29-R4";
   const STORE="taipower-4in1-entry-release:v1";
   const FORM_STORE="taipower-4in1-entry-forms:v1";
   const target=new Date("2026-09-01T00:00:00+08:00");
@@ -22,7 +22,7 @@
     {id:"pass",title:"工作證／臨時工作證",note:"承攬工程或勞務人員按適用要點辦理；如初期派駐免辦，須有台電書面依據",basis:"承攬商安全衛生輔導要點第18、29點及附件工作證要點",kind:"contract",critical:true,nonwaivable:false},
     {id:"ppe",title:"PPE提供、領用與適用性",note:"安全帽、安全鞋、反光背心、工作服、背負式安全帶依實際工作風險配置",basis:"工作說明書8.3、9.15；承攬商安全衛生輔導要點第15點",kind:"contract",critical:true,nonwaivable:true},
     {id:"health",title:"健康檢查與健康管理",note:"依職安法規及實際工作風險管理；本次核對未發現固定的統一檢查項目與格式",basis:"工作說明書9.18；承攬商安全衛生輔導要點第10、45點",kind:"contract",critical:true,nonwaivable:false},
-    {id:"urine",title:"尿液採驗／尿檢",note:"本次核對文件未查得明文；只有台電另行書面要求或工區規定時才列入",basis:"待台電提供書面依據、適用對象、項目及期限",kind:"confirm",critical:false,nonwaivable:false},
+    {id:"urine",title:"特定人員尿液採驗適用性及完成證據",note:"契約附件已有明文；須由台電確認監造初期4類人員是否屬特定人員、首次或後續抽驗、通知及送件方式。適用者施工前採驗，報告於採驗後10日內密件送甲方",basis:"特定條款4.1.2第3～5、7點；4.1.3第2～11點",kind:"contract",critical:true,nonwaivable:false},
     {id:"emergency",title:"緊急通報系統、聯絡網與一小時速報",note:"開工前張貼聯絡系統，並建立災害與緊急事件通報路徑",basis:"工作說明書6.2、9.13、9.22；安全衛生輔導要點第9點",kind:"contract",critical:true,nonwaivable:true},
     {id:"minStaff",title:"平日至少2人駐守及代理安排",note:"核定出勤配置須能支持最低2人駐守；若台電另有核定配置，以核定內容勾稽",basis:"工作說明書7.6.3～7.6.8",kind:"contract",critical:true,nonwaivable:true},
     {id:"vehicle",title:"車輛、駕駛及汽機車第三人責任險",note:"有車輛進場／執行公務時核對；未使用車輛須記明判定依據",basis:"技術服務契約第10條第7項；工作說明書8.4～8.7",kind:"contract",critical:false,nonwaivable:false},
@@ -41,6 +41,7 @@
     {key:"insured",options:["待確認","完成"]},
     {key:"trained",options:["待確認","完成"]},
     {key:"safetyTrained",options:["待確認","完成"]},
+    {key:"urine",options:["待確認","完成","台電書面確認不適用"]},
     {key:"pass",options:["待確認","完成"]},
     {key:"ppe",options:["待確認","完成"]},
     {key:"scheduled",options:["待確認","完成"]}
@@ -50,7 +51,7 @@
   const optionHtml=(options,value)=>options.map(option=>`<option ${option===value?"selected":""}>${esc(option)}</option>`).join("");
 
   function blankPerson(role=""){
-    return {role,name:"",qualification:"待確認",approved:"待確認",employed:"待確認",insured:"待確認",trained:"待確認",safetyTrained:"待確認",pass:"待確認",ppe:"待確認",scheduled:"待確認"};
+    return {role,name:"",qualification:"待確認",approved:"待確認",employed:"待確認",insured:"待確認",trained:"待確認",safetyTrained:"待確認",urine:"待確認",pass:"待確認",ppe:"待確認",scheduled:"待確認"};
   }
   function initial(){
     return {
@@ -92,6 +93,7 @@
     if(!person.name.trim())return false;
     return personDefs.every(def=>{
       if(def.key==="qualification"&&person[def.key]==="契約無證照要求")return person.role.includes("文書");
+      if(def.key==="urine"&&person[def.key]==="台電書面確認不適用")return true;
       if(def.key==="pass"&&state.conditions.pass?.status==="不適用"&&state.conditions.pass?.evidence?.trim())return true;
       return person[def.key]==="完成";
     });
@@ -133,7 +135,7 @@
     let level="red",title="不得正式派駐",reason="";
     if(!activePeople.length)reason="尚未填入實際派駐人員。";
     else if(missingRoles.length)reason=`初期派駐必要職類尚無合格實際人員：${missingRoles.join("、")}。`;
-    else if(readyPeople.length!==activePeople.length)reason=`${activePeople.length-readyPeople.length}名派駐人員仍有資格、投保、訓練、證件、PPE或配置缺口。`;
+    else if(readyPeople.length!==activePeople.length)reason=`${activePeople.length-readyPeople.length}名派駐人員仍有資格、投保、訓練、尿液採驗適用性、證件、PPE或配置缺口。`;
     else if(hardMissing.length)reason=`不可免除條件未完成：${hardMissing.map(item=>item.title).join("、")}。`;
     else if(yellowBlocking.length)reason=`必要進場條件未完成或不適用未附依據：${yellowBlocking.map(item=>item.title).join("、")}。`;
     else if(gateCount===3&&!missingConditions.length){level="green";title="建議正式放行";reason="三道核可、甲方書面通知、人員及必要進場條件均已完成；仍須由D-1會議簽認。"}

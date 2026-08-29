@@ -1,6 +1,6 @@
 (function(){
   "use strict";
-  const VERSION="2026-08-29";
+  const VERSION="2026-08-29-R2";
   const STORE="taipower-4in1-entry-forms:v1";
   const statuses=["未開始","準備中","待台電格式","待用印","已送審","退補件","已核定","不適用"];
   const F=(id,label,type="text",wide=false,options=[])=>({kind:"field",id,label,type,wide,options});
@@ -23,7 +23,7 @@
     ]},
     {id:"f03",group:"pre",source:"internal",title:"人員資格送審封面及個人附件檢核表",timing:"人員送審／補件前",owner:"人資＋文書",reviewer:"管理人員／監造主任",description:"每位派駐人員一冊，確認職務、到職、投保、資格與回訓資料完整。",sections:[
       S("人員資料",Fields(F("name","姓名"),F("role","送審職務"),F("arrival","到職日","date"),F("dispatch","預定派駐日","date"),F("employee_no","員工編號"),F("phone","聯絡電話"),F("replacement","是否替換原送審人員","select",false,["否","是"]),F("reason","異動原因／說明","textarea",true))),
-      S("附件檢核",Checks("attachments","個人附件",["公司正式派任文件","學經歷表","身分證明必要遮蔽版本","最高學歷證明","相關工作經歷證明","專業證照正反面","證照有效期限已核對","品管／職安回訓證明","到職與書面勞動契約資料","勞保／就保／健保／職災保險","勞退提繳資料","12小時監造職前訓練證明","一般安全衛生教育訓練證明","健康檢查適用性及紀錄","尿液採驗僅在台電另行書面要求時檢附","工作證／臨時工作證","個資文件未放入公開網頁"])),
+      S("附件檢核",Checks("attachments","個人附件",["公司正式派任文件","學經歷表","身分證明必要遮蔽版本","最高學歷證明","相關工作經歷證明","專業證照正反面","證照有效期限已核對","品管／職安回訓證明","到職與書面勞動契約資料","勞保／就保／健保／職災保險","勞退提繳資料","12小時監造職前訓練證明","一般安全衛生教育訓練證明","健康檢查適用性及紀錄","尿液採驗適用性已有台電書面確認；適用者僅記完成及密件索引，不在本表揭露結果","工作證／臨時工作證","個資文件未放入公開網頁"])),
       S("送審結果",Fields(F("sent_date","送出日","date"),F("doc_no","文號"),F("review_result","台電審查結果","select",false,["待送","審查中","退補件","核准"]),F("approved_date","核准日","date"),F("supplement","退補件內容","textarea",true)))
     ]},
     {id:"f04",group:"pre",source:"internal",title:"人員異動及新舊資格比較表",timing:"名單與原送審不一致時",owner:"人資／專案管理",reviewer:"管理人員",description:"呈現原人員、新人員與契約條件的等同或更優比較，取得台電同意後才派駐。",sections:[
