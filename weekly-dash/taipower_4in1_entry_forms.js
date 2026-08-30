@@ -31,10 +31,11 @@
       S("資格比較",Table("compare","新舊資格比較",[Col("item","比較項目"),Col("contract","契約／服務建議書要求"),Col("old","原人員"),Col("new","新任人員"),Col("result","比較結果","select",["待確認","相當","優於","不符"]),Col("evidence","證據附件")],6)),
       S("核准留痕",Fields(F("sent","送出日","date"),F("docno","文號"),F("approved","台電同意日","date"),F("handover","交接完成日","date"),F("note","備註","textarea",true)))
     ]},
-    {id:"f05",group:"pre",source:"internal",title:"115年9月出勤配置計畫／每日排班表",timing:"進場前核可、每月更新",owner:"監造主任",reviewer:"甲方承辦",description:"按日期與職務列出實際派駐、代理與最低留守人力；核定版才是正式出勤依據。",sections:[
+    {id:"f05",group:"pre",source:"internal",title:"115年9月出勤配置計畫／每日排班表",timing:"進場前核可、每月更新",owner:"監造主任",reviewer:"甲方承辦",description:"按日期與職務列出實際派駐、代理與最低留守人力；當月車輛以附件併送，核定版才是正式出勤依據。",sections:[
       S("計畫基本資料",Fields(F("month","配置月份","month"),F("site","工地／案別"),F("min_staff","最低留守人力"),F("attendance","簽到退方式"),F("compiler","編製人"),F("approval","台電核可文號／日期"))),
       S("每日配置",Table("schedule","排班與代理",[Col("date","日期","date"),Col("weekday","星期"),Col("shift","班別"),Col("role","職務"),Col("name","姓名"),Col("start","開始時間","time"),Col("end","結束時間","time"),Col("proxy","請假代理"),Col("work","主要工作／留守位置")],10)),
-      S("計畫確認",Checks("confirm","送審前確認",["與台電核准人員名單一致","每一必要職務均有配置","請假代理資格相符","連續施工已另排24小時監造","簽到退與月請款勾稽方式已定","核定版與現場排班版一致"]))
+      S("車輛配置附件",Table("vehicle_attachment","當月車輛配置",[Col("plate","車號"),Col("site","配置案別／地點"),Col("driver","主要駕駛／保管人"),Col("start","配置起日","date"),Col("end","預定迄日","date"),Col("approval","台電核備文號／日"),Col("claim_start","車月起算日","date"),Col("note","備註")],4),Note("本欄是出勤配置附件；行照、保險、來源、定檢及每月車月證據應在F10完整列管。工作說明書所列4台為四案整體配置，不得把觀音中大單案預設為4台。",true)),
+      S("計畫確認",Checks("confirm","送審前確認",["與台電核准人員名單一致","每一必要職務均有配置","請假代理資格相符","連續施工已另排24小時監造","簽到退與月請款勾稽方式已定","當月車輛配置附件已填或註明未配置","F10車輛核備與本附件一致","核定版與現場排班版一致"]))
     ]},
     {id:"f06",group:"pre",source:"internal",title:"名冊、資格、投保、配置、簽到五表勾稽表",timing:"D-1放行與每月請款前",owner:"文書管理人員",reviewer:"監造主任",description:"將同一人跨五套資料勾稽，任何姓名、職務或日期不一致都要先補正。",sections:[
       S("五表勾稽",Table("crosscheck","人員一致性",[Col("name","姓名"),Col("role","職務"),Col("labor","受僱勞工名冊","select",["未檢核","一致","不一致"]),Col("qualification","資格核准","select",["未檢核","一致","不一致"]),Col("insurance","投保資料","select",["未檢核","一致","不一致"]),Col("schedule","出勤配置","select",["未檢核","一致","不一致"]),Col("attendance","實際簽到","select",["未檢核","一致","不一致"]),Col("issue","差異與補正")],8)),
@@ -55,9 +56,11 @@
       S("領用紀錄",Table("ppe","個人防護具",[Col("name","姓名"),Col("role","職務"),Col("item","PPE項目"),Col("spec","規格／編號"),Col("qty","數量","number"),Col("date","領用日","date"),Col("inspection","適用／檢查結果"),Col("signature","領用簽認"),Col("replace","汰換日／原因")],8)),
       S("管理確認",Checks("ppe_check","進場前檢查",["安全帽","安全鞋","反光背心","工作服","背負式安全帶／安全帶","依危害提供護目具","依危害提供手套／呼吸防護","領用人已受使用及保管告知"]),Fields(F("checker","檢查人"),F("date","檢查日","date"),F("note","缺件與補正","textarea",true)))
     ]},
-    {id:"f10",group:"pre",source:"internal",title:"車輛核備、保險及配置清冊",timing:"車輛使用前／每月核對",owner:"車輛管理人",reviewer:"監造主任",description:"證明車號、來源、保險、配置日及案別，並銜接後續車月請款。",sections:[
-      S("車輛配置",Table("vehicles","工地車輛",[Col("plate","車號"),Col("model","廠牌／車型"),Col("year","年份"),Col("owner","所有人／租賃來源"),Col("driver","主要駕駛"),Col("site","配置案別"),Col("start","配置起日","date"),Col("insurance","保險有效期"),Col("inspection","定檢有效期"),Col("approval","台電核備／備註")],4)),
-      S("附件",Checks("vehicle_docs","每車附件",["行車執照影本","強制險","第三人責任險或台電要求保險","自有／租賃／使用證明","定期檢驗資料","前後車牌及車身照片","使用管理及替代車程序","核備函或簽認清冊"]),Note("車輛資料含個資及識別資訊，只存受控檔案位置，不放入公開網頁。",true))
+    {id:"f10",group:"pre",source:"internal",title:"車輛配置計畫、核備及車月證據表",timing:"車輛使用前／每月核對",owner:"車輛管理人",reviewer:"監造主任",description:"證明車號、來源、保險、配置案別、核備起算日及每月實際使用，銜接貳.3車月請款。",sections:[
+      S("送審與核備",Fields(F("month","配置月份","month"),F("site","工地／案別"),F("sent","送出日","date"),F("docno","送審文號"),F("received","台電收文日","date"),F("approved","台電核備日","date"),F("approval_no","核備文號"),F("proration","未滿整月／替代車認列方式","textarea",true))),
+      S("車輛配置",Table("vehicles","工地車輛",[Col("plate","車號"),Col("model","廠牌／車型"),Col("year","年份"),Col("owner","所有人／租賃來源"),Col("driver","主要駕駛"),Col("site","配置案別／地點"),Col("start","配置起日","date"),Col("claim_start","車月起算日","date"),Col("insurance","保險有效期"),Col("inspection","定檢有效期"),Col("approval","台電核備結果")],4)),
+      S("每月車月證據",Table("vehicle_month","實際履約與估驗",[Col("month","估驗月份","month"),Col("plate","車號"),Col("actual_start","實際可用起日","date"),Col("actual_end","實際可用迄日","date"),Col("odo_start","月初里程","number"),Col("odo_end","月底里程","number"),Col("downtime","停駛／替代"),Col("claimed","申報車月","number"),Col("approved","核定車月","number"),Col("evidence","使用／月報證據")],4)),
+      S("附件",Checks("vehicle_docs","每車附件",["當月出勤配置已附車輛清冊","行車執照影本","強制險","第三人責任險或台電要求保險","自有／租賃／使用證明","定期檢驗資料","前後車牌及車身照片","使用管理及替代車程序","核備函或簽認清冊","行車／里程／巡查與月報證據"]),Note("工作說明書8.5的4台是四案整體配置；同一車輛同一期間不得跨案重複申報完整車月。車輛資料含個資及識別資訊，只存受控檔案位置，不放入公開網頁。",true))
     ]},
     {id:"f11",group:"pre",source:"internal",title:"工務所設備點交及緊急聯絡網",timing:"9/1前上牆／設備進場時",owner:"文書＋職安",reviewer:"監造主任",description:"確認辦公設備、通訊、文件收發與緊急通報均可運作。",sections:[
       S("工務所設備",Table("equipment","設備點交",[Col("item","設備／設施"),Col("spec","規格"),Col("qty","數量","number"),Col("location","位置"),Col("date","點交日","date"),Col("condition","狀態","select",["待進場","正常","缺件","故障"]),Col("custodian","保管人"),Col("evidence","照片／證據")],8)),
