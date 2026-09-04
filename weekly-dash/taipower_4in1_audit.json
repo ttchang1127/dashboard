@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-03 13:30:19 +0800",
+  "generatedAt": "2026-09-04 08:30:25 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
-    "auditDate": "2026-09-03",
+    "auditDate": "2026-09-04",
     "modifiedAt": "2026-09-02 15:05:00",
     "riskCounts": {
       "red": 1,
@@ -44,8 +44,8 @@
         {
           "task": "專業技師簽證執行計畫",
           "dueLabel": "115/09/06（決標次日+30日）",
-          "diff": 3,
-          "diffLabel": "D-3 提醒",
+          "diff": 2,
+          "diffLabel": "D-2 提醒",
           "statusLight": "🟡",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -54,8 +54,8 @@
         {
           "task": "專業責任保險投保及送執",
           "dueLabel": "115/10/06（第1次估驗前；未載明者暫以決標後60日預排）",
-          "diff": 33,
-          "diffLabel": "D-33 追蹤",
+          "diff": 32,
+          "diffLabel": "D-32 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -905,8 +905,8 @@
         {
           "task": "觀音中大線監造派駐啟動",
           "dueLabel": "115/09/01（起始會議確認）",
-          "diff": -2,
-          "diffLabel": "逾期2天",
+          "diff": -3,
+          "diffLabel": "逾期3天",
           "statusLight": "🔴",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
@@ -1118,8 +1118,8 @@
         {
           "task": "龍顯聖亭線監造派駐啟動",
           "dueLabel": "115/10/01（起始會議確認）",
-          "diff": 28,
-          "diffLabel": "D-28 追蹤",
+          "diff": 27,
+          "diffLabel": "D-27 追蹤",
           "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
@@ -1346,8 +1346,8 @@
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/10/01（起始會議確認）",
-          "diff": 28,
-          "diffLabel": "D-28 追蹤",
+          "diff": 27,
+          "diffLabel": "D-27 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
