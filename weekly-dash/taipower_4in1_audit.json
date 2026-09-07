@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-09-07 17:01:34 +0800",
+  "generatedAt": "2026-09-07 17:09:19 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-09-07",
-    "modifiedAt": "2026-09-07 17:00:24",
+    "modifiedAt": "2026-09-07 17:08:55",
     "riskCounts": {
-      "red": 1,
+      "red": 0,
       "orange": 0,
       "yellow": 0,
       "green": 3
     }
   },
   "summary": {
-    "active": 4,
-    "pending": 110,
+    "active": 3,
+    "pending": 111,
     "major": 37,
-    "red": 1,
+    "red": 0,
     "orange": 0,
     "yellow": 0,
     "green": 3
@@ -883,27 +883,27 @@
         }
       ],
       "counts": {
-        "active": 1,
-        "pending": 13,
+        "active": 0,
+        "pending": 14,
         "major": 5,
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 0
       },
-      "activeItems": [
-        {
-          "task": "觀音中大線監造派駐啟動",
-          "dueLabel": "115/09/01（起始會議確認）",
-          "diff": -6,
-          "diffLabel": "逾期6天",
-          "statusLight": "🔴",
-          "owner": "巍耀哥 <@1486270112326615042>",
-          "manager": "巍耀哥 <@1486270112326615042>",
-          "major": true
-        }
-      ],
+      "activeItems": [],
       "pendingItems": [
+        {
+          "heading": "三、簽約初期（決標日觸發）",
+          "task": "觀音中大線監造派駐啟動",
+          "dueLabel": "業主審查通過後啟動（暫定下週一）",
+          "owner": "巍耀",
+          "manager": "巍耀",
+          "major": true,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.2.1／7.3.15",
+          "status": "待觸發（暫定115/09/14業主審查通過後啟動）"
+        },
         {
           "heading": "六、分案施工階段待觸發事項",
           "task": "大潭觀音各期工期管控",
