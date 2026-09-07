@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-07 10:51:17 +0800",
+  "generatedAt": "2026-09-07 17:01:34 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -295,16 +295,16 @@
       "name": "台電4合1",
       "auditDate": "2026-09-07",
       "version": "V3",
-      "modifiedAt": "2026-09-02 15:05:00",
+      "modifiedAt": "2026-09-07 17:00:24",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 2,
+        "red": 1,
         "orange": 0,
         "yellow": 0,
         "green": 3
       },
-      "itemCount": 5,
+      "itemCount": 4,
       "topUrgent": {
         "task": "觀音中大線監造派駐啟動",
         "dueLabel": "115/09/01（起始會議確認）",
@@ -323,15 +323,6 @@
           "statusLight": "🔴",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>"
-        },
-        {
-          "task": "專業技師簽證執行計畫",
-          "dueLabel": "115/09/06（決標次日+30日）",
-          "diff": -1,
-          "diffLabel": "逾期1天",
-          "statusLight": "🔴",
-          "owner": "**巧晴姐**",
-          "manager": "孝智哥 <@911417165373136897>"
         },
         {
           "task": "廣豐D/S監造派駐啟動",

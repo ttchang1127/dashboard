@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-09-07 15:32:32 +0800",
+  "generatedAt": "2026-09-07 17:01:34 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-09-07",
-    "modifiedAt": "2026-09-02 15:05:00",
+    "modifiedAt": "2026-09-07 17:00:24",
     "riskCounts": {
-      "red": 2,
+      "red": 1,
       "orange": 0,
       "yellow": 0,
       "green": 3
     }
   },
   "summary": {
-    "active": 5,
+    "active": 4,
     "pending": 110,
-    "major": 38,
-    "red": 2,
+    "major": 37,
+    "red": 1,
     "orange": 0,
     "yellow": 0,
     "green": 3
@@ -32,25 +32,15 @@
       "staffing": [],
       "staffingPlan": [],
       "counts": {
-        "active": 2,
+        "active": 1,
         "pending": 71,
-        "major": 23,
-        "red": 1,
+        "major": 22,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 1
       },
       "activeItems": [
-        {
-          "task": "專業技師簽證執行計畫",
-          "dueLabel": "115/09/06（決標次日+30日）",
-          "diff": -1,
-          "diffLabel": "逾期1天",
-          "statusLight": "🔴",
-          "owner": "巧晴姐",
-          "manager": "孝智哥 <@911417165373136897>",
-          "major": true
-        },
         {
           "task": "專業責任保險投保及送執",
           "dueLabel": "115/10/06（第1次估驗前；未載明者暫以決標後60日預排）",
