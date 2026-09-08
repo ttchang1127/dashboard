@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-08 08:30:14 +0800",
+  "generatedAt": "2026-09-08 14:29:00 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -295,26 +295,35 @@
       "name": "台電4合1",
       "auditDate": "2026-09-08",
       "version": "V3",
-      "modifiedAt": "2026-09-07 17:08:55",
+      "modifiedAt": "2026-09-08 14:27:50",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
         "orange": 0,
         "yellow": 0,
-        "green": 3
+        "green": 4
       },
-      "itemCount": 3,
+      "itemCount": 4,
       "topUrgent": {
-        "task": "廣豐D/S監造派駐啟動",
-        "dueLabel": "115/10/01（起始會議確認）",
-        "diff": 23,
-        "diffLabel": "D-23 追蹤",
+        "task": "觀音中大線監造派駐啟動",
+        "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
+        "diff": 6,
+        "diffLabel": "D-6 預告",
         "statusLight": "🟢",
-        "owner": "**巧晴姐**",
-        "manager": "孝智哥 <@911417165373136897>"
+        "owner": "巍耀哥 <@1486270112326615042>",
+        "manager": "巍耀哥 <@1486270112326615042>"
       },
       "items": [
+        {
+          "task": "觀音中大線監造派駐啟動",
+          "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
+          "diff": 6,
+          "diffLabel": "D-6 預告",
+          "statusLight": "🟢",
+          "owner": "巍耀哥 <@1486270112326615042>",
+          "manager": "巍耀哥 <@1486270112326615042>"
+        },
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/10/01（起始會議確認）",
