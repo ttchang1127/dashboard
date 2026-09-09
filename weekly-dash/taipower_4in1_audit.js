@@ -19,6 +19,15 @@ function escapeHtml(value) {
         .replace(/'/g, "&#39;");
 }
 
+function safeExternalUrl(value) {
+    try {
+        const url = new URL(String(value || ""));
+        return url.protocol === "https:" ? url.href : "";
+    } catch {
+        return "";
+    }
+}
+
 function riskToneClass(diff) {
     const value = Number(diff);
     if (Number.isFinite(value) && value <= 0) return "border-rose-200 bg-rose-50 text-rose-800";
@@ -186,6 +195,12 @@ function renderSection(section) {
     const activeItems = section.activeItems || [];
     const pendingItems = section.pendingItems || [];
     const note = section.note ? `<p class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">${escapeHtml(section.note)}</p>` : "";
+    const officeMapUrl = safeExternalUrl(section.officeMapUrl);
+    const officeAddress = section.officeAddress ? `
+        <p class="mt-2 text-sm font-semibold text-stone-600">
+            工務所地址：${officeMapUrl ? `<a class="text-teal-700 underline decoration-teal-300 underline-offset-4 hover:text-teal-900" href="${escapeHtml(officeMapUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(section.officeAddress)}</a>` : escapeHtml(section.officeAddress)}
+        </p>
+    ` : "";
     const staffing = renderStaffing(section);
     return `
         <section id="section-panel" class="panel rounded-[28px] p-5 lg:p-6" role="tabpanel" aria-labelledby="tab-${escapeHtml(section.key)}">
@@ -196,6 +211,7 @@ function renderSection(section) {
                         <span class="pill bg-stone-100 text-stone-700">${escapeHtml(statusLabel(section.status))}</span>
                     </div>
                     <p class="mt-2 text-sm text-stone-500">${escapeHtml(section.subtitle || "")}</p>
+                    ${officeAddress}
                     ${note}
                 </div>
                 <div class="grid min-w-[260px] grid-cols-3 gap-2">
