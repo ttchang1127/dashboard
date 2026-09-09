@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-09 05:53:51 +0800",
+  "generatedAt": "2026-09-09 08:15:48 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -394,7 +394,7 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-09-09",
       "version": "V1",
-      "modifiedAt": "2026-09-09 05:44:03",
+      "modifiedAt": "2026-09-09 08:15:33",
       "mode": "active",
       "note": null,
       "riskCounts": {
