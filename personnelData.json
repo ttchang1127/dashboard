@@ -6,23 +6,11 @@
     "education": "淡江大學 土木工程學系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       },
       {
-        "name": "2.",
-        "number": ""
-      },
-      {
         "name": "職安(營造業甲種業務主管)",
-        "number": ""
-      },
-      {
-        "name": "3.",
         "number": ""
       },
       {
@@ -39,15 +27,11 @@
     "education": "國立臺灣大學 土木工程學系 碩士",
     "certificates": [
       {
-        "name": "1.",
+        "name": "土木技師",
         "number": ""
       },
       {
-        "name": "技師(土木",
-        "number": ""
-      },
-      {
-        "name": "大地)",
+        "name": "大地技師",
         "number": ""
       }
     ],
@@ -60,15 +44,7 @@
     "education": "國立中央大學 土木工程學系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -85,15 +61,7 @@
     "education": "逢甲大學 水利工程與資源保育學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -110,10 +78,6 @@
     "education": "中華大學 營建管理研究所 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -127,15 +91,7 @@
     "education": "蘭陽技術學院 土木工程科 副學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -152,10 +108,6 @@
     "education": "國立成功大學 土木工程學系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -168,10 +120,6 @@
     "role": "副理",
     "education": "逢甲大學 土木工程學系 碩士",
     "certificates": [
-      {
-        "name": "1.",
-        "number": ""
-      },
       {
         "name": "品管",
         "number": ""
@@ -186,10 +134,6 @@
     "education": "交通大學 土木工程學系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -202,10 +146,6 @@
     "role": "組員",
     "education": "國立交通大學 土木工程學系 碩士",
     "certificates": [
-      {
-        "name": "1.",
-        "number": ""
-      },
       {
         "name": "品管",
         "number": ""
@@ -220,23 +160,11 @@
     "education": "國立嘉義大學 土木與水資源工程學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       },
       {
-        "name": "2.",
-        "number": ""
-      },
-      {
         "name": "職安(乙級職安管理員)",
-        "number": ""
-      },
-      {
-        "name": "3.",
         "number": ""
       },
       {
@@ -261,10 +189,6 @@
     "education": "國立臺北科技大學 土木工程系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -286,15 +210,7 @@
     "education": "國立臺灣海洋大學 河海工程學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -311,10 +227,6 @@
     "education": "中原大學 土木工程學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -327,10 +239,6 @@
     "role": "組員",
     "education": "國立金門大學 都市計畫與景觀學系 學士",
     "certificates": [
-      {
-        "name": "1.",
-        "number": ""
-      },
       {
         "name": "品管",
         "number": ""
@@ -345,15 +253,7 @@
     "education": "國立中央大學 土木工程學系 博士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -370,15 +270,7 @@
     "education": "國立高雄第一科技大學 環境與安全衛生工程系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -395,15 +287,7 @@
     "education": "逢甲大學 水利工程與資源保育學系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -420,23 +304,11 @@
     "education": "逢甲大學 土木工程學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       },
       {
-        "name": "2.",
-        "number": ""
-      },
-      {
         "name": "職安(營造業甲種業務主管)",
-        "number": ""
-      },
-      {
-        "name": "3.",
         "number": ""
       },
       {
@@ -453,15 +325,7 @@
     "education": "致遠管理學院 營建管理學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -495,10 +359,6 @@
     "education": "萬能科技大學 土木工程系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -512,15 +372,7 @@
     "education": "朝陽科技大學 景觀及都市設計系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -537,15 +389,7 @@
     "education": "逢甲大學 水利工程與資源保育學系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -562,15 +406,7 @@
     "education": "德霖技術學院 土木工程系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -587,10 +423,6 @@
     "education": "國立宜蘭大學 土木工程學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -603,10 +435,6 @@
     "role": "組員",
     "education": "朝陽科技大學 景觀及都市設計系 學士",
     "certificates": [
-      {
-        "name": "1.",
-        "number": ""
-      },
       {
         "name": "品管",
         "number": ""
@@ -621,15 +449,7 @@
     "education": "國立臺灣科技大學 營建工程系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
-        "name": "技師(土木)",
-        "number": ""
-      },
-      {
-        "name": "2.",
+        "name": "土木技師",
         "number": ""
       },
       {
@@ -646,11 +466,7 @@
     "education": "國立中央大學 土木工程學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
-        "name": "技師(土木)",
+        "name": "土木技師",
         "number": ""
       }
     ],
@@ -662,10 +478,6 @@
     "role": "組員",
     "education": "健行科技大學 資訊管理系 學士",
     "certificates": [
-      {
-        "name": "1.",
-        "number": ""
-      },
       {
         "name": "職安(營造業甲種業務主管)",
         "number": ""
@@ -688,15 +500,7 @@
     "education": "宏國德霖科技大學 土木工程系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -713,15 +517,7 @@
     "education": "陸軍軍官學校 理組 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -742,15 +538,7 @@
     "education": "中國文化大學 景觀學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -791,15 +579,7 @@
     "education": "國立聯合大學 土木與防災工程學系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -816,15 +596,7 @@
     "education": "Oregon State University 水利工程學系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -865,15 +637,7 @@
     "education": "朝陽科技大學 營建工程系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
-        "number": ""
-      },
-      {
-        "name": "2.",
         "number": ""
       },
       {
@@ -890,10 +654,6 @@
     "education": "萬能科技大學 財務金融系 學士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "職安(營造業甲種業務主管)",
         "number": ""
       }
@@ -907,10 +667,6 @@
     "education": "國立中興大學 水土保持學系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -923,10 +679,6 @@
     "role": "",
     "education": "",
     "certificates": [
-      {
-        "name": "1.",
-        "number": ""
-      },
       {
         "name": "品管",
         "number": ""
@@ -965,10 +717,6 @@
     "education": "國立聯合大學環安工程系 碩士",
     "certificates": [
       {
-        "name": "1.",
-        "number": ""
-      },
-      {
         "name": "品管",
         "number": ""
       }
@@ -981,10 +729,6 @@
     "role": "組員",
     "education": "中華大學建築都市計畫系 碩士",
     "certificates": [
-      {
-        "name": "1.",
-        "number": ""
-      },
       {
         "name": "品管",
         "number": ""
