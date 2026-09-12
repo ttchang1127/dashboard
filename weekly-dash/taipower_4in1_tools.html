@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="台電4合1委託監造：觀音中大案監造進場工具與全案勞務請款列管的集中入口">
+<title>台電4合1｜監造進場與請款工具</title>
+<style>
+:root{color-scheme:light;--bg:#efede7;--paper:#fffefa;--ink:#24323b;--muted:#66727a;--navy:#263a49;--line:#d3d0c7;--teal:#176f68;--green:#25744d;--green-bg:#e9f5ee;--amber:#97600f;--amber-bg:#fff4d9;--red:#a33c35;--red-bg:#fff0ed;--blue:#315d83;--blue-bg:#edf4fa;--shadow:0 14px 34px rgba(45,54,54,.09)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.5}
+.wrap{width:min(1180px,calc(100% - 28px));margin:auto}
+.top{background:var(--navy);color:#fff;border-bottom:5px solid var(--teal)}
+.top .wrap{display:flex;justify-content:space-between;gap:22px;padding:22px 0}
+.eyebrow{margin:0;color:#bce0dc;font-size:.74rem;font-weight:850;letter-spacing:.15em}
+.top h1{margin:6px 0 0;font-size:clamp(1.7rem,3vw,2.5rem);line-height:1.14}
+.top p{max-width:760px;margin:8px 0 0;color:#d6e0e5;font-size:.9rem}
+.nav{display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:flex-end;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 13px;border:1px solid #c9c5bc;border-radius:8px;background:var(--paper);color:var(--ink);font-weight:780;text-decoration:none;cursor:pointer}
+.btn:hover{border-color:var(--teal);color:var(--teal)}
+.btn.dark{background:#344e60;border-color:#577285;color:#fff}
+.btn.dark:hover{background:#3d5b70;color:#fff}
+main{padding:22px 0 40px}
+.alert{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:15px 17px;border:1px solid #d99b94;border-left:7px solid var(--red);border-radius:11px;background:var(--red-bg);box-shadow:var(--shadow)}
+.alert .dot{width:13px;height:13px;margin-top:6px;border-radius:50%;background:var(--red)}
+.alert h2{margin:0;font-size:1.02rem}
+.alert p{margin:6px 0 0;font-size:.84rem;color:#6d4b47}
+.gate-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.gate-chip{padding:4px 10px;border:1px solid #d2aaa6;border-radius:999px;background:#fff;font-size:.74rem;font-weight:800;color:var(--red)}
+.dates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 6px}
+.date{padding:13px;border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:10px;background:var(--paper);box-shadow:var(--shadow)}
+.date.hot{border-top-color:var(--red)}
+.date b{display:block;font-size:1.22rem;line-height:1.2}
+.date .cd{display:block;margin-top:3px;font-size:.72rem;font-weight:800;color:var(--teal)}
+.date.hot .cd{color:var(--red)}
+.date span.lbl{display:block;margin-top:5px;color:var(--muted);font-size:.75rem}
+h2.sect{margin:26px 0 4px;font-size:1.12rem}
+p.sect-note{margin:0 0 12px;color:var(--muted);font-size:.8rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:13px}
+.card{display:flex;flex-direction:column;gap:8px;padding:17px;border:1px solid var(--line);border-left:6px solid var(--teal);border-radius:12px;background:var(--paper);box-shadow:var(--shadow);color:inherit;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(45,54,54,.14);border-left-color:var(--navy)}
+.card:focus-visible{outline:3px solid rgba(23,111,104,.38);outline-offset:3px}
+.card .tag{display:inline-flex;align-self:flex-start;padding:3px 9px;border-radius:999px;background:var(--green-bg);color:var(--green);font-size:.68rem;font-weight:850;letter-spacing:.04em}
+.card.billing{border-left-color:var(--blue)}
+.card.billing .tag{background:var(--blue-bg);color:var(--blue)}
+.card h3{margin:0;font-size:1.04rem}
+.card p{margin:0;color:var(--muted);font-size:.8rem}
+.card .go{margin-top:2px;color:var(--teal);font-size:.8rem;font-weight:800}
+.card.billing .go{color:var(--blue)}
+.note{margin-top:24px;padding:13px 15px;border:1px solid #debf84;border-left:5px solid var(--amber);border-radius:9px;background:var(--amber-bg);font-size:.8rem}
+.note b{color:#74470f}
+footer{padding:18px 0 30px;border-top:1px solid var(--line);color:#69655e;font-size:.76rem}
+@media(max-width:900px){.dates{grid-template-columns:1fr 1fr}.top .wrap{display:block}.nav{justify-content:flex-start;margin-top:15px}}
+@media(max-width:560px){.dates{grid-template-columns:1fr}.nav .btn{flex:1}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div>
+    <p class="eyebrow">TAIPOWER 4-IN-1 · ENTRY &amp; BILLING TOOLS</p>
+    <h1>監造進場與請款工具</h1>
+    <p>觀音中大案監造進場的三個作業頁，與全案委託監造勞務請款列管，集中於此。四案待辦控管請回「四案稽核儀表板」。</p>
+  </div>
+  <nav class="nav"><a class="btn dark" href="./taipower_4in1_audit.html">← 四案稽核儀表板</a></nav>
+</div></header>
+
+<main class="wrap">
+
+  <section class="alert" aria-label="進場門檻狀態">
+    <span class="dot" aria-hidden="true"></span>
+    <div>
+      <h2>觀音中大案：115/09/14 起派駐（北區字第1158111132號函，115/09/07）</h2>
+      <p>依知識庫 115/09/12 盤點，正式派駐的三道門檻<strong>均無核定證據</strong>。門檻未齊又無台電書面指示時，當日僅得辦理工務所建置、文件點交、現勘、教育訓練與資料整理，<strong>不得進行會形成契約責任的正式監造簽認</strong>。</p>
+      <div class="gate-row">
+        <span class="gate-chip">① 監造計畫核定 — 未取得</span>
+        <span class="gate-chip">② 派駐人員核准 — 未完成</span>
+        <span class="gate-chip">③ 9月出勤配置核可 — 未取得</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="dates" aria-label="關鍵到期">
+    <div class="date hot"><b>09/14</b><span class="cd" data-countdown="2026-09-14"></span><span class="lbl">監造派駐首日｜本工作開工報告單填寫用印</span></div>
+    <div class="date hot"><b>09/17</b><span class="cd" data-countdown="2026-09-17"></span><span class="lbl">本工作開工報告單送核定｜逾期 3,000元/日</span></div>
+    <div class="date"><b>10/05</b><span class="cd" data-countdown="2026-10-05"></span><span class="lbl">9月月報＋10月出勤配置＋9月差勤（三件同日）</span></div>
+    <div class="date"><b>10/14</b><span class="cd" data-countdown="2026-10-14"></span><span class="lbl">進場滿一個月｜PMIS＋雇主意外責任險</span></div>
+  </section>
+
+  <h2 class="sect">觀音中大案 · 監造進場</h2>
+  <p class="sect-note">進場前送審、放行判定與表單填寫，三頁互相勾稽；資料保存在各自瀏覽器，正式證據仍須歸入受控卷宗。</p>
+  <div class="cards">
+    <a class="card" href="./taipower_4in1_guanyin_entry.html">
+      <span class="tag">總控</span>
+      <h3>監造進場前送審與核可總控</h3>
+      <p>包1～包11 的送審範圍、三道核可門檻、執行順序與留痕總表。</p>
+      <span class="go">開啟 →</span>
+    </a>
+    <a class="card" href="./taipower_4in1_entry_release.html">
+      <span class="tag">D-1 放行</span>
+      <h3>D-1 監造派駐放行看板</h3>
+      <p>紅黃綠判定：三道核可、逐人進場條件、共同條件與會議簽認。</p>
+      <span class="go">開啟 →</span>
+    </a>
+    <a class="card" href="./taipower_4in1_entry_forms.html">
+      <span class="tag">24 份表單</span>
+      <h3>監造進場表單中心</h3>
+      <p>可本機填寫、列印／存 PDF、下載 Word 相容檔與匯出 JSON 備份。</p>
+      <span class="go">開啟 →</span>
+    </a>
+  </div>
+
+  <h2 class="sect">全案 · 請款管理</h2>
+  <p class="sect-note">四案共用，不限觀音中大。第 1 次估驗須<strong>專業責任保險保單＋監造計畫核定</strong>兩者齊備（11.5.2）。</p>
+  <div class="cards">
+    <a class="card billing" href="./taipower_4in1_billing_tracker.html">
+      <span class="tag">請款</span>
+      <h3>委託監造勞務請款列管</h3>
+      <p>技術服務費、車輛費車月、材料設備抽檢驗費之逐月估驗與付款追蹤。</p>
+      <span class="go">開啟 →</span>
+    </a>
+  </div>
+
+  <p class="note"><b>為什麼這些頁不放在稽核儀表板：</b>四案稽核儀表板的職責是<strong>控管四案的待辦事項</strong>；上列各頁是單案作業工具與請款管理，性質不同。分開後儀表板頂部回歸單純，工具頁也不再受其版面限制。</p>
+
+</main>
+
+<footer><div class="wrap">本頁僅為入口彙整，不產生任何判定。各頁綠燈或完成狀態皆屬內部管理建議，非台電核准；正式效力以台電核定函、核准名單與有效書面指示為準。</div></footer>
+
+<script>
+(function(){
+  var today=new Date(); today.setHours(0,0,0,0);
+  document.querySelectorAll("[data-countdown]").forEach(function(el){
+    var parts=el.getAttribute("data-countdown").split("-");
+    var target=new Date(+parts[0], +parts[1]-1, +parts[2]);
+    var days=Math.round((target-today)/86400000);
+    el.textContent = days>0 ? "還有 "+days+" 天" : (days===0 ? "就是今天" : "已過 "+Math.abs(days)+" 天");
+  });
+})();
+</script>
+</body>
+</html>

@@ -273,22 +273,28 @@ async function init() {
 init();
 
 /* ------------------------------------------------------------------
- * 進場控制列（由 JS 注入）
+ * 工具專區入口（由 JS 注入）
  *
- * 這排按鈕原本寫在 taipower_4in1_audit.html 裡，但 Mac mini 上的
- * "sync taoyuan weekly dashboard data" 會用舊樣板重新產生該 html，
- * 每次都把這 58 行刪掉（2026-08-31 08:30 與 13:30 各發生一次）。
+ * 沿革：
+ *  - 原本此處注入「觀音中大監造進場總控／D-1放行看板／進場表單中心／
+ *    勞務請款列管」四顆按鈕。2026-09-12 依指示移出——本頁職責是
+ *    「控管四案的待辦事項」，單案作業工具與請款管理性質不同。
+ *  - 四個連結已移至 taipower_4in1_tools.html，此處只保留單一入口，
+ *    否則新頁無處可達。
  *
- * 該同步從未改動本 .js，因此改由此處注入，可存活於 html 重新產生。
- * 根本解仍是把這段加進 Mac mini 的產生器樣板。
+ * 為何仍由 JS 注入而非寫進 html：
+ *  2026-08-31 之前 Mac mini 的 "sync taoyuan weekly dashboard data"
+ *  會用舊樣板重新產生本頁 html，每輪刪掉手改內容。該問題已於
+ *  2026-08-31 根治（同步腳本不再寫入 HTML／JS），但注入寫法本身
+ *  無害且具冪等性，故予保留，避免日後再次回歸時又失去入口。
  * ------------------------------------------------------------------ */
-(function injectEntryControls() {
-    const LINKS = [
-        { date: "9/1",  label: "觀音中大監造進場總控", href: "./taipower_4in1_guanyin_entry.html",   aria: "開啟觀音中大案9月1日監造進場總控" },
-        { date: "D-1",  label: "監造派駐放行看板",     href: "./taipower_4in1_entry_release.html",   aria: "開啟觀音中大案D-1監造派駐放行看板" },
-        { date: "表單", label: "監造進場表單中心",     href: "./taipower_4in1_entry_forms.html",     aria: "開啟觀音中大案監造進場表單中心" },
-        { date: "請款", label: "勞務請款列管",         href: "./taipower_4in1_billing_tracker.html", aria: "開啟委託監造勞務請款列管" }
-    ];
+(function injectToolsEntry() {
+    const LINK = {
+        href: "./taipower_4in1_tools.html",
+        badge: "工具",
+        label: "監造進場與請款工具",
+        aria: "開啟監造進場與請款工具專區（觀音中大進場三頁與全案勞務請款列管）"
+    };
 
     function addStyles() {
         if (document.getElementById("entryControlStyles")) return;
@@ -335,7 +341,7 @@ init();
     }
 
     function mount() {
-        // html 若已自帶按鈕（例如日後樣板修好了）就不重複注入
+        // html 若已自帶入口就不重複注入
         if (document.querySelector(".entry-control-link")) return;
 
         const heading = document.querySelector("header h1");
@@ -347,26 +353,24 @@ init();
         bar.id = "entryControlBar";
         bar.className = "mt-4 flex flex-wrap gap-2";
 
-        LINKS.forEach(({ date, label, href, aria }) => {
-            const a = document.createElement("a");
-            a.className = "entry-control-link";
-            a.href = href;
-            a.setAttribute("aria-label", aria);
+        const a = document.createElement("a");
+        a.className = "entry-control-link";
+        a.href = LINK.href;
+        a.setAttribute("aria-label", LINK.aria);
 
-            const badge = document.createElement("span");
-            badge.className = "entry-control-date";
-            badge.textContent = date;
+        const badge = document.createElement("span");
+        badge.className = "entry-control-date";
+        badge.textContent = LINK.badge;
 
-            const text = document.createElement("span");
-            text.textContent = label;
+        const text = document.createElement("span");
+        text.textContent = LINK.label;
 
-            const arrow = document.createElement("span");
-            arrow.setAttribute("aria-hidden", "true");
-            arrow.textContent = "→";
+        const arrow = document.createElement("span");
+        arrow.setAttribute("aria-hidden", "true");
+        arrow.textContent = "\u2192";
 
-            a.append(badge, text, arrow);
-            bar.appendChild(a);
-        });
+        a.append(badge, text, arrow);
+        bar.appendChild(a);
 
         heading.parentElement.appendChild(bar);
     }
