@@ -273,111 +273,17 @@ async function init() {
 init();
 
 /* ------------------------------------------------------------------
- * 工具專區入口（由 JS 注入）
+ * 頁首連結：已全部移除（2026-09-12）
  *
  * 沿革：
- *  - 原本此處注入「觀音中大監造進場總控／D-1放行看板／進場表單中心／
- *    勞務請款列管」四顆按鈕。2026-09-12 依指示移出——本頁職責是
- *    「控管四案的待辦事項」，單案作業工具與請款管理性質不同。
- *  - 四個連結已移至 taipower_4in1_tools.html，此處只保留單一入口，
- *    否則新頁無處可達。
+ *  1. 原本此處注入四顆按鈕（觀音中大進場總控／D-1放行看板／進場表單
+ *     中心／勞務請款列管）。
+ *  2. 2026-09-12 先改為單一「監造進場與請款工具」入口，四個連結移至
+ *     taipower_4in1_tools.html。
+ *  3. 同日依指示再把該入口也移除——本頁專注於四案待辦事項控管，
+ *     頁首不放任何外連。
  *
- * 為何仍由 JS 注入而非寫進 html：
- *  2026-08-31 之前 Mac mini 的 "sync taoyuan weekly dashboard data"
- *  會用舊樣板重新產生本頁 html，每輪刪掉手改內容。該問題已於
- *  2026-08-31 根治（同步腳本不再寫入 HTML／JS），但注入寫法本身
- *  無害且具冪等性，故予保留，避免日後再次回歸時又失去入口。
+ * 工具專區仍在線上，只是不再從本頁連過去：
+ *     ./taipower_4in1_tools.html
+ * 需要時請直接開該網址或加入書籤。
  * ------------------------------------------------------------------ */
-(function injectToolsEntry() {
-    const LINK = {
-        href: "./taipower_4in1_tools.html",
-        badge: "工具",
-        label: "監造進場與請款工具",
-        aria: "開啟監造進場與請款工具專區（觀音中大進場三頁與全案勞務請款列管）"
-    };
-
-    function addStyles() {
-        if (document.getElementById("entryControlStyles")) return;
-        const style = document.createElement("style");
-        style.id = "entryControlStyles";
-        style.textContent = `
-        .entry-control-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.65rem;
-            min-height: 44px;
-            border: 1px solid rgba(31, 118, 110, 0.24);
-            border-radius: 9999px;
-            padding: 0.6rem 0.95rem 0.6rem 0.65rem;
-            color: #155e57;
-            background: linear-gradient(135deg, rgba(232, 244, 241, 0.98), rgba(255, 255, 255, 0.94));
-            box-shadow: 0 8px 20px rgba(31, 118, 110, 0.1);
-            font-size: 0.875rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-        }
-        .entry-control-link:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 11px 24px rgba(31, 118, 110, 0.15);
-        }
-        .entry-control-link:focus-visible {
-            outline: 3px solid rgba(31, 118, 110, 0.35);
-            outline-offset: 3px;
-        }
-        .entry-control-date {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 2.8rem;
-            min-height: 2rem;
-            border-radius: 9999px;
-            color: white;
-            background: #1f766e;
-            font-size: 0.75rem;
-            letter-spacing: 0.04em;
-        }`;
-        document.head.appendChild(style);
-    }
-
-    function mount() {
-        // html 若已自帶入口就不重複注入
-        if (document.querySelector(".entry-control-link")) return;
-
-        const heading = document.querySelector("header h1");
-        if (!heading || !heading.parentElement) return;
-
-        addStyles();
-
-        const bar = document.createElement("div");
-        bar.id = "entryControlBar";
-        bar.className = "mt-4 flex flex-wrap gap-2";
-
-        const a = document.createElement("a");
-        a.className = "entry-control-link";
-        a.href = LINK.href;
-        a.setAttribute("aria-label", LINK.aria);
-
-        const badge = document.createElement("span");
-        badge.className = "entry-control-date";
-        badge.textContent = LINK.badge;
-
-        const text = document.createElement("span");
-        text.textContent = LINK.label;
-
-        const arrow = document.createElement("span");
-        arrow.setAttribute("aria-hidden", "true");
-        arrow.textContent = "\u2192";
-
-        a.append(badge, text, arrow);
-        bar.appendChild(a);
-
-        heading.parentElement.appendChild(bar);
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", mount);
-    } else {
-        mount();
-    }
-})();
