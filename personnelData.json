@@ -760,7 +760,12 @@
     "group": "",
     "role": "",
     "education": "正修工專 二專",
-    "certificates": [],
+    "certificates": [
+      {
+        "name": "品管",
+        "number": ""
+      }
+    ],
     "seniority": ""
   }
 ]
