@@ -10,6 +10,7 @@ const summaryGrid = document.getElementById("summaryGrid");
 const anchorBar = document.getElementById("anchorBar");
 const sectionsRoot = document.getElementById("sections");
 const insightsRoot = document.getElementById("insights");
+const caseOverviewRoot = document.getElementById("caseOverview");
 
 function escapeHtml(value) {
     return String(value || "")
@@ -62,6 +63,137 @@ function renderRiskCounts(counts = {}) {
 function sectionTabLabel(section, index) {
     return `Tab ${index} ${section.title}`;
 }
+
+/* ==================================================================
+ * 四案並排總覽（2026-09-13 新增）
+ *
+ * 分頁一次只看得到一案，但四案是同時進行、進度各不相同；
+ * 要判斷「誰最急」必須並排。排序在產生器端完成（分層比較：
+ * 逾期 → 距到期天數 → 阻斷數 → 未到位人數 → 暫代人數），
+ * 前端只負責照 rank 畫出來。
+ * ================================================================== */
+
+const CASE_STATUS_LABEL = {
+    active: "列管中",
+    recruiting: "招募中",
+    paused: "暫不啟動"
+};
+
+function caseTone(card) {
+    const days = card.nextDue?.daysLeft;
+    if (card.overdue > 0 || card.blocked > 0 || (typeof days === "number" && days <= 7)) return "tone-hot";
+    if (typeof days === "number") return "tone-warn";
+    return "tone-idle";
+}
+
+function countdownText(card) {
+    const days = card.nextDue?.daysLeft;
+    if (typeof days !== "number") return { big: "—", small: "尚未進入列管節點" };
+    if (days < 0) return { big: `逾期 ${Math.abs(days)} 天`, small: escapeHtml(card.nextDue.task || "") };
+    if (days === 0) return { big: "就是今天", small: escapeHtml(card.nextDue.task || "") };
+    return { big: `D-${days}`, small: escapeHtml(card.nextDue.task || "") };
+}
+
+/* 人員條分三段。兩段不夠用：龍顯主任「暫代到11月中」是現場有人，
+ * 廣豐主任「10/5報到」是現場沒人——併成一個數字會失真。 */
+function staffingBlock(staff) {
+    if (!staff || !staff.total) {
+        return `
+            <div>
+                <div class="flex justify-between text-xs"><span class="font-bold">人員 —</span><span class="text-stone-500">尚未編組</span></div>
+                <div class="staff-bar mt-1"><div style="width:100%" class="bg-stone-200"></div></div>
+            </div>`;
+    }
+    const pct = (n) => (n / staff.total) * 100;
+    const notes = [];
+    if (staff.provisional) notes.push(`<span class="text-amber-700">暫代 ${staff.provisional}</span>`);
+    if (staff.notInPlace) notes.push(`<span class="text-rose-700">未到位 ${staff.notInPlace}</span>`);
+    if (!notes.length) notes.push(`<span class="text-emerald-700">全到位</span>`);
+    return `
+        <div>
+            <div class="flex justify-between text-xs">
+                <span class="font-bold">人員 ${staff.inPlace}/${staff.total}</span>
+                <span>${notes.join("・")}</span>
+            </div>
+            <div class="staff-bar mt-1">
+                ${staff.inPlace ? `<div style="width:${pct(staff.inPlace)}%" class="bg-emerald-500" title="已到位 ${staff.inPlace}"></div>` : ""}
+                ${staff.provisional ? `<div style="width:${pct(staff.provisional)}%" class="bg-amber-400" title="暫代 ${staff.provisional}"></div>` : ""}
+                ${staff.notInPlace ? `<div style="width:${pct(staff.notInPlace)}%" class="bg-stone-300" title="未到位 ${staff.notInPlace}"></div>` : ""}
+            </div>
+        </div>`;
+}
+
+function renderCaseCard(card) {
+    const cd = countdownText(card);
+    const selected = card.key === state.activeSection;
+    const pills = [
+        card.blocked ? `<span class="pill border-rose-300 bg-rose-100 text-rose-800">🔴 阻斷 ${card.blocked}</span>` : "",
+        card.overdue ? `<span class="pill border-orange-300 bg-orange-100 text-orange-800">⚠️ 逾期 ${card.overdue}</span>` : "",
+        `<span class="pill border-stone-300 bg-stone-100 text-stone-600">待觸發 ${card.pending}</span>`,
+        card.major ? `<span class="pill border-rose-200 bg-rose-50 text-rose-700">重大 ${card.major}</span>` : ""
+    ].filter(Boolean).join("");
+    return `
+        <button type="button" class="case-card ${caseTone(card)} ${selected ? "is-active" : ""}" data-case="${escapeHtml(card.key)}"
+                aria-label="切換到 ${escapeHtml(card.title)} 分頁">
+            <div class="flex items-start justify-between gap-2">
+                <div>
+                    <h3 class="text-lg font-bold leading-tight">${escapeHtml(card.title)}</h3>
+                    <p class="mt-0.5 text-xs text-stone-500">${escapeHtml(card.subtitle || "")}</p>
+                </div>
+                <span class="pill bg-stone-100 text-stone-600">${escapeHtml(CASE_STATUS_LABEL[card.status] || "列管中")}</span>
+            </div>
+            <div class="flex items-end gap-2">
+                <span class="text-3xl font-extrabold leading-none ${card.overdue || (card.nextDue?.daysLeft ?? 99) <= 7 ? "text-rose-700" : "text-stone-700"}">${cd.big}</span>
+                <span class="pb-1 text-xs leading-snug text-stone-500">${escapeHtml(card.nextDue?.dueLabel?.split("（")[0] || "")}<br>${cd.small}</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5">${pills}</div>
+            ${staffingBlock(card.staffing)}
+        </button>`;
+}
+
+/* 卡片下方那一行由資料算出來，不是寫死的文案——
+ * 人員缺口一直躺在 staffing 欄位裡，只是從來沒有人算過。 */
+function staffingHeadline(cards) {
+    const parts = cards
+        .filter((c) => c.staffing?.total && (c.staffing.notInPlace || c.staffing.provisional))
+        .map((c) => {
+            const bits = [];
+            if (c.staffing.notInPlace) bits.push(`<strong>${c.staffing.notInPlace} 個未到位</strong>`);
+            if (c.staffing.provisional) bits.push(`${c.staffing.provisional} 個暫代`);
+            const due = typeof c.nextDue?.daysLeft === "number" ? `（剩 ${c.nextDue.daysLeft} 天）` : "";
+            return `${escapeHtml(c.title)} ${c.staffing.total} 個職務，${bits.join("、")}${due}`;
+        });
+    if (!parts.length) return "";
+    return `<p class="mt-4 rounded-xl bg-amber-50 px-4 py-2.5 text-xs text-amber-900"><strong>人員缺口：</strong>${parts.join("；")}。</p>`;
+}
+
+function renderCaseOverview() {
+    if (!caseOverviewRoot) return;
+    const cards = state.payload.caseOverview || [];
+    if (!cards.length) { caseOverviewRoot.innerHTML = ""; return; }
+    caseOverviewRoot.innerHTML = `
+        <section class="panel rounded-[28px] p-5 lg:p-6">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Four Cases at a Glance</p>
+                    <h2 class="text-2xl font-bold">四案現況　<span class="text-sm font-semibold text-stone-500">依急迫度排序</span></h2>
+                </div>
+                <p class="text-xs text-stone-500">點任一案 → 切到該案分頁</p>
+            </div>
+            <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                ${cards.map(renderCaseCard).join("")}
+            </div>
+            ${staffingHeadline(cards)}
+        </section>`;
+    caseOverviewRoot.querySelectorAll("[data-case]").forEach((button) => {
+        button.addEventListener("click", () => {
+            state.activeSection = button.dataset.case;
+            render();
+            document.getElementById("section-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    });
+}
+
 
 function renderSummary() {
     const payload = state.payload;
@@ -511,8 +643,9 @@ function renderSections() {
 function render() {
     renderSummary();
     renderAnchors();
-    renderSections();   // 會把 state.activeSection 正規化
-    renderInsights();   // 故須在其後，才知道目前在哪一頁
+    renderSections();      // 會把 state.activeSection 正規化
+    renderInsights();      // 故須在其後，才知道目前在哪一頁
+    renderCaseOverview();  // 同理：卡片要標示目前選中的案
 }
 
 async function init() {

@@ -67,6 +67,28 @@
             transition: transform 0.18s ease;
         }
         details[open] > .insight-summary .insight-chev { transform: rotate(90deg); }
+        /* 四案現況卡 */
+        .case-card {
+            border: 1px solid var(--line);
+            border-top: 6px solid var(--teal);
+            border-radius: 18px;
+            background: var(--panel);
+            box-shadow: 0 10px 28px rgba(98, 72, 44, 0.07);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+        .case-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(98,72,44,0.14); }
+        .case-card:focus-visible { outline: 3px solid rgba(31,118,110,0.35); outline-offset: 3px; }
+        .case-card.tone-hot  { border-top-color: #be3f36; }
+        .case-card.tone-warn { border-top-color: #c8892a; }
+        .case-card.tone-idle { border-top-color: #b7b2a7; opacity: 0.72; }
+        .case-card.is-active { box-shadow: 0 0 0 2px #1f2937, 0 18px 40px rgba(98,72,44,0.14); }
+        .staff-bar { display: flex; height: 9px; border-radius: 999px; overflow: hidden; background: #ece9e2; }
         .tab-strip {
             display: flex;
             gap: 0.5rem;
@@ -120,6 +142,9 @@
             </div>
         </header>
 
+        <!-- 四案並排總覽，依急迫度排序（2026-09-13 新增） -->
+        <section id="caseOverview"></section>
+
         <section class="panel rounded-[28px] p-5 lg:p-6">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div>
@@ -140,6 +165,6 @@
         </main>
     </div>
 
-    <script src="./taipower_4in1_audit.js?v=20260913-commononly"></script>
+    <script src="./taipower_4in1_audit.js?v=20260913-cases"></script>
 </body>
 </html>

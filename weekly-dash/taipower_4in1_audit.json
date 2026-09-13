@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13 09:09:52 +0800",
+  "generatedAt": "2026-09-13 16:13:45 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
@@ -36,6 +36,95 @@
     "inprogress": "進行中",
     "notstarted": "未啟動"
   },
+  "caseOverview": [
+    {
+      "key": "guanyin",
+      "title": "觀音中大案",
+      "subtitle": "161kV大潭（乙）~觀音線改接至中大",
+      "status": "active",
+      "pending": 13,
+      "major": 5,
+      "blocked": 1,
+      "overdue": 0,
+      "staffing": {
+        "total": 7,
+        "inPlace": 7,
+        "provisional": 0,
+        "notInPlace": 0
+      },
+      "nextDue": {
+        "task": "觀音中大線監造派駐啟動",
+        "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
+        "dueDate": "2026-09-14",
+        "daysLeft": 1
+      },
+      "rank": 1
+    },
+    {
+      "key": "guangfeng",
+      "title": "廣豐D/S案",
+      "subtitle": "廣豐D/S新建工程（土建統包）",
+      "status": "recruiting",
+      "pending": 6,
+      "major": 3,
+      "blocked": 0,
+      "overdue": 0,
+      "staffing": {
+        "total": 8,
+        "inPlace": 2,
+        "provisional": 0,
+        "notInPlace": 6
+      },
+      "nextDue": {
+        "task": "廣豐D/S監造派駐啟動",
+        "dueLabel": "115/10/01（起始會議確認）",
+        "dueDate": "2026-10-01",
+        "daysLeft": 18
+      },
+      "rank": 2
+    },
+    {
+      "key": "longxian",
+      "title": "龍顯聖亭案",
+      "subtitle": "161kV龍顯~聖亭線（第五工區）",
+      "status": "active",
+      "pending": 14,
+      "major": 5,
+      "blocked": 0,
+      "overdue": 0,
+      "staffing": {
+        "total": 7,
+        "inPlace": 2,
+        "provisional": 3,
+        "notInPlace": 2
+      },
+      "nextDue": {
+        "task": "龍顯聖亭線監造派駐啟動",
+        "dueLabel": "115/10/01（起始會議確認）",
+        "dueDate": "2026-10-01",
+        "daysLeft": 18
+      },
+      "rank": 3
+    },
+    {
+      "key": "nangang",
+      "title": "南港P/S案",
+      "subtitle": "南港P/S改建工程（土建統包）",
+      "status": "paused",
+      "pending": 6,
+      "major": 2,
+      "blocked": 0,
+      "overdue": 0,
+      "staffing": {
+        "total": 0,
+        "inPlace": 0,
+        "provisional": 0,
+        "notInPlace": 0
+      },
+      "nextDue": {},
+      "rank": 4
+    }
+  ],
   "fineRanking": [
     {
       "task": "PCCES預算書/細目編碼正確率審查",
