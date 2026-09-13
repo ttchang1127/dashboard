@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13 08:05:47 +0800",
+  "generatedAt": "2026-09-13 09:09:52 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
@@ -591,7 +591,7 @@
   ],
   "sections": [
     {
-      "key": "site_event",
+      "key": "common",
       "title": "共同項目",
       "subtitle": "四案共通的簽約、開工前、施工、驗收與請款列管",
       "status": "active",
@@ -3790,13 +3790,51 @@
       ]
     },
     {
-      "key": "site_event",
+      "key": "guanyin",
       "title": "觀音中大案",
       "subtitle": "161kV大潭（乙）~觀音線改接至中大",
       "status": "active",
       "note": "",
-      "staffing": [],
-      "staffingPlan": [],
+      "staffing": [
+        {
+          "role": "監造主任",
+          "person": "巍耀"
+        },
+        {
+          "role": "主辦監造工程師",
+          "person": "小梅"
+        },
+        {
+          "role": "協辦監造工程師",
+          "person": "詩雨"
+        },
+        {
+          "role": "協辦監造工程員",
+          "person": "品圻"
+        },
+        {
+          "role": "文書人員／工務助理",
+          "person": "凱馨"
+        },
+        {
+          "role": "職安人員",
+          "person": "潘國揚"
+        },
+        {
+          "role": "管理人員",
+          "person": "增糴"
+        }
+      ],
+      "staffingPlan": [
+        {
+          "phase": "開工前",
+          "plan": "1管理人員 + 1主任 + 1協辦監造 + 1文書"
+        },
+        {
+          "phase": "開工後",
+          "plan": "1管理人員 + 1主任 + 1主辦監造 + 1協辦監造 + 1協辦監造員 + 1職安 + 1文書"
+        }
+      ],
       "counts": {
         "active": 1,
         "pending": 13,
@@ -4465,13 +4503,51 @@
       "officeMapUrl": "https://maps.app.goo.gl/xVZtS1AR6v633HCv9"
     },
     {
-      "key": "site_event",
+      "key": "longxian",
       "title": "龍顯聖亭案",
       "subtitle": "161kV龍顯~聖亭線（第五工區）",
       "status": "active",
       "note": "",
-      "staffing": [],
-      "staffingPlan": [],
+      "staffing": [
+        {
+          "role": "監造主任",
+          "person": "尚東（暫代到11月中，之後由邱法忠擔任主任；邱法忠取得證照回訓11/5、營造甲業9/9）"
+        },
+        {
+          "role": "主辦監造工程師",
+          "person": "尚東"
+        },
+        {
+          "role": "協辦監造工程師",
+          "person": "紀光耀（預計10/5（一）報到）"
+        },
+        {
+          "role": "協辦監造工程員",
+          "person": "繼中（暫排）"
+        },
+        {
+          "role": "文書人員／工務助理",
+          "person": "宗霆暫代，黃雲潔（104招募，尚未報到，暫定9/29報到）"
+        },
+        {
+          "role": "職安人員",
+          "person": "黃忠台（104尚未報到，10/1報到）"
+        },
+        {
+          "role": "管理人員",
+          "person": "增糴"
+        }
+      ],
+      "staffingPlan": [
+        {
+          "phase": "開工前",
+          "plan": "1管理人員 + 1主任 + 1協辦監造 + 1文書"
+        },
+        {
+          "phase": "開工後",
+          "plan": "1管理人員 + 1主任 + 1主辦監造 + 1協辦監造 + 1協辦監造員 + 1職安 + 1文書"
+        }
+      ],
       "counts": {
         "active": 1,
         "pending": 14,
@@ -5153,13 +5229,55 @@
       ]
     },
     {
-      "key": "waiting_notice",
+      "key": "guangfeng",
       "title": "廣豐D/S案",
       "subtitle": "廣豐D/S新建工程（土建統包）",
       "status": "recruiting",
       "note": "",
-      "staffing": [],
-      "staffingPlan": [],
+      "staffing": [
+        {
+          "role": "監造主任",
+          "person": "鄭光宏（104尚未報到，10/5報到）"
+        },
+        {
+          "role": "建築主辦監造工程師",
+          "person": "林耀堂（10月底報到）"
+        },
+        {
+          "role": "機電主辦監造工程師",
+          "person": "管傳鈴（預計10/21（三）報到）"
+        },
+        {
+          "role": "協辦建築監造工程師",
+          "person": "李哲維（預計115/10/12報到）"
+        },
+        {
+          "role": "協辦監造工程員",
+          "person": "蘇鉦"
+        },
+        {
+          "role": "文書人員／工務助理",
+          "person": "侯品辛（104尚未報到，9/14報到）"
+        },
+        {
+          "role": "職安人員",
+          "person": "黃明秋（10/1報到）"
+        },
+        {
+          "role": "管理人員",
+          "person": "黃俊憲"
+        }
+      ],
+      "staffingPlan": [
+        {
+          "phase": "開工前2個月",
+          "plan": "1主任 + 2主辦監造（建築、機電） + 1文書"
+        },
+        {
+          "phase": "開工後",
+          "plan": "1主任 + 2主辦監造（建築、機電） + 1協辦監造（建築） + 1協辦監造員 + 1文書 + 1職安"
+        }
+      ],
       "counts": {
         "active": 1,
         "pending": 6,
@@ -5505,7 +5623,7 @@
       ]
     },
     {
-      "key": "waiting_notice",
+      "key": "nangang",
       "title": "南港P/S案",
       "subtitle": "南港P/S改建工程（土建統包）",
       "status": "paused",
