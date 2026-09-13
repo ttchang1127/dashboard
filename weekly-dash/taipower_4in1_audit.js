@@ -263,9 +263,25 @@ function renderFinePanel() {
     });
 }
 
+/* 四塊洞察只在「共同項目」分頁呈現。
+ *
+ * 它們統計的是【全案合計】，不屬於任何單一案；掛在四個案別分頁上
+ * 每切一次就重複一次，會把該案自己的內容擠下去。共同項目本來就是
+ * 跨案的那一頁，放這裡才是它們該在的位置。
+ *
+ * 因為是全案合計而非共同項目自身的數字，標題列必須標明，
+ * 否則「被阻斷 4 項」會被誤讀成共同項目有 4 項（實際共通 3、觀音中大 1）。
+ *
+ * 案別分頁不重複這四塊，但該案若有阻斷或逾期，仍會在區段計數列
+ * 顯示一格提示，避免資訊消失。 */
 function renderInsights() {
     if (!insightsRoot) return;
+    if (state.activeSection !== "common") {
+        insightsRoot.innerHTML = "";
+        return;
+    }
     insightsRoot.innerHTML = [
+        `<p class="px-2 text-xs font-semibold uppercase tracking-[0.16em] text-stone-400">以下四項為<span class="text-stone-600">全案合計</span>，非僅共同項目</p>`,
         renderBlockedPanel(),
         renderOverduePanel(),
         renderStateBar(),
@@ -435,6 +451,13 @@ function renderSection(section) {
         </p>
     ` : "";
     const staffing = renderStaffing(section);
+    // 四塊洞察只在共同項目呈現；本案若有阻斷或逾期，仍在此補一格，
+    // 讓該案分頁不會因為不重複面板而漏掉自己的風險。
+    const blockedCount = section.counts?.blocked || 0;
+    const overdueCount = section.counts?.overdue || 0;
+    const extraCount = blockedCount || overdueCount
+        ? `<div class="rounded-2xl bg-rose-100 p-3 text-center text-rose-900"><p class="text-xs">${overdueCount ? "⚠️ 逾期" : "🔴 阻斷"}</p><p class="text-xl font-bold">${overdueCount || blockedCount}</p></div>`
+        : "";
     return `
         <section id="section-panel" class="panel rounded-[28px] p-5 lg:p-6" role="tabpanel" aria-labelledby="tab-${escapeHtml(section.key)}">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -447,10 +470,11 @@ function renderSection(section) {
                     ${officeAddress}
                     ${note}
                 </div>
-                <div class="grid min-w-[260px] grid-cols-3 gap-2">
+                <div class="grid min-w-[260px] ${extraCount ? "grid-cols-4" : "grid-cols-3"} gap-2">
                     <div class="rounded-2xl bg-emerald-50 p-3 text-center text-emerald-800"><p class="text-xs">已啟動</p><p class="text-xl font-bold">${section.counts?.active || 0}</p></div>
                     <div class="rounded-2xl bg-stone-100 p-3 text-center text-stone-700"><p class="text-xs">待觸發</p><p class="text-xl font-bold">${section.counts?.pending || 0}</p></div>
                     <div class="rounded-2xl bg-rose-50 p-3 text-center text-rose-800"><p class="text-xs">重大</p><p class="text-xl font-bold">${section.counts?.major || 0}</p></div>
+                    ${extraCount}
                 </div>
             </div>
             <div class="mt-4 rounded-2xl border border-stone-200 bg-white/70 px-4 py-3 text-sm font-bold text-stone-700">${renderRiskCounts(section.counts)}</div>
@@ -486,9 +510,9 @@ function renderSections() {
 
 function render() {
     renderSummary();
-    renderInsights();
     renderAnchors();
-    renderSections();
+    renderSections();   // 會把 state.activeSection 正規化
+    renderInsights();   // 故須在其後，才知道目前在哪一頁
 }
 
 async function init() {
