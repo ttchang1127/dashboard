@@ -96,6 +96,27 @@ function renderSummary() {
  * 以下四塊補的都是「日期倒數看不出來的風險」。
  * ================================================================== */
 
+/* 洞察面板的共用外殼：可收合。
+ * 收合時 summary 仍顯示標題與關鍵數字——阻斷若連數字都藏起來，
+ * 就違背了它「讓沒人發現的上游卡點被看見」的目的。
+ * 展開的是細節（哪幾項、為什麼卡、罰多少），不是結論。 */
+function insightPanel({ tone = "", eyebrow, title, titleClass = "", meta = "", body, open = false }) {
+    return `
+        <details class="panel overflow-hidden rounded-[28px] ${tone}" ${open ? "open" : ""}>
+            <summary class="insight-summary flex cursor-pointer flex-wrap items-center gap-x-4 gap-y-1 p-5 lg:px-6">
+                <span class="insight-chev text-stone-400" aria-hidden="true">▸</span>
+                <span class="flex flex-col">
+                    <span class="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">${escapeHtml(eyebrow)}</span>
+                    <span class="text-xl font-bold ${titleClass}">${title}</span>
+                </span>
+                ${meta ? `<span class="ml-auto text-xs text-stone-500">${meta}</span>` : ""}
+            </summary>
+            <div class="border-t border-stone-200/70 p-5 lg:p-6">${body}</div>
+        </details>
+    `;
+}
+
+
 function fmtMoney(value) {
     return Number(value || 0).toLocaleString("zh-TW");
 }
@@ -126,17 +147,16 @@ function renderStateBar() {
             <span class="inline-block h-2.5 w-2.5 rounded-full ${tone[key][0]}"></span>
             ${escapeHtml(labels[key] || key)} ${counts[key] || 0}
         </span>`).join("");
-    return `
-        <section class="panel rounded-[28px] p-5 lg:p-6">
-            <div class="flex flex-col gap-1">
-                <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Paper Trail</p>
-                <h2 class="text-xl font-bold">留痕四態</h2>
-                <p class="text-xs text-stone-500">送出不等於核定。<strong class="text-amber-700">已送出 ${counts.submitted || 0} 項</strong>仍在台電手上，核定前都不算閉環。</p>
-            </div>
+    return insightPanel({
+        eyebrow: "Paper Trail",
+        title: "📮 留痕四態",
+        meta: `已送出 <strong class="text-amber-700">${counts.submitted || 0}</strong> 項未核定`,
+        body: `
+            <p class="text-xs text-stone-500">送出不等於核定。<strong class="text-amber-700">已送出 ${counts.submitted || 0} 項</strong>仍在台電手上，核定前都不算閉環。</p>
             <div class="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-stone-100">${bars}</div>
             <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2">${legend}</div>
-        </section>
-    `;
+        `
+    });
 }
 
 /* ⑤ 阻斷：日期倒數不會示警的那種風險。
@@ -154,29 +174,31 @@ function renderBlockedPanel() {
             ${item.blockedImpact ? `<p class="mt-1 text-xs text-rose-700/80">影響：${escapeHtml(item.blockedImpact)}</p>` : ""}
         </article>
     `).join("");
-    return `
-        <section class="panel rounded-[28px] border-l-8 border-l-rose-400 p-5 lg:p-6">
-            <div class="flex flex-col gap-1">
-                <p class="text-sm font-semibold uppercase tracking-[0.16em] text-rose-500">Blocked</p>
-                <h2 class="text-xl font-bold text-rose-900">🔴 被阻斷 ${items.length} 項</h2>
-                <p class="text-xs text-stone-500">上游未解，日期再遠也要先處理。這類風險<strong>倒數看板看不出來</strong>。</p>
-            </div>
+    return insightPanel({
+        tone: "border-l-8 border-l-rose-400",
+        eyebrow: "Blocked",
+        title: `🔴 被阻斷 ${items.length} 項`,
+        titleClass: "text-rose-900",
+        meta: "上游未解，日期再遠也要先處理",
+        body: `
+            <p class="text-xs text-stone-500">這類風險<strong>倒數看板看不出來</strong>——項目日期可能還很遠，或根本沒有日期。</p>
             <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">${cards}</div>
-        </section>
-    `;
+        `
+    });
 }
 
 /* ⑦ 逾期未回填：期限已過，但狀態仍不是已送出／已核定。 */
 function renderOverduePanel() {
     const items = state.payload.overdueItems || [];
     if (!items.length) {
-        return `
-        <section class="panel rounded-[28px] p-5 lg:p-6">
-            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Overdue</p>
-            <h2 class="mt-1 text-xl font-bold">⚠️ 逾期未回填　<span class="text-emerald-700">0 項</span></h2>
-            <p class="mt-2 text-xs text-stone-500">所有<strong>有明確日期</strong>的項目都已送出或核定。
-            注意：110 項待觸發沒有日期，不在本檢查範圍；提醒清單以外的內部倒推日（如各交付包的啟動日）亦未納入。</p>
-        </section>`;
+        return insightPanel({
+            eyebrow: "Overdue",
+            title: `⚠️ 逾期未回填 <span class="text-emerald-700">0 項</span>`,
+            meta: "有日期的項目都已送出或核定",
+            body: `<p class="text-xs text-stone-500">所有<strong>有明確日期</strong>的項目都已送出或核定。
+            但 <strong>0 不等於沒有東西遲到</strong>：110 項待觸發沒有日期，不在本檢查範圍；
+            提醒清單以外的內部倒推日（如各交付包的啟動日）亦未納入。</p>`
+        });
     }
     const rows = items.map((item) => `
         <tr class="border-t border-stone-200">
@@ -185,16 +207,18 @@ function renderOverduePanel() {
             <td class="py-2 pr-3 text-xs text-stone-500">${escapeHtml(item.dueLabel || "")}</td>
             <td class="py-2 text-xs text-stone-500">${escapeHtml(item.fine || "—")}</td>
         </tr>`).join("");
-    return `
-        <section class="panel rounded-[28px] border-l-8 border-l-orange-400 p-5 lg:p-6">
-            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-orange-500">Overdue</p>
-            <h2 class="mt-1 text-xl font-bold text-orange-900">⚠️ 逾期未回填 ${items.length} 項</h2>
-            <p class="mt-2 text-xs text-stone-500">期限已過，但狀態仍非「已送出」或「已核定」。</p>
-            <div class="mt-4 overflow-x-auto">
+    return insightPanel({
+        tone: "border-l-8 border-l-orange-400",
+        eyebrow: "Overdue",
+        title: `⚠️ 逾期未回填 ${items.length} 項`,
+        titleClass: "text-orange-900",
+        meta: "期限已過，狀態仍非已送出／已核定",
+        body: `
+            <div class="overflow-x-auto">
                 <table class="w-full min-w-[560px] text-left"><tbody>${rows}</tbody></table>
             </div>
-        </section>
-    `;
+        `
+    });
 }
 
 /* ③ 罰則排行：拆「按期累計」與「單次重罰」兩張。
@@ -217,11 +241,13 @@ function renderFinePanel() {
             <td class="py-2 pr-3 text-sm">${escapeHtml(item.task)}</td>
             <td class="py-2 text-xs text-stone-500">${escapeHtml(item.fine || "")}</td>
         </tr>`).join("");
-    return `
-        <section class="panel rounded-[28px] p-5 lg:p-6">
-            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Penalty Exposure</p>
-            <h2 class="mt-1 text-xl font-bold">💰 罰則單價排行</h2>
-            <p class="mt-2 text-xs text-stone-500">下列是<strong>單價</strong>不是累計金額——實際曝險 ＝ 單價 × 天數／次數／人數，發生幾次無法從清單得知。</p>
+    const top = rated[0];
+    return insightPanel({
+        eyebrow: "Penalty Exposure",
+        title: "💰 罰則單價排行",
+        meta: top ? `按期最高 <strong class="text-rose-700">${fmtMoney(top.amount)}/${escapeHtml(top.unit)}</strong>` : "",
+        body: `
+            <p class="text-xs text-stone-500">下列是<strong>單價</strong>不是累計金額——實際曝險 ＝ 單價 × 天數／次數／人數，發生幾次無法從清單得知。</p>
             <div class="mt-5 grid grid-cols-1 gap-6 xl:grid-cols-2">
                 <div>
                     <h3 class="text-sm font-bold text-rose-800">按期累計（拖越久越多）</h3>
@@ -233,8 +259,8 @@ function renderFinePanel() {
                     ${nonmon.length ? `<p class="mt-3 text-xs text-stone-500">非金錢罰則：${nonmon.map(escapeHtml).join("、")}</p>` : ""}
                 </div>
             </div>
-        </section>
-    `;
+        `
+    });
 }
 
 function renderInsights() {

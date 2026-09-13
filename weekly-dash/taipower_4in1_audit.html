@@ -52,6 +52,21 @@
             color: white;
             border-color: var(--ink);
         }
+        /* 洞察面板收合 */
+        .insight-summary { list-style: none; }
+        .insight-summary::-webkit-details-marker { display: none; }
+        .insight-summary:hover .insight-chev { color: var(--teal); }
+        .insight-summary:focus-visible {
+            outline: 3px solid rgba(31, 118, 110, 0.35);
+            outline-offset: -3px;
+            border-radius: 28px;
+        }
+        .insight-chev {
+            display: inline-block;
+            font-size: 1.1rem;
+            transition: transform 0.18s ease;
+        }
+        details[open] > .insight-summary .insight-chev { transform: rotate(90deg); }
         .tab-strip {
             display: flex;
             gap: 0.5rem;
@@ -125,6 +140,6 @@
         </main>
     </div>
 
-    <script src="./taipower_4in1_audit.js?v=20260913-insights"></script>
+    <script src="./taipower_4in1_audit.js?v=20260913-collapse"></script>
 </body>
 </html>
