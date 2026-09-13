@@ -9,6 +9,7 @@ const metaText = document.getElementById("metaText");
 const summaryGrid = document.getElementById("summaryGrid");
 const anchorBar = document.getElementById("anchorBar");
 const sectionsRoot = document.getElementById("sections");
+const insightsRoot = document.getElementById("insights");
 
 function escapeHtml(value) {
     return String(value || "")
@@ -74,15 +75,178 @@ function renderSummary() {
         payload.source ? `來源 ${payload.source}` : ""
     ].filter(Boolean).join("｜");
 
+    // 原本紅／橘／黃三卡長期都是 0，佔掉一半版面卻不帶訊息；
+    // 換成真正會出事的三個數字，燈號改用一行摘要呈現。
+    const stateCounts = payload.stateCounts || {};
     summaryGrid.innerHTML = [
         renderStat("已啟動項目", `${summary.active || 0} 項`, "text-teal-700"),
         renderStat("待觸發項目", `${summary.pending || 0} 項`, "text-stone-700"),
         renderStat("重大事項", `${summary.major || 0} 項`, "text-rose-700"),
-        renderStat("🔴 紅燈", `${summary.red || 0} 項`, "text-rose-700"),
-        renderStat("🟠 橘燈", `${summary.orange || 0} 項`, "text-orange-700"),
-        renderStat("🟡 黃燈", `${summary.yellow || 0} 項`, "text-amber-700")
+        renderStat("🔴 被阻斷", `${summary.blocked || 0} 項`, "text-rose-700"),
+        renderStat("⚠️ 逾期未回填", `${summary.overdue || 0} 項`, "text-orange-700"),
+        renderStat("📮 已送出未核定", `${stateCounts.submitted || 0} 項`, "text-amber-700")
     ].join("");
 }
+
+/* ==================================================================
+ * 跨案洞察區（2026-09-13 新增）
+ *
+ * 背景：114 項裡只有 4 項有日期，其餘 110 項是沒有日期的「待觸發」，
+ * 倒數看板抓不到——於是頁面最大的數字反而最不能行動。
+ * 以下四塊補的都是「日期倒數看不出來的風險」。
+ * ================================================================== */
+
+function fmtMoney(value) {
+    return Number(value || 0).toLocaleString("zh-TW");
+}
+
+/* ⑥ 留痕四態：未啟動 → 進行中 → 已送出 → 已核定
+ * 原本只有兩態，看不出「已送出但還沒核定」——而那正是最危險的一段，
+ * 因為送出去之後很容易就當成沒事了。 */
+function renderStateBar() {
+    const payload = state.payload;
+    const counts = payload.stateCounts || {};
+    const labels = payload.stateLabels || {};
+    const order = ["notstarted", "inprogress", "submitted", "approved"];
+    const tone = {
+        notstarted: ["bg-stone-200", "text-stone-600"],
+        inprogress: ["bg-sky-300", "text-sky-800"],
+        submitted: ["bg-amber-300", "text-amber-800"],
+        approved: ["bg-emerald-400", "text-emerald-800"]
+    };
+    const total = order.reduce((sum, key) => sum + (counts[key] || 0), 0) || 1;
+    const bars = order.map((key) => {
+        const value = counts[key] || 0;
+        const pct = (value / total) * 100;
+        if (!value) return "";
+        return `<div class="${tone[key][0]} h-full" style="width:${pct}%" title="${escapeHtml(labels[key] || key)} ${value} 項"></div>`;
+    }).join("");
+    const legend = order.map((key) => `
+        <span class="inline-flex items-center gap-1.5 text-xs font-bold ${tone[key][1]}">
+            <span class="inline-block h-2.5 w-2.5 rounded-full ${tone[key][0]}"></span>
+            ${escapeHtml(labels[key] || key)} ${counts[key] || 0}
+        </span>`).join("");
+    return `
+        <section class="panel rounded-[28px] p-5 lg:p-6">
+            <div class="flex flex-col gap-1">
+                <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Paper Trail</p>
+                <h2 class="text-xl font-bold">留痕四態</h2>
+                <p class="text-xs text-stone-500">送出不等於核定。<strong class="text-amber-700">已送出 ${counts.submitted || 0} 項</strong>仍在台電手上，核定前都不算閉環。</p>
+            </div>
+            <div class="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-stone-100">${bars}</div>
+            <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2">${legend}</div>
+        </section>
+    `;
+}
+
+/* ⑤ 阻斷：日期倒數不會示警的那種風險。
+ * 逾期罰款通常不是忘記，而是上游卡住了卻沒人發現。 */
+function renderBlockedPanel() {
+    const items = state.payload.blockedItems || [];
+    if (!items.length) return "";
+    const cards = items.map((item) => `
+        <article class="rounded-2xl border border-rose-200 bg-rose-50/70 p-4">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+                <h4 class="text-base font-bold leading-snug text-rose-900">${escapeHtml(item.task)}</h4>
+                <span class="pill border-rose-300 bg-white text-rose-700">卡在 ${escapeHtml(item.blockedOwner || "未指定")}</span>
+            </div>
+            <p class="mt-2 text-sm text-rose-800">${escapeHtml(item.blockedReason || "")}</p>
+            ${item.blockedImpact ? `<p class="mt-1 text-xs text-rose-700/80">影響：${escapeHtml(item.blockedImpact)}</p>` : ""}
+        </article>
+    `).join("");
+    return `
+        <section class="panel rounded-[28px] border-l-8 border-l-rose-400 p-5 lg:p-6">
+            <div class="flex flex-col gap-1">
+                <p class="text-sm font-semibold uppercase tracking-[0.16em] text-rose-500">Blocked</p>
+                <h2 class="text-xl font-bold text-rose-900">🔴 被阻斷 ${items.length} 項</h2>
+                <p class="text-xs text-stone-500">上游未解，日期再遠也要先處理。這類風險<strong>倒數看板看不出來</strong>。</p>
+            </div>
+            <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">${cards}</div>
+        </section>
+    `;
+}
+
+/* ⑦ 逾期未回填：期限已過，但狀態仍不是已送出／已核定。 */
+function renderOverduePanel() {
+    const items = state.payload.overdueItems || [];
+    if (!items.length) {
+        return `
+        <section class="panel rounded-[28px] p-5 lg:p-6">
+            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Overdue</p>
+            <h2 class="mt-1 text-xl font-bold">⚠️ 逾期未回填　<span class="text-emerald-700">0 項</span></h2>
+            <p class="mt-2 text-xs text-stone-500">所有<strong>有明確日期</strong>的項目都已送出或核定。
+            注意：110 項待觸發沒有日期，不在本檢查範圍；提醒清單以外的內部倒推日（如各交付包的啟動日）亦未納入。</p>
+        </section>`;
+    }
+    const rows = items.map((item) => `
+        <tr class="border-t border-stone-200">
+            <td class="py-2 pr-3 text-sm font-bold text-rose-800">逾期 ${item.overdueDays} 天</td>
+            <td class="py-2 pr-3 text-sm font-semibold">${escapeHtml(item.task)}</td>
+            <td class="py-2 pr-3 text-xs text-stone-500">${escapeHtml(item.dueLabel || "")}</td>
+            <td class="py-2 text-xs text-stone-500">${escapeHtml(item.fine || "—")}</td>
+        </tr>`).join("");
+    return `
+        <section class="panel rounded-[28px] border-l-8 border-l-orange-400 p-5 lg:p-6">
+            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-orange-500">Overdue</p>
+            <h2 class="mt-1 text-xl font-bold text-orange-900">⚠️ 逾期未回填 ${items.length} 項</h2>
+            <p class="mt-2 text-xs text-stone-500">期限已過，但狀態仍非「已送出」或「已核定」。</p>
+            <div class="mt-4 overflow-x-auto">
+                <table class="w-full min-w-[560px] text-left"><tbody>${rows}</tbody></table>
+            </div>
+        </section>
+    `;
+}
+
+/* ③ 罰則排行：拆「按期累計」與「單次重罰」兩張。
+ * 混在一起排序會誤導——30萬看起來最大，但 2,000/日 拖一年就是 73萬。 */
+function renderFinePanel() {
+    const payload = state.payload;
+    const rated = payload.fineRanking || [];
+    const oneoff = payload.fineOneOff || [];
+    const nonmon = payload.nonMonetaryFines || [];
+    if (!rated.length && !oneoff.length) return "";
+    const ratedRows = rated.map((item) => `
+        <tr class="border-t border-stone-200">
+            <td class="whitespace-nowrap py-2 pr-3 text-sm font-bold text-rose-700">${fmtMoney(item.amount)}<span class="text-xs font-semibold text-stone-500"> /${escapeHtml(item.unit)}</span></td>
+            <td class="py-2 pr-3 text-sm">${escapeHtml(item.task)}${item.major ? ` <span class="pill border-rose-200 bg-rose-50 text-rose-700">重大</span>` : ""}</td>
+            <td class="py-2 text-xs text-stone-500">${escapeHtml(item.basis || "—")}</td>
+        </tr>`).join("");
+    const oneoffRows = oneoff.map((item) => `
+        <tr class="border-t border-stone-200">
+            <td class="whitespace-nowrap py-2 pr-3 text-sm font-bold text-stone-700">${fmtMoney(item.amount)}</td>
+            <td class="py-2 pr-3 text-sm">${escapeHtml(item.task)}</td>
+            <td class="py-2 text-xs text-stone-500">${escapeHtml(item.fine || "")}</td>
+        </tr>`).join("");
+    return `
+        <section class="panel rounded-[28px] p-5 lg:p-6">
+            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Penalty Exposure</p>
+            <h2 class="mt-1 text-xl font-bold">💰 罰則單價排行</h2>
+            <p class="mt-2 text-xs text-stone-500">下列是<strong>單價</strong>不是累計金額——實際曝險 ＝ 單價 × 天數／次數／人數，發生幾次無法從清單得知。</p>
+            <div class="mt-5 grid grid-cols-1 gap-6 xl:grid-cols-2">
+                <div>
+                    <h3 class="text-sm font-bold text-rose-800">按期累計（拖越久越多）</h3>
+                    <div class="mt-2 overflow-x-auto"><table class="w-full min-w-[420px] text-left"><tbody>${ratedRows}</tbody></table></div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-stone-700">單次重罰（一次計罰）</h3>
+                    <div class="mt-2 overflow-x-auto"><table class="w-full min-w-[420px] text-left"><tbody>${oneoffRows}</tbody></table></div>
+                    ${nonmon.length ? `<p class="mt-3 text-xs text-stone-500">非金錢罰則：${nonmon.map(escapeHtml).join("、")}</p>` : ""}
+                </div>
+            </div>
+        </section>
+    `;
+}
+
+function renderInsights() {
+    if (!insightsRoot) return;
+    insightsRoot.innerHTML = [
+        renderBlockedPanel(),
+        renderOverduePanel(),
+        renderStateBar(),
+        renderFinePanel()
+    ].join("");
+}
+
 
 function renderAnchors() {
     const sections = state.payload.sections || [];
@@ -123,17 +287,19 @@ function renderActiveItem(item) {
     `;
 }
 
-function renderPendingItem(item) {
+// inGroup=true 時，群組標題已寫明觸發源，卡片改顯示條文出處，避免整欄重複同一行字
+function renderPendingItem(item, inGroup) {
     const manager = item.manager ? ` / 副理：${escapeHtml(item.manager)}` : "";
     const major = item.major ? `<span class="pill border-rose-200 bg-rose-50 text-rose-700">重大</span>` : "";
+    const blocked = item.blocked ? `<span class="pill border-rose-300 bg-rose-100 text-rose-800">🔴 阻斷</span>` : "";
     return `
         <article class="pending-card rounded-2xl p-4">
             <div class="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                    <p class="text-xs font-bold text-stone-500">${escapeHtml(item.heading || "待觸發")}</p>
+                    <p class="text-xs font-bold text-stone-500">${escapeHtml(inGroup ? (item.heading || "") : (item.triggerLabel || item.heading || "待觸發"))}</p>
                     <h4 class="mt-1 text-base font-bold leading-snug">${escapeHtml(item.task)}</h4>
                 </div>
-                ${major}
+                <div class="flex flex-wrap items-start gap-1.5">${blocked}${major}</div>
             </div>
             <p class="mt-3 text-sm text-stone-600">基準：${escapeHtml(item.dueLabel || "待確認")}</p>
             <p class="mt-1 text-sm text-stone-600">負責：${escapeHtml(item.owner || "未指定")}${manager}</p>
@@ -191,6 +357,47 @@ function renderStaffing(section) {
     return planMarkup || peopleMarkup ? `${planMarkup}${peopleMarkup}` : "";
 }
 
+/* ④ 待觸發依「觸發源」分群。
+ * 原本的 heading 是「六、分案施工階段待觸發事項」這種條文編號，
+ * 對看的人沒有意義；改成回答「這件事在等誰」，才分得出
+ * 哪些我能推、哪些只能等。預設只展開第一組，其餘收合。 */
+const TRIGGER_TONE = {
+    waiting_taipower: ["border-sky-200", "bg-sky-50", "text-sky-800"],
+    waiting_notice: ["border-sky-200", "bg-sky-50", "text-sky-800"],
+    waiting_contractor: ["border-violet-200", "bg-violet-50", "text-violet-800"],
+    periodic_self: ["border-emerald-200", "bg-emerald-50", "text-emerald-800"],
+    personnel: ["border-teal-200", "bg-teal-50", "text-teal-800"],
+    site_event: ["border-amber-200", "bg-amber-50", "text-amber-800"],
+    closeout: ["border-stone-200", "bg-stone-50", "text-stone-700"],
+    other: ["border-stone-200", "bg-stone-50", "text-stone-700"]
+};
+
+function renderTriggerGroups(section) {
+    const groups = section.triggerGroups || [];
+    if (!groups.length) {
+        return `<div class="mt-3 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-sm font-semibold text-stone-500">目前無待觸發項目</div>`;
+    }
+    return `<div class="mt-3 space-y-3">` + groups.map((group, index) => {
+        const tone = TRIGGER_TONE[group.key] || TRIGGER_TONE.other;
+        const blockedCount = group.items.filter((item) => item.blocked).length;
+        return `
+        <details class="rounded-2xl border ${tone[0]} ${tone[1]}" ${index === 0 ? "open" : ""}>
+            <summary class="flex cursor-pointer flex-wrap items-center justify-between gap-2 px-4 py-3">
+                <span class="text-sm font-bold ${tone[2]}">${escapeHtml(group.label)}</span>
+                <span class="flex flex-wrap items-center gap-1.5">
+                    ${blockedCount ? `<span class="pill border-rose-300 bg-rose-100 text-rose-800">🔴 ${blockedCount}</span>` : ""}
+                    ${group.major ? `<span class="pill border-rose-200 bg-white text-rose-700">重大 ${group.major}</span>` : ""}
+                    <span class="pill border-stone-300 bg-white ${tone[2]}">${group.count} 項</span>
+                </span>
+            </summary>
+            <div class="grid grid-cols-1 gap-3 px-4 pb-4 lg:grid-cols-2">
+                ${group.items.map((item) => renderPendingItem(item, true)).join("")}
+            </div>
+        </details>`;
+    }).join("") + `</div>`;
+}
+
+
 function renderSection(section) {
     const activeItems = section.activeItems || [];
     const pendingItems = section.pendingItems || [];
@@ -231,10 +438,9 @@ function renderSection(section) {
                     </div>
                 </div>
                 <div>
-                    <h4 class="text-sm font-bold uppercase tracking-[0.14em] text-stone-500">待觸發項目</h4>
-                    <div class="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
-                        ${pendingItems.length ? pendingItems.map(renderPendingItem).join("") : `<div class="rounded-2xl border border-stone-200 bg-stone-50 p-4 text-sm font-semibold text-stone-500">目前無待觸發項目</div>`}
-                    </div>
+                    <h4 class="text-sm font-bold uppercase tracking-[0.14em] text-stone-500">待觸發項目 — 依「在等誰」分群</h4>
+                    <p class="mt-1 text-xs text-stone-500">原本依條文章節編號排列，看不出哪些能自己推、哪些在等別人。</p>
+                    ${renderTriggerGroups(section)}
                 </div>
             </div>
         </section>
@@ -254,6 +460,7 @@ function renderSections() {
 
 function render() {
     renderSummary();
+    renderInsights();
     renderAnchors();
     renderSections();
 }

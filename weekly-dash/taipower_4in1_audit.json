@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-11 18:12:44 +0800",
+  "generatedAt": "2026-09-13 08:05:47 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
@@ -20,11 +20,578 @@
     "red": 0,
     "orange": 0,
     "yellow": 1,
-    "green": 3
+    "green": 3,
+    "blocked": 4,
+    "overdue": 0
   },
+  "stateCounts": {
+    "approved": 2,
+    "submitted": 12,
+    "inprogress": 4,
+    "notstarted": 110
+  },
+  "stateLabels": {
+    "approved": "已核定",
+    "submitted": "已送出",
+    "inprogress": "進行中",
+    "notstarted": "未啟動"
+  },
+  "fineRanking": [
+    {
+      "task": "PCCES預算書/細目編碼正確率審查",
+      "fine": "千分之一/日",
+      "amount": 250000,
+      "unit": "日",
+      "basis": "工作說明書5.7／契約第9條(十四)；正確率須達40%",
+      "major": false
+    },
+    {
+      "task": "估驗計價審核",
+      "fine": "千分之一/日",
+      "amount": 250000,
+      "unit": "日",
+      "basis": "工作說明書4.1.19／契約13條",
+      "major": true
+    },
+    {
+      "task": "勞工職災求償處理",
+      "fine": "懲罰性違約金6萬/日，上限600萬",
+      "amount": 60000,
+      "unit": "日",
+      "basis": "契約15.1.4",
+      "major": true
+    },
+    {
+      "task": "工期展延/趕工計畫審查",
+      "fine": "展延10,000/日",
+      "amount": 10000,
+      "unit": "日",
+      "basis": "罰則13.17",
+      "major": false
+    },
+    {
+      "task": "大潭觀音各期工期管控",
+      "fine": "展延10,000/日",
+      "amount": 10000,
+      "unit": "日",
+      "basis": "工作說明書5.2.4／罰則13.17",
+      "major": false
+    },
+    {
+      "task": "龍顯各期工期管控",
+      "fine": "展延10,000/日",
+      "amount": 10000,
+      "unit": "日",
+      "basis": "工作說明書5.2.3／罰則13.17",
+      "major": false
+    },
+    {
+      "task": "廣豐各期工期起訖管控",
+      "fine": "展延10,000/日",
+      "amount": 10000,
+      "unit": "日",
+      "basis": "工作說明書5.2.2／罰則13.17",
+      "major": false
+    },
+    {
+      "task": "南港各期工期起訖管控",
+      "fine": "展延10,000/日",
+      "amount": 10000,
+      "unit": "日",
+      "basis": "工作說明書5.2.1／罰則13.17",
+      "major": false
+    }
+  ],
+  "fineOneOff": [
+    {
+      "task": "工程施工查核小組查核配合",
+      "fine": "乙等10萬/丙等30萬+扣點",
+      "amount": 300000,
+      "unit": "",
+      "basis": "罰則13.15",
+      "major": true
+    },
+    {
+      "task": "大潭觀音施工損壞管線通報",
+      "fine": "遲報5萬/匿報15萬（關鍵10/30萬）",
+      "amount": 300000,
+      "unit": "",
+      "basis": "工作說明書4.6四、九",
+      "major": true
+    },
+    {
+      "task": "龍顯施工損壞管線通報",
+      "fine": "遲報5萬/匿報15萬（關鍵10/30萬）",
+      "amount": 300000,
+      "unit": "",
+      "basis": "工作說明書4.6四、九",
+      "major": true
+    }
+  ],
+  "nonMonetaryFines": [
+    "暫停估驗款",
+    "追繳工程款30%"
+  ],
+  "blockedItems": [
+    {
+      "task": "專業責任保險投保及送執",
+      "dueLabel": "115/10/06（第1次估驗前；未載明者暫以決標後60日預排）",
+      "diff": 25,
+      "diffLabel": "D-25 追蹤",
+      "statusLight": "🟢",
+      "owner": "巧晴姐",
+      "manager": "孝智哥 <@911417165373136897>",
+      "major": true,
+      "fine": "2,500/日",
+      "basis": "契約第10條／罰則13.32",
+      "status": "待辦",
+      "heading": "三、簽約初期（決標日觸發）",
+      "fineParsed": {
+        "amount": 2500,
+        "unit": "日",
+        "kind": "amount",
+        "label": "2,500/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "inprogress",
+      "stateLabel": "進行中",
+      "blocked": true,
+      "blockedReason": "真正期限是「第1次估驗前」，估驗預定日未確認；115/10/06僅為暫排",
+      "blockedOwner": "我方待確認",
+      "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
+      "dueDate": "2026-10-06",
+      "daysLeft": 23
+    },
+    {
+      "task": "觀音中大線監造派駐啟動",
+      "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
+      "diff": 3,
+      "diffLabel": "D-3 提醒",
+      "statusLight": "🟡",
+      "owner": "巍耀哥 <@1486270112326615042>",
+      "manager": "巍耀哥 <@1486270112326615042>",
+      "major": true,
+      "fine": "5,000/人日",
+      "basis": "工作說明書7.3.2.1／7.3.15",
+      "status": "待辦（已收115/09/07函，115/09/14起派駐）",
+      "heading": "三、簽約初期（決標日觸發）",
+      "fineParsed": {
+        "amount": 5000,
+        "unit": "人日",
+        "kind": "amount",
+        "label": "5,000/人日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "inprogress",
+      "stateLabel": "進行中",
+      "blocked": true,
+      "blockedReason": "三道門檻全未取得核定證據（監造計畫核定／人員核准／9月出勤配置核可）",
+      "blockedOwner": "台電＋我方",
+      "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
+      "dueDate": "2026-09-14",
+      "daysLeft": 1
+    },
+    {
+      "heading": "四、開工前待觸發列管事項",
+      "task": "監造人員登錄表函報",
+      "dueLabel": "開工前；工程標已開工則決標後7日內",
+      "owner": "巧晴",
+      "manager": "孝智",
+      "major": false,
+      "fine": "5,000/人日",
+      "basis": "工作說明書7.3.15.1",
+      "status": "待觸發",
+      "fineParsed": {
+        "amount": 5000,
+        "unit": "人日",
+        "kind": "amount",
+        "label": "5,000/人日"
+      },
+      "trigger": "waiting_taipower",
+      "triggerLabel": "等台電開工／核定",
+      "state": "notstarted",
+      "stateLabel": "未啟動",
+      "blocked": true,
+      "blockedReason": "期限認定有兩讀法（開工前／工程標已開工則決標後7日內），未取得台電書面釋示",
+      "blockedOwner": "台電",
+      "blockedImpact": "若採後者，期限為115/08/14、已逾期；罰則5,000元/人日"
+    },
+    {
+      "heading": "四、開工前待觸發列管事項",
+      "task": "開工報告單",
+      "dueLabel": "開工日+3日內送甲方",
+      "owner": "巧晴",
+      "manager": "孝智",
+      "major": true,
+      "fine": "3,000/日",
+      "basis": "罰則13.1",
+      "status": "待觸發",
+      "fineParsed": {
+        "amount": 3000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "3,000/日"
+      },
+      "trigger": "waiting_taipower",
+      "triggerLabel": "等台電開工／核定",
+      "state": "notstarted",
+      "stateLabel": "未啟動",
+      "blocked": true,
+      "blockedReason": "115/09/07派駐通知函是否同時構成本工作開工通知，未經釋示",
+      "blockedOwner": "台電",
+      "blockedImpact": "期限起算日不確定；逾期13.1為3,000元/日"
+    }
+  ],
+  "overdueItems": [],
+  "trackedItems": [
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "資格證明文件正本送發包單位核對",
+      "dueLabel": "115/08/12（發包單位通知期限）",
+      "owner": "雲岳",
+      "manager": "雲岳",
+      "major": true,
+      "fine": "撤銷決標/解除契約風險",
+      "basis": "投標須知83(四)4",
+      "status": "✅ 115/08/11 雲岳已提送核對資料",
+      "fineParsed": {
+        "amount": 0,
+        "unit": "",
+        "kind": "nonmonetary",
+        "label": "撤銷決標／解除契約"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "dueDate": "2026-08-12",
+      "daysLeft": -32
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "服務實施計畫書",
+      "dueLabel": "115/08/21（決標次日+14日曆天）",
+      "owner": "巧晴",
+      "manager": "孝智",
+      "major": true,
+      "fine": "5,000/日",
+      "basis": "契約第8條第1款／第9條第9款",
+      "status": "✅ 115/08/20 已提送台電",
+      "fineParsed": {
+        "amount": 5000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "5,000/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "dueDate": "2026-08-21",
+      "daysLeft": -23
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "受僱勞工名冊及勞保投保資料",
+      "dueLabel": "115/08/21（決標次日+14日曆天）",
+      "owner": "雲岳",
+      "manager": "雲岳",
+      "major": false,
+      "fine": "—",
+      "basis": "契約第8條第11款(三)",
+      "status": "✅ 115/08/20 已提送台電",
+      "fineParsed": {
+        "amount": 0,
+        "unit": "",
+        "kind": "none",
+        "label": ""
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "dueDate": "2026-08-21",
+      "daysLeft": -23
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "管理人員及品管/職安資格證明送審",
+      "dueLabel": "115/08/21（決標次日+14日曆天，遇假日順延）",
+      "owner": "巧晴",
+      "manager": "孝智",
+      "major": true,
+      "fine": "5,000/人日",
+      "basis": "工作說明書7.1",
+      "status": "✅ 115/08/20 已提送台電",
+      "fineParsed": {
+        "amount": 5000,
+        "unit": "人日",
+        "kind": "amount",
+        "label": "5,000/人日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "dueDate": "2026-08-21",
+      "daysLeft": -23
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "履約保證金繳納",
+      "dueLabel": "115/08/21（決標日次日+14日內）",
+      "owner": "雲岳",
+      "manager": "雲岳",
+      "major": true,
+      "fine": "撤銷決標/解除契約風險",
+      "basis": "投標須知39、43、83(十)",
+      "status": "✅ 115/08/17 已繳納",
+      "fineParsed": {
+        "amount": 0,
+        "unit": "",
+        "kind": "nonmonetary",
+        "label": "撤銷決標／解除契約"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "dueDate": "2026-08-21",
+      "daysLeft": -23
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "起始會議召開",
+      "dueLabel": "115/08/14 14:30（已確認）",
+      "owner": "張增糴",
+      "manager": "",
+      "major": true,
+      "fine": "2,000/次",
+      "basis": "工作說明書4.1.28",
+      "status": "✅ 115/08/14 已召開",
+      "fineParsed": {
+        "amount": 2000,
+        "unit": "次",
+        "kind": "amount",
+        "label": "2,000/次"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "dueDate": "2026-08-14",
+      "daysLeft": -30
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "起始會議紀錄及簽到簿提送甲方確認",
+      "dueLabel": "115/08/17（會後3日內，比照4.1.28趕工會議標準）",
+      "owner": "張增糴",
+      "manager": "",
+      "major": true,
+      "fine": "2,000/次",
+      "basis": "工作說明書4.1.28／罰則13.20",
+      "status": "✅ 115/08/17 已提送甲方確認",
+      "fineParsed": {
+        "amount": 2000,
+        "unit": "次",
+        "kind": "amount",
+        "label": "2,000/次"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "dueDate": "2026-08-17",
+      "daysLeft": -27
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "監造計畫（龍顯聖亭案，含工安/品質/環保）及監督查核計畫",
+      "dueLabel": "115/08/27（決標次日+20日曆天）",
+      "owner": "尚東",
+      "manager": "囿任",
+      "major": true,
+      "fine": "2,000/日",
+      "basis": "工作說明書5.4／罰則13.2",
+      "status": "✅ 115/08/25 已提送台電",
+      "fineParsed": {
+        "amount": 2000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "2,000/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "blocked": true,
+      "blockedReason": "已送出，台電審查中，尚未核定",
+      "blockedOwner": "台電",
+      "blockedImpact": "同上；影響10/01派駐",
+      "dueDate": "2026-08-27",
+      "daysLeft": -17
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "監造計畫（觀音中大案，含工安/品質/環保）及監督查核計畫",
+      "dueLabel": "115/08/27（決標次日+20日曆天）",
+      "owner": "巍耀",
+      "manager": "巍耀",
+      "major": true,
+      "fine": "2,000/日",
+      "basis": "工作說明書5.4／罰則13.2",
+      "status": "✅ 115/08/25 已提送台電",
+      "fineParsed": {
+        "amount": 2000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "2,000/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "blocked": true,
+      "blockedReason": "已於115/08/25送出，台電審查中，尚未核定",
+      "blockedOwner": "台電",
+      "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
+      "dueDate": "2026-08-27",
+      "daysLeft": -17
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "已決標施工標案之修正監造計畫（龍顯聖亭案）",
+      "dueLabel": "115/08/27（決標次日+20日曆天）",
+      "owner": "尚東",
+      "manager": "囿任",
+      "major": false,
+      "fine": "2,000/日",
+      "basis": "工作說明書5.6",
+      "status": "✅ 115/08/25 已提送台電",
+      "fineParsed": {
+        "amount": 2000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "2,000/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "blocked": true,
+      "blockedReason": "已送出，台電審查中，尚未核定",
+      "blockedOwner": "台電",
+      "blockedImpact": "同上；影響10/01派駐",
+      "dueDate": "2026-08-27",
+      "daysLeft": -17
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "已決標施工標案之修正監造計畫（觀音中大案）",
+      "dueLabel": "115/08/27（決標次日+20日曆天）",
+      "owner": "巍耀",
+      "manager": "巍耀",
+      "major": false,
+      "fine": "2,000/日",
+      "basis": "工作說明書5.6",
+      "status": "✅ 115/08/25 已提送台電",
+      "fineParsed": {
+        "amount": 2000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "2,000/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "blocked": true,
+      "blockedReason": "已於115/08/25送出，台電審查中，尚未核定",
+      "blockedOwner": "台電",
+      "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
+      "dueDate": "2026-08-27",
+      "daysLeft": -17
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "監造計畫（廣豐D/S案，含工安/品質/環保）",
+      "dueLabel": "115/08/27（決標次日+20日曆天）",
+      "owner": "巧晴",
+      "manager": "孝智",
+      "major": true,
+      "fine": "2,000/日",
+      "basis": "工作說明書5.4／罰則13.2",
+      "status": "✅ 115/08/26 已提送台電",
+      "fineParsed": {
+        "amount": 2000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "2,000/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "blocked": true,
+      "blockedReason": "已送出，台電審查中，尚未核定",
+      "blockedOwner": "台電",
+      "blockedImpact": "同上；影響10/01派駐",
+      "dueDate": "2026-08-27",
+      "daysLeft": -17
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "監造計畫（南港P/S案，含工安/品質/環保）及職業安全衛生監督查核計畫",
+      "dueLabel": "115/08/27（決標次日+20日曆天）",
+      "owner": "巧晴",
+      "manager": "孝智",
+      "major": true,
+      "fine": "2,000/日",
+      "basis": "工作說明書5.4／罰則13.2",
+      "status": "✅ 115/09/09 已核定（北區字第1153493251號；115/08/25世技字第1150013412號送出）",
+      "fineParsed": {
+        "amount": 2000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "2,000/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "approved",
+      "stateLabel": "已核定",
+      "dueDate": "2026-08-27",
+      "daysLeft": -17
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "建築師／專業技師簽證執行計畫",
+      "dueLabel": "115/09/06（決標次日+30日；為週日順延至09/07）",
+      "owner": "巧晴",
+      "manager": "孝智",
+      "major": true,
+      "fine": "1,000~5,000/日",
+      "basis": "契約第9條／罰則13.4",
+      "status": "✅ 115/09/11 已備查（北區字第1153493404號；115/09/07世技字第1150013531號送出）",
+      "fineParsed": {
+        "amount": 5000,
+        "unit": "日",
+        "kind": "amount",
+        "label": "1,000~5,000/日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "approved",
+      "stateLabel": "已核定",
+      "dueDate": "2026-09-06",
+      "daysLeft": -7
+    }
+  ],
   "sections": [
     {
-      "key": "common",
+      "key": "site_event",
       "title": "共同項目",
       "subtitle": "四案共通的簽約、開工前、施工、驗收與請款列管",
       "status": "active",
@@ -35,11 +602,1659 @@
         "active": 1,
         "pending": 71,
         "major": 22,
+        "blocked": 3,
+        "overdue": 0,
         "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 1
       },
+      "stateCounts": {
+        "approved": 0,
+        "submitted": 0,
+        "inprogress": 1,
+        "notstarted": 71
+      },
+      "triggerGroups": [
+        {
+          "key": "personnel",
+          "label": "人員與證照報核",
+          "count": 4,
+          "major": 0,
+          "items": [
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "證照維持/回訓",
+              "dueLabel": "甲種職安、品管、乙級職安管理員逾期回訓",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/人日",
+              "basis": "工作說明書7.3.1.2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人日",
+                "kind": "amount",
+                "label": "5,000/人日"
+              },
+              "trigger": "personnel",
+              "triggerLabel": "人員與證照報核",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "監造人員進用",
+              "dueLabel": "進用日7日前報學經歷",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/人日",
+              "basis": "工作說明書7.3.5",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人日",
+                "kind": "amount",
+                "label": "5,000/人日"
+              },
+              "trigger": "personnel",
+              "triggerLabel": "人員與證照報核",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "監造人員異動報核",
+              "dueLabel": "一般異動30日前；職安/監造主任異動7日前",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/人日",
+              "basis": "工作說明書7.3.15",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人日",
+                "kind": "amount",
+                "label": "5,000/人日"
+              },
+              "trigger": "personnel",
+              "triggerLabel": "人員與證照報核",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "甲方通知更換人員",
+              "dueLabel": "接獲通知7日內報核；更換30日內完成",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/人日",
+              "basis": "工作說明書7.3.15/7.5",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人日",
+                "kind": "amount",
+                "label": "5,000/人日"
+              },
+              "trigger": "personnel",
+              "triggerLabel": "人員與證照報核",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_contractor",
+          "label": "等施工廠商送件",
+          "count": 13,
+          "major": 3,
+          "items": [
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "施工計畫書審查",
+              "dueLabel": "施工廠商提送次日+7日",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "品質計畫審查",
+              "dueLabel": "施工廠商提送次日+7日",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "職業安全衛生管理計畫審查",
+              "dueLabel": "施工廠商提送次日+7日",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "施工預定進度表/網狀圖審查",
+              "dueLabel": "施工廠商提送次日+7日",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "工程保險審查",
+              "dueLabel": "施工廠商提送次日+7日",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "營建剩餘土石方處理計畫審查",
+              "dueLabel": "施工廠商提送次日+7日",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "環境保護/生態檢核執行計畫審查",
+              "dueLabel": "施工廠商提送次日+7日",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "PCCES預算書/細目編碼正確率審查",
+              "dueLabel": "接獲廠商資料日起15日內（甲方核定5日）",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "千分之一/日",
+              "basis": "工作說明書5.7／契約第9條(十四)；正確率須達40%",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 250000,
+                "unit": "日",
+                "kind": "rate",
+                "label": "契約價金千分之一／日"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "材料設備送審",
+              "dueLabel": "施工廠商提送次日+7日；進版3日",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "材料試驗結果查察",
+              "dueLabel": "施工廠商提送次日+7日",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "2,000/次",
+              "basis": "罰則13.12",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "估驗計價審核",
+              "dueLabel": "施工廠商提送次日+7工作天",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "千分之一/日",
+              "basis": "工作說明書4.1.19／契約13條",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 250000,
+                "unit": "日",
+                "kind": "rate",
+                "label": "契約價金千分之一／日"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "工期展延/趕工計畫審查",
+              "dueLabel": "提送次日+7日",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "展延10,000/日",
+              "basis": "罰則13.17",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 10000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "展延10,000/日"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "七、完工驗收待觸發事項",
+              "task": "竣工確認/核計總工期",
+              "dueLabel": "承辦收竣工報告表後7日內會同核對",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "3,000/日；5,000/次",
+              "basis": "罰則13.1/13.3；工作說明書4.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "3,000/日；5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_notice",
+          "label": "等台電通知／指定",
+          "count": 6,
+          "major": 1,
+          "items": [
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "設計/契約變更審查",
+              "dueLabel": "甲方通知後10日內",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "工程施工查核小組查核配合",
+              "dueLabel": "依查核小組通知",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "乙等10萬/丙等30萬+扣點",
+              "basis": "罰則13.15",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 300000,
+                "unit": "",
+                "kind": "amount",
+                "label": "乙等10萬/丙等30萬+扣點"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "簡報資料準備（視察/評鑑/督導/查核/說明會）",
+              "dueLabel": "簡報日前7日或接獲通知次日",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.1.30",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "工程督導缺失改善文件",
+              "dueLabel": "機關每月督導1次；督導後7工作天內提送",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.4",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "七、完工驗收待觸發事項",
+              "task": "複驗",
+              "dueLabel": "依機關通知",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "5,000/人次",
+              "basis": "契約7.3.11",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人次",
+                "kind": "amount",
+                "label": "5,000/人次"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "九、付款與請款待觸發事項",
+              "task": "履約保證金分次發還",
+              "dueLabel": "依投標須知第83條",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "—",
+              "basis": "投標須知第83條",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "site_event",
+          "label": "現場工項觸發",
+          "count": 7,
+          "major": 3,
+          "items": [
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "災害/緊急事件速報",
+              "dueLabel": "第一時間，最遲1小時內",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "2,000/次",
+              "basis": "罰則13.9",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "施工前生態環境友善措施告知會議（表C）",
+              "dueLabel": "施工前",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.2.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "職災/緊急事件通報層級",
+              "dueLabel": "1小時內速報甲方；8小時內通報勞檢機構；死亡災害通報警察",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "2,000/次",
+              "basis": "工作說明書9.22",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "個人安全衛生防護器具配發",
+              "dueLabel": "進場前",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "—",
+              "basis": "工作說明書8.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "監造人員職前訓練12小時",
+              "dueLabel": "進場前",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "—",
+              "basis": "工作說明書7.3.6",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "健康檢查/尿液採驗",
+              "dueLabel": "進場前及定期",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "—",
+              "basis": "勞工健康保護規則／尿液採驗要點",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "勞工職災求償處理",
+              "dueLabel": "調解7日申請+首次調解會後7日和解；或求償30日內和解；求償3日內通知甲方",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": true,
+              "fine": "懲罰性違約金6萬/日，上限600萬",
+              "basis": "契約15.1.4",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 60000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "懲罰性違約金6萬/日，上限600萬"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "periodic_self",
+          "label": "我方週期義務",
+          "count": 18,
+          "major": 0,
+          "items": [
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "工作月報",
+              "dueLabel": "開工後依每月次月5日前列管",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "5,000/日",
+              "basis": "工作說明書4.2.8／契約第9條第9款(一)",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "5,000/日"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "監造報表（日/週報）",
+              "dueLabel": "開工後逐日或每週遞交前一週",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "罰則13.5",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "施工日誌審查",
+              "dueLabel": "開工後每日或監造次日審查",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "罰則13.5",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "出勤配置計畫（排班）",
+              "dueLabel": "監造計畫核定後按月5日前列管",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "工作說明書7.3.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "差勤簽到退及時數統計表",
+              "dueLabel": "開工後按月5日前列管",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "5,000/人日；不實5,000/人次",
+              "basis": "工作說明書7.6.1/7.6.12",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人日",
+                "kind": "amount",
+                "label": "5,000/人日；不實5,000/人次"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "施工標案受罰一覽表",
+              "dueLabel": "開工後按月5日前或事實發生3日內列管",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.1.32",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "檢驗停留點/施工品質抽查",
+              "dueLabel": "依核定監造計畫",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "罰則13.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "工安抽查/環保生態抽查",
+              "dueLabel": "開工後每週列管（工安每週至少5次、環保每週至少1次）",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.2.2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "生態檢核抽查（表G）",
+              "dueLabel": "每年2/5/8/11月底前（每季）",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.2.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "CCTV即時影像抽看",
+              "dueLabel": "開工後每日列管",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "依安衛罰款標準",
+              "basis": "工作說明書9.23.8",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "other",
+                "label": "依安衛罰款標準"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "施工協調會/工進會議",
+              "dueLabel": "開工後每半個月列管",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.1.28",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "內部稽核",
+              "dueLabel": "開工後每3個月列管",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書3.5.17.8",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "技術專刊",
+              "dueLabel": "每年列管，待實際期程確認",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.2.7.2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "生態檢核自評表（表5）",
+              "dueLabel": "每年3/6/9/12月中旬前（每季）",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.2.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "拌和廠驗廠及每年品質查驗",
+              "dueLabel": "每年至少1次",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書3.5.17.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "土方運送證明/事業廢棄物清理文件督導",
+              "dueLabel": "每月併月報；事業廢棄物每季結束後10日內",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.1.36／4.2.1",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "安衛監督查核（定期檢查/重點檢查/作業檢點/現場巡視）",
+              "dueLabel": "依查核計畫頻率",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "依查核計畫",
+              "basis": "工作說明書4.1.39／4.1.1",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "other",
+                "label": "依查核計畫"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "九、付款與請款待觸發事項",
+              "task": "每月估驗請款",
+              "dueLabel": "施工階段每月，待實際請款期程確認",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "—",
+              "basis": "工作說明書11.5",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_taipower",
+          "label": "等台電開工／核定",
+          "count": 9,
+          "major": 6,
+          "items": [
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "監造人員登錄表函報",
+              "dueLabel": "開工前；工程標已開工則決標後7日內",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/人日",
+              "basis": "工作說明書7.3.15.1",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人日",
+                "kind": "amount",
+                "label": "5,000/人日"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動",
+              "blocked": true,
+              "blockedReason": "期限認定有兩讀法（開工前／工程標已開工則決標後7日內），未取得台電書面釋示",
+              "blockedOwner": "台電",
+              "blockedImpact": "若採後者，期限為115/08/14、已逾期；罰則5,000元/人日"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "雇主意外責任險/團體傷害險送執",
+              "dueLabel": "通知開工後30日內",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": true,
+              "fine": "2,500/日",
+              "basis": "契約第10條",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2500,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,500/日"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "開工前施工說明會",
+              "dueLabel": "開工前",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": true,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.1.4",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "重大公共工程開工管制條件檢核表",
+              "dueLabel": "開工前",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "工作說明書4.2.4",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "四、開工前待觸發列管事項",
+              "task": "開工報告單",
+              "dueLabel": "開工日+3日內送甲方",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": true,
+              "fine": "3,000/日",
+              "basis": "罰則13.1",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 3000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "3,000/日"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動",
+              "blocked": true,
+              "blockedReason": "115/09/07派駐通知函是否同時構成本工作開工通知，未經釋示",
+              "blockedOwner": "台電",
+              "blockedImpact": "期限起算日不確定；逾期13.1為3,000元/日"
+            },
+            {
+              "heading": "五、施工階段待觸發事項",
+              "task": "期初生態檢核自評表（表3）",
+              "dueLabel": "決標後、開工前",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.2.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "九、付款與請款待觸發事項",
+              "task": "第1次估驗",
+              "dueLabel": "保險及監造計畫核定後",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "—",
+              "basis": "工作說明書11.5.2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "開工前一般安全衛生教育訓練",
+              "dueLabel": "開工前，未實施不得施工",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": true,
+              "fine": "依安衛罰款標準",
+              "basis": "承攬商安衛輔導要點46",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "other",
+                "label": "依安衛罰款標準"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "急救人員訓練18小時及設置",
+              "dueLabel": "開工前；每輪班至少1人，逾50人每增50人加1",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": true,
+              "fine": "—",
+              "basis": "教育訓練規則第15條／勞工健康保護規則第9條",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "closeout",
+          "label": "完工驗收與結案",
+          "count": 14,
+          "major": 8,
+          "items": [
+            {
+              "heading": "七、完工驗收待觸發事項",
+              "task": "初驗準備",
+              "dueLabel": "竣工後7日內",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "工作說明書4.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "七、完工驗收待觸發事項",
+              "task": "設備功能運轉測試監督",
+              "dueLabel": "依機關需求",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "罰則13.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "七、完工驗收待觸發事項",
+              "task": "工程驗收（初驗）到場",
+              "dueLabel": "初驗合格後20日內辦驗收；無初驗者30日內",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "建築師/技師未到場5,000/人次",
+              "basis": "契約7.3.11；工作說明書4.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人次",
+                "kind": "amount",
+                "label": "建築師/技師未到場5,000/人次"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "七、完工驗收待觸發事項",
+              "task": "驗收缺失改善督導",
+              "dueLabel": "依承攬契約限期（未規定以14日列管）",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "2,000/日",
+              "basis": "罰則13.16；工作說明書4.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "七、完工驗收待觸發事項",
+              "task": "竣工階段生態評估（表H）及執行成果報告書",
+              "dueLabel": "竣工後",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.2.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "八、結案文件與勞務驗收待觸發事項",
+              "task": "服務成果報告書",
+              "dueLabel": "結算驗收證明書核定次日+30日曆天",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.2.7／罰則13.2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "八、結案文件與勞務驗收待觸發事項",
+              "task": "監造竣工報告書（5份/竣工圖2份）",
+              "dueLabel": "結算驗收證明書核定次日+30日曆天",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.2.9／罰則13.2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "八、結案文件與勞務驗收待觸發事項",
+              "task": "監造簽證報告",
+              "dueLabel": "結算驗收證明書核定次日+30日曆天",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "工作說明書4.2.7.1",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "八、結案文件與勞務驗收待觸發事項",
+              "task": "技術專刊彙編成冊（15份）",
+              "dueLabel": "工作完成後",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/日",
+              "basis": "工作說明書4.2.7.2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "2,000/日"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "八、結案文件與勞務驗收待觸發事項",
+              "task": "財產清冊/移交/智財權讓與",
+              "dueLabel": "驗收合格後或結案前",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "依13.28~13.30",
+              "basis": "工作說明書15.3／契約第14條附件1",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "other",
+                "label": "依13.28~13.30"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "八、結案文件與勞務驗收待觸發事項",
+              "task": "勞務驗收準備（大事紀整理）",
+              "dueLabel": "勞務履約期限結束前",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "—",
+              "basis": "契約第12條",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "八、結案文件與勞務驗收待觸發事項",
+              "task": "勞務驗收申請",
+              "dueLabel": "全部工程驗收合格結算後",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "—",
+              "basis": "契約第12條",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "九、付款與請款待觸發事項",
+              "task": "尾款（含保留款）",
+              "dueLabel": "全部驗收合格結算後一次結付",
+              "owner": "由各分標主任分配",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "—",
+              "basis": "工作說明書11.5.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "none",
+                "label": ""
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "十、職安、車輛與人員管理待觸發事項",
+              "task": "公務車輛配置及汽機車第三人責任險",
+              "dueLabel": "至驗收合格；第三人責任險送執",
+              "owner": "巧晴",
+              "manager": "孝智",
+              "major": false,
+              "fine": "險逾期2,500/日",
+              "basis": "工作說明書8.5／契約第10條",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2500,
+                "unit": "日",
+                "kind": "amount",
+                "label": "險逾期2,500/日"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        }
+      ],
+      "blockedItems": [
+        {
+          "task": "專業責任保險投保及送執",
+          "dueLabel": "115/10/06（第1次估驗前；未載明者暫以決標後60日預排）",
+          "diff": 25,
+          "diffLabel": "D-25 追蹤",
+          "statusLight": "🟢",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true,
+          "fine": "2,500/日",
+          "basis": "契約第10條／罰則13.32",
+          "status": "待辦",
+          "heading": "三、簽約初期（決標日觸發）",
+          "fineParsed": {
+            "amount": 2500,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,500/日"
+          },
+          "trigger": "other",
+          "triggerLabel": "其他／未分類",
+          "state": "inprogress",
+          "stateLabel": "進行中",
+          "blocked": true,
+          "blockedReason": "真正期限是「第1次估驗前」，估驗預定日未確認；115/10/06僅為暫排",
+          "blockedOwner": "我方待確認",
+          "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
+          "dueDate": "2026-10-06",
+          "daysLeft": 23
+        },
+        {
+          "heading": "四、開工前待觸發列管事項",
+          "task": "監造人員登錄表函報",
+          "dueLabel": "開工前；工程標已開工則決標後7日內",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": false,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.15.1",
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動",
+          "blocked": true,
+          "blockedReason": "期限認定有兩讀法（開工前／工程標已開工則決標後7日內），未取得台電書面釋示",
+          "blockedOwner": "台電",
+          "blockedImpact": "若採後者，期限為115/08/14、已逾期；罰則5,000元/人日"
+        },
+        {
+          "heading": "四、開工前待觸發列管事項",
+          "task": "開工報告單",
+          "dueLabel": "開工日+3日內送甲方",
+          "owner": "巧晴",
+          "manager": "孝智",
+          "major": true,
+          "fine": "3,000/日",
+          "basis": "罰則13.1",
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 3000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "3,000/日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動",
+          "blocked": true,
+          "blockedReason": "115/09/07派駐通知函是否同時構成本工作開工通知，未經釋示",
+          "blockedOwner": "台電",
+          "blockedImpact": "期限起算日不確定；逾期13.1為3,000元/日"
+        }
+      ],
+      "overdueItems": [],
       "activeItems": [
         {
           "task": "專業責任保險投保及送執",
@@ -49,7 +2264,27 @@
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
-          "major": true
+          "major": true,
+          "fine": "2,500/日",
+          "basis": "契約第10條／罰則13.32",
+          "status": "待辦",
+          "heading": "三、簽約初期（決標日觸發）",
+          "fineParsed": {
+            "amount": 2500,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,500/日"
+          },
+          "trigger": "other",
+          "triggerLabel": "其他／未分類",
+          "state": "inprogress",
+          "stateLabel": "進行中",
+          "blocked": true,
+          "blockedReason": "真正期限是「第1次估驗前」，估驗預定日未確認；115/10/06僅為暫排",
+          "blockedOwner": "我方待確認",
+          "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
+          "dueDate": "2026-10-06",
+          "daysLeft": 23
         }
       ],
       "pendingItems": [
@@ -62,7 +2297,21 @@
           "major": false,
           "fine": "5,000/人日",
           "basis": "工作說明書7.3.15.1",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動",
+          "blocked": true,
+          "blockedReason": "期限認定有兩讀法（開工前／工程標已開工則決標後7日內），未取得台電書面釋示",
+          "blockedOwner": "台電",
+          "blockedImpact": "若採後者，期限為115/08/14、已逾期；罰則5,000元/人日"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -73,7 +2322,17 @@
           "major": true,
           "fine": "2,500/日",
           "basis": "契約第10條",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2500,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,500/日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -84,7 +2343,17 @@
           "major": true,
           "fine": "2,000/次",
           "basis": "工作說明書4.1.4",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -95,7 +2364,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -106,7 +2385,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -117,7 +2406,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -128,7 +2427,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -139,7 +2448,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -150,7 +2469,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -161,7 +2490,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -172,7 +2511,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "工作說明書4.2.4",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -183,7 +2532,21 @@
           "major": true,
           "fine": "3,000/日",
           "basis": "罰則13.1",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 3000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "3,000/日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動",
+          "blocked": true,
+          "blockedReason": "115/09/07派駐通知函是否同時構成本工作開工通知，未經釋示",
+          "blockedOwner": "台電",
+          "blockedImpact": "期限起算日不確定；逾期13.1為3,000元/日"
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -194,7 +2557,17 @@
           "major": false,
           "fine": "千分之一/日",
           "basis": "工作說明書5.7／契約第9條(十四)；正確率須達40%",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 250000,
+            "unit": "日",
+            "kind": "rate",
+            "label": "契約價金千分之一／日"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -205,7 +2578,17 @@
           "major": false,
           "fine": "5,000/日",
           "basis": "工作說明書4.2.8／契約第9條第9款(一)",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "5,000/日"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -216,7 +2599,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "罰則13.5",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -227,7 +2620,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "罰則13.5",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -238,7 +2641,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "工作說明書7.3.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -249,7 +2662,17 @@
           "major": false,
           "fine": "5,000/人日；不實5,000/人次",
           "basis": "工作說明書7.6.1/7.6.12",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日；不實5,000/人次"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -260,7 +2683,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書4.1.32",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -271,7 +2704,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -282,7 +2725,17 @@
           "major": true,
           "fine": "2,000/次",
           "basis": "罰則13.12",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -293,7 +2746,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -304,7 +2767,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "工作說明書4.2.2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -315,7 +2788,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書4.2.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -326,7 +2809,17 @@
           "major": false,
           "fine": "依安衛罰款標準",
           "basis": "工作說明書9.23.8",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "other",
+            "label": "依安衛罰款標準"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -337,7 +2830,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書4.1.28",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -348,7 +2851,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書3.5.17.8",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -359,7 +2872,17 @@
           "major": true,
           "fine": "千分之一/日",
           "basis": "工作說明書4.1.19／契約13條",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 250000,
+            "unit": "日",
+            "kind": "rate",
+            "label": "契約價金千分之一／日"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -370,7 +2893,17 @@
           "major": false,
           "fine": "展延10,000/日",
           "basis": "罰則13.17",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 10000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "展延10,000/日"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -381,7 +2914,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -392,7 +2935,17 @@
           "major": true,
           "fine": "乙等10萬/丙等30萬+扣點",
           "basis": "罰則13.15",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 300000,
+            "unit": "",
+            "kind": "amount",
+            "label": "乙等10萬/丙等30萬+扣點"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -403,7 +2956,17 @@
           "major": true,
           "fine": "2,000/次",
           "basis": "罰則13.9",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -414,7 +2977,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "工作說明書4.2.7.2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -425,7 +2998,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "工作說明書4.2.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -436,7 +3019,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "工作說明書4.2.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -447,7 +3040,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書4.2.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -458,7 +3061,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書3.5.17.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -469,7 +3082,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書4.1.30",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -480,7 +3103,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書4.1.36／4.2.1",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -491,7 +3124,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "工作說明書4.4",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -502,7 +3145,17 @@
           "major": true,
           "fine": "2,000/次",
           "basis": "工作說明書9.22",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "五、施工階段待觸發事項",
@@ -513,7 +3166,17 @@
           "major": false,
           "fine": "依查核計畫",
           "basis": "工作說明書4.1.39／4.1.1",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "other",
+            "label": "依查核計畫"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "七、完工驗收待觸發事項",
@@ -524,7 +3187,17 @@
           "major": true,
           "fine": "3,000/日；5,000/次",
           "basis": "罰則13.1/13.3；工作說明書4.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "3,000/日；5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "七、完工驗收待觸發事項",
@@ -535,7 +3208,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "工作說明書4.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "七、完工驗收待觸發事項",
@@ -546,7 +3229,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "七、完工驗收待觸發事項",
@@ -557,7 +3250,17 @@
           "major": true,
           "fine": "建築師/技師未到場5,000/人次",
           "basis": "契約7.3.11；工作說明書4.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人次",
+            "kind": "amount",
+            "label": "建築師/技師未到場5,000/人次"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "七、完工驗收待觸發事項",
@@ -568,7 +3271,17 @@
           "major": true,
           "fine": "2,000/日",
           "basis": "罰則13.16；工作說明書4.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "七、完工驗收待觸發事項",
@@ -579,7 +3292,17 @@
           "major": false,
           "fine": "5,000/人次",
           "basis": "契約7.3.11",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人次",
+            "kind": "amount",
+            "label": "5,000/人次"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "七、完工驗收待觸發事項",
@@ -590,7 +3313,17 @@
           "major": true,
           "fine": "2,000/日",
           "basis": "工作說明書4.2.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "八、結案文件與勞務驗收待觸發事項",
@@ -601,7 +3334,17 @@
           "major": true,
           "fine": "2,000/日",
           "basis": "工作說明書4.2.7／罰則13.2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "八、結案文件與勞務驗收待觸發事項",
@@ -612,7 +3355,17 @@
           "major": true,
           "fine": "2,000/日",
           "basis": "工作說明書4.2.9／罰則13.2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "八、結案文件與勞務驗收待觸發事項",
@@ -623,7 +3376,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "工作說明書4.2.7.1",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "八、結案文件與勞務驗收待觸發事項",
@@ -634,7 +3397,17 @@
           "major": false,
           "fine": "2,000/日",
           "basis": "工作說明書4.2.7.2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "2,000/日"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "八、結案文件與勞務驗收待觸發事項",
@@ -645,7 +3418,17 @@
           "major": false,
           "fine": "依13.28~13.30",
           "basis": "工作說明書15.3／契約第14條附件1",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "other",
+            "label": "依13.28~13.30"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "八、結案文件與勞務驗收待觸發事項",
@@ -656,7 +3439,17 @@
           "major": true,
           "fine": "—",
           "basis": "契約第12條",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "八、結案文件與勞務驗收待觸發事項",
@@ -667,7 +3460,17 @@
           "major": true,
           "fine": "—",
           "basis": "契約第12條",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "九、付款與請款待觸發事項",
@@ -678,7 +3481,17 @@
           "major": false,
           "fine": "—",
           "basis": "工作說明書11.5",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "九、付款與請款待觸發事項",
@@ -689,7 +3502,17 @@
           "major": true,
           "fine": "—",
           "basis": "工作說明書11.5.2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "九、付款與請款待觸發事項",
@@ -700,7 +3523,17 @@
           "major": true,
           "fine": "—",
           "basis": "工作說明書11.5.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "九、付款與請款待觸發事項",
@@ -711,7 +3544,17 @@
           "major": false,
           "fine": "—",
           "basis": "投標須知第83條",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -722,7 +3565,17 @@
           "major": false,
           "fine": "險逾期2,500/日",
           "basis": "工作說明書8.5／契約第10條",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2500,
+            "unit": "日",
+            "kind": "amount",
+            "label": "險逾期2,500/日"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -733,7 +3586,17 @@
           "major": false,
           "fine": "—",
           "basis": "工作說明書8.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -744,7 +3607,17 @@
           "major": false,
           "fine": "—",
           "basis": "工作說明書7.3.6",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -755,7 +3628,17 @@
           "major": true,
           "fine": "依安衛罰款標準",
           "basis": "承攬商安衛輔導要點46",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "other",
+            "label": "依安衛罰款標準"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -766,7 +3649,17 @@
           "major": true,
           "fine": "—",
           "basis": "教育訓練規則第15條／勞工健康保護規則第9條",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -777,7 +3670,17 @@
           "major": false,
           "fine": "5,000/人日",
           "basis": "工作說明書7.3.1.2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "personnel",
+          "triggerLabel": "人員與證照報核",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -788,7 +3691,17 @@
           "major": false,
           "fine": "—",
           "basis": "勞工健康保護規則／尿液採驗要點",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "none",
+            "label": ""
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -799,7 +3712,17 @@
           "major": false,
           "fine": "5,000/人日",
           "basis": "工作說明書7.3.5",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "personnel",
+          "triggerLabel": "人員與證照報核",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -810,7 +3733,17 @@
           "major": false,
           "fine": "5,000/人日",
           "basis": "工作說明書7.3.15",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "personnel",
+          "triggerLabel": "人員與證照報核",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -821,7 +3754,17 @@
           "major": false,
           "fine": "5,000/人日",
           "basis": "工作說明書7.3.15/7.5",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "personnel",
+          "triggerLabel": "人員與證照報核",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "十、職安、車輛與人員管理待觸發事項",
@@ -832,65 +3775,385 @@
           "major": true,
           "fine": "懲罰性違約金6萬/日，上限600萬",
           "basis": "契約15.1.4",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 60000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "懲罰性違約金6萬/日，上限600萬"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         }
       ]
     },
     {
-      "key": "guanyin",
+      "key": "site_event",
       "title": "觀音中大案",
       "subtitle": "161kV大潭（乙）~觀音線改接至中大",
       "status": "active",
       "note": "",
-      "staffing": [
-        {
-          "role": "監造主任",
-          "person": "巍耀"
-        },
-        {
-          "role": "主辦監造工程師",
-          "person": "小梅"
-        },
-        {
-          "role": "協辦監造工程師",
-          "person": "詩雨"
-        },
-        {
-          "role": "協辦監造工程員",
-          "person": "品圻"
-        },
-        {
-          "role": "文書人員／工務助理",
-          "person": "凱馨"
-        },
-        {
-          "role": "職安人員",
-          "person": "潘國揚"
-        },
-        {
-          "role": "管理人員",
-          "person": "增糴"
-        }
-      ],
-      "staffingPlan": [
-        {
-          "phase": "開工前",
-          "plan": "1管理人員 + 1主任 + 1協辦監造 + 1文書"
-        },
-        {
-          "phase": "開工後",
-          "plan": "1管理人員 + 1主任 + 1主辦監造 + 1協辦監造 + 1協辦監造員 + 1職安 + 1文書"
-        }
-      ],
+      "staffing": [],
+      "staffingPlan": [],
       "counts": {
         "active": 1,
         "pending": 13,
         "major": 5,
+        "blocked": 1,
+        "overdue": 0,
         "red": 0,
         "orange": 0,
         "yellow": 1,
         "green": 0
       },
+      "stateCounts": {
+        "approved": 0,
+        "submitted": 0,
+        "inprogress": 1,
+        "notstarted": 13
+      },
+      "triggerGroups": [
+        {
+          "key": "waiting_notice",
+          "label": "等台電通知／指定",
+          "count": 1,
+          "major": 1,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音竣工圖資/結算彙總/分項驗收",
+              "dueLabel": "依機關通知",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": true,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "site_event",
+          "label": "現場工項觸發",
+          "count": 8,
+          "major": 2,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音推管/直井/涵洞/人孔隱蔽部分檢驗停留點",
+              "dueLabel": "埋入物或澆置前",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "罰則13.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音沿線施工障礙物遷移申請/協調",
+              "dueLabel": "施工前",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書3.5.17.12",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音關鍵管線補充試挖/免開挖探測",
+              "dueLabel": "施工前",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.6三/4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音審查承攬商施工計畫（關鍵管線保護）及防挖損對策表",
+              "dueLabel": "施工前",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "工作說明書4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音防挖損查檢表填覆/查檢表檢視",
+              "dueLabel": "施工進場前或各階段",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音關鍵管線挖掘/試挖監造主任現場監督",
+              "dueLabel": "施工中",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": true,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書4.6九/4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音施工損壞管線通報",
+              "dueLabel": "損壞後1小時內",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": true,
+              "fine": "遲報5萬/匿報15萬（關鍵10/30萬）",
+              "basis": "工作說明書4.6四、九",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 300000,
+                "unit": "",
+                "kind": "amount",
+                "label": "遲報5萬/匿報15萬（關鍵10/30萬）"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音監造認定擅自施工/非當日報准工項",
+              "dueLabel": "事件觸發",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "擅自施工+30%",
+              "basis": "工作說明書4.6表2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "追繳工程款30%"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "periodic_self",
+          "label": "我方週期義務",
+          "count": 1,
+          "major": 1,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音損壞事故檢討會/報告",
+              "dueLabel": "一般5日內會+1個月報告；關鍵5日內會+15日報告+每週回報",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": true,
+              "fine": "依4.6",
+              "basis": "工作說明書4.6八、九",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "other",
+                "label": "依4.6"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_taipower",
+          "label": "等台電開工／核定",
+          "count": 3,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音各期工期管控",
+              "dueLabel": "自開工日起算",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "展延10,000/日",
+              "basis": "工作說明書5.2.4／罰則13.17",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 10000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "展延10,000/日"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音道路挖掘許可證申請/協調/繳回",
+              "dueLabel": "依道路主管機關",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書3.5.17.9",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "大潭觀音管線套繪查證/現場會勘/防範措施送備查",
+              "dueLabel": "開工前",
+              "owner": "巍耀",
+              "manager": "巍耀",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書4.6二/4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        }
+      ],
+      "blockedItems": [
+        {
+          "task": "觀音中大線監造派駐啟動",
+          "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
+          "diff": 3,
+          "diffLabel": "D-3 提醒",
+          "statusLight": "🟡",
+          "owner": "巍耀哥 <@1486270112326615042>",
+          "manager": "巍耀哥 <@1486270112326615042>",
+          "major": true,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.2.1／7.3.15",
+          "status": "待辦（已收115/09/07函，115/09/14起派駐）",
+          "heading": "三、簽約初期（決標日觸發）",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "other",
+          "triggerLabel": "其他／未分類",
+          "state": "inprogress",
+          "stateLabel": "進行中",
+          "blocked": true,
+          "blockedReason": "三道門檻全未取得核定證據（監造計畫核定／人員核准／9月出勤配置核可）",
+          "blockedOwner": "台電＋我方",
+          "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
+          "dueDate": "2026-09-14",
+          "daysLeft": 1
+        }
+      ],
+      "overdueItems": [],
       "activeItems": [
         {
           "task": "觀音中大線監造派駐啟動",
@@ -900,7 +4163,27 @@
           "statusLight": "🟡",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
-          "major": true
+          "major": true,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.2.1／7.3.15",
+          "status": "待辦（已收115/09/07函，115/09/14起派駐）",
+          "heading": "三、簽約初期（決標日觸發）",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "other",
+          "triggerLabel": "其他／未分類",
+          "state": "inprogress",
+          "stateLabel": "進行中",
+          "blocked": true,
+          "blockedReason": "三道門檻全未取得核定證據（監造計畫核定／人員核准／9月出勤配置核可）",
+          "blockedOwner": "台電＋我方",
+          "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
+          "dueDate": "2026-09-14",
+          "daysLeft": 1
         }
       ],
       "pendingItems": [
@@ -913,7 +4196,17 @@
           "major": false,
           "fine": "展延10,000/日",
           "basis": "工作說明書5.2.4／罰則13.17",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 10000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "展延10,000/日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -924,7 +4217,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -935,7 +4238,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書3.5.17.9",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -946,7 +4259,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書3.5.17.12",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -957,7 +4280,17 @@
           "major": true,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -968,7 +4301,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書4.6二/4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -979,7 +4322,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書4.6三/4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -990,7 +4343,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "工作說明書4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1001,7 +4364,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1012,7 +4385,17 @@
           "major": true,
           "fine": "暫停估驗款",
           "basis": "工作說明書4.6九/4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1023,7 +4406,17 @@
           "major": true,
           "fine": "遲報5萬/匿報15萬（關鍵10/30萬）",
           "basis": "工作說明書4.6四、九",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 300000,
+            "unit": "",
+            "kind": "amount",
+            "label": "遲報5萬/匿報15萬（關鍵10/30萬）"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1034,7 +4427,17 @@
           "major": true,
           "fine": "依4.6",
           "basis": "工作說明書4.6八、九",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "other",
+            "label": "依4.6"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1045,67 +4448,385 @@
           "major": false,
           "fine": "擅自施工+30%",
           "basis": "工作說明書4.6表2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "追繳工程款30%"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         }
       ],
       "officeAddress": "桃園市觀音區上大里新富路一段123號",
       "officeMapUrl": "https://maps.app.goo.gl/xVZtS1AR6v633HCv9"
     },
     {
-      "key": "longxian",
+      "key": "site_event",
       "title": "龍顯聖亭案",
       "subtitle": "161kV龍顯~聖亭線（第五工區）",
       "status": "active",
       "note": "",
-      "staffing": [
-        {
-          "role": "監造主任",
-          "person": "尚東（暫代到11月中，之後由邱法忠擔任主任；邱法忠取得證照回訓11/5、營造甲業9/9）"
-        },
-        {
-          "role": "主辦監造工程師",
-          "person": "尚東"
-        },
-        {
-          "role": "協辦監造工程師",
-          "person": "紀光耀（預計10/5（一）報到）"
-        },
-        {
-          "role": "協辦監造工程員",
-          "person": "繼中（暫排）"
-        },
-        {
-          "role": "文書人員／工務助理",
-          "person": "宗霆暫代，黃雲潔（104招募，尚未報到，暫定9/29報到）"
-        },
-        {
-          "role": "職安人員",
-          "person": "黃忠台（104尚未報到，10/1報到）"
-        },
-        {
-          "role": "管理人員",
-          "person": "增糴"
-        }
-      ],
-      "staffingPlan": [
-        {
-          "phase": "開工前",
-          "plan": "1管理人員 + 1主任 + 1協辦監造 + 1文書"
-        },
-        {
-          "phase": "開工後",
-          "plan": "1管理人員 + 1主任 + 1主辦監造 + 1協辦監造 + 1協辦監造員 + 1職安 + 1文書"
-        }
-      ],
+      "staffing": [],
+      "staffingPlan": [],
       "counts": {
         "active": 1,
         "pending": 14,
         "major": 5,
+        "blocked": 0,
+        "overdue": 0,
         "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 1
       },
+      "stateCounts": {
+        "approved": 0,
+        "submitted": 0,
+        "inprogress": 1,
+        "notstarted": 14
+      },
+      "triggerGroups": [
+        {
+          "key": "waiting_notice",
+          "label": "等台電通知／指定",
+          "count": 1,
+          "major": 1,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯竣工圖資/結算彙總/分項驗收",
+              "dueLabel": "依機關通知",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": true,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "site_event",
+          "label": "現場工項觸發",
+          "count": 8,
+          "major": 2,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯推管/直井/涵洞/人孔隱蔽部分檢驗停留點",
+              "dueLabel": "埋入物或澆置前",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "罰則13.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯沿線施工障礙物遷移申請/協調",
+              "dueLabel": "施工前",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書3.5.17.12",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯關鍵管線補充試挖/免開挖探測",
+              "dueLabel": "施工前",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書4.6三/4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯審查承攬商施工計畫（關鍵管線保護）及防挖損對策表",
+              "dueLabel": "施工前",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "5,000/次",
+              "basis": "工作說明書4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯防挖損查檢表填覆/查檢表檢視",
+              "dueLabel": "施工進場前或各階段",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯關鍵管線挖掘/試挖監造主任現場監督",
+              "dueLabel": "施工中",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": true,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書4.6九/4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯施工損壞管線通報",
+              "dueLabel": "損壞後1小時內",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": true,
+              "fine": "遲報5萬/匿報15萬（關鍵10/30萬）",
+              "basis": "工作說明書4.6四、九",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 300000,
+                "unit": "",
+                "kind": "amount",
+                "label": "遲報5萬/匿報15萬（關鍵10/30萬）"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯監造認定擅自施工/非當日報准工項",
+              "dueLabel": "事件觸發",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "擅自施工+30%",
+              "basis": "工作說明書4.6表2",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "追繳工程款30%"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "periodic_self",
+          "label": "我方週期義務",
+          "count": 1,
+          "major": 1,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯損壞事故檢討會/報告",
+              "dueLabel": "一般5日內會+1個月報告；關鍵5日內會+15日報告+每週回報",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": true,
+              "fine": "依4.6",
+              "basis": "工作說明書4.6八、九",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "other",
+                "label": "依4.6"
+              },
+              "trigger": "periodic_self",
+              "triggerLabel": "我方週期義務",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_taipower",
+          "label": "等台電開工／核定",
+          "count": 3,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯各期工期管控",
+              "dueLabel": "自開工日起算",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "展延10,000/日",
+              "basis": "工作說明書5.2.3／罰則13.17",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 10000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "展延10,000/日"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯道路挖掘許可證申請/協調/繳回",
+              "dueLabel": "依道路主管機關",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書3.5.17.9",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯管線套繪查證/現場會勘/防範措施送備查",
+              "dueLabel": "開工前",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "暫停估驗款",
+              "basis": "工作說明書4.6二/4.7",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 0,
+                "unit": "",
+                "kind": "nonmonetary",
+                "label": "暫停估驗款"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "closeout",
+          "label": "完工驗收與結案",
+          "count": 1,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "龍顯告示牌設置/沉箱打除/環差監測結案",
+              "dueLabel": "各分期期程內",
+              "owner": "尚東",
+              "manager": "囿任",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "工作說明書5.2.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        }
+      ],
+      "blockedItems": [],
+      "overdueItems": [],
       "activeItems": [
         {
           "task": "龍顯聖亭線監造派駐啟動",
@@ -1115,7 +4836,23 @@
           "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
-          "major": true
+          "major": true,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.2.1／7.3.15",
+          "status": "待辦",
+          "heading": "三、簽約初期（決標日觸發）",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "other",
+          "triggerLabel": "其他／未分類",
+          "state": "inprogress",
+          "stateLabel": "進行中",
+          "dueDate": "2026-10-01",
+          "daysLeft": 18
         }
       ],
       "pendingItems": [
@@ -1128,7 +4865,17 @@
           "major": false,
           "fine": "展延10,000/日",
           "basis": "工作說明書5.2.3／罰則13.17",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 10000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "展延10,000/日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1139,7 +4886,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1150,7 +4907,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書3.5.17.9",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1161,7 +4928,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書3.5.17.12",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1172,7 +4949,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書5.2.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1183,7 +4970,17 @@
           "major": true,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1194,7 +4991,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書4.6二/4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1205,7 +5012,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "工作說明書4.6三/4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1216,7 +5033,17 @@
           "major": false,
           "fine": "5,000/次",
           "basis": "工作說明書4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1227,7 +5054,17 @@
           "major": false,
           "fine": "暫停估驗款",
           "basis": "工作說明書4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1238,7 +5075,17 @@
           "major": true,
           "fine": "暫停估驗款",
           "basis": "工作說明書4.6九/4.7",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "暫停估驗款"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1249,7 +5096,17 @@
           "major": true,
           "fine": "遲報5萬/匿報15萬（關鍵10/30萬）",
           "basis": "工作說明書4.6四、九",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 300000,
+            "unit": "",
+            "kind": "amount",
+            "label": "遲報5萬/匿報15萬（關鍵10/30萬）"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1260,7 +5117,17 @@
           "major": true,
           "fine": "依4.6",
           "basis": "工作說明書4.6八、九",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "other",
+            "label": "依4.6"
+          },
+          "trigger": "periodic_self",
+          "triggerLabel": "我方週期義務",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1271,69 +5138,215 @@
           "major": false,
           "fine": "擅自施工+30%",
           "basis": "工作說明書4.6表2",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 0,
+            "unit": "",
+            "kind": "nonmonetary",
+            "label": "追繳工程款30%"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         }
       ]
     },
     {
-      "key": "guangfeng",
+      "key": "waiting_notice",
       "title": "廣豐D/S案",
       "subtitle": "廣豐D/S新建工程（土建統包）",
       "status": "recruiting",
       "note": "",
-      "staffing": [
-        {
-          "role": "監造主任",
-          "person": "鄭光宏（104尚未報到，10/5報到）"
-        },
-        {
-          "role": "建築主辦監造工程師",
-          "person": "林耀堂（10月底報到）"
-        },
-        {
-          "role": "機電主辦監造工程師",
-          "person": "管傳鈴（預計10/21（三）報到）"
-        },
-        {
-          "role": "協辦建築監造工程師",
-          "person": "李哲維（預計115/10/12報到）"
-        },
-        {
-          "role": "協辦監造工程員",
-          "person": "蘇鉦"
-        },
-        {
-          "role": "文書人員／工務助理",
-          "person": "侯品辛（104尚未報到，9/14報到）"
-        },
-        {
-          "role": "職安人員",
-          "person": "黃明秋（10/1報到）"
-        },
-        {
-          "role": "管理人員",
-          "person": "黃俊憲"
-        }
-      ],
-      "staffingPlan": [
-        {
-          "phase": "開工前2個月",
-          "plan": "1主任 + 2主辦監造（建築、機電） + 1文書"
-        },
-        {
-          "phase": "開工後",
-          "plan": "1主任 + 2主辦監造（建築、機電） + 1協辦監造（建築） + 1協辦監造員 + 1文書 + 1職安"
-        }
-      ],
+      "staffing": [],
+      "staffingPlan": [],
       "counts": {
         "active": 1,
         "pending": 6,
         "major": 3,
+        "blocked": 0,
+        "overdue": 0,
         "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 1
       },
+      "stateCounts": {
+        "approved": 0,
+        "submitted": 0,
+        "inprogress": 1,
+        "notstarted": 6
+      },
+      "triggerGroups": [
+        {
+          "key": "waiting_contractor",
+          "label": "等施工廠商送件",
+          "count": 2,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "廣豐機電/消防設備廠驗及功能測試",
+              "dueLabel": "依廠驗項目",
+              "owner": "廣豐主任（預計115",
+              "manager": "10/01派駐）/視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "罰則13.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "廣豐竣工報告單/竣工圖說/工程結算審查",
+              "dueLabel": "竣工日+3日或提送次日+7日",
+              "owner": "廣豐主任（預計115",
+              "manager": "10/01派駐）/視該員副理",
+              "major": false,
+              "fine": "3,000/日；5,000/次",
+              "basis": "罰則13.1/13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "3,000/日；5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_notice",
+          "label": "等台電通知／指定",
+          "count": 1,
+          "major": 1,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "廣豐分項初驗/複驗到場",
+              "dueLabel": "依機關通知",
+              "owner": "廣豐主任（預計115",
+              "manager": "10/01派駐）/視該員副理",
+              "major": true,
+              "fine": "建築師/技師未到場5,000/人次",
+              "basis": "契約7.3.11",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人次",
+                "kind": "amount",
+                "label": "建築師/技師未到場5,000/人次"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "site_event",
+          "label": "現場工項觸發",
+          "count": 1,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "廣豐大樓結構體/RC澆置檢驗停留點",
+              "dueLabel": "隱蔽部分澆置前",
+              "owner": "廣豐主任（預計115",
+              "manager": "10/01派駐）/視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "罰則13.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_taipower",
+          "label": "等台電開工／核定",
+          "count": 1,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "廣豐各期工期起訖管控",
+              "dueLabel": "自開工日起算",
+              "owner": "廣豐主任（預計115",
+              "manager": "10/01派駐）/視該員副理",
+              "major": false,
+              "fine": "展延10,000/日",
+              "basis": "工作說明書5.2.2／罰則13.17",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 10000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "展延10,000/日"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "closeout",
+          "label": "完工驗收與結案",
+          "count": 1,
+          "major": 1,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "廣豐使用執照/綠建築標章及機電消防竣工簽證",
+              "dueLabel": "第4期期程內",
+              "owner": "廣豐主任（預計115",
+              "manager": "10/01派駐）/視該員副理",
+              "major": true,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        }
+      ],
+      "blockedItems": [],
+      "overdueItems": [],
       "activeItems": [
         {
           "task": "廣豐D/S監造派駐啟動",
@@ -1343,7 +5356,23 @@
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
-          "major": true
+          "major": true,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.2.3／7.3.15",
+          "status": "待辦",
+          "heading": "三、簽約初期（決標日觸發）",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "other",
+          "triggerLabel": "其他／未分類",
+          "state": "inprogress",
+          "stateLabel": "進行中",
+          "dueDate": "2026-10-01",
+          "daysLeft": 18
         }
       ],
       "pendingItems": [
@@ -1356,7 +5385,17 @@
           "major": false,
           "fine": "展延10,000/日",
           "basis": "工作說明書5.2.2／罰則13.17",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 10000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "展延10,000/日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1367,7 +5406,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1378,7 +5427,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1389,7 +5448,17 @@
           "major": true,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1400,7 +5469,17 @@
           "major": false,
           "fine": "3,000/日；5,000/次",
           "basis": "罰則13.1/13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "3,000/日；5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1411,12 +5490,22 @@
           "major": true,
           "fine": "建築師/技師未到場5,000/人次",
           "basis": "契約7.3.11",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人次",
+            "kind": "amount",
+            "label": "建築師/技師未到場5,000/人次"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         }
       ]
     },
     {
-      "key": "nangang",
+      "key": "waiting_notice",
       "title": "南港P/S案",
       "subtitle": "南港P/S改建工程（土建統包）",
       "status": "paused",
@@ -1427,11 +5516,189 @@
         "active": 0,
         "pending": 6,
         "major": 2,
+        "blocked": 0,
+        "overdue": 0,
         "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 0
       },
+      "stateCounts": {
+        "approved": 0,
+        "submitted": 0,
+        "inprogress": 0,
+        "notstarted": 6
+      },
+      "triggerGroups": [
+        {
+          "key": "waiting_contractor",
+          "label": "等施工廠商送件",
+          "count": 2,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "南港機電/消防設備廠驗及功能測試",
+              "dueLabel": "依廠驗項目",
+              "owner": "南港主任（118年派駐）",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "罰則13.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            },
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "南港竣工報告單/竣工圖說/工程結算審查",
+              "dueLabel": "竣工日+3日或提送次日+7日",
+              "owner": "南港主任（118年派駐）",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "3,000/日；5,000/次",
+              "basis": "罰則13.1/13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "3,000/日；5,000/次"
+              },
+              "trigger": "waiting_contractor",
+              "triggerLabel": "等施工廠商送件",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_notice",
+          "label": "等台電通知／指定",
+          "count": 1,
+          "major": 1,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "南港分項初驗/複驗到場",
+              "dueLabel": "依機關通知",
+              "owner": "南港主任（118年派駐）",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "建築師/技師未到場5,000/人次",
+              "basis": "契約7.3.11",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "人次",
+                "kind": "amount",
+                "label": "建築師/技師未到場5,000/人次"
+              },
+              "trigger": "waiting_notice",
+              "triggerLabel": "等台電通知／指定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "site_event",
+          "label": "現場工項觸發",
+          "count": 1,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "南港大樓結構體/RC澆置檢驗停留點",
+              "dueLabel": "隱蔽部分澆置前",
+              "owner": "南港主任（118年派駐）",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "2,000/次",
+              "basis": "罰則13.13",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 2000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "2,000/次"
+              },
+              "trigger": "site_event",
+              "triggerLabel": "現場工項觸發",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "waiting_taipower",
+          "label": "等台電開工／核定",
+          "count": 1,
+          "major": 0,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "南港各期工期起訖管控",
+              "dueLabel": "自開工日起算",
+              "owner": "南港主任（118年派駐）",
+              "manager": "視該員副理",
+              "major": false,
+              "fine": "展延10,000/日",
+              "basis": "工作說明書5.2.1／罰則13.17",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 10000,
+                "unit": "日",
+                "kind": "amount",
+                "label": "展延10,000/日"
+              },
+              "trigger": "waiting_taipower",
+              "triggerLabel": "等台電開工／核定",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        },
+        {
+          "key": "closeout",
+          "label": "完工驗收與結案",
+          "count": 1,
+          "major": 1,
+          "items": [
+            {
+              "heading": "六、分案施工階段待觸發事項",
+              "task": "南港使用執照/綠建築標章及機電消防竣工簽證",
+              "dueLabel": "第4期期程內",
+              "owner": "南港主任（118年派駐）",
+              "manager": "視該員副理",
+              "major": true,
+              "fine": "5,000/次",
+              "basis": "罰則13.3",
+              "status": "待觸發",
+              "fineParsed": {
+                "amount": 5000,
+                "unit": "次",
+                "kind": "amount",
+                "label": "5,000/次"
+              },
+              "trigger": "closeout",
+              "triggerLabel": "完工驗收與結案",
+              "state": "notstarted",
+              "stateLabel": "未啟動"
+            }
+          ]
+        }
+      ],
+      "blockedItems": [],
+      "overdueItems": [],
       "activeItems": [],
       "pendingItems": [
         {
@@ -1443,7 +5710,17 @@
           "major": false,
           "fine": "展延10,000/日",
           "basis": "工作說明書5.2.1／罰則13.17",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 10000,
+            "unit": "日",
+            "kind": "amount",
+            "label": "展延10,000/日"
+          },
+          "trigger": "waiting_taipower",
+          "triggerLabel": "等台電開工／核定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1454,7 +5731,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "site_event",
+          "triggerLabel": "現場工項觸發",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1465,7 +5752,17 @@
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 2000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "2,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1476,7 +5773,17 @@
           "major": true,
           "fine": "5,000/次",
           "basis": "罰則13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "5,000/次"
+          },
+          "trigger": "closeout",
+          "triggerLabel": "完工驗收與結案",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1487,7 +5794,17 @@
           "major": false,
           "fine": "3,000/日；5,000/次",
           "basis": "罰則13.1/13.3",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "次",
+            "kind": "amount",
+            "label": "3,000/日；5,000/次"
+          },
+          "trigger": "waiting_contractor",
+          "triggerLabel": "等施工廠商送件",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         },
         {
           "heading": "六、分案施工階段待觸發事項",
@@ -1498,7 +5815,17 @@
           "major": true,
           "fine": "建築師/技師未到場5,000/人次",
           "basis": "契約7.3.11",
-          "status": "待觸發"
+          "status": "待觸發",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人次",
+            "kind": "amount",
+            "label": "建築師/技師未到場5,000/人次"
+          },
+          "trigger": "waiting_notice",
+          "triggerLabel": "等台電通知／指定",
+          "state": "notstarted",
+          "stateLabel": "未啟動"
         }
       ]
     }
