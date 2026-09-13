@@ -36,7 +36,7 @@
         "number": ""
       }
     ],
-    "salary": "155,000",
+    "salary": "158,000",
     "seniority": "13年4月"
   },
   {
@@ -814,8 +814,13 @@
     "group": "",
     "role": "",
     "education": "正修工專 二專",
-    "certificates": [],
-    "salary": "#N/A",
+    "certificates": [
+      {
+        "name": "品管",
+        "number": ""
+      }
+    ],
+    "salary": "65,000",
     "seniority": ""
   }
 ]
