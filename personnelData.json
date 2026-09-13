@@ -192,7 +192,12 @@
     "group": "無組別",
     "role": "",
     "education": "國立屏東科技大學 農企業管理系 學士",
-    "certificates": [],
+    "certificates": [
+      {
+        "name": "品管",
+        "number": ""
+      }
+    ],
     "seniority": "9年5月"
   },
   {
@@ -333,10 +338,6 @@
     "role": "組員",
     "education": "中華大學 景觀建築學系 學士",
     "certificates": [
-      {
-        "name": "1.",
-        "number": ""
-      },
       {
         "name": "品管",
         "number": ""
@@ -619,7 +620,12 @@
     "group": "柏勛組",
     "role": "組員",
     "education": "國立臺灣科技大學 營建工程學系 學士",
-    "certificates": [],
+    "certificates": [
+      {
+        "name": "品管",
+        "number": ""
+      }
+    ],
     "seniority": "1年6月"
   },
   {
@@ -683,7 +689,16 @@
     "group": "孝智組",
     "role": "組員",
     "education": "國立臺灣科技大學 營建所",
-    "certificates": [],
+    "certificates": [
+      {
+        "name": "乙級職安管理員",
+        "number": ""
+      },
+      {
+        "name": "甲級安全管理師",
+        "number": ""
+      }
+    ],
     "seniority": "1年0月"
   },
   {
