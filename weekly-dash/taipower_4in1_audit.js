@@ -1,6 +1,6 @@
 const state = {
     payload: null,
-    activeSection: "common"
+    activeSection: new URLSearchParams(window.location.search).get("tab") || "common"
 };
 
 const versionText = document.getElementById("versionText");

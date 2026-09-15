@@ -295,34 +295,53 @@
       "name": "台電4合1",
       "auditDate": "2026-09-15",
       "version": "V3",
-      "modifiedAt": "2026-09-13 07:58:50",
+      "modifiedAt": "2026-09-15（觀音中大派駐及週期節點同步）",
       "mode": "active",
-      "note": null,
+      "note": "觀音中大已於09/14實際派駐；本卡顯示D-45與阻斷摘要，完整21項週期工作請開專屬儀表板。",
+      "detailUrl": "./taipower_4in1_audit.html?tab=guanyin",
       "riskCounts": {
         "red": 1,
         "orange": 0,
         "yellow": 0,
-        "green": 3
+        "green": 5
       },
-      "itemCount": 4,
+      "itemCount": 6,
       "topUrgent": {
-        "task": "觀音中大線監造派駐啟動",
-        "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
-        "diff": -1,
-        "diffLabel": "逾期1天",
+        "task": "觀音中大｜派駐核准與留痕補正",
+        "dueLabel": "09/14已實際派駐；監造計畫、人員核准及9月出勤配置核可文件續追",
+        "diff": 0,
+        "diffLabel": "阻斷續追",
         "statusLight": "🔴",
-        "owner": "巍耀哥 <@1486270112326615042>",
-        "manager": "巍耀哥 <@1486270112326615042>"
+        "owner": "巍耀／巧晴",
+        "manager": "孝智"
       },
       "items": [
         {
-          "task": "觀音中大線監造派駐啟動",
-          "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
-          "diff": -1,
-          "diffLabel": "逾期1天",
+          "task": "觀音中大｜派駐核准與留痕補正",
+          "dueLabel": "09/14已實際派駐；監造計畫、人員核准及9月出勤配置核可文件續追",
+          "diff": 0,
+          "diffLabel": "阻斷續追",
           "statusLight": "🔴",
-          "owner": "巍耀哥 <@1486270112326615042>",
-          "manager": "巍耀哥 <@1486270112326615042>"
+          "owner": "巍耀／巧晴",
+          "manager": "孝智"
+        },
+        {
+          "task": "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
+          "dueLabel": "115/10/05（三件同日到期）",
+          "diff": 20,
+          "diffLabel": "D-20 追蹤",
+          "statusLight": "🟢",
+          "owner": "巍耀／巧晴",
+          "manager": "孝智"
+        },
+        {
+          "task": "觀音中大｜PMIS建置",
+          "dueLabel": "115/10/14（進場一個月內）",
+          "diff": 29,
+          "diffLabel": "D-29 追蹤",
+          "statusLight": "🟢",
+          "owner": "巍耀",
+          "manager": "孝智"
         },
         {
           "task": "廣豐D/S監造派駐啟動",

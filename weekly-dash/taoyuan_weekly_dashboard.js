@@ -39,6 +39,82 @@ function escapeHtml(value) {
         .replace(/'/g, "&#39;");
 }
 
+/* 台電4合1專屬頁與本頁使用不同JSON。Mac mini來源尚未同步時，
+ * 以已確認的現場事實及觀音中大週期節點補正本頁摘要；這層位於
+ * 不受資料排程覆蓋的前端，避免舊project_audit_summary.json回寫。 */
+function applyProjectAuditCorrections(payload) {
+    const project = (payload?.projects || []).find((item) => item.key === "taipower_4in1");
+    if (!project) return payload;
+
+    const managedTasks = new Set([
+        "觀音中大線監造派駐啟動",
+        "觀音中大｜派駐核准與留痕補正",
+        "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
+        "觀音中大｜PMIS建置"
+    ]);
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const daysUntil = (year, month, day) => Math.round((new Date(year, month - 1, day) - todayStart) / 86400000);
+    const tracker = (task, dueLabel, year, month, day, owner, manager) => {
+        const diff = daysUntil(year, month, day);
+        let statusLight = "🟢";
+        let diffLabel = `D-${diff} 追蹤`;
+        if (diff < 0) {
+            statusLight = "🔴";
+            diffLabel = `逾期${Math.abs(diff)}天`;
+        } else if (diff === 0) {
+            statusLight = "🔴";
+            diffLabel = "今日到期";
+        } else if (diff === 1) {
+            statusLight = "🟠";
+            diffLabel = "D-1 追蹤";
+        } else if (diff <= 3) {
+            statusLight = "🟡";
+        }
+        return { task, dueLabel, diff, diffLabel, statusLight, owner, manager };
+    };
+
+    const retained = (project.items || []).filter((item) => !managedTasks.has(item.task));
+    const corrections = [
+        {
+            task: "觀音中大｜派駐核准與留痕補正",
+            dueLabel: "09/14已實際派駐；監造計畫、人員核准及9月出勤配置核可文件續追",
+            diff: 0,
+            diffLabel: "阻斷續追",
+            statusLight: "🔴",
+            owner: "巍耀／巧晴",
+            manager: "孝智"
+        },
+        tracker(
+            "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
+            "115/10/05（三件同日到期）",
+            2026, 10, 5, "巍耀／巧晴", "孝智"
+        ),
+        tracker(
+            "觀音中大｜PMIS建置",
+            "115/10/14（進場一個月內）",
+            2026, 10, 14, "巍耀", "孝智"
+        )
+    ];
+
+    project.items = [...corrections, ...retained];
+    project.itemCount = project.items.length;
+    project.topUrgent = [...project.items].sort((a, b) => Number(a.diff) - Number(b.diff))[0] || null;
+    project.riskCounts = project.items.reduce((counts, item) => {
+        const diff = Number(item.diff);
+        if (diff <= 0) counts.red += 1;
+        else if (diff === 1) counts.orange += 1;
+        else if (diff <= 3) counts.yellow += 1;
+        else counts.green += 1;
+        return counts;
+    }, { red: 0, orange: 0, yellow: 0, green: 0 });
+    project.modifiedAt = "2026-09-15（觀音中大派駐及週期節點同步）";
+    project.note = "觀音中大已於09/14實際派駐；本卡顯示D-45與阻斷摘要，完整21項週期工作請開專屬儀表板。";
+    project.detailUrl = "./taipower_4in1_audit.html?tab=guanyin";
+    payload.confirmedOverride = "台電4合1已連動115/09/15確認內容";
+    return payload;
+}
+
 function riskToneClass(diff) {
     if (diff <= 0) return "bg-rose-50 text-rose-700 border-rose-200";
     if (diff === 1) return "bg-orange-50 text-orange-700 border-orange-200";
@@ -358,12 +434,16 @@ function renderAuditSummary() {
     const metaPieces = [];
     if (payload.generatedAt) metaPieces.push(`稽核資料更新 ${payload.generatedAt}`);
     if (payload.source) metaPieces.push(`來源 ${payload.source}`);
+    if (payload.confirmedOverride) metaPieces.push(payload.confirmedOverride);
     auditSummaryMeta.textContent = metaPieces.join("｜");
 
     auditSummaryGrid.innerHTML = projects.map((project) => {
         const counts = project.riskCounts || {};
         const items = Array.isArray(project.items) ? [...project.items].sort((a, b) => auditItemSortValue(a) - auditItemSortValue(b)) : [];
         const note = project.note ? `<p class="mt-2 text-xs text-stone-500">${escapeHtml(project.note)}</p>` : "";
+        const detailLink = project.detailUrl
+            ? `<a class="mt-3 inline-flex text-xs font-bold text-teal-700 underline decoration-teal-300 underline-offset-4 hover:text-teal-900" href="${escapeHtml(project.detailUrl)}">開啟台電4合1完整列管 →</a>`
+            : "";
         const itemBlock = items.length
             ? `
                 <ul class="mt-3 space-y-2">
@@ -394,6 +474,7 @@ function renderAuditSummary() {
                 ${itemBlock}
                 <p class="mt-3 text-xs text-stone-500">提醒清單更新 ${escapeHtml(project.modifiedAt || "—")}</p>
                 ${note}
+                ${detailLink}
             </article>
         `;
     }).join("");
@@ -711,7 +792,7 @@ async function loadData() {
     try {
         const auditResponse = await fetch("./project_audit_summary.json", { cache: "no-store" });
         if (auditResponse.ok) {
-            state.auditSummary = await auditResponse.json();
+            state.auditSummary = applyProjectAuditCorrections(await auditResponse.json());
         } else {
             state.auditSummary = null;
         }
