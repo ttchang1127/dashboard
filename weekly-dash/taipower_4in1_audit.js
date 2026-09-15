@@ -44,12 +44,18 @@ function applyConfirmedAuditOverrides(payload) {
     const complianceStatus = "實際派駐已完成；監造計畫、人員核准及9月出勤配置核可文件仍須追蹤";
 
     const wasOverdue = (payload.overdueItems || []).some((item) => item.task === taskName);
-    const tracked = (payload.trackedItems || []).find((item) => item.task === taskName);
-    const wasInProgress = tracked?.state === "inprogress";
+    const activeEntry = (payload.sections || [])
+        .flatMap((section) => section.activeItems || [])
+        .find((item) => item.task === taskName);
+    const wasActive = Boolean(activeEntry);
+    const wasInProgress = activeEntry?.state === "inprogress";
 
     function visit(value, parentKey = "") {
         if (Array.isArray(value)) {
             if (parentKey === "overdueItems") {
+                return value.filter((item) => item?.task !== taskName).map((item) => visit(item));
+            }
+            if (parentKey === "activeItems") {
                 return value.filter((item) => item?.task !== taskName).map((item) => visit(item));
             }
             if (parentKey === "blockedItems") {
@@ -95,7 +101,7 @@ function applyConfirmedAuditOverrides(payload) {
 
     const guanyinCard = (payload.caseOverview || []).find((card) => card.key === "guanyin");
     if (guanyinCard) {
-        guanyinCard.overdue = 0;
+        guanyinCard.overdue = Math.max(0, Number(guanyinCard.overdue || 0) - (wasOverdue ? 1 : 0));
         if (guanyinCard.nextDue?.task === taskName) {
             guanyinCard.nextDue = {
                 task: taskName,
@@ -107,7 +113,8 @@ function applyConfirmedAuditOverrides(payload) {
 
     const guanyinSection = (payload.sections || []).find((section) => section.key === "guanyin");
     if (guanyinSection?.counts) {
-        guanyinSection.counts.overdue = 0;
+        guanyinSection.counts.active = Math.max(0, Number(guanyinSection.counts.active || 0) - (wasActive ? 1 : 0));
+        guanyinSection.counts.overdue = Math.max(0, Number(guanyinSection.counts.overdue || 0) - (wasOverdue ? 1 : 0));
         guanyinSection.counts.red = Math.max(0, Number(guanyinSection.counts.red || 0) - (wasOverdue ? 1 : 0));
     }
     if (wasInProgress && guanyinSection?.stateCounts) {
@@ -116,7 +123,8 @@ function applyConfirmedAuditOverrides(payload) {
     }
 
     if (payload.summary) {
-        payload.summary.overdue = 0;
+        payload.summary.active = Math.max(0, Number(payload.summary.active || 0) - (wasActive ? 1 : 0));
+        payload.summary.overdue = Math.max(0, Number(payload.summary.overdue || 0) - (wasOverdue ? 1 : 0));
         payload.summary.red = Math.max(0, Number(payload.summary.red || 0) - (wasOverdue ? 1 : 0));
     }
     if (wasInProgress && payload.stateCounts) {
