@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14 13:30:21 +0800",
+  "generatedAt": "2026-09-15 08:20:08 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
@@ -22,7 +22,7 @@
     "yellow": 0,
     "green": 3,
     "blocked": 4,
-    "overdue": 0
+    "overdue": 1
   },
   "stateCounts": {
     "approved": 2,
@@ -45,7 +45,7 @@
       "pending": 13,
       "major": 5,
       "blocked": 1,
-      "overdue": 0,
+      "overdue": 1,
       "staffing": {
         "total": 7,
         "inPlace": 7,
@@ -56,7 +56,7 @@
         "task": "觀音中大線監造派駐啟動",
         "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
         "dueDate": "2026-09-14",
-        "daysLeft": 0
+        "daysLeft": -1
       },
       "rank": 1
     },
@@ -79,7 +79,7 @@
         "task": "廣豐D/S監造派駐啟動",
         "dueLabel": "115/10/01（起始會議確認）",
         "dueDate": "2026-10-01",
-        "daysLeft": 17
+        "daysLeft": 16
       },
       "rank": 2
     },
@@ -102,7 +102,7 @@
         "task": "龍顯聖亭線監造派駐啟動",
         "dueLabel": "115/10/01（起始會議確認）",
         "dueDate": "2026-10-01",
-        "daysLeft": 17
+        "daysLeft": 16
       },
       "rank": 3
     },
@@ -250,7 +250,7 @@
       "blockedOwner": "我方待確認",
       "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
       "dueDate": "2026-10-06",
-      "daysLeft": 22
+      "daysLeft": 21
     },
     {
       "task": "觀音中大線監造派駐啟動",
@@ -280,7 +280,9 @@
       "blockedOwner": "台電＋我方",
       "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
       "dueDate": "2026-09-14",
-      "daysLeft": 0
+      "daysLeft": -1,
+      "overdue": true,
+      "overdueDays": 1
     },
     {
       "heading": "四、開工前待觸發列管事項",
@@ -333,7 +335,40 @@
       "blockedImpact": "期限起算日不確定；逾期13.1為3,000元/日"
     }
   ],
-  "overdueItems": [],
+  "overdueItems": [
+    {
+      "task": "觀音中大線監造派駐啟動",
+      "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
+      "diff": 0,
+      "diffLabel": "D-0 逾期",
+      "statusLight": "🔴",
+      "owner": "巍耀哥 <@1486270112326615042>",
+      "manager": "巍耀哥 <@1486270112326615042>",
+      "major": true,
+      "fine": "5,000/人日",
+      "basis": "工作說明書7.3.2.1／7.3.15",
+      "status": "待辦（已收115/09/07函，115/09/14起派駐）",
+      "heading": "三、簽約初期（決標日觸發）",
+      "fineParsed": {
+        "amount": 5000,
+        "unit": "人日",
+        "kind": "amount",
+        "label": "5,000/人日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "inprogress",
+      "stateLabel": "進行中",
+      "blocked": true,
+      "blockedReason": "三道門檻全未取得核定證據（監造計畫核定／人員核准／9月出勤配置核可）",
+      "blockedOwner": "台電＋我方",
+      "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
+      "dueDate": "2026-09-14",
+      "daysLeft": -1,
+      "overdue": true,
+      "overdueDays": 1
+    }
+  ],
   "trackedItems": [
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -356,7 +391,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-12",
-      "daysLeft": -33
+      "daysLeft": -34
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -379,7 +414,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -24
+      "daysLeft": -25
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -402,7 +437,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -24
+      "daysLeft": -25
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -425,7 +460,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -24
+      "daysLeft": -25
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -448,7 +483,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -24
+      "daysLeft": -25
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -471,7 +506,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-14",
-      "daysLeft": -31
+      "daysLeft": -32
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -494,7 +529,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-17",
-      "daysLeft": -28
+      "daysLeft": -29
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -521,7 +556,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響10/01派駐",
       "dueDate": "2026-08-27",
-      "daysLeft": -18
+      "daysLeft": -19
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -548,7 +583,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -18
+      "daysLeft": -19
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -575,7 +610,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響10/01派駐",
       "dueDate": "2026-08-27",
-      "daysLeft": -18
+      "daysLeft": -19
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -602,7 +637,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -18
+      "daysLeft": -19
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -629,7 +664,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響10/01派駐",
       "dueDate": "2026-08-27",
-      "daysLeft": -18
+      "daysLeft": -19
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -652,7 +687,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-08-27",
-      "daysLeft": -18
+      "daysLeft": -19
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -675,7 +710,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-09-06",
-      "daysLeft": -8
+      "daysLeft": -9
     }
   ],
   "sections": [
@@ -2290,7 +2325,7 @@
           "blockedOwner": "我方待確認",
           "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
           "dueDate": "2026-10-06",
-          "daysLeft": 22
+          "daysLeft": 21
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -2373,7 +2408,7 @@
           "blockedOwner": "我方待確認",
           "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
           "dueDate": "2026-10-06",
-          "daysLeft": 22
+          "daysLeft": 21
         }
       ],
       "pendingItems": [
@@ -3929,7 +3964,7 @@
         "pending": 13,
         "major": 5,
         "blocked": 1,
-        "overdue": 0,
+        "overdue": 1,
         "red": 1,
         "orange": 0,
         "yellow": 0,
@@ -4277,10 +4312,45 @@
           "blockedOwner": "台電＋我方",
           "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
           "dueDate": "2026-09-14",
-          "daysLeft": 0
+          "daysLeft": -1,
+          "overdue": true,
+          "overdueDays": 1
         }
       ],
-      "overdueItems": [],
+      "overdueItems": [
+        {
+          "task": "觀音中大線監造派駐啟動",
+          "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
+          "diff": 0,
+          "diffLabel": "D-0 逾期",
+          "statusLight": "🔴",
+          "owner": "巍耀哥 <@1486270112326615042>",
+          "manager": "巍耀哥 <@1486270112326615042>",
+          "major": true,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.2.1／7.3.15",
+          "status": "待辦（已收115/09/07函，115/09/14起派駐）",
+          "heading": "三、簽約初期（決標日觸發）",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "other",
+          "triggerLabel": "其他／未分類",
+          "state": "inprogress",
+          "stateLabel": "進行中",
+          "blocked": true,
+          "blockedReason": "三道門檻全未取得核定證據（監造計畫核定／人員核准／9月出勤配置核可）",
+          "blockedOwner": "台電＋我方",
+          "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
+          "dueDate": "2026-09-14",
+          "daysLeft": -1,
+          "overdue": true,
+          "overdueDays": 1
+        }
+      ],
       "activeItems": [
         {
           "task": "觀音中大線監造派駐啟動",
@@ -4310,7 +4380,9 @@
           "blockedOwner": "台電＋我方",
           "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
           "dueDate": "2026-09-14",
-          "daysLeft": 0
+          "daysLeft": -1,
+          "overdue": true,
+          "overdueDays": 1
         }
       ],
       "pendingItems": [
@@ -5017,7 +5089,7 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-10-01",
-          "daysLeft": 17
+          "daysLeft": 16
         }
       ],
       "pendingItems": [
@@ -5315,7 +5387,9 @@
           "state": "notstarted",
           "stateLabel": "未啟動"
         }
-      ]
+      ],
+      "officeAddress": "桃園市龍潭區中原路二段465號",
+      "officeMapUrl": "https://maps.app.goo.gl/cnq8jbxZSFfdcSR3A"
     },
     {
       "key": "guangfeng",
@@ -5579,7 +5653,7 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-10-01",
-          "daysLeft": 17
+          "daysLeft": 16
         }
       ],
       "pendingItems": [
