@@ -30,6 +30,106 @@ function safeExternalUrl(value) {
     }
 }
 
+/* ==================================================================
+ * 人工確認覆寫（2026-09-15）
+ *
+ * 稽核 JSON 由 Mac mini 排程產生；來源同步較慢時，已確認的現場事實
+ * 不應被舊資料重新顯示為逾期。本層只補正「事件已發生」，原本三道
+ * 核可文件缺口仍保留為阻斷事項，不推定文件已核准。
+ * ================================================================== */
+function applyConfirmedAuditOverrides(payload) {
+    const taskName = "觀音中大線監造派駐啟動";
+    const completionText = "✅ 已完成：115/09/14 已實際派駐，監造人員均已進場（115/09/15 Tim確認）";
+    const complianceTask = "觀音中大派駐核准與留痕補正";
+    const complianceStatus = "實際派駐已完成；監造計畫、人員核准及9月出勤配置核可文件仍須追蹤";
+
+    const wasOverdue = (payload.overdueItems || []).some((item) => item.task === taskName);
+    const tracked = (payload.trackedItems || []).find((item) => item.task === taskName);
+    const wasInProgress = tracked?.state === "inprogress";
+
+    function visit(value, parentKey = "") {
+        if (Array.isArray(value)) {
+            if (parentKey === "overdueItems") {
+                return value.filter((item) => item?.task !== taskName).map((item) => visit(item));
+            }
+            if (parentKey === "blockedItems") {
+                return value.map((item) => {
+                    if (item?.task !== taskName) return visit(item);
+                    const corrected = {
+                        ...item,
+                        task: complianceTask,
+                        dueLabel: "115/09/14已實際派駐；核准與留痕文件續追",
+                        diff: 4,
+                        diffLabel: "文件留痕續追",
+                        statusLight: "🟠",
+                        status: complianceStatus,
+                        state: "inprogress",
+                        stateLabel: "進行中"
+                    };
+                    delete corrected.overdue;
+                    delete corrected.overdueDays;
+                    return visit(corrected);
+                });
+            }
+            return value.map((item) => visit(item));
+        }
+        if (!value || typeof value !== "object") return value;
+
+        if (value.task === taskName) {
+            value.status = completionText;
+            value.state = "submitted";
+            value.stateLabel = "已完成";
+            value.statusLight = "✅";
+            value.diff = 4;
+            value.diffLabel = "已於115/09/14完成";
+            delete value.overdue;
+            delete value.overdueDays;
+        }
+        Object.keys(value).forEach((key) => {
+            value[key] = visit(value[key], key);
+        });
+        return value;
+    }
+
+    visit(payload);
+
+    const guanyinCard = (payload.caseOverview || []).find((card) => card.key === "guanyin");
+    if (guanyinCard) {
+        guanyinCard.overdue = 0;
+        if (guanyinCard.nextDue?.task === taskName) {
+            guanyinCard.nextDue = {
+                task: taskName,
+                dueLabel: "115/09/14已完成",
+                completed: true
+            };
+        }
+    }
+
+    const guanyinSection = (payload.sections || []).find((section) => section.key === "guanyin");
+    if (guanyinSection?.counts) {
+        guanyinSection.counts.overdue = 0;
+        guanyinSection.counts.red = Math.max(0, Number(guanyinSection.counts.red || 0) - (wasOverdue ? 1 : 0));
+    }
+    if (wasInProgress && guanyinSection?.stateCounts) {
+        guanyinSection.stateCounts.inprogress = Math.max(0, Number(guanyinSection.stateCounts.inprogress || 0) - 1);
+        guanyinSection.stateCounts.submitted = Number(guanyinSection.stateCounts.submitted || 0) + 1;
+    }
+
+    if (payload.summary) {
+        payload.summary.overdue = 0;
+        payload.summary.red = Math.max(0, Number(payload.summary.red || 0) - (wasOverdue ? 1 : 0));
+    }
+    if (wasInProgress && payload.stateCounts) {
+        payload.stateCounts.inprogress = Math.max(0, Number(payload.stateCounts.inprogress || 0) - 1);
+        payload.stateCounts.submitted = Number(payload.stateCounts.submitted || 0) + 1;
+    }
+    if (payload.project?.riskCounts) {
+        payload.project.riskCounts.red = Math.max(0, Number(payload.project.riskCounts.red || 0) - (wasOverdue ? 1 : 0));
+    }
+    payload.confirmedOverride = "115/09/15補正：觀音中大案已於115/09/14實際派駐，監造人員均已進場";
+    return payload;
+}
+
 function riskToneClass(diff) {
     const value = Number(diff);
     if (Number.isFinite(value) && value <= 0) return "border-rose-200 bg-rose-50 text-rose-800";
@@ -87,6 +187,7 @@ function caseTone(card) {
 }
 
 function countdownText(card) {
+    if (card.nextDue?.completed) return { big: "已完成", small: escapeHtml(card.nextDue.task || "") };
     const days = card.nextDue?.daysLeft;
     if (typeof days !== "number") return { big: "—", small: "尚未進入列管節點" };
     if (days < 0) return { big: `逾期 ${Math.abs(days)} 天`, small: escapeHtml(card.nextDue.task || "") };
@@ -204,6 +305,7 @@ function renderSummary() {
     metaText.textContent = [
         payload.generatedAt ? `資料更新 ${payload.generatedAt}` : "",
         project.modifiedAt ? `提醒清單更新 ${project.modifiedAt}` : "",
+        payload.confirmedOverride || "",
         payload.source ? `來源 ${payload.source}` : ""
     ].filter(Boolean).join("｜");
 
@@ -652,7 +754,7 @@ async function init() {
     try {
         const response = await fetch("./taipower_4in1_audit.json", { cache: "no-store" });
         if (!response.ok) throw new Error(`無法讀取資料檔：${response.status}`);
-        state.payload = await response.json();
+        state.payload = applyConfirmedAuditOverrides(await response.json());
         render();
     } catch (error) {
         summaryGrid.innerHTML = "";
