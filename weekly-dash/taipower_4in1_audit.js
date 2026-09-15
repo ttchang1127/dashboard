@@ -681,6 +681,227 @@ function renderTriggerGroups(section) {
     }).join("") + `</div>`;
 }
 
+/* ==================================================================
+ * 觀音中大進駐後週期列管（2026-09-15）
+ *
+ * 共通清單原本把週期工作放在「待觸發」，但觀音中大已於09/14實際
+ * 派駐，這些工作已不能再藏在待觸發群組。此區依瀏覽日自動滾動
+ * 本週、每月5日、季報及每3個月節點；完成、送件、核定仍須人工
+ * 回填，不因日期滾動而自動視為完成。
+ * ================================================================== */
+function dayStart(value = new Date()) {
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+}
+
+function addDays(value, days) {
+    const result = new Date(value);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+function rocDate(value) {
+    return `${value.getFullYear() - 1911}/${String(value.getMonth() + 1).padStart(2, "0")}/${String(value.getDate()).padStart(2, "0")}`;
+}
+
+function rocMonth(value) {
+    return `${value.getFullYear() - 1911}年${value.getMonth() + 1}月`;
+}
+
+function currentWeekWindow(today) {
+    const offsetFromMonday = (today.getDay() + 6) % 7;
+    const monday = addDays(today, -offsetFromMonday);
+    const sunday = addDays(monday, 6);
+    return `${rocDate(monday)}–${rocDate(sunday)}`;
+}
+
+function monthlyFifthWindow(today) {
+    const due = new Date(today.getFullYear(), today.getMonth() + (today.getDate() > 5 ? 1 : 0), 5);
+    const reportMonth = new Date(due.getFullYear(), due.getMonth() - 1, 1);
+    return {
+        due,
+        reportMonth: rocMonth(reportMonth),
+        rosterMonth: rocMonth(due)
+    };
+}
+
+function nextFixedMonthDate(today, months, dayMode) {
+    for (let offset = 0; offset <= 12; offset += 1) {
+        const cursor = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+        if (!months.includes(cursor.getMonth() + 1)) continue;
+        const candidate = dayMode === "end"
+            ? new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0)
+            : new Date(cursor.getFullYear(), cursor.getMonth(), dayMode);
+        if (candidate >= today) return candidate;
+    }
+    return today;
+}
+
+function nextQuarterWasteDue(today) {
+    for (let offset = 0; offset <= 4; offset += 1) {
+        const quarterStartMonth = Math.floor(today.getMonth() / 3) * 3 + (offset * 3);
+        const quarterEnd = new Date(today.getFullYear(), quarterStartMonth + 3, 0);
+        const due = addDays(quarterEnd, 10);
+        if (due >= today) return { quarterEnd, due };
+    }
+    return { quarterEnd: today, due: today };
+}
+
+function nextInternalAudit(today) {
+    const deployment = new Date(2026, 8, 14);
+    let candidate = new Date(deployment);
+    candidate.setMonth(candidate.getMonth() + 3);
+    while (candidate < today) candidate.setMonth(candidate.getMonth() + 3);
+    return candidate;
+}
+
+function guanyinPeriodicGroups() {
+    const today = dayStart();
+    const week = currentWeekWindow(today);
+    const monthly = monthlyFifthWindow(today);
+    const ecologyG = nextFixedMonthDate(today, [2, 5, 8, 11], "end");
+    const ecologySelf = nextFixedMonthDate(today, [3, 6, 9, 12], 15);
+    const waste = nextQuarterWasteDue(today);
+    const audit = nextInternalAudit(today);
+    const halfMonth = today.getDate() <= 15 ? `${rocMonth(today)}上半月` : `${rocMonth(today)}下半月`;
+    const common = { owner: "巍耀分派／巍耀覆核" };
+
+    return [
+        {
+            key: "daily", label: "每日", count: 4, tone: "emerald", open: true,
+            window: `今日 ${rocDate(today)}`,
+            items: [
+                { ...common, status: "active", task: "差勤簽到退", due: "上下班1小時內完成", evidence: "簽到退紀錄、異常說明", fine: "未到場5,000/人日；不實5,000/人次", basis: "工作說明書7.6.1／7.6.12" },
+                { ...common, status: "active", task: "監造日報／派駐工作紀錄", due: "逐日依實際派駐工作填報", evidence: "人員、時間、工作內容、照片與異常", fine: "紀錄不實依契約處理", basis: "工作說明書4.2.8／進場後總控" },
+                { ...common, status: "trigger", task: "施工日誌審查", due: "施工標開工後，每日或次日審查", evidence: "施工日誌、審查簽章、退補紀錄", fine: "2,000/日", basis: "罰則13.5" },
+                { ...common, status: "trigger", task: "CCTV即時影像抽看", due: "施工標開工後，每日至少1次", evidence: "抽看時間、畫面截圖、異常處置", fine: "依安衛罰款標準", basis: "工作說明書9.23.8" }
+            ]
+        },
+        {
+            key: "weekly", label: "每週", count: 2, tone: "teal", open: true,
+            window: `本週 ${week}`,
+            items: [
+                { ...common, status: "trigger", task: "監造週報", due: "施工標開工後，每週遞交前一週成果", evidence: "週報、送件或收件紀錄", fine: "2,000/日", basis: "罰則13.5" },
+                { ...common, status: "trigger", task: "工安／環境保護抽查", due: "施工標開工後：工安每週至少5次；環保每週至少1次", evidence: "抽查表、照片、缺失改善閉環", fine: "2,000/日", basis: "工作說明書4.2.2" }
+            ]
+        },
+        {
+            key: "halfmonth", label: "每半月", count: 2, tone: "sky", open: true,
+            window: `${halfMonth}窗口（日期依通知）`,
+            items: [
+                { ...common, status: "trigger", task: "施工協調會／工進會議", due: "施工標開工後每半個月1次", evidence: "議程、簽到、紀錄、決議追蹤", fine: "2,000/次", basis: "工作說明書4.1.28" },
+                { ...common, status: "setup", statusLabel: "10/14前建置", task: "PMIS半月報", due: "PMIS須於進場一個月內建置；其後每半月更新", evidence: "建置／教育訓練紀錄、PMIS匯出、估驗附件", fine: "契約附件義務", basis: "服務建議書／起始會議確認" }
+            ]
+        },
+        {
+            key: "monthly", label: "每月", count: 6, tone: "amber", open: true,
+            window: `最近共同期限 ${rocDate(monthly.due)}`,
+            items: [
+                { ...common, status: "active", task: `${monthly.reportMonth}工作月報`, due: `${rocDate(monthly.due)}前`, evidence: "月報、函文與收件證明", fine: "5,000/日", basis: "工作說明書4.2.8／契約9-9" },
+                { ...common, status: "active", task: `${monthly.rosterMonth}出勤配置計畫`, due: `${rocDate(monthly.due)}前`, evidence: "排班、人員與車輛配置、台電核可", fine: "2,000/日", basis: "工作說明書7.3.3" },
+                { ...common, status: "active", task: `${monthly.reportMonth}差勤統計及簽到表影本`, due: `${rocDate(monthly.due)}前`, evidence: "工時統計、簽到退影本、請假異常", fine: "未到場5,000/人日", basis: "工作說明書7.6.1／7.6.12" },
+                { ...common, status: "trigger", task: "施工標案受罰一覽表", due: `施工標開工後，${rocDate(monthly.due)}前；事實發生3日內先開立`, evidence: "受罰表、通知與改善追蹤", fine: "2,000/次", basis: "工作說明書4.1.32" },
+                { ...common, status: "trigger", task: "土方運送證明文件彙整", due: "施工標開工後，每月併工作月報", evidence: "運送憑證、流向勾稽、月報附件", fine: "2,000/次", basis: "工作說明書4.1.36" },
+                { ...common, status: "trigger", task: "每月估驗請款／估驗計價審核", due: "依廠商提送；審核期限為次日+7工作天", evidence: "估驗明細、審核表、收送件紀錄", fine: "千分之一/日", basis: "工作說明書4.1.19／11.5" }
+            ]
+        },
+        {
+            key: "quarterly", label: "每季／每3個月", count: 4, tone: "violet", open: true,
+            window: `最近節點 ${rocDate(ecologySelf)}`,
+            items: [
+                { ...common, status: "confirm", task: "生態檢核自評表（表5）", due: `${rocDate(ecologySelf)}前（3／6／9／12月中旬）；先取得本季適用性判定`, evidence: "台電書面判定、表5、照片、送件紀錄", fine: "2,000/日", basis: "工作說明書4.2.3" },
+                { ...common, status: "trigger", task: "生態檢核抽查（表G）", due: `施工標開工後；最近 ${rocDate(ecologyG)}前`, evidence: "表G、現場照片、改善追蹤", fine: "2,000/次", basis: "工作說明書4.2.3" },
+                { ...common, status: "trigger", task: "事業廢棄物妥善清理文件督導", due: `施工標開工後；${rocDate(waste.quarterEnd)}季結、${rocDate(waste.due)}前完成`, evidence: "清運聯單、去向證明、季報", fine: "2,000/次", basis: "工作說明書4.2.1" },
+                { ...common, status: "confirm", task: "內部稽核", due: `首期暫排 ${rocDate(audit)}；起算基準依核定監造計畫確認`, evidence: "稽核計畫、查核紀錄、矯正閉環", fine: "可暫停估驗款", basis: "工作說明書3.5.17.8" }
+            ]
+        },
+        {
+            key: "annual", label: "每年／個人週期", count: 3, tone: "stone", open: false,
+            window: "先建名冊與年度排程",
+            items: [
+                { ...common, status: "schedule", task: "技術專刊", due: "每年1篇；實際日期待排", evidence: "年度題目、撰稿進度、送件紀錄", fine: "2,000/日", basis: "工作說明書4.2.7.2" },
+                { ...common, status: "trigger", task: "拌和廠驗廠及年度品質查驗", due: "有供料拌和廠後，每年至少1次", evidence: "驗廠／品質查驗紀錄、改善閉環", fine: "2,000/次", basis: "工作說明書3.5.17.13" },
+                { ...common, status: "active", task: "在職訓練、定期健檢及尿液採驗", due: "依人員、職類及證照週期列管", evidence: "人員到期名冊、訓練／健檢／採驗證明", fine: "依職安及採驗規定", basis: "工作說明書7.3.6／9.18及相關規則" }
+            ]
+        }
+    ];
+}
+
+const PERIODIC_TONES = {
+    emerald: ["border-emerald-200", "bg-emerald-50", "text-emerald-800"],
+    teal: ["border-teal-200", "bg-teal-50", "text-teal-800"],
+    sky: ["border-sky-200", "bg-sky-50", "text-sky-800"],
+    amber: ["border-amber-200", "bg-amber-50", "text-amber-800"],
+    violet: ["border-violet-200", "bg-violet-50", "text-violet-800"],
+    stone: ["border-stone-200", "bg-stone-50", "text-stone-700"]
+};
+
+const PERIODIC_STATUS = {
+    active: ["已啟動", "border-emerald-200 bg-emerald-50 text-emerald-800"],
+    setup: ["建置中", "border-sky-200 bg-sky-50 text-sky-800"],
+    confirm: ["適用性確認", "border-amber-200 bg-amber-50 text-amber-800"],
+    schedule: ["排程待定", "border-violet-200 bg-violet-50 text-violet-800"],
+    trigger: ["待施工開工／提送", "border-stone-300 bg-stone-100 text-stone-700"]
+};
+
+function renderGuanyinPeriodicControl() {
+    const groups = guanyinPeriodicGroups();
+    const items = groups.flatMap((group) => group.items);
+    const total = items.length;
+    const activeCount = items.filter((item) => ["active", "setup"].includes(item.status)).length;
+    const waitingCount = total - activeCount;
+    return `
+        <section class="mt-6 overflow-hidden rounded-[24px] border border-teal-200 bg-teal-50/50">
+            <div class="border-b border-teal-200 bg-gradient-to-r from-teal-900 to-teal-700 px-5 py-5 text-white">
+                <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-teal-100">115/09/14進駐後生效</p>
+                        <h4 class="mt-1 text-xl font-bold">觀音中大週期工作列管</h4>
+                        <p class="mt-2 max-w-3xl text-sm leading-relaxed text-teal-50">共${total}項週期工作。監造派駐不等於施工標開工；已啟動、適用性待確認與待施工觸發分開列示，完成、送件與核定仍須回填證據。</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-xs font-bold">
+                        <span class="rounded-full bg-white/15 px-3 py-1.5">現在啟動／建置 ${activeCount}</span>
+                        <span class="rounded-full bg-white/15 px-3 py-1.5">待確認／觸發 ${waitingCount}</span>
+                        <span class="rounded-full bg-white/15 px-3 py-1.5">總計 ${total}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-3 p-4 lg:p-5">
+                ${groups.map((group) => {
+                    const tone = PERIODIC_TONES[group.tone] || PERIODIC_TONES.stone;
+                    return `
+                        <details class="overflow-hidden rounded-2xl border ${tone[0]} bg-white/90" ${group.open ? "open" : ""}>
+                            <summary class="flex cursor-pointer flex-wrap items-center justify-between gap-2 ${tone[1]} px-4 py-3">
+                                <span class="font-bold ${tone[2]}">${escapeHtml(group.label)}列管</span>
+                                <span class="flex flex-wrap items-center gap-2">
+                                    <span class="text-xs font-semibold ${tone[2]}">${escapeHtml(group.window)}</span>
+                                    <span class="pill border-white/70 bg-white ${tone[2]}">${group.count}項</span>
+                                </span>
+                            </summary>
+                            <div class="grid grid-cols-1 gap-3 p-4 xl:grid-cols-2">
+                                ${group.items.map((item) => {
+                                    const status = PERIODIC_STATUS[item.status] || PERIODIC_STATUS.confirm;
+                                    return `
+                                    <article class="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+                                        <div class="flex flex-wrap items-start justify-between gap-2">
+                                            <h5 class="font-bold leading-snug text-stone-800">${escapeHtml(item.task)}</h5>
+                                            <span class="pill ${status[1]}">${escapeHtml(item.statusLabel || status[0])}</span>
+                                        </div>
+                                        <p class="mt-3 text-sm font-semibold text-teal-800">本期：${escapeHtml(item.due)}</p>
+                                        <p class="mt-2 text-sm text-stone-600">負責：${escapeHtml(item.owner)}</p>
+                                        <p class="mt-1 text-sm text-stone-600">留痕：${escapeHtml(item.evidence)}</p>
+                                        <p class="mt-2 text-xs leading-relaxed text-stone-500">依據：${escapeHtml(item.basis)}｜風險：${escapeHtml(item.fine)}</p>
+                                    </article>
+                                `;
+                                }).join("")}
+                            </div>
+                        </details>
+                    `;
+                }).join("")}
+            </div>
+        </section>
+    `;
+}
+
 
 function renderSection(section) {
     const activeItems = section.activeItems || [];
@@ -693,6 +914,7 @@ function renderSection(section) {
         </p>
     ` : "";
     const staffing = renderStaffing(section);
+    const periodicControl = section.key === "guanyin" ? renderGuanyinPeriodicControl() : "";
     // 四塊洞察只在共同項目呈現；本案若有阻斷或逾期，仍在此補一格，
     // 讓該案分頁不會因為不重複面板而漏掉自己的風險。
     const blockedCount = section.counts?.blocked || 0;
@@ -721,6 +943,7 @@ function renderSection(section) {
             </div>
             <div class="mt-4 rounded-2xl border border-stone-200 bg-white/70 px-4 py-3 text-sm font-bold text-stone-700">${renderRiskCounts(section.counts)}</div>
             ${staffing}
+            ${periodicControl}
 
             <div class="mt-6 grid grid-cols-1 gap-5 xl:grid-cols-[0.85fr,1.15fr]">
                 <div>
