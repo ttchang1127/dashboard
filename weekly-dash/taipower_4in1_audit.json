@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-15 11:59:31 +0800",
+  "generatedAt": "2026-09-16 08:30:17 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "project": {
     "name": "台電4合1",
     "version": "V3",
-    "auditDate": "2026-09-15",
+    "auditDate": "2026-09-16",
     "modifiedAt": "2026-09-13 07:58:50",
     "riskCounts": {
       "red": 1,
@@ -56,7 +56,7 @@
         "task": "觀音中大線監造派駐啟動",
         "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
         "dueDate": "2026-09-14",
-        "daysLeft": -1
+        "daysLeft": -2
       },
       "rank": 1
     },
@@ -79,7 +79,7 @@
         "task": "廣豐D/S監造派駐啟動",
         "dueLabel": "115/10/01（起始會議確認）",
         "dueDate": "2026-10-01",
-        "daysLeft": 16
+        "daysLeft": 15
       },
       "rank": 2
     },
@@ -102,7 +102,7 @@
         "task": "龍顯聖亭線監造派駐啟動",
         "dueLabel": "115/10/01（起始會議確認）",
         "dueDate": "2026-10-01",
-        "daysLeft": 16
+        "daysLeft": 15
       },
       "rank": 3
     },
@@ -225,8 +225,8 @@
     {
       "task": "專業責任保險投保及送執",
       "dueLabel": "115/10/06（第1次估驗前；未載明者暫以決標後60日預排）",
-      "diff": 21,
-      "diffLabel": "D-21 追蹤",
+      "diff": 20,
+      "diffLabel": "D-20 追蹤",
       "statusLight": "🟢",
       "owner": "巧晴姐",
       "manager": "孝智哥 <@911417165373136897>",
@@ -250,13 +250,13 @@
       "blockedOwner": "我方待確認",
       "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
       "dueDate": "2026-10-06",
-      "daysLeft": 21
+      "daysLeft": 20
     },
     {
       "task": "觀音中大線監造派駐啟動",
       "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
-      "diff": -1,
-      "diffLabel": "逾期1天",
+      "diff": -2,
+      "diffLabel": "逾期2天",
       "statusLight": "🔴",
       "owner": "巍耀哥 <@1486270112326615042>",
       "manager": "巍耀哥 <@1486270112326615042>",
@@ -280,9 +280,9 @@
       "blockedOwner": "台電＋我方",
       "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
       "dueDate": "2026-09-14",
-      "daysLeft": -1,
+      "daysLeft": -2,
       "overdue": true,
-      "overdueDays": 1
+      "overdueDays": 2
     },
     {
       "heading": "四、開工前待觸發列管事項",
@@ -339,8 +339,8 @@
     {
       "task": "觀音中大線監造派駐啟動",
       "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
-      "diff": -1,
-      "diffLabel": "逾期1天",
+      "diff": -2,
+      "diffLabel": "逾期2天",
       "statusLight": "🔴",
       "owner": "巍耀哥 <@1486270112326615042>",
       "manager": "巍耀哥 <@1486270112326615042>",
@@ -364,9 +364,9 @@
       "blockedOwner": "台電＋我方",
       "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
       "dueDate": "2026-09-14",
-      "daysLeft": -1,
+      "daysLeft": -2,
       "overdue": true,
-      "overdueDays": 1
+      "overdueDays": 2
     }
   ],
   "trackedItems": [
@@ -391,7 +391,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-12",
-      "daysLeft": -34
+      "daysLeft": -35
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -414,7 +414,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -25
+      "daysLeft": -26
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -437,7 +437,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -25
+      "daysLeft": -26
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -460,7 +460,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -25
+      "daysLeft": -26
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -483,7 +483,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -25
+      "daysLeft": -26
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -506,7 +506,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-14",
-      "daysLeft": -32
+      "daysLeft": -33
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -529,7 +529,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-17",
-      "daysLeft": -29
+      "daysLeft": -30
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -556,7 +556,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響10/01派駐",
       "dueDate": "2026-08-27",
-      "daysLeft": -19
+      "daysLeft": -20
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -583,7 +583,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -19
+      "daysLeft": -20
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -610,7 +610,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響10/01派駐",
       "dueDate": "2026-08-27",
-      "daysLeft": -19
+      "daysLeft": -20
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -637,7 +637,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -19
+      "daysLeft": -20
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -664,7 +664,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響10/01派駐",
       "dueDate": "2026-08-27",
-      "daysLeft": -19
+      "daysLeft": -20
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -687,7 +687,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-08-27",
-      "daysLeft": -19
+      "daysLeft": -20
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -710,7 +710,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-09-06",
-      "daysLeft": -9
+      "daysLeft": -10
     }
   ],
   "sections": [
@@ -2300,8 +2300,8 @@
         {
           "task": "專業責任保險投保及送執",
           "dueLabel": "115/10/06（第1次估驗前；未載明者暫以決標後60日預排）",
-          "diff": 21,
-          "diffLabel": "D-21 追蹤",
+          "diff": 20,
+          "diffLabel": "D-20 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -2325,7 +2325,7 @@
           "blockedOwner": "我方待確認",
           "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
           "dueDate": "2026-10-06",
-          "daysLeft": 21
+          "daysLeft": 20
         },
         {
           "heading": "四、開工前待觸發列管事項",
@@ -2383,8 +2383,8 @@
         {
           "task": "專業責任保險投保及送執",
           "dueLabel": "115/10/06（第1次估驗前；未載明者暫以決標後60日預排）",
-          "diff": 21,
-          "diffLabel": "D-21 追蹤",
+          "diff": 20,
+          "diffLabel": "D-20 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -2408,7 +2408,7 @@
           "blockedOwner": "我方待確認",
           "blockedImpact": "11.5.2第1次估驗須保單＋監造計畫核定兩者齊備",
           "dueDate": "2026-10-06",
-          "daysLeft": 21
+          "daysLeft": 20
         }
       ],
       "pendingItems": [
@@ -4287,8 +4287,8 @@
         {
           "task": "觀音中大線監造派駐啟動",
           "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
-          "diff": -1,
-          "diffLabel": "逾期1天",
+          "diff": -2,
+          "diffLabel": "逾期2天",
           "statusLight": "🔴",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
@@ -4312,17 +4312,17 @@
           "blockedOwner": "台電＋我方",
           "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
           "dueDate": "2026-09-14",
-          "daysLeft": -1,
+          "daysLeft": -2,
           "overdue": true,
-          "overdueDays": 1
+          "overdueDays": 2
         }
       ],
       "overdueItems": [
         {
           "task": "觀音中大線監造派駐啟動",
           "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
-          "diff": -1,
-          "diffLabel": "逾期1天",
+          "diff": -2,
+          "diffLabel": "逾期2天",
           "statusLight": "🔴",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
@@ -4346,17 +4346,17 @@
           "blockedOwner": "台電＋我方",
           "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
           "dueDate": "2026-09-14",
-          "daysLeft": -1,
+          "daysLeft": -2,
           "overdue": true,
-          "overdueDays": 1
+          "overdueDays": 2
         }
       ],
       "activeItems": [
         {
           "task": "觀音中大線監造派駐啟動",
           "dueLabel": "115/09/14（115/09/07函通知自115/09/14起派駐）",
-          "diff": -1,
-          "diffLabel": "逾期1天",
+          "diff": -2,
+          "diffLabel": "逾期2天",
           "statusLight": "🔴",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "巍耀哥 <@1486270112326615042>",
@@ -4380,9 +4380,9 @@
           "blockedOwner": "台電＋我方",
           "blockedImpact": "人到而不在核可名單，13.6為5,000元/人日",
           "dueDate": "2026-09-14",
-          "daysLeft": -1,
+          "daysLeft": -2,
           "overdue": true,
-          "overdueDays": 1
+          "overdueDays": 2
         }
       ],
       "pendingItems": [
@@ -5068,8 +5068,8 @@
         {
           "task": "龍顯聖亭線監造派駐啟動",
           "dueLabel": "115/10/01（起始會議確認）",
-          "diff": 16,
-          "diffLabel": "D-16 追蹤",
+          "diff": 15,
+          "diffLabel": "D-15 追蹤",
           "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
@@ -5089,7 +5089,7 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-10-01",
-          "daysLeft": 16
+          "daysLeft": 15
         }
       ],
       "pendingItems": [
@@ -5632,8 +5632,8 @@
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/10/01（起始會議確認）",
-          "diff": 16,
-          "diffLabel": "D-16 追蹤",
+          "diff": 15,
+          "diffLabel": "D-15 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -5653,7 +5653,7 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-10-01",
-          "daysLeft": 16
+          "daysLeft": 15
         }
       ],
       "pendingItems": [
