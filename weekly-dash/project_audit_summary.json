@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-17 08:30:14 +0800",
+  "generatedAt": "2026-09-17 11:20:34 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -394,35 +394,26 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-09-17",
       "version": "V1",
-      "modifiedAt": "2026-09-09 08:15:33",
+      "modifiedAt": "2026-09-17 11:20:18",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 1,
         "yellow": 1,
-        "green": 6
+        "green": 7
       },
       "itemCount": 9,
       "topUrgent": {
-        "task": "管線調查",
-        "dueLabel": "115/09/12（機關指定日基準；暫以 115/08/13 +30 日預排）",
-        "diff": -5,
-        "diffLabel": "逾期5天",
-        "statusLight": "🔴",
+        "task": "地質調查",
+        "dueLabel": "115/09/18（機關指定日基準；暫以 115/08/13 +36 日預排）",
+        "diff": 1,
+        "diffLabel": "D-1 緊急",
+        "statusLight": "🟠",
         "owner": "待指派",
         "manager": null
       },
       "items": [
-        {
-          "task": "管線調查",
-          "dueLabel": "115/09/12（機關指定日基準；暫以 115/08/13 +30 日預排）",
-          "diff": -5,
-          "diffLabel": "逾期5天",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
         {
           "task": "地質調查",
           "dueLabel": "115/09/18（機關指定日基準；暫以 115/08/13 +36 日預排）",
@@ -491,6 +482,15 @@
           "dueLabel": "115/10/06（機關指定日基準；尚未指定，暫以 115/09/15 +21 日預排）",
           "diff": 19,
           "diffLabel": "D-19 追蹤",
+          "statusLight": "🟢",
+          "owner": "待指派",
+          "manager": null
+        },
+        {
+          "task": "管線調查",
+          "dueLabel": "115/10/20（機關指定日基準；尚未指定，暫以 115/09/20 +30 日預排）",
+          "diff": 33,
+          "diffLabel": "D-33 追蹤",
           "statusLight": "🟢",
           "owner": "待指派",
           "manager": null
