@@ -686,6 +686,21 @@ function renderProjects() {
     `;
 }
 
+function renderTimeline() {
+    return `
+        <section class="panel rounded-[24px] p-5 lg:p-6 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <p class="text-sm font-semibold tracking-[0.16em] uppercase text-stone-500">Personnel Timeline</p>
+                    <h2 class="text-2xl font-bold leading-tight">專案人力時間軸</h2>
+                </div>
+                <a href="../timeline.html" target="_blank" rel="noopener" class="project-link text-sm">在新視窗開啟完整版 ↗</a>
+            </div>
+            <iframe src="../timeline.html" title="專案人力時間軸" class="w-full rounded-2xl border border-stone-300" style="height:80vh;"></iframe>
+        </section>
+    `;
+}
+
 function syncTabs() {
     tabButtons.forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.tab === state.activeTab);
@@ -712,6 +727,8 @@ function renderMain() {
         mainContent.innerHTML = renderGroups();
     } else if (state.activeTab === "people") {
         mainContent.innerHTML = renderPeople();
+    } else if (state.activeTab === "timeline") {
+        mainContent.innerHTML = renderTimeline();
     } else {
         mainContent.innerHTML = renderProjects();
     }
