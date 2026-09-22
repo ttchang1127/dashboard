@@ -505,6 +505,80 @@ function renderFinePanel() {
     });
 }
 
+/* 請假與職務代理規定（共同項目分頁，點選展開）。
+ *
+ * 這是契約條文整理，不是提醒清單的資料，所以寫死在前端、不走 JSON：
+ * 條文不會隨排程變動，放進產生器反而多一個會被覆蓋的地方。
+ * 依據與完整說明見 KB：50_職安人員/請假與職務代理規定.md。
+ * 條文或台電確認事項變更時，兩處要一起改。 */
+function leaveTable(head, rows, minWidth = 640) {
+    const th = head.map((h) => `<th class="py-2 pr-3 text-xs font-semibold text-stone-500">${h}</th>`).join("");
+    const tr = rows.map((cells) => `<tr class="border-t border-stone-200 align-top">${
+        cells.map((c, i) => `<td class="py-2 pr-3 text-sm ${i === 0 ? "font-semibold text-stone-800" : "text-stone-700"}">${c}</td>`).join("")
+    }</tr>`).join("");
+    return `<div class="overflow-x-auto"><table class="w-full text-left" style="min-width:${minWidth}px"><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table></div>`;
+}
+
+function renderLeavePanel() {
+    const h = (t) => `<h4 class="mt-6 text-base font-bold text-stone-900">${t}</h4>`;
+    const scenario = leaveTable(["情境", "事前要做什麼", "代理人", "依據"], [
+        ["公出、出差", "當日（含）以前向台電報備；差假前先覓妥代理人；填外勤／公出單", "當日出勤人員互為代理", "7.6.2"],
+        ["請假 1 天以上", "除情況特殊外，<strong>事先</strong>向台電報備", "同等專長資格人員；或當日計畫出勤人員互為代理（<strong>出勤配置計畫預先核定即可</strong>）", "7.6.4"],
+        ["連續 5 天以上長假", "<strong>3 天前以書面</strong>提出", "同上", "7.6.4"],
+        ["離職，或連續 3 天以上無法執勤", "指派代理人並<strong>函報台電核定</strong>，不得中斷", "<strong>相同資格</strong>人員", "7.4.2"],
+        ["職安人員請假／無法駐守", "<strong>書面通知</strong>台電；代理須<strong>事先報准</strong>；離開工地須填<strong>移交委託書</strong>留工地備查", "見下表", "7.6.3、契約附件6.1、輔導要點二十四"]
+    ]);
+    const role = leaveTable(["被代理職務", "代理人資格", "限制", "依據"], [
+        ["監造主任", "具同資格：土木／建築相關科系、相關工作10年、現場監造8年、甲種職安業務主管＋品管證照", "一人同時限代 1 人；每月暫代不逾 10 日", "7.6.3、7.4.2"],
+        ["主辦／協辦工程師、協辦工程員、品管", "具同資格（以被代理職務 7.3.1.2 門檻為準；資格高者可向下代理）", "同上", "7.6.3、7.4.2、7.6.4"],
+        ["職安人員（路線A）", "<strong>同一契約內所置</strong>、具「營造業甲種職業安全衛生業務主管」以上資格者（或與職安相同資格者），<strong>事先報准</strong>", "每月 ≤ <strong>7 天</strong>；<strong>逾 7 天應主動更換原職安人員</strong>", "7.2、7.6.3、輔導要點十一(七)"],
+        ["職安人員（路線B）", "工地負責人＝<strong>監造主任</strong>", "請假連續 3 日內；每月累計 ≤ <strong>5 天</strong>；當天代理", "7.6.3"],
+        ["文書管理人員", "同等專長人員", "假日／超時不得為唯一出勤人", "7.6.4、7.3.9"]
+    ], 680);
+    const fines = leaveTable(["違反情形", "罰則", "依據"], [
+        ["請假未依規定指定代理人、職務中斷", "扣當日薪資，另 <strong class='text-rose-700'>5,000元／人日</strong>", "13.6"],
+        ["職安離開現場未報備、未指定合格代理人或代理人未到場（含未填移交委託書）", "<strong class='text-rose-700'>5,000元／次</strong>、2.5點", "安衛罰款標準 三、5"],
+        ["職安及常駐人員未依規定簽到（含未經同意代理簽到）", "2,000元／人次", "契約附件6.1"],
+        ["應簽到未簽到；簽到不實", "5,000元／人日；5,000元／人次", "13.7"],
+        ["經同意未指派代理人", "每日扣 1/30 服務費", "11.5.1.1.2"]
+    ], 560);
+    return insightPanel({
+        tone: "border-l-8 border-l-teal-500",
+        eyebrow: "Rules · 共通規定",
+        title: "📋 請假與職務代理規定",
+        titleClass: "text-stone-900",
+        meta: "未指定代理人或職務中斷 13.6 · 5,000元／人日",
+        body: `
+            <ul class="space-y-1 text-sm text-stone-700">
+                <li>① <strong>代理人要具被代理職務的資格</strong>（同資格／相同資格／同等專長），不是找現場任何人頂。</li>
+                <li>② <strong>職安人員代理最嚴</strong>：甲種職安業務主管以上、同契約內所置、事先報准、每月最多 7 天，逾 7 天要換人。</li>
+                <li>③ <strong>互為代理</strong>以每月出勤配置計畫預先核定即可 → <strong>每月計畫須附職務代理對照表</strong>。</li>
+            </ul>
+            ${h("依請假情境")}${scenario}
+            <p class="mt-2 text-xs text-stone-500">互為代理計價：請假人不計服務費，代理人只計原服務費（無加成）。</p>
+            ${h("依職務查代理人資格")}${role}
+            <p class="mt-2 text-xs text-stone-500">職安代理共同要件：事先以書面報請台電同意，未經同意不得執行代理勤務及簽到（契約附件6.1）。職安人員本身須乙級職安管理員以上（7.3.1.2.5），甲種業務主管代理屬短期例外，故設 7 天上限。</p>
+            ${h("互為代理：出勤配置計畫預先核定即可")}
+            <p class="text-sm text-stone-700">核可的是<strong>代理名單</strong>，不是豁免資格；名單外的代理仍須個案報准。下列仍須另辦，不因計畫核可而免除：</p>
+            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-stone-700">
+                <li>請假 1 天以上之事先報備（報備 ≠ 同意）</li>
+                <li>連續 5 天以上長假，3 天前書面提出</li>
+                <li>連續 3 天以上無法執勤，函報台電核定</li>
+                <li>職安人員代理之事先報准與書面同意</li>
+            </ul>
+            ${h("不管誰請假都要守")}
+            <ul class="list-disc space-y-1 pl-5 text-sm text-stone-700">
+                <li>不得同時全部差假，平日至少 <strong>2 人</strong>駐守（7.6.8）</li>
+                <li>假日／超時出勤至少 1 名駐地人員（文書除外），須具甲種職安業務主管以上（7.3.9）</li>
+                <li>停留點、隱蔽部分、影響結構安全部分須全程監督，不得以未上班推諉（7.6.11）</li>
+            </ul>
+            ${h("罰則")}${fines}
+            <p class="mt-4 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-900">待確認：職安代理路線A（7天）與路線B（5天）可否同月合併；確認前合計以不超過 7 天為宜。另觀音中大監造主任（10年／8年門檻）之合格代理人尚未安排。</p>
+            <p class="mt-2 text-xs text-stone-400">依據：工作說明書 7.2、7.4.2、7.6.2～7.6.4、7.6.8、7.3.9、11.5.1.1.2、13.6、13.7；技術服務契約「工作安全與衛生」附件；承攬商安全衛生輔導要點十一、二十四及罰款標準（114.10.23）。確認事項：工地負責人＝監造主任、互為代理以出勤配置計畫預先核定（115/09/22）。</p>
+        `
+    });
+}
+
 /* 四塊洞察只在「共同項目」分頁呈現。
  *
  * 它們統計的是【全案合計】，不屬於任何單一案；掛在四個案別分頁上
@@ -527,7 +601,9 @@ function renderInsights() {
         renderBlockedPanel(),
         renderOverduePanel(),
         renderStateBar(),
-        renderFinePanel()
+        renderFinePanel(),
+        `<p class="px-2 pt-2 text-xs font-semibold uppercase tracking-[0.16em] text-stone-400">共通規定</p>`,
+        renderLeavePanel()
     ].join("");
 }
 
