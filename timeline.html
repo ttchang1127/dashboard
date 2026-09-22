@@ -575,7 +575,7 @@ function sectionHTML(title, desc, people){
     + '<div class="mini-track"><div class="mini-dot" style="left:'+pct(TODAY)+'%"></div></div>'
     + '<span class="mini-edge">'+rocShort(RANGE_END)+'</span>'
     + '</div>';
-  return '<section class="section">'
+  return '<section class="section expanded">'
     + '<div class="section-head"><h2>'+title+'</h2><span class="cnt">'+people.length+' 人</span><span class="chev">▾</span><p>'+desc+'</p>'+miniToday+'</div>'
     + '<div class="scrollwrap"><div class="chart" style="width:'+(210+chartW)+'px">'+body+'</div></div>'
     + '</section>';
