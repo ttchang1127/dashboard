@@ -1,0 +1,664 @@
+<title>專案人力時間軸</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --page:        #f9f9f7;
+    --surface:     #fcfcfb;
+    --surface-2:   #f3f2ee;
+    --ink:         #0b0b0b;
+    --ink-2:       #52514e;
+    --muted:       #898781;
+    --grid:        #e1e0d9;
+    --grid-strong: #c3c2b7;
+    --border:      rgba(11,11,11,0.10);
+    --shihe:       #2a78d6;   /* 世合 */
+    --shihe-soft:  #2a78d61a;
+    --zhaofeng:    #eb6834;   /* 兆豐 */
+    --zhaofeng-soft: #eb68341a;
+    --jiuding:     #1baf7a;   /* 九鼎 */
+    --jiuding-soft:#1baf7a1a;
+    --warn:        #fab219;
+    --critical:    #d03b3b;
+    --good:        #0ca30c;
+    --today-line:  #d03b3b;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:        #0d0d0d;
+      --surface:     #1a1a19;
+      --surface-2:   #232322;
+      --ink:         #ffffff;
+      --ink-2:       #c3c2b7;
+      --muted:       #898781;
+      --grid:        #2c2c2a;
+      --grid-strong: #383835;
+      --border:      rgba(255,255,255,0.10);
+      --shihe:       #3987e5;
+      --shihe-soft:  #3987e526;
+      --zhaofeng:    #d95926;
+      --zhaofeng-soft: #d9592626;
+      --jiuding:     #199e70;
+      --jiuding-soft:#199e7026;
+      --warn:        #fab219;
+      --critical:    #e66767;
+      --good:        #0ca30c;
+      --today-line:  #e66767;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:        #0d0d0d;
+    --surface:     #1a1a19;
+    --surface-2:   #232322;
+    --ink:         #ffffff;
+    --ink-2:       #c3c2b7;
+    --muted:       #898781;
+    --grid:        #2c2c2a;
+    --grid-strong: #383835;
+    --border:      rgba(255,255,255,0.10);
+    --shihe:       #3987e5;
+    --shihe-soft:  #3987e526;
+    --zhaofeng:    #d95926;
+    --zhaofeng-soft: #d9592626;
+    --jiuding:     #199e70;
+    --jiuding-soft:#199e7026;
+    --warn:        #fab219;
+    --critical:    #e66767;
+    --good:        #0ca30c;
+    --today-line:  #e66767;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--page);
+    color:var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    padding-inline:16px;
+    padding-block: 20px 48px;
+    max-width:1280px;
+    margin:0 auto;
+  }
+  h1,h2,h3{font-family:"Manrope", system-ui, sans-serif; margin:0; text-wrap:balance;}
+
+  /* ---- header ---- */
+  .top{
+    display:flex; flex-wrap:wrap; gap:16px 28px; align-items:flex-end; justify-content:space-between;
+    padding-block:4px 18px; border-bottom:1px solid var(--border); margin-bottom:18px;
+  }
+  .top h1{font-size:22px; font-weight:800; letter-spacing:-0.01em;}
+  .top .sub{color:var(--ink-2); font-size:13px; margin-top:4px;}
+  .top .sub b{color:var(--ink); font-variant-numeric:tabular-nums;}
+
+  .kpis{display:flex; gap:10px; flex-wrap:wrap;}
+  .kpi{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:8px 14px; min-width:92px;
+  }
+  .kpi .n{font-family:"Manrope",sans-serif; font-weight:800; font-size:20px; font-variant-numeric:tabular-nums; line-height:1.1;}
+  .kpi .l{font-size:11px; color:var(--muted); margin-top:2px;}
+  .kpi.warn .n{color:var(--warn);}
+  .kpi.critical .n{color:var(--critical);}
+
+  /* ---- controls ---- */
+  .controls{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;
+  }
+  .pillgroup{display:flex; gap:6px; flex-wrap:wrap;}
+  .pill{
+    border:1px solid var(--border); background:var(--surface); color:var(--ink-2);
+    font-size:12.5px; padding:6px 12px; border-radius:999px; cursor:pointer; user-select:none;
+    display:flex; align-items:center; gap:6px; font-weight:600;
+  }
+  .pill .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+  .pill .num{
+    font-size:10.5px; font-weight:700; color:var(--muted); background:var(--surface-2);
+    border-radius:999px; padding:1px 6px; font-variant-numeric:tabular-nums;
+  }
+  .pill[aria-pressed="true"] .num{ color:var(--ink); background:var(--page); }
+  .pill[aria-pressed="true"]{background:var(--surface-2); color:var(--ink); border-color:var(--grid-strong);}
+  .search{
+    flex:1 1 180px; max-width:240px;
+    border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    border-radius:999px; padding:6px 14px; font-size:12.5px; outline:none;
+  }
+  .search::placeholder{color:var(--muted);}
+  .legend-mini{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); align-items:center; margin-left:auto;}
+  .legend-mini span{display:flex; align-items:center; gap:5px;}
+  .legend-mini i{width:10px; height:10px; border-radius:50%; display:inline-block;}
+
+  /* ---- section card ---- */
+  .section{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    margin-bottom:20px; overflow:hidden;
+  }
+  .section-head{
+    padding:14px 18px 12px; border-bottom:1px solid var(--border);
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+    cursor:pointer; user-select:none;
+  }
+  .section-head:hover{background:var(--surface-2);}
+  .section-head h2{font-size:15px; font-weight:800;}
+  .section-head .cnt{font-size:12px; color:var(--muted);}
+  .section-head .chev{
+    margin-left:auto; font-size:11px; color:var(--muted); transition:transform .15s ease;
+    display:inline-flex; align-items:center;
+  }
+  .section.expanded .section-head .chev{ transform:rotate(180deg); }
+  .section-head p{margin:0; font-size:12px; color:var(--ink-2); width:100%;}
+
+  .mini-today{display:flex; align-items:center; gap:7px; width:100%; margin-top:9px;}
+  .mini-edge{font-size:9.5px; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .mini-track{flex:1; height:4px; border-radius:2px; background:var(--grid); position:relative;}
+  .mini-dot{
+    position:absolute; top:50%; width:7px; height:7px; border-radius:50%;
+    background:var(--today-line); transform:translate(-50%,-50%); box-shadow:0 0 0 2px var(--surface);
+  }
+  .mini-dot::after{
+    content:'今天'; position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+    font-size:9px; font-weight:700; color:var(--today-line); white-space:nowrap;
+  }
+
+  .section:not(.expanded) .scrollwrap{ display:none; }
+  .section:not(.expanded) .section-head{ border-bottom:none; }
+  .scrollwrap{overflow-x:auto; overflow-y:hidden;}
+  .chart{position:relative; min-width:1120px;}
+
+  /* month header */
+  .monthrow{
+    display:flex; position:sticky; top:0; z-index:3; background:var(--surface);
+    border-bottom:1px solid var(--grid-strong);
+  }
+  .namecol-head{
+    width:210px; min-width:210px; flex:none; padding:8px 14px; font-size:11px; color:var(--muted);
+    display:flex; align-items:flex-end; position:sticky; left:0; background:var(--surface); z-index:4;
+    border-right:1px solid var(--border);
+  }
+  .monthscale{flex:1; position:relative; display:flex;}
+  .monthcell{
+    flex:none; font-size:10px; color:var(--muted); padding:18px 0 6px 4px; position:relative;
+    border-left:1px solid var(--grid);
+  }
+  .monthcell.yearstart{border-left:1px solid var(--grid-strong); color:var(--ink-2); font-weight:700;}
+  .monthcell .yr{position:absolute; top:3px; left:4px; font-size:9px; color:var(--muted); font-weight:700; white-space:nowrap;}
+
+  /* body rows */
+  .body-rows{position:relative;}
+  .gridlines{position:absolute; inset:0; display:flex; pointer-events:none;}
+  .gridlines .namecol-head{visibility:hidden;}
+  .gridlines .monthscale{}
+  .gridlines .gline{flex:none; border-left:1px solid var(--grid); height:100%;}
+  .gridlines .gline.yearstart{border-left:1px solid var(--grid-strong);}
+
+  .todayline{
+    position:absolute; top:0; bottom:0; width:0; border-left:1.5px dashed var(--today-line); z-index:2;
+  }
+  .todayline .lbl{
+    position:absolute; top:2px; left:4px; font-size:9.5px; color:var(--today-line); font-weight:700;
+    background:var(--surface); padding:0 3px; white-space:nowrap;
+  }
+
+  .person{border-bottom:1px solid var(--border);}
+  .person:last-child{border-bottom:none;}
+  .person-head{
+    display:flex; align-items:center; gap:8px; position:sticky; left:0; width:fit-content; z-index:1;
+  }
+  .prow{display:flex; align-items:stretch; min-height:30px;}
+  .prow:hover{background:var(--surface-2);}
+  .namecol{
+    width:210px; min-width:210px; flex:none; padding:6px 14px; display:flex; align-items:center; gap:7px;
+    position:sticky; left:0; background:var(--surface); z-index:1; border-right:1px solid var(--border);
+  }
+  .prow:hover .namecol{background:var(--surface-2);}
+  .cdot{width:7px; height:7px; border-radius:50%; flex:none;}
+  .pname{font-size:12.5px; font-weight:700; white-space:nowrap;}
+  .pcompany{font-size:10px; color:var(--muted); font-weight:600;}
+
+  .track{flex:1; position:relative; min-height:30px;}
+  .bar{
+    position:absolute; top:6px; height:18px; border-radius:9px; display:flex; align-items:center;
+    padding:0 8px; font-size:10.5px; color:#fff; white-space:nowrap; overflow:hidden;
+    cursor:default; box-shadow: 0 0 0 1px var(--border) inset;
+  }
+  .bar.predicted{opacity:.68; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,0.22) 0 4px, transparent 4px 9px);}
+  .bar .lbl{overflow:hidden; text-overflow:ellipsis;}
+  .bar .urg{
+    width:7px; height:7px; border-radius:50%; flex:none; margin-left:auto; margin-right:-1px;
+    box-shadow:0 0 0 2px rgba(255,255,255,.55);
+  }
+
+  .projrow{display:flex; align-items:center; min-height:30px;}
+  .projrow .namecol{visibility:hidden; padding:0;}
+
+  .notes{padding:10px 18px 14px; border-top:1px solid var(--border); font-size:12px; color:var(--ink-2);}
+  .notes h3{font-size:12px; margin-bottom:6px; color:var(--muted); font-weight:700;}
+  .chiprow{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{
+    border:1px dashed var(--grid-strong); border-radius:8px; padding:4px 9px; font-size:11.5px;
+    background:var(--surface-2); color:var(--ink-2);
+  }
+  .chip b{color:var(--ink); font-weight:700;}
+
+  /* tooltip */
+  #tt{
+    position:fixed; z-index:50; max-width:280px; background:var(--ink); color:var(--page);
+    border-radius:10px; padding:10px 12px; font-size:12px; line-height:1.5; pointer-events:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.28); opacity:0; transform:translateY(4px); transition:opacity .12s, transform .12s;
+  }
+  #tt.show{opacity:1; transform:translateY(0);}
+  #tt .t1{font-weight:800; margin-bottom:2px;}
+  #tt .t2{opacity:.75; font-size:11px;}
+
+  footer{margin-top:8px; font-size:11px; color:var(--muted); text-align:center;}
+
+  @media (max-width:640px){
+    .top{flex-direction:column; align-items:flex-start;}
+    .legend-mini{margin-left:0;}
+  }
+</style>
+
+<div class="top">
+  <div>
+    <h1>專案人力時間軸</h1>
+    <div class="sub">資料基準日 <b id="todayLabel"></b> ・ 依現有工作至預計/監造截止日期繪製</div>
+  </div>
+  <div class="kpis" id="kpis"></div>
+</div>
+
+<div class="controls">
+  <div class="pillgroup" id="companyFilters"></div>
+  <input class="search" id="search" placeholder="搜尋姓名或案號…" />
+  <div class="legend-mini">
+    <span><i style="background:var(--warn)"></i>90天內到期</span>
+    <span><i style="background:var(--critical)"></i>45天內到期</span>
+    <span><i style="background:none;border:1px dashed var(--grid-strong);width:9px;height:9px;border-radius:2px"></i>預計/尚未確定</span>
+  </div>
+</div>
+
+<div id="sections"></div>
+
+<footer>橫向可捲動查看完整時間軸；點選上方公司篩選或輸入姓名/案號可縮小範圍。</footer>
+<div id="tt"></div>
+
+<script>
+/* ---------------- data ---------------- */
+const TODAY = new Date('2026-09-22');
+const RANGE_START = new Date('2026-09-01');
+const RANGE_END   = new Date('2030-01-01'); // exclusive
+
+const COMPANY_COLOR = { '世合':'--shihe', '九鼎':'--jiuding', '兆豐':'--zhaofeng' };
+const UNSPEC_COLOR = '--muted';
+
+function P(code,title,phase,end,opts){
+  opts = opts || {};
+  return Object.assign({code,title,phase,start:opts.start||'2026-09-22',end}, opts);
+}
+
+const groups = [
+  { key:'xiaozhi', title:'孝智組', desc:'機場捷運A7站區、台7線災害復建及新北市備用水井相關監造人力。', people:[
+    {name:'吳孝智', company:'世合', projects:[ P('SC573-05S','機場捷運A7站區開發案區外道路(T字型聯外道路-變一)新闢工程','監造','2028-11-07') ]},
+    {name:'翁巧晴', company:'世合', projects:[ P('SC573-05S','機場捷運A7站區開發案區外道路(T字型聯外道路-變一)新闢工程','監造','2028-11-07') ]},
+    {name:'康慶龍', company:'世合', projects:[ P('SC847-01S','台7線32K+500災害復建工程','監造','2027-10-04') ]},
+    {name:'李萬財', company:'世合', projects:[ P('SC847-01S','台7線32K+500災害復建工程','監造','2027-10-04') ]},
+    {name:'林全華', company:'世合', projects:[ P('SD078-01S','新北市備用水井建置計畫統包工程(甲區)','監造','2026-12-31') ]},
+    {name:'陳建榮', company:'世合', projects:[ P('SD078-02S','新北市備用水井建置計畫統包工程(乙區)','監造','2026-12-31') ]},
+    {name:'王宥達', company:'九鼎', projects:[ P('JD008','新北市備用水井建置計畫統包工程(丙區)','監造','2026-12-31') ]},
+  ]},
+
+  { key:'weiyao', title:'巍耀組', desc:'成功路、青山路、機動開口與公設開口等現場支援人力，含 SD116-04S 台電觀音中大案共同支援成員。', people:[
+    {name:'張巍耀', company:'世合', projects:[ P('SD116-04S','台電觀音中大案','共同支援(6員)','2029-09-30') ]},
+    {name:'蕭家璨', company:'世合', projects:[
+      P('SC844-08S','成功路專案','','2026-12-31'),
+      P('JD049-03S','人行道開口(中山路)','','2026-12-31'),
+    ], pending:['後續：跟囿任組討論是否接抽泥']},
+    {name:'李俊毅', company:'世合', projects:[ P('SC846-01S','青山路專案','','2026-10-31') ], pending:['後續：接龍慈路專案']},
+    {name:'吳諾樸', company:'九鼎', projects:[ P('JD049-01S','機動開口－現場','','2027-03-31') ], pending:['後續：暫無安排案件']},
+    {name:'田浩帆', company:'九鼎', projects:[
+      P('JD049-01S','機動開口－駐廠','','2027-03-31'),
+      P('JD049','公設開口','','2027-03-31'),
+    ], pending:['後續：暫無安排案件']},
+    {name:'梁繼中', company:'世合', projects:[
+      P('SD076-05S','中正專案','','2026-11-05'),
+      P('SD076-06S','中正專案','','2026-11-05'),
+    ], pending:['後續：預計安排龍慈路']},
+    {name:'蘇鉦', company:'世合', projects:[ P('SD116-02S','台電廣豐D/S案','','2029-12-31') ], pending:['協助囿任組撰寫監造計畫']},
+    {name:'梅德鍾', company:'世合', projects:[ P('SD116-04S','台電觀音中大案','共同支援(6員)','2029-09-30') ]},
+    {name:'陳品圻', company:'世合', projects:[ P('SD116-04S','台電觀音中大案','共同支援(6員)','2029-09-30') ]},
+    {name:'徐詩雨', company:'世合', projects:[ P('SD116-04S','台電觀音中大案','共同支援(6員)','2029-09-30') ]},
+    {name:'蕭凱馨', company:'世合', projects:[ P('SD116-04S','台電觀音中大案','共同支援(6員)','2029-09-30') ]},
+    {name:'潘國揚', company:'世合', projects:[ P('SD116-04S','台電觀音中大案','共同支援(6員)','2029-09-30') ]},
+  ]},
+
+  { key:'kaijun', title:'鎧峻組', desc:'生活圈道路基本／細部設計、航空城開口與69kV台電下地案等設計人力。', people:[
+    {name:'張鎧峻', company:'世合', projects:[
+      P('SC689-01D','生活圈道路','基本設計','2026-12-31'),
+      P('SC689-01D','生活圈道路','細部設計（116.12.01啟動，暫定執行半年）','2028-05-31',{start:'2027-12-01',predicted:true}),
+      P('SD110','台電69kV下地案','','2027-06-30'),
+      P('SD112','大園竹圍重劃案','','2027-12-31'),
+    ]},
+    {name:'張友誠', company:'九鼎', projects:[
+      P('SC689-01D','生活圈道路','基本設計','2026-12-31'),
+      P('SC689-01D','生活圈道路','細部設計（116.12.01啟動，暫定執行半年）','2028-05-31',{start:'2027-12-01',predicted:true}),
+      P('SC844-08D','成功路三段','變更設計','2026-12-31'),
+      P('SD076-04D','中正路','變更設計','2026-12-31'),
+      P('SD076-03D','中山路','變更設計','2026-12-31'),
+    ]},
+    {name:'林莊健', company:'世合', projects:[
+      P('SC689-01D','生活圈道路','基本設計','2026-12-31'),
+      P('SC689-01D','生活圈道路','細部設計（116.12.01啟動，暫定執行半年）','2028-05-31',{start:'2027-12-01',predicted:true}),
+      P('SD112','大園竹圍重劃案','','2027-12-31'),
+    ]},
+    {name:'王宜婷', company:'世合', projects:[
+      P('SC689-01D','生活圈道路','基本設計','2026-12-31'),
+      P('SC689-01D','生活圈道路','細部設計（116.12.01啟動，暫定執行半年）','2028-05-31',{start:'2027-12-01',predicted:true}),
+      P('ZF056','航空城開口','會勘','2027-12-31'),
+      P('SC847-01S','台7線榮華橋','水保相關作業','2027-12-31'),
+      P('SC573-05D','A7變一','水保相關作業','2028-12-31'),
+      P('SC846-01D','青山路','水保相關作業','2026-11-30'),
+    ]},
+    {name:'王子銘', company:'兆豐', projects:[
+      P('ZF056','航空城開口','會勘','2027-12-31'),
+      P('ZF056','航空城開口','設計','2028-12-31'),
+      P('SD110','台電69kV下地案','','2027-06-30'),
+    ]},
+    {name:'陳蒼緯', company:'兆豐', projects:[
+      P('ZF056','航空城開口','駐點','2028-12-31'),
+      P('ZF056','航空城開口','會勘','2027-12-31'),
+    ]},
+    {name:'詹子瑩', company:'兆豐', projects:[
+      P('SC689-01D','生活圈道路','基本設計','2026-12-31'),
+      P('SC689-01D','生活圈道路','細部設計（116.12.01啟動，暫定執行半年）','2028-05-31',{start:'2027-12-01',predicted:true}),
+      P('SC795-04D','和平路下水道','變更設計','2026-12-31'),
+      P('SC795-08D','南工路下水道工程(三期)','設計','2027-03-31'),
+      P('SC795-10D','文化一路側溝','局部規劃報告','2026-12-31'),
+    ]},
+    {name:'黃建忠', company:'世合', projects:[
+      P('SD076-05D','中正路','變更設計','2026-12-31'),
+      P('SD076-02D','振興路及長壽路口','','2026-12-31'),
+    ]},
+    {name:'陳宗霆', company:'世合', projects:[ P('SC573-05S','A7變一','光達作業','2028-12-31') ]},
+  ]},
+
+  { key:'songbo', title:'宋博組', desc:'機場聯外道路整建、陽明校區山坡地及石碇區各邊坡／農路監造人力。', people:[
+    {name:'宋柏勛', company:'世合', projects:[ P('SC814-01S','桃園國際機場聯外道路整建計畫(第一標)','監造','2028-12-31') ]},
+    {name:'張智淵', company:'世合', projects:[ P('SD110-01D','69kV板橋～土城線土建統包工程基本規劃設計等委託技術服務案','設計','2027-06-30') ]},
+    {name:'林啓聖', company:'世合', projects:[ P('SC814-01S','桃園國際機場聯外道路整建計畫(第一標)','監造','2028-12-31') ]},
+    {name:'李瑞迪', company:'世合', projects:[
+      P('SC814-01S','桃園國際機場聯外道路整建計畫(第一標)','監造（職安）','2028-12-31'),
+      P('SC785-04S','陽明校區山坡地整治第二期(115年)工程','監造','2027-02-28'),
+      P('SD095-05S','石碇區光明里光明路22號邊坡災害復建工程','監造','2026-12-31'),
+      P('SD095-06S','石碇區烏塗里山羊洞(農北碇009)農路及農村環境改善工程','監造','2026-10-31',{note:'服務費請領中'}),
+      P('SD095-07S','坪林區上德里坑子口道路（農北坪008）及虎寮潭道路（農北坪018）改善工程','監造','2026-10-31',{note:'服務費請領中'}),
+      P('SD095-11S','石碇區豐田里南勢坑（農北碇006）農路改善工程','監造','2026-11-30',{note:'待驗收'}),
+    ]},
+    {name:'周建志', company:'世合', projects:[
+      P('SC799-01S','汐止區夢湖路改道工程','監造','2026-11-30'),
+      P('SD095-04S','石碇區碇坪路1段168號對面擋土牆修復工程','監造','2027-02-28'),
+      P('SD095-10S','新北LL001石碇區大崙路坡面排水改善工程','監造','2026-12-31'),
+    ]},
+    {name:'簡宏瑋', company:'九鼎', projects:[
+      P('JD008','新北市備用水井建置計畫統包工程(丙區)','監造','2026-12-31'),
+      P('JD030','115年度桃市府原民局公共工程委託規劃設計監造服務案','','2026-12-31'),
+      P('JD031','桃園市115年度漁業工程委託設計監造工作(開口契約)','','2026-12-31'),
+      P('JD049','115年度道路附屬設施工程委託設計監造－第一工區(開口契約)','','2026-12-31'),
+      P('JD056','公路局北分局轄區自行車道新建工程委託水土保持監造技術服務(開口契約)','','2028-12-31'),
+    ]},
+  ]},
+
+  { key:'youren', title:'囿任組', desc:'負責開口契約各子案（原民局／農業局等），時程多為現場估算之「預計」進度。', people:[
+    {name:'陳囿任', company:'九鼎', projects:[
+      P('JD030-06','115原民局','變更設計','2026-10-31'),
+      P('JD030-02','115原民局','監造','2026-12-31',{predicted:true}),
+      P('JD030','115原民局・議員工務款','設計','2026-10-31',{predicted:true}),
+      P('JD030','115原民局・災害修復工程','設計','2026-11-30',{predicted:true}),
+      P('SD111','永安漁港笨鯊橋、觀海橋及竹圍小拱橋樑檢測專案','與承辦聯繫窗口','2026-12-31'),
+    ]},
+    {name:'黃阡維', company:'世合', projects:[ P('SC847-01S','台7線32K+500災害復建工程','監造','2027-10-31') ]},
+    {name:'陳珮婷', company:'兆豐', projects:[
+      P('ZF056-00D','會勘資料安排','','2026-10-31'),
+      P('SD111','永安漁港笨鯊橋、觀海橋及竹圍小拱橋樑檢測專案','BIM製作','2027-01-31'),
+    ]},
+    {name:'高鴻瑜', company:'九鼎', projects:[
+      P('JD031-04','115農業局','監造','2026-11-30'),
+      P('JD031-05','115農業局','監造','2027-02-28'),
+      P('JD031-07','115農業局','監造','2027-01-31'),
+    ]},
+    {name:'謝宜庭', company:'九鼎', projects:[
+      P('JD030-07','115原民局','監造','2027-01-31'),
+      P('JD030-08','115原民局','監造','2027-11-30'),
+      P('JD030-09','115原民局','監造','2026-12-31',{predicted:true}),
+      P('JD030-10','115原民局','監造','2026-12-31',{predicted:true}),
+      P('JD030-14','115原民局','監造','2027-03-31',{predicted:true}),
+      P('JD030-15','115原民局','監造','2027-03-31',{predicted:true}),
+      P('JD030-16','115原民局','監造','2027-03-31',{predicted:true}),
+    ]},
+    {name:'吳尚東', company:'世合', projects:[
+      P('JD030-05','115原民局','監造','2027-03-31'),
+      P('JD030-06','115原民局','監造','2027-03-31',{predicted:true}),
+    ]},
+    {name:'蕭輔仁', company:'世合', projects:[
+      P('JD031-01','115農業局','監造','2026-12-31'),
+      P('JD031-06','115農業局','監造','2026-12-31'),
+      P('JD030-11','115原民局','監造','2027-03-31',{predicted:true}),
+      P('JD030-12','115原民局','監造','2027-02-28',{predicted:true}),
+      P('JD030-13','115原民局','監造','2027-03-31',{predicted:true}),
+    ]},
+    {name:'許英麗', company:'世合', projects:[
+      P('JD030-05','115原民局','變更設計','2026-09-30',{predicted:true}),
+      P('JD030-13','115原民局','細部設計','2026-10-31',{predicted:true}),
+      P('JD030','115原民局・議員工務款','設計','2026-10-31',{predicted:true}),
+      P('JD030','115原民局・災害修復工程','設計','2026-11-30',{predicted:true}),
+      P('JD031-08','115農業局','設計','2026-11-30',{predicted:true}),
+      P('JD031-03','115農業局','監造','2027-08-31',{predicted:true}),
+    ], pending:['未來監造案：JD030-17（原民局）', 'JD030 災害修復工程－監造', 'JD030 議員工務款－監造', 'JD031-08（農業局）－監造']},
+  ]},
+];
+
+/* ---------------- helpers ---------------- */
+function d(s){ return new Date(s+'T00:00:00'); }
+const totalMs = RANGE_END - RANGE_START;
+function pct(dt){ return Math.max(0, Math.min(100, (dt - RANGE_START)/totalMs*100)); }
+function daysUntil(endStr){ return Math.round((d(endStr) - TODAY)/86400000); }
+function fmt(dt){ return dt.getFullYear()+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+String(dt.getDate()).padStart(2,'0'); }
+function rocFmt(dt){ return (dt.getFullYear()-1911)+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+String(dt.getDate()).padStart(2,'0'); }
+function rocShort(dt){ return (dt.getFullYear()-1911)+'/'+String(dt.getMonth()+1).padStart(2,'0'); }
+
+document.getElementById('todayLabel').textContent = rocFmt(TODAY)+'（西元 '+fmt(TODAY)+'）';
+
+/* month list */
+const months = [];
+{
+  let cur = new Date(RANGE_START);
+  while(cur < RANGE_END){
+    const next = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
+    months.push({start:new Date(cur), end:next, label:(cur.getMonth()+1)+'月', isYearStart:cur.getMonth()===0, year:cur.getFullYear()});
+    cur = next;
+  }
+}
+const MONTH_W = 34;
+const chartW = months.length * MONTH_W;
+
+/* ---------------- render ---------------- */
+function monthHeaderHTML(){
+  let h = '<div class="monthrow"><div class="namecol-head">姓名 ／ 公司</div><div class="monthscale" style="width:'+chartW+'px">';
+  months.forEach(m=>{
+    h += '<div class="monthcell'+(m.isYearStart?' yearstart':'')+'" style="width:'+MONTH_W+'px">'
+       + (m.isYearStart?'<span class="yr">民國'+(m.year-1911)+'年</span>':'') + m.label + '</div>';
+  });
+  h += '</div></div>';
+  return h;
+}
+
+function gridlinesHTML(){
+  let h = '<div class="gridlines"><div class="namecol-head"></div><div class="monthscale" style="width:'+chartW+'px">';
+  months.forEach(m=>{
+    h += '<div class="gline'+(m.isYearStart?' yearstart':'')+'" style="width:'+MONTH_W+'px"></div>';
+  });
+  h += '</div></div>';
+  return h;
+}
+
+function urgencyColor(endStr){
+  const dl = daysUntil(endStr);
+  if(dl <= 45) return 'var(--critical)';
+  if(dl <= 90) return 'var(--warn)';
+  return null;
+}
+
+function barHTML(proj, colorVar){
+  const s = pct(d(proj.start));
+  const e = pct(d(proj.end));
+  const w = Math.max(e - s, 0.6);
+  const urg = urgencyColor(proj.end);
+  const label = [proj.code, proj.title, proj.phase].filter(Boolean).join(' ・ ');
+  return '<div class="bar'+(proj.predicted?' predicted':'')+'" '
+    + 'style="left:'+s+'%; width:'+w+'%; background:var('+colorVar+');" '
+    + 'data-tt="'+encodeURIComponent(ttText(proj))+'">'
+    + '<span class="lbl">'+escapeHTML(shortLabel(proj))+'</span>'
+    + (urg?'<span class="urg" style="background:'+urg+'"></span>':'')
+    + '</div>';
+}
+
+function shortLabel(p){
+  return (p.code?p.code+' ':'') + (p.phase||'');
+}
+
+function ttText(p){
+  const parts = [];
+  parts.push((p.code?p.code+'　':'')+(p.title||''));
+  if(p.phase) parts.push('階段／角色：'+p.phase);
+  parts.push('期程：'+fmt(d(p.start))+' → '+fmt(d(p.end)));
+  const dl = daysUntil(p.end);
+  parts.push(dl>=0 ? ('距結案 '+dl+' 天') : ('已逾期 '+Math.abs(dl)+' 天'));
+  if(p.predicted) parts.push('（預計，尚未定案）');
+  if(p.note) parts.push('備註：'+p.note);
+  return parts.join('\n');
+}
+
+function escapeHTML(s){
+  return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+function personHTML(person){
+  const colorVar = COMPANY_COLOR[person.company] || UNSPEC_COLOR;
+  let rows = '';
+  if(person.projects.length===0){
+    rows += '<div class="prow projrow"><div class="namecol"></div><div class="track"></div></div>';
+  } else {
+    person.projects.forEach(pr=>{
+      rows += '<div class="prow projrow"><div class="namecol"></div><div class="track">'+barHTML(pr, colorVar)+'</div></div>';
+    });
+  }
+  let pendingHTML = '';
+  if(person.pending && person.pending.length){
+    pendingHTML = '<div class="notes"><div class="chiprow">'+person.pending.map(t=>'<div class="chip">'+escapeHTML(t)+'</div>').join('')+'</div></div>';
+  }
+  return '<div class="person" data-company="'+(person.company||'')+'" data-name="'+escapeHTML(person.name)+'" data-codes="'+escapeHTML(person.projects.map(p=>p.code).join(' '))+'">'
+    + '<div class="prow person-head" style="position:relative;">'
+      + '<div class="namecol"><span class="cdot" style="background:var('+colorVar+')"></span>'
+        + '<div><div class="pname">'+escapeHTML(person.name)+'</div><div class="pcompany">'+(person.company||'未標示')+'</div></div></div>'
+      + '<div class="track"></div>'
+    + '</div>'
+    + rows
+    + pendingHTML
+    + '</div>';
+}
+
+function sectionHTML(title, desc, people){
+  let body = monthHeaderHTML();
+  body += '<div class="body-rows">' + gridlinesHTML() + '<div class="todayline" style="left:'+ (210 + chartW*pct(TODAY)/100) +'px"><span class="lbl">今天</span></div>';
+  people.forEach(p=> body += personHTML(p));
+  body += '</div>';
+  const miniToday = '<div class="mini-today" title="今天 '+fmt(TODAY)+' 在整體時程中的位置">'
+    + '<span class="mini-edge">'+rocShort(RANGE_START)+'</span>'
+    + '<div class="mini-track"><div class="mini-dot" style="left:'+pct(TODAY)+'%"></div></div>'
+    + '<span class="mini-edge">'+rocShort(RANGE_END)+'</span>'
+    + '</div>';
+  return '<section class="section">'
+    + '<div class="section-head"><h2>'+title+'</h2><span class="cnt">'+people.length+' 人</span><span class="chev">▾</span><p>'+desc+'</p>'+miniToday+'</div>'
+    + '<div class="scrollwrap"><div class="chart" style="width:'+(210+chartW)+'px">'+body+'</div></div>'
+    + '</section>';
+}
+
+document.getElementById('sections').innerHTML =
+  groups.map(g => sectionHTML(g.title, g.desc, g.people)).join('');
+
+document.querySelectorAll('.section-head').forEach(head=>{
+  head.addEventListener('click', ()=> head.closest('.section').classList.toggle('expanded'));
+});
+
+/* KPIs */
+function buildKPIs(){
+  const all = groups.flatMap(g=>g.people);
+  const totalPeople = all.length;
+  const allProjects = all.flatMap(p=>p.projects);
+  const totalProjects = allProjects.length;
+  const soon45 = allProjects.filter(p=>daysUntil(p.end)>=0 && daysUntil(p.end)<=45).length;
+  const soon90 = allProjects.filter(p=>daysUntil(p.end)>=0 && daysUntil(p.end)<=90).length;
+  const kpis = [
+    {n:totalPeople, l:'參與人員'},
+    {n:totalProjects, l:'進行中案件'},
+    {n:soon45, l:'45天內到期', cls:'critical'},
+    {n:soon90, l:'90天內到期', cls:'warn'},
+  ];
+  document.getElementById('kpis').innerHTML = kpis.map(k=>
+    '<div class="kpi '+(k.cls||'')+'"><div class="n">'+k.n+'</div><div class="l">'+k.l+'</div></div>'
+  ).join('');
+}
+buildKPIs();
+
+/* company filter pills */
+const allPeople = groups.flatMap(g=>g.people);
+const companyCounts = allPeople.reduce((acc,p)=>{ acc[p.company]=(acc[p.company]||0)+1; return acc; }, {});
+const companyDefs = [
+  {key:'all', label:'全部', color:null, count:allPeople.length},
+  {key:'世合', label:'世合', color:'--shihe', count:companyCounts['世合']||0},
+  {key:'九鼎', label:'九鼎', color:'--jiuding', count:companyCounts['九鼎']||0},
+  {key:'兆豐', label:'兆豐', color:'--zhaofeng', count:companyCounts['兆豐']||0},
+];
+let activeCompany = 'all';
+function renderFilters(){
+  document.getElementById('companyFilters').innerHTML = companyDefs.map(c=>
+    '<button class="pill" data-key="'+c.key+'" aria-pressed="'+(c.key===activeCompany)+'">'
+    + (c.color?'<span class="dot" style="background:var('+c.color+')"></span>':'')
+    + c.label + '<span class="num">'+c.count+'</span></button>'
+  ).join('');
+  document.querySelectorAll('.pillgroup .pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ activeCompany = btn.dataset.key; renderFilters(); applyFilters(); });
+  });
+}
+renderFilters();
+
+function applyFilters(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const filtering = !!q || activeCompany!=='all';
+  document.querySelectorAll('.section').forEach(sec=>{
+    let anyVisible = false;
+    sec.querySelectorAll('.person').forEach(el=>{
+      const companyMatch = activeCompany==='all' || el.dataset.company===activeCompany;
+      const text = (el.dataset.name+' '+el.dataset.codes).toLowerCase();
+      const searchMatch = !q || text.includes(q);
+      const show = companyMatch && searchMatch;
+      el.style.display = show ? '' : 'none';
+      if(show) anyVisible = true;
+    });
+    if(filtering && anyVisible) sec.classList.add('expanded');
+  });
+}
+document.getElementById('search').addEventListener('input', applyFilters);
+
+/* tooltip */
+const tt = document.getElementById('tt');
+document.addEventListener('mousemove', e=>{
+  const bar = e.target.closest('.bar');
+  if(!bar){ tt.classList.remove('show'); return; }
+  const text = decodeURIComponent(bar.dataset.tt).split('\n');
+  tt.innerHTML = '<div class="t1">'+escapeHTML(text[0])+'</div>' + text.slice(1).map(l=>'<div class="t2">'+escapeHTML(l)+'</div>').join('');
+  tt.classList.add('show');
+  const x = Math.min(e.clientX+14, window.innerWidth-300);
+  const y = Math.min(e.clientY+14, window.innerHeight-120);
+  tt.style.left = x+'px'; tt.style.top = y+'px';
+});
+document.addEventListener('mouseleave', ()=>tt.classList.remove('show'));
+</script>
