@@ -94,8 +94,8 @@
       "overdue": 0,
       "staffing": {
         "total": 7,
-        "inPlace": 2,
-        "provisional": 3,
+        "inPlace": 3,
+        "provisional": 2,
         "notInPlace": 2
       },
       "nextDue": {
@@ -4684,11 +4684,11 @@
         },
         {
           "role": "協辦監造工程員",
-          "person": "繼中（暫排）"
+          "person": "宗霆暫代繼中（到中正路人行道結束）"
         },
         {
           "role": "文書人員／工務助理",
-          "person": "宗霆暫代，黃雲潔（104招募，尚未報到，暫定9/29報到）"
+          "person": "黃雲潔"
         },
         {
           "role": "職安人員",
