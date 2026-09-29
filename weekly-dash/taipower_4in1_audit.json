@@ -94,8 +94,8 @@
       "overdue": 0,
       "staffing": {
         "total": 7,
-        "inPlace": 3,
-        "provisional": 2,
+        "inPlace": 4,
+        "provisional": 1,
         "notInPlace": 2
       },
       "nextDue": {
@@ -4672,7 +4672,7 @@
       "staffing": [
         {
           "role": "監造主任",
-          "person": "尚東（暫代到11月中，之後由邱法忠擔任主任；邱法忠取得證照回訓11/5、營造甲業9/9）"
+          "person": "邱法忠（品管證照11/5、營造甲業9/9）"
         },
         {
           "role": "主辦監造工程師",
