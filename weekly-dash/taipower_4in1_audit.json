@@ -4661,7 +4661,8 @@
         }
       ],
       "officeAddress": "桃園市觀音區上大里新富路一段123號",
-      "officeMapUrl": "https://maps.app.goo.gl/xVZtS1AR6v633HCv9"
+      "officeMapUrl": "https://maps.app.goo.gl/xVZtS1AR6v633HCv9",
+      "contractor": "真毅營造"
     },
     {
       "key": "longxian",
@@ -5389,7 +5390,8 @@
         }
       ],
       "officeAddress": "桃園市龍潭區中原路二段465號",
-      "officeMapUrl": "https://maps.app.goo.gl/cnq8jbxZSFfdcSR3A"
+      "officeMapUrl": "https://maps.app.goo.gl/cnq8jbxZSFfdcSR3A",
+      "contractor": "輝昇營造"
     },
     {
       "key": "guangfeng",

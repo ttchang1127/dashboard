@@ -989,6 +989,9 @@ function renderSection(section) {
             工務所地址：${officeMapUrl ? `<a class="text-teal-700 underline decoration-teal-300 underline-offset-4 hover:text-teal-900" href="${escapeHtml(officeMapUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(section.officeAddress)}</a>` : escapeHtml(section.officeAddress)}
         </p>
     ` : "";
+    const contractor = section.contractor ? `
+        <p class="mt-1 text-sm font-semibold text-stone-600">施工廠商：<span class="text-stone-800">${escapeHtml(section.contractor)}</span></p>
+    ` : "";
     const staffing = renderStaffing(section);
     const periodicControl = section.key === "guanyin" ? renderGuanyinPeriodicControl() : "";
     // 四塊洞察只在共同項目呈現；本案若有阻斷或逾期，仍在此補一格，
@@ -1008,6 +1011,7 @@ function renderSection(section) {
                     </div>
                     <p class="mt-2 text-sm text-stone-500">${escapeHtml(section.subtitle || "")}</p>
                     ${officeAddress}
+                    ${contractor}
                     ${note}
                 </div>
                 <div class="grid min-w-[260px] ${extraCount ? "grid-cols-4" : "grid-cols-3"} gap-2">
