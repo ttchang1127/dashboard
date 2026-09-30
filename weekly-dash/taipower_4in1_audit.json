@@ -718,6 +718,7 @@
       "key": "common",
       "title": "共同項目",
       "subtitle": "四案共通的簽約、開工前、施工、驗收與請款列管",
+      "companyCaseNo": "SD116",
       "status": "active",
       "note": "",
       "staffing": [],
@@ -3917,6 +3918,7 @@
       "key": "guanyin",
       "title": "觀音中大案",
       "subtitle": "161kV大潭（乙）~觀音線改接至中大",
+      "companyCaseNo": "SD116-04S",
       "status": "active",
       "note": "",
       "staffing": [
@@ -4668,6 +4670,7 @@
       "key": "longxian",
       "title": "龍顯聖亭案",
       "subtitle": "161kV龍顯~聖亭線（第五工區）",
+      "companyCaseNo": "SD116-03S",
       "status": "active",
       "note": "",
       "staffing": [
@@ -5397,6 +5400,7 @@
       "key": "guangfeng",
       "title": "廣豐D/S案",
       "subtitle": "廣豐D/S新建工程（土建統包）",
+      "companyCaseNo": "SD116-02S",
       "status": "recruiting",
       "note": "",
       "staffing": [
@@ -5791,6 +5795,7 @@
       "key": "nangang",
       "title": "南港P/S案",
       "subtitle": "南港P/S改建工程（土建統包）",
+      "companyCaseNo": "SD116-01S",
       "status": "paused",
       "note": "預計 118 年執行後派駐，現階段只顯示案況與待觸發清單，不啟動專屬工作稽核。",
       "staffing": [],

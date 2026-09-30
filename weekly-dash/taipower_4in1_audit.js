@@ -984,6 +984,9 @@ function renderSection(section) {
     const pendingItems = section.pendingItems || [];
     const note = section.note ? `<p class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">${escapeHtml(section.note)}</p>` : "";
     const officeMapUrl = safeExternalUrl(section.officeMapUrl);
+    const companyCaseNo = section.companyCaseNo ? `
+        <p class="mt-2 text-sm font-semibold text-teal-700">公司案號：${escapeHtml(section.companyCaseNo)}</p>
+    ` : "";
     const officeAddress = section.officeAddress ? `
         <p class="mt-2 text-sm font-semibold text-stone-600">
             工務所地址：${officeMapUrl ? `<a class="text-teal-700 underline decoration-teal-300 underline-offset-4 hover:text-teal-900" href="${escapeHtml(officeMapUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(section.officeAddress)}</a>` : escapeHtml(section.officeAddress)}
@@ -1010,6 +1013,7 @@ function renderSection(section) {
                         <span class="pill bg-stone-100 text-stone-700">${escapeHtml(statusLabel(section.status))}</span>
                     </div>
                     <p class="mt-2 text-sm text-stone-500">${escapeHtml(section.subtitle || "")}</p>
+                    ${companyCaseNo}
                     ${officeAddress}
                     ${contractor}
                     ${note}
