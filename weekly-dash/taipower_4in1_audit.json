@@ -48,8 +48,8 @@
       "overdue": 0,
       "staffing": {
         "total": 7,
-        "inPlace": 5,
-        "provisional": 1,
+        "inPlace": 6,
+        "provisional": 0,
         "notInPlace": 1
       },
       "nextDue": {
@@ -4518,7 +4518,7 @@
         },
         {
           "role": "協辦監造工程員",
-          "person": "宗霆暫代繼中（到中正路人行道結束）"
+          "person": "陳宗霆"
         },
         {
           "role": "文書人員／工務助理",
