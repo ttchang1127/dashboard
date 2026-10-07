@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-07 09:12:18 +0800",
+  "generatedAt": "2026-10-07 09:14:05 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -295,35 +295,26 @@
       "name": "農業局橋檢案",
       "auditDate": "2026-10-07",
       "version": "V1",
-      "modifiedAt": "2026-09-07 10:50:47",
+      "modifiedAt": "2026-10-07 09:13:54",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 12
       },
-      "itemCount": 13,
+      "itemCount": 12,
       "topUrgent": {
-        "task": "115年9月工作月報 提送截止",
-        "dueLabel": "115/10/05",
-        "diff": -2,
-        "diffLabel": "逾期2天",
-        "statusLight": "🔴",
-        "owner": "**英麗**",
-        "manager": "囿任哥 <@1516964897404092430>"
+        "task": "GPR／水下基礎／LiDAR 幾何／AIM",
+        "dueLabel": "115/11/04（配合期中報告前完成）",
+        "diff": 28,
+        "diffLabel": "D-28 追蹤",
+        "statusLight": "🟢",
+        "owner": "待指派",
+        "manager": null
       },
       "items": [
-        {
-          "task": "115年9月工作月報 提送截止",
-          "dueLabel": "115/10/05",
-          "diff": -2,
-          "diffLabel": "逾期2天",
-          "statusLight": "🔴",
-          "owner": "**英麗**",
-          "manager": "囿任哥 <@1516964897404092430>"
-        },
         {
           "task": "GPR／水下基礎／LiDAR 幾何／AIM",
           "dueLabel": "115/11/04（配合期中報告前完成）",
