@@ -48,9 +48,9 @@
       "overdue": 0,
       "staffing": {
         "total": 7,
-        "inPlace": 6,
+        "inPlace": 7,
         "provisional": 0,
-        "notInPlace": 1
+        "notInPlace": 0
       },
       "nextDue": {
         "task": "龍顯聖亭線監造派駐啟動",
