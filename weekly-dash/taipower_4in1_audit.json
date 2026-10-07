@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-07 10:36:40 +0800",
+  "generatedAt": "2026-10-07 13:22:04 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "1df7fe4c25d4baf2de21a15c37ba300f7ae192b51186f7013c3d565d4156c576",
-  "sourceModifiedAt": "2026-10-07 10:36:27 +0800",
+  "sourceSha256": "11fc11255997fdae9fe666f4d4efc34e0c83b63e323a870052edacf943a7aa3e",
+  "sourceModifiedAt": "2026-10-07 13:21:38 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-10-07",
-    "modifiedAt": "2026-10-07 10:36:27",
+    "modifiedAt": "2026-10-07 13:21:38",
     "riskCounts": {
       "red": 0,
       "orange": 0,
@@ -52,7 +52,7 @@
         "total": 7,
         "approved": 0,
         "approvalPending": 7,
-        "provisional": 1,
+        "provisional": 0,
         "arrivalToVerify": 0
       },
       "nextDue": {
@@ -74,8 +74,8 @@
       "overdue": 0,
       "staffing": {
         "total": 7,
-        "approved": 0,
-        "approvalPending": 7,
+        "approved": 7,
+        "approvalPending": 0,
         "provisional": 0,
         "arrivalToVerify": 0
       },
@@ -101,7 +101,7 @@
         "approved": 0,
         "approvalPending": 8,
         "provisional": 0,
-        "arrivalToVerify": 5
+        "arrivalToVerify": 4
       },
       "nextDue": {
         "task": "廣豐D/S監造派駐啟動",
@@ -3960,37 +3960,37 @@
         {
           "role": "管理人員",
           "person": "張增糴",
-          "approval": "待核對"
+          "approval": "已核准（Tim 115/10/07 確認已報台電核准）"
         },
         {
           "role": "監造主任",
-          "person": "巍耀",
-          "approval": "待核對"
+          "person": "張巍耀",
+          "approval": "已核准（Tim 115/10/07 確認已報台電核准）"
         },
         {
           "role": "主辦監造工程師",
           "person": "梅德鐘",
-          "approval": "待核對"
+          "approval": "已核准（Tim 115/10/07 確認已報台電核准）"
         },
         {
           "role": "協辦監造工程師",
           "person": "徐詩雨",
-          "approval": "待核對"
+          "approval": "已核准（Tim 115/10/07 確認已報台電核准）"
         },
         {
           "role": "協辦監造工程員",
           "person": "陳品圻",
-          "approval": "待核對"
+          "approval": "已核准（Tim 115/10/07 確認已報台電核准）"
         },
         {
           "role": "職安人員",
           "person": "潘國揚",
-          "approval": "待核對"
+          "approval": "已核准（Tim 115/10/07 確認已報台電核准）"
         },
         {
           "role": "文書人員／工務助理",
           "person": "蕭凱馨",
-          "approval": "待核對"
+          "approval": "已核准（Tim 115/10/07 確認已報台電核准）"
         }
       ],
       "staffingPlan": [
@@ -4735,7 +4735,7 @@
         },
         {
           "role": "監造主任",
-          "person": "尚東（暫代到11月中；邱法忠預計接任）",
+          "person": "邱法忠",
           "approval": "待核對"
         },
         {
@@ -5532,7 +5532,7 @@
         },
         {
           "role": "職安人員",
-          "person": "黃明秋（10/1報到）",
+          "person": "黃明秋（115/10/01 已到職）",
           "approval": "待核對"
         },
         {
