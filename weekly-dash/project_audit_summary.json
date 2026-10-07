@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-07 10:34:55 +0800",
+  "generatedAt": "2026-10-07 10:36:40 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -241,35 +241,26 @@
       "name": "台電4合1",
       "auditDate": "2026-10-07",
       "version": "V3",
-      "modifiedAt": "2026-10-07 10:34:38",
+      "modifiedAt": "2026-10-07 10:36:27",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 3
       },
-      "itemCount": 4,
+      "itemCount": 3,
       "topUrgent": {
-        "task": "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
-        "dueLabel": "115/10/05（三件同日列管；送件狀態待核對）",
-        "diff": -2,
-        "diffLabel": "逾期2天",
-        "statusLight": "🔴",
-        "owner": "**巍耀（巧晴協助）**",
-        "manager": "孝智哥 <@911417165373136897>"
+        "task": "龍顯聖亭線監造派駐啟動",
+        "dueLabel": "115/10/12（全員7人；Tim 10/07確認，待台電正式公文）",
+        "diff": 5,
+        "diffLabel": "D-5 預告",
+        "statusLight": "🟢",
+        "owner": "**尚東**",
+        "manager": "囿任哥 <@1516964897404092430>"
       },
       "items": [
-        {
-          "task": "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
-          "dueLabel": "115/10/05（三件同日列管；送件狀態待核對）",
-          "diff": -2,
-          "diffLabel": "逾期2天",
-          "statusLight": "🔴",
-          "owner": "**巍耀（巧晴協助）**",
-          "manager": "孝智哥 <@911417165373136897>"
-        },
         {
           "task": "龍顯聖亭線監造派駐啟動",
           "dueLabel": "115/10/12（全員7人；Tim 10/07確認，待台電正式公文）",
@@ -298,7 +289,7 @@
           "manager": "孝智哥 <@911417165373136897>"
         }
       ],
-      "sourceSha256": "cb43d9e6c9bbcae180d6c947440b7c432fb353d4edd75d6df155f2e3809c45d8"
+      "sourceSha256": "1df7fe4c25d4baf2de21a15c37ba300f7ae192b51186f7013c3d565d4156c576"
     },
     {
       "key": "agri_bridge",

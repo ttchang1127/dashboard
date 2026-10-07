@@ -1,35 +1,35 @@
 {
-  "generatedAt": "2026-10-07 10:34:55 +0800",
+  "generatedAt": "2026-10-07 10:36:40 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "cb43d9e6c9bbcae180d6c947440b7c432fb353d4edd75d6df155f2e3809c45d8",
-  "sourceModifiedAt": "2026-10-07 10:34:38 +0800",
+  "sourceSha256": "1df7fe4c25d4baf2de21a15c37ba300f7ae192b51186f7013c3d565d4156c576",
+  "sourceModifiedAt": "2026-10-07 10:36:27 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-10-07",
-    "modifiedAt": "2026-10-07 10:34:38",
+    "modifiedAt": "2026-10-07 10:36:27",
     "riskCounts": {
-      "red": 1,
+      "red": 0,
       "orange": 0,
       "yellow": 0,
       "green": 3
     }
   },
   "summary": {
-    "active": 4,
+    "active": 3,
     "pending": 112,
-    "major": 38,
-    "red": 1,
+    "major": 37,
+    "red": 0,
     "orange": 0,
     "yellow": 0,
     "green": 3,
     "blocked": 5,
-    "overdue": 1
+    "overdue": 0
   },
   "stateCounts": {
     "approved": 2,
-    "submitted": 12,
-    "inprogress": 5,
+    "submitted": 13,
+    "inprogress": 4,
     "notstarted": 111
   },
   "stateLabels": {
@@ -39,30 +39,6 @@
     "notstarted": "未啟動"
   },
   "caseOverview": [
-    {
-      "key": "guanyin",
-      "title": "觀音中大案",
-      "subtitle": "161kV大潭（乙）~觀音線改接至中大",
-      "status": "active",
-      "pending": 14,
-      "major": 6,
-      "blocked": 1,
-      "overdue": 1,
-      "staffing": {
-        "total": 7,
-        "approved": 0,
-        "approvalPending": 7,
-        "provisional": 0,
-        "arrivalToVerify": 0
-      },
-      "nextDue": {
-        "task": "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
-        "dueLabel": "115/10/05（三件同日列管；送件狀態待核對）",
-        "dueDate": "2026-10-05",
-        "daysLeft": -2
-      },
-      "rank": 1
-    },
     {
       "key": "longxian",
       "title": "龍顯聖亭案",
@@ -84,6 +60,30 @@
         "dueLabel": "115/10/12（全員7人；Tim 10/07確認，待台電正式公文）",
         "dueDate": "2026-10-12",
         "daysLeft": 5
+      },
+      "rank": 1
+    },
+    {
+      "key": "guanyin",
+      "title": "觀音中大案",
+      "subtitle": "161kV大潭（乙）~觀音線改接至中大",
+      "status": "active",
+      "pending": 14,
+      "major": 5,
+      "blocked": 1,
+      "overdue": 0,
+      "staffing": {
+        "total": 7,
+        "approved": 0,
+        "approvalPending": 7,
+        "provisional": 0,
+        "arrivalToVerify": 0
+      },
+      "nextDue": {
+        "task": "觀音中大｜PMIS建置",
+        "dueLabel": "115/10/14（依115/09/14進場一個月推估，實際期限待核對）",
+        "dueDate": "2026-10-14",
+        "daysLeft": 7
       },
       "rank": 2
     },
@@ -359,36 +359,7 @@
       "blockedImpact": "未取得證據前不得標示合規完成"
     }
   ],
-  "overdueItems": [
-    {
-      "task": "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
-      "dueLabel": "115/10/05（三件同日列管；送件狀態待核對）",
-      "diff": -2,
-      "diffLabel": "逾期2天",
-      "statusLight": "🔴",
-      "owner": "巍耀（巧晴協助）",
-      "manager": "孝智哥 <@911417165373136897>",
-      "major": true,
-      "fine": "依各項契約規定",
-      "basis": "工作說明書4.2.8／7.3.3／7.6.1",
-      "status": "待核對送件證據",
-      "heading": "三、簽約初期（決標日觸發）",
-      "fineParsed": {
-        "amount": 0,
-        "unit": "",
-        "kind": "other",
-        "label": "依各項契約規定"
-      },
-      "trigger": "other",
-      "triggerLabel": "其他／未分類",
-      "state": "inprogress",
-      "stateLabel": "進行中",
-      "dueDate": "2026-10-05",
-      "daysLeft": -2,
-      "overdue": true,
-      "overdueDays": 2
-    }
-  ],
+  "overdueItems": [],
   "trackedItems": [
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -731,6 +702,29 @@
       "stateLabel": "已核定",
       "dueDate": "2026-09-06",
       "daysLeft": -31
+    },
+    {
+      "heading": "三、簽約初期（決標日觸發）",
+      "task": "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
+      "dueLabel": "115/10/05（三件同日列管；實際提送日期未提供）",
+      "owner": "巍耀（巧晴協助）",
+      "manager": "孝智",
+      "major": true,
+      "fine": "依各項契約規定",
+      "basis": "工作說明書4.2.8／7.3.3／7.6.1",
+      "status": "✅ 115/10/07 大哥確認已提送（實際提送日期未提供）",
+      "fineParsed": {
+        "amount": 0,
+        "unit": "",
+        "kind": "other",
+        "label": "依各項契約規定"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "submitted",
+      "stateLabel": "已送出",
+      "dueDate": "2026-10-05",
+      "daysLeft": -2
     }
   ],
   "sections": [
@@ -4010,12 +4004,12 @@
         }
       ],
       "counts": {
-        "active": 2,
+        "active": 1,
         "pending": 14,
-        "major": 6,
+        "major": 5,
         "blocked": 1,
-        "overdue": 1,
-        "red": 1,
+        "overdue": 0,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 1
@@ -4023,7 +4017,7 @@
       "stateCounts": {
         "approved": 0,
         "submitted": 0,
-        "inprogress": 3,
+        "inprogress": 2,
         "notstarted": 13
       },
       "triggerGroups": [
@@ -4393,65 +4387,8 @@
           "blockedImpact": "未取得證據前不得標示合規完成"
         }
       ],
-      "overdueItems": [
-        {
-          "task": "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
-          "dueLabel": "115/10/05（三件同日列管；送件狀態待核對）",
-          "diff": -2,
-          "diffLabel": "逾期2天",
-          "statusLight": "🔴",
-          "owner": "巍耀（巧晴協助）",
-          "manager": "孝智哥 <@911417165373136897>",
-          "major": true,
-          "fine": "依各項契約規定",
-          "basis": "工作說明書4.2.8／7.3.3／7.6.1",
-          "status": "待核對送件證據",
-          "heading": "三、簽約初期（決標日觸發）",
-          "fineParsed": {
-            "amount": 0,
-            "unit": "",
-            "kind": "other",
-            "label": "依各項契約規定"
-          },
-          "trigger": "other",
-          "triggerLabel": "其他／未分類",
-          "state": "inprogress",
-          "stateLabel": "進行中",
-          "dueDate": "2026-10-05",
-          "daysLeft": -2,
-          "overdue": true,
-          "overdueDays": 2
-        }
-      ],
+      "overdueItems": [],
       "activeItems": [
-        {
-          "task": "觀音中大｜9月工作月報＋10月出勤配置＋9月差勤統計",
-          "dueLabel": "115/10/05（三件同日列管；送件狀態待核對）",
-          "diff": -2,
-          "diffLabel": "逾期2天",
-          "statusLight": "🔴",
-          "owner": "巍耀（巧晴協助）",
-          "manager": "孝智哥 <@911417165373136897>",
-          "major": true,
-          "fine": "依各項契約規定",
-          "basis": "工作說明書4.2.8／7.3.3／7.6.1",
-          "status": "待核對送件證據",
-          "heading": "三、簽約初期（決標日觸發）",
-          "fineParsed": {
-            "amount": 0,
-            "unit": "",
-            "kind": "other",
-            "label": "依各項契約規定"
-          },
-          "trigger": "other",
-          "triggerLabel": "其他／未分類",
-          "state": "inprogress",
-          "stateLabel": "進行中",
-          "dueDate": "2026-10-05",
-          "daysLeft": -2,
-          "overdue": true,
-          "overdueDays": 2
-        },
         {
           "task": "觀音中大｜PMIS建置",
           "dueLabel": "115/10/14（依115/09/14進場一個月推估，實際期限待核對）",
