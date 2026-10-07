@@ -95,8 +95,7 @@ function countdownText(card) {
     return { big: `D-${days}`, small: escapeHtml(card.nextDue.task || "") };
 }
 
-/* 人員條分三段。兩段不夠用：龍顯主任「暫代到11月中」是現場有人，
- * 廣豐主任「10/5報到」是現場沒人——併成一個數字會失真。 */
+/* 規劃名單只依核准證據計數；不可從姓名或預計報到日推定已到位。 */
 function staffingBlock(staff) {
     if (!staff || !staff.total) {
         return `
@@ -107,19 +106,17 @@ function staffingBlock(staff) {
     }
     const pct = (n) => (n / staff.total) * 100;
     const notes = [];
-    if (staff.provisional) notes.push(`<span class="text-amber-700">暫代 ${staff.provisional}</span>`);
-    if (staff.notInPlace) notes.push(`<span class="text-rose-700">未到位 ${staff.notInPlace}</span>`);
-    if (!notes.length) notes.push(`<span class="text-emerald-700">全到位</span>`);
+    if (staff.provisional) notes.push(`<span class="text-amber-700">暫代註記 ${staff.provisional}</span>`);
+    if (staff.arrivalToVerify) notes.push(`<span class="text-stone-600">報到待核 ${staff.arrivalToVerify}</span>`);
     return `
         <div>
             <div class="flex justify-between text-xs">
-                <span class="font-bold">人員 ${staff.inPlace}/${staff.total}</span>
+                <span class="font-bold">核准已確認 ${staff.approved}/${staff.total}（規劃名單）</span>
                 <span>${notes.join("・")}</span>
             </div>
             <div class="staff-bar mt-1">
-                ${staff.inPlace ? `<div style="width:${pct(staff.inPlace)}%" class="bg-emerald-500" title="已到位 ${staff.inPlace}"></div>` : ""}
-                ${staff.provisional ? `<div style="width:${pct(staff.provisional)}%" class="bg-amber-400" title="暫代 ${staff.provisional}"></div>` : ""}
-                ${staff.notInPlace ? `<div style="width:${pct(staff.notInPlace)}%" class="bg-stone-300" title="未到位 ${staff.notInPlace}"></div>` : ""}
+                ${staff.approved ? `<div style="width:${pct(staff.approved)}%" class="bg-emerald-500" title="核准已確認 ${staff.approved}"></div>` : ""}
+                ${staff.approvalPending ? `<div style="width:${pct(staff.approvalPending)}%" class="bg-stone-300" title="核准待核對 ${staff.approvalPending}"></div>` : ""}
             </div>
         </div>`;
 }
@@ -152,20 +149,19 @@ function renderCaseCard(card) {
         </button>`;
 }
 
-/* 卡片下方那一行由資料算出來，不是寫死的文案——
- * 人員缺口一直躺在 staffing 欄位裡，只是從來沒有人算過。 */
+/* 卡片下方提示核准證據缺口，不將規劃名單當成實際到位名單。 */
 function staffingHeadline(cards) {
     const parts = cards
-        .filter((c) => c.staffing?.total && (c.staffing.notInPlace || c.staffing.provisional))
+        .filter((c) => c.staffing?.total && c.staffing.approvalPending)
         .map((c) => {
             const bits = [];
-            if (c.staffing.notInPlace) bits.push(`<strong>${c.staffing.notInPlace} 個未到位</strong>`);
-            if (c.staffing.provisional) bits.push(`${c.staffing.provisional} 個暫代`);
+            if (c.staffing.approvalPending) bits.push(`<strong>${c.staffing.approvalPending} 人核准待核對</strong>`);
+            if (c.staffing.provisional) bits.push(`${c.staffing.provisional} 人暫代註記`);
             const due = typeof c.nextDue?.daysLeft === "number" ? `（剩 ${c.nextDue.daysLeft} 天）` : "";
             return `${escapeHtml(c.title)} ${c.staffing.total} 個職務，${bits.join("、")}${due}`;
         });
     if (!parts.length) return "";
-    return `<p class="mt-4 rounded-xl bg-amber-50 px-4 py-2.5 text-xs text-amber-900"><strong>人員缺口：</strong>${parts.join("；")}。</p>`;
+    return `<p class="mt-4 rounded-xl bg-amber-50 px-4 py-2.5 text-xs text-amber-900"><strong>核准證據待核：</strong>${parts.join("；")}。</p>`;
 }
 
 function renderCaseOverview() {
