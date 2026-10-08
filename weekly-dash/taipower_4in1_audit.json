@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-07 13:30:10 +0800",
+  "generatedAt": "2026-10-08 08:30:09 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "sourceSha256": "11fc11255997fdae9fe666f4d4efc34e0c83b63e323a870052edacf943a7aa3e",
   "sourceModifiedAt": "2026-10-07 13:21:38 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
-    "auditDate": "2026-10-07",
+    "auditDate": "2026-10-08",
     "modifiedAt": "2026-10-07 13:21:38",
     "riskCounts": {
       "red": 0,
@@ -59,7 +59,7 @@
         "task": "龍顯聖亭線監造派駐啟動",
         "dueLabel": "115/10/12（全員7人；Tim 10/07確認，待台電正式公文）",
         "dueDate": "2026-10-12",
-        "daysLeft": 5
+        "daysLeft": 4
       },
       "rank": 1
     },
@@ -83,7 +83,7 @@
         "task": "觀音中大｜PMIS建置",
         "dueLabel": "115/10/14（依115/09/14進場一個月推估，實際期限待核對）",
         "dueDate": "2026-10-14",
-        "daysLeft": 7
+        "daysLeft": 6
       },
       "rank": 2
     },
@@ -107,7 +107,7 @@
         "task": "廣豐D/S監造派駐啟動",
         "dueLabel": "115/11/01（起始會議確認）",
         "dueDate": "2026-11-01",
-        "daysLeft": 25
+        "daysLeft": 24
       },
       "rank": 3
     },
@@ -231,8 +231,8 @@
     {
       "task": "龍顯聖亭線監造派駐啟動",
       "dueLabel": "115/10/12（全員7人；Tim 10/07確認，待台電正式公文）",
-      "diff": 5,
-      "diffLabel": "D-5 預告",
+      "diff": 4,
+      "diffLabel": "D-4 預告",
       "statusLight": "🟢",
       "owner": "尚東",
       "manager": "囿任哥 <@1516964897404092430>",
@@ -256,7 +256,7 @@
       "blockedOwner": "台電＋我方",
       "blockedImpact": "應先核對七人資格與出勤配置，不將安排視為核准",
       "dueDate": "2026-10-12",
-      "daysLeft": 5
+      "daysLeft": 4
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -382,7 +382,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-12",
-      "daysLeft": -56
+      "daysLeft": -57
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -405,7 +405,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -47
+      "daysLeft": -48
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -428,7 +428,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -47
+      "daysLeft": -48
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -451,7 +451,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -47
+      "daysLeft": -48
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -474,7 +474,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -47
+      "daysLeft": -48
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -497,7 +497,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-14",
-      "daysLeft": -54
+      "daysLeft": -55
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -520,7 +520,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-17",
-      "daysLeft": -51
+      "daysLeft": -52
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -547,7 +547,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響115/10/12全員7人進駐安排",
       "dueDate": "2026-08-27",
-      "daysLeft": -41
+      "daysLeft": -42
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -574,7 +574,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -41
+      "daysLeft": -42
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -601,7 +601,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響115/10/12全員7人進駐安排",
       "dueDate": "2026-08-27",
-      "daysLeft": -41
+      "daysLeft": -42
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -628,7 +628,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -41
+      "daysLeft": -42
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -655,7 +655,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響11/01派駐安排",
       "dueDate": "2026-08-27",
-      "daysLeft": -41
+      "daysLeft": -42
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -678,7 +678,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-08-27",
-      "daysLeft": -41
+      "daysLeft": -42
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -701,7 +701,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-09-06",
-      "daysLeft": -31
+      "daysLeft": -32
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -724,7 +724,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-10-05",
-      "daysLeft": -2
+      "daysLeft": -3
     }
   ],
   "sections": [
@@ -4392,8 +4392,8 @@
         {
           "task": "觀音中大｜PMIS建置",
           "dueLabel": "115/10/14（依115/09/14進場一個月推估，實際期限待核對）",
-          "diff": 7,
-          "diffLabel": "D-7 預告",
+          "diff": 6,
+          "diffLabel": "D-6 預告",
           "statusLight": "🟢",
           "owner": "巍耀哥 <@1486270112326615042>",
           "manager": "孝智哥 <@911417165373136897>",
@@ -4413,7 +4413,7 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-10-14",
-          "daysLeft": 7
+          "daysLeft": 6
         }
       ],
       "pendingItems": [
@@ -5131,8 +5131,8 @@
         {
           "task": "龍顯聖亭線監造派駐啟動",
           "dueLabel": "115/10/12（全員7人；Tim 10/07確認，待台電正式公文）",
-          "diff": 5,
-          "diffLabel": "D-5 預告",
+          "diff": 4,
+          "diffLabel": "D-4 預告",
           "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
@@ -5156,7 +5156,7 @@
           "blockedOwner": "台電＋我方",
           "blockedImpact": "應先核對七人資格與出勤配置，不將安排視為核准",
           "dueDate": "2026-10-12",
-          "daysLeft": 5
+          "daysLeft": 4
         }
       ],
       "overdueItems": [],
@@ -5164,8 +5164,8 @@
         {
           "task": "龍顯聖亭線監造派駐啟動",
           "dueLabel": "115/10/12（全員7人；Tim 10/07確認，待台電正式公文）",
-          "diff": 5,
-          "diffLabel": "D-5 預告",
+          "diff": 4,
+          "diffLabel": "D-4 預告",
           "statusLight": "🟢",
           "owner": "尚東",
           "manager": "囿任哥 <@1516964897404092430>",
@@ -5189,7 +5189,7 @@
           "blockedOwner": "台電＋我方",
           "blockedImpact": "應先核對七人資格與出勤配置，不將安排視為核准",
           "dueDate": "2026-10-12",
-          "daysLeft": 5
+          "daysLeft": 4
         }
       ],
       "pendingItems": [
@@ -5742,8 +5742,8 @@
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/11/01（起始會議確認）",
-          "diff": 25,
-          "diffLabel": "D-25 追蹤",
+          "diff": 24,
+          "diffLabel": "D-24 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -5763,7 +5763,7 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-11-01",
-          "daysLeft": 25
+          "daysLeft": 24
         }
       ],
       "pendingItems": [
