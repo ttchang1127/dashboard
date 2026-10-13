@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13 15:53:19 +0800",
+  "generatedAt": "2026-10-13 16:23:26 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -151,35 +151,26 @@
       "name": "台電4合1",
       "auditDate": "2026-10-13",
       "version": "V3",
-      "modifiedAt": "2026-10-13 15:53:08",
+      "modifiedAt": "2026-10-13 16:23:16",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 1,
+        "orange": 0,
         "yellow": 3,
         "green": 1
       },
-      "itemCount": 5,
+      "itemCount": 4,
       "topUrgent": {
-        "task": "觀音中大｜PMIS建置",
-        "dueLabel": "115/10/14（依115/09/14進場一個月推估，實際期限待核對）",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
-        "owner": "巍耀哥 <@1486270112326615042>",
-        "manager": "孝智哥 <@911417165373136897>"
+        "task": "龍顯聖亭線監造派駐啟動",
+        "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
+        "diff": 3,
+        "diffLabel": "D-3 提醒",
+        "statusLight": "🟡",
+        "owner": "**尚東**",
+        "manager": "囿任哥 <@1516964897404092430>"
       },
       "items": [
-        {
-          "task": "觀音中大｜PMIS建置",
-          "dueLabel": "115/10/14（依115/09/14進場一個月推估，實際期限待核對）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "巍耀哥 <@1486270112326615042>",
-          "manager": "孝智哥 <@911417165373136897>"
-        },
         {
           "task": "龍顯聖亭線監造派駐啟動",
           "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
@@ -217,7 +208,7 @@
           "manager": "孝智哥 <@911417165373136897>"
         }
       ],
-      "sourceSha256": "456111f19c8485a033414d30c127e5537f8dc47310236b12297ee296051e5f81"
+      "sourceSha256": "3b9aa39be53cc856f5f85a10603e7dbd855724f8296db0ebf339e7d7905cd55c"
     },
     {
       "key": "agri_bridge",

@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2026-10-13 15:53:20 +0800",
+  "generatedAt": "2026-10-13 16:23:26 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "456111f19c8485a033414d30c127e5537f8dc47310236b12297ee296051e5f81",
-  "sourceModifiedAt": "2026-10-13 15:53:08 +0800",
+  "sourceSha256": "3b9aa39be53cc856f5f85a10603e7dbd855724f8296db0ebf339e7d7905cd55c",
+  "sourceModifiedAt": "2026-10-13 16:23:16 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-10-13",
-    "modifiedAt": "2026-10-13 15:53:08",
+    "modifiedAt": "2026-10-13 16:23:16",
     "riskCounts": {
       "red": 0,
-      "orange": 1,
+      "orange": 0,
       "yellow": 3,
       "green": 1
     }
   },
   "summary": {
-    "active": 5,
+    "active": 4,
     "pending": 112,
     "major": 39,
     "red": 0,
-    "orange": 1,
+    "orange": 0,
     "yellow": 3,
     "green": 1,
     "blocked": 5,
@@ -29,7 +29,7 @@
   "stateCounts": {
     "approved": 2,
     "submitted": 13,
-    "inprogress": 6,
+    "inprogress": 5,
     "notstarted": 111
   },
   "stateLabels": {
@@ -39,30 +39,6 @@
     "notstarted": "未啟動"
   },
   "caseOverview": [
-    {
-      "key": "guanyin",
-      "title": "觀音中大案",
-      "subtitle": "161kV大潭（乙）~觀音線改接至中大",
-      "status": "active",
-      "pending": 14,
-      "major": 5,
-      "blocked": 1,
-      "overdue": 0,
-      "staffing": {
-        "total": 7,
-        "approved": 7,
-        "approvalPending": 0,
-        "provisional": 0,
-        "arrivalToVerify": 0
-      },
-      "nextDue": {
-        "task": "觀音中大｜PMIS建置",
-        "dueLabel": "115/10/14（依115/09/14進場一個月推估，實際期限待核對）",
-        "dueDate": "2026-10-14",
-        "daysLeft": 1
-      },
-      "rank": 1
-    },
     {
       "key": "longxian",
       "title": "龍顯聖亭案",
@@ -85,7 +61,7 @@
         "dueDate": "2026-10-16",
         "daysLeft": 3
       },
-      "rank": 2
+      "rank": 1
     },
     {
       "key": "guangfeng",
@@ -109,6 +85,25 @@
         "dueDate": "2026-11-01",
         "daysLeft": 19
       },
+      "rank": 2
+    },
+    {
+      "key": "guanyin",
+      "title": "觀音中大案",
+      "subtitle": "161kV大潭（乙）~觀音線改接至中大",
+      "status": "active",
+      "pending": 14,
+      "major": 5,
+      "blocked": 1,
+      "overdue": 0,
+      "staffing": {
+        "total": 7,
+        "approved": 7,
+        "approvalPending": 0,
+        "provisional": 0,
+        "arrivalToVerify": 0
+      },
+      "nextDue": {},
       "rank": 3
     },
     {
@@ -4004,20 +3999,20 @@
         }
       ],
       "counts": {
-        "active": 1,
+        "active": 0,
         "pending": 14,
         "major": 5,
         "blocked": 1,
         "overdue": 0,
         "red": 0,
-        "orange": 1,
+        "orange": 0,
         "yellow": 0,
         "green": 0
       },
       "stateCounts": {
         "approved": 0,
         "submitted": 0,
-        "inprogress": 2,
+        "inprogress": 1,
         "notstarted": 13
       },
       "triggerGroups": [
@@ -4388,34 +4383,7 @@
         }
       ],
       "overdueItems": [],
-      "activeItems": [
-        {
-          "task": "觀音中大｜PMIS建置",
-          "dueLabel": "115/10/14（依115/09/14進場一個月推估，實際期限待核對）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "巍耀哥 <@1486270112326615042>",
-          "manager": "孝智哥 <@911417165373136897>",
-          "major": false,
-          "fine": "—",
-          "basis": "原桃辦週報追蹤項；契約期限待核對",
-          "status": "待查證據",
-          "heading": "三、簽約初期（決標日觸發）",
-          "fineParsed": {
-            "amount": 0,
-            "unit": "",
-            "kind": "none",
-            "label": ""
-          },
-          "trigger": "other",
-          "triggerLabel": "其他／未分類",
-          "state": "inprogress",
-          "stateLabel": "進行中",
-          "dueDate": "2026-10-14",
-          "daysLeft": 1
-        }
-      ],
+      "activeItems": [],
       "pendingItems": [
         {
           "heading": "三、簽約初期（決標日觸發）",
