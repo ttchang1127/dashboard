@@ -524,11 +524,11 @@ function renderActiveItem(item) {
     return `
         <article class="item-card rounded-2xl p-4">
             <div class="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
-                <div>
+                <div class="min-w-0 lg:flex-1">
                     <p class="text-xs font-bold text-emerald-700">${escapeHtml(item.statusLight || "🟢")} ${escapeHtml(item.diffLabel || "")}</p>
                     <h4 class="mt-1 text-base font-bold leading-snug">${escapeHtml(item.task)}</h4>
                 </div>
-                <span class="pill ${riskToneClass(item.diff)}">${escapeHtml(item.dueLabel || "未設定")}</span>
+                <span class="pill pill-wrap lg:max-w-[55%] ${riskToneClass(item.diff)}">${escapeHtml(item.dueLabel || "未設定")}</span>
             </div>
             <p class="mt-3 text-sm text-stone-600">負責：${escapeHtml(item.owner || "未指定")}${manager}</p>
         </article>
