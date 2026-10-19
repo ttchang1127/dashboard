@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-19 08:30:08 +0800",
+  "generatedAt": "2026-10-19 19:13:12 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -160,16 +160,16 @@
       "name": "台電4合1",
       "auditDate": "2026-10-19",
       "version": "V3",
-      "modifiedAt": "2026-10-13 17:00:19",
+      "modifiedAt": "2026-10-19 19:13:05",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 3,
+        "red": 1,
         "orange": 0,
         "yellow": 0,
         "green": 1
       },
-      "itemCount": 4,
+      "itemCount": 2,
       "topUrgent": {
         "task": "龍顯聖亭線監造派駐啟動",
         "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
@@ -190,24 +190,6 @@
           "manager": "**法忠**"
         },
         {
-          "task": "龍顯聖亭｜出勤配置計畫提送（10/16 派駐起）",
-          "dueLabel": "115/10/16（派駐日起算；依工作說明書7.3.3，台電 115/10/12 北區字第1158124715號函說明一；確切期限待核對條文）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "**法忠**",
-          "manager": "**法忠**"
-        },
-        {
-          "task": "龍顯聖亭｜監造現場人員登錄表等資料提報",
-          "dueLabel": "115/10/16（派駐日前後提報；依監造計畫，台電審後填報工程會網站備查，台電 115/10/12 北區字第1158124715號函說明二；確切期限待核對）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "**法忠**",
-          "manager": "**法忠**"
-        },
-        {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/11/01（起始會議確認）",
           "diff": 13,
@@ -217,7 +199,7 @@
           "manager": "孝智哥 <@911417165373136897>"
         }
       ],
-      "sourceSha256": "067b013d6aceefff766e209b00066f67db97d0e849f0d6382514e4b9e7ffc95f"
+      "sourceSha256": "83dcc8566f4163d2c48f78bfe45b6342caf1981a33ee3936b1b9623a83508116"
     },
     {
       "key": "agri_bridge",
