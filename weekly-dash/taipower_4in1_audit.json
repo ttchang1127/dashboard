@@ -1,35 +1,35 @@
 {
-  "generatedAt": "2026-10-19 19:13:43 +0800",
+  "generatedAt": "2026-10-19 19:16:56 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "83dcc8566f4163d2c48f78bfe45b6342caf1981a33ee3936b1b9623a83508116",
-  "sourceModifiedAt": "2026-10-19 19:13:05 +0800",
+  "sourceSha256": "080dc42a482749cb70b1018cfc315b0725b818ce0e398a8ecabfefeaf1968c81",
+  "sourceModifiedAt": "2026-10-19 19:16:50 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-10-19",
-    "modifiedAt": "2026-10-19 19:13:05",
+    "modifiedAt": "2026-10-19 19:16:50",
     "riskCounts": {
-      "red": 1,
+      "red": 0,
       "orange": 0,
       "yellow": 0,
       "green": 1
     }
   },
   "summary": {
-    "active": 2,
+    "active": 1,
     "pending": 112,
-    "major": 37,
-    "red": 1,
+    "major": 36,
+    "red": 0,
     "orange": 0,
     "yellow": 0,
     "green": 1,
-    "blocked": 5,
-    "overdue": 1
+    "blocked": 4,
+    "overdue": 0
   },
   "stateCounts": {
     "approved": 2,
     "submitted": 14,
-    "inprogress": 3,
+    "inprogress": 2,
     "notstarted": 111
   },
   "stateLabels": {
@@ -39,30 +39,6 @@
     "notstarted": "未啟動"
   },
   "caseOverview": [
-    {
-      "key": "longxian",
-      "title": "龍顯聖亭案",
-      "subtitle": "161kV龍顯~聖亭線（第五工區）",
-      "status": "active",
-      "pending": 14,
-      "major": 5,
-      "blocked": 1,
-      "overdue": 1,
-      "staffing": {
-        "total": 7,
-        "approved": 0,
-        "approvalPending": 7,
-        "provisional": 0,
-        "arrivalToVerify": 0
-      },
-      "nextDue": {
-        "task": "龍顯聖亭線監造派駐啟動",
-        "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
-        "dueDate": "2026-10-16",
-        "daysLeft": -3
-      },
-      "rank": 1
-    },
     {
       "key": "guangfeng",
       "title": "廣豐D/S案",
@@ -85,7 +61,7 @@
         "dueDate": "2026-11-01",
         "daysLeft": 13
       },
-      "rank": 2
+      "rank": 1
     },
     {
       "key": "guanyin",
@@ -100,6 +76,25 @@
         "total": 7,
         "approved": 7,
         "approvalPending": 0,
+        "provisional": 0,
+        "arrivalToVerify": 0
+      },
+      "nextDue": {},
+      "rank": 2
+    },
+    {
+      "key": "longxian",
+      "title": "龍顯聖亭案",
+      "subtitle": "161kV龍顯~聖亭線（第五工區）",
+      "status": "active",
+      "pending": 14,
+      "major": 4,
+      "blocked": 0,
+      "overdue": 0,
+      "staffing": {
+        "total": 7,
+        "approved": 0,
+        "approvalPending": 7,
         "provisional": 0,
         "arrivalToVerify": 0
       },
@@ -224,38 +219,6 @@
   ],
   "blockedItems": [
     {
-      "task": "龍顯聖亭線監造派駐啟動",
-      "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
-      "diff": -3,
-      "diffLabel": "逾期3天",
-      "statusLight": "🔴",
-      "owner": "法忠",
-      "manager": "法忠",
-      "major": true,
-      "fine": "5,000/人日",
-      "basis": "工作說明書7.3.2.1／7.3.15",
-      "status": "公文已到；10/16 進駐，逐人核准名單待核對",
-      "heading": "三、簽約初期（決標日觸發）",
-      "fineParsed": {
-        "amount": 5000,
-        "unit": "人日",
-        "kind": "amount",
-        "label": "5,000/人日"
-      },
-      "trigger": "other",
-      "triggerLabel": "其他／未分類",
-      "state": "inprogress",
-      "stateLabel": "進行中",
-      "blocked": true,
-      "blockedReason": "正式公文已到（115/10/12 北區字第1158124715號）：115/10/16 起派駐監造主管1、協辦監造工程師1、文書管理人員1；逐人核准名單待核對",
-      "blockedOwner": "台電＋我方",
-      "blockedImpact": "先核對這 3 人的資格與核准，並提送出勤配置計畫與人員登錄表；其餘 4 職的派駐時點待台電通知",
-      "dueDate": "2026-10-16",
-      "daysLeft": -3,
-      "overdue": true,
-      "overdueDays": 3
-    },
-    {
       "heading": "三、簽約初期（決標日觸發）",
       "task": "專業責任保險投保及送執",
       "dueLabel": "第1次估驗前（估驗日待確認）",
@@ -356,40 +319,7 @@
       "blockedImpact": "未取得證據前不得標示合規完成"
     }
   ],
-  "overdueItems": [
-    {
-      "task": "龍顯聖亭線監造派駐啟動",
-      "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
-      "diff": -3,
-      "diffLabel": "逾期3天",
-      "statusLight": "🔴",
-      "owner": "法忠",
-      "manager": "法忠",
-      "major": true,
-      "fine": "5,000/人日",
-      "basis": "工作說明書7.3.2.1／7.3.15",
-      "status": "公文已到；10/16 進駐，逐人核准名單待核對",
-      "heading": "三、簽約初期（決標日觸發）",
-      "fineParsed": {
-        "amount": 5000,
-        "unit": "人日",
-        "kind": "amount",
-        "label": "5,000/人日"
-      },
-      "trigger": "other",
-      "triggerLabel": "其他／未分類",
-      "state": "inprogress",
-      "stateLabel": "進行中",
-      "blocked": true,
-      "blockedReason": "正式公文已到（115/10/12 北區字第1158124715號）：115/10/16 起派駐監造主管1、協辦監造工程師1、文書管理人員1；逐人核准名單待核對",
-      "blockedOwner": "台電＋我方",
-      "blockedImpact": "先核對這 3 人的資格與核准，並提送出勤配置計畫與人員登錄表；其餘 4 職的派駐時點待台電通知",
-      "dueDate": "2026-10-16",
-      "daysLeft": -3,
-      "overdue": true,
-      "overdueDays": 3
-    }
-  ],
+  "overdueItems": [],
   "trackedItems": [
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -4801,12 +4731,12 @@
         }
       ],
       "counts": {
-        "active": 1,
+        "active": 0,
         "pending": 14,
-        "major": 5,
-        "blocked": 1,
-        "overdue": 1,
-        "red": 1,
+        "major": 4,
+        "blocked": 0,
+        "overdue": 0,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 0
@@ -4814,7 +4744,7 @@
       "stateCounts": {
         "approved": 0,
         "submitted": 0,
-        "inprogress": 1,
+        "inprogress": 0,
         "notstarted": 14
       },
       "triggerGroups": [
@@ -5153,108 +5083,9 @@
           ]
         }
       ],
-      "blockedItems": [
-        {
-          "task": "龍顯聖亭線監造派駐啟動",
-          "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "法忠",
-          "manager": "法忠",
-          "major": true,
-          "fine": "5,000/人日",
-          "basis": "工作說明書7.3.2.1／7.3.15",
-          "status": "公文已到；10/16 進駐，逐人核准名單待核對",
-          "heading": "三、簽約初期（決標日觸發）",
-          "fineParsed": {
-            "amount": 5000,
-            "unit": "人日",
-            "kind": "amount",
-            "label": "5,000/人日"
-          },
-          "trigger": "other",
-          "triggerLabel": "其他／未分類",
-          "state": "inprogress",
-          "stateLabel": "進行中",
-          "blocked": true,
-          "blockedReason": "正式公文已到（115/10/12 北區字第1158124715號）：115/10/16 起派駐監造主管1、協辦監造工程師1、文書管理人員1；逐人核准名單待核對",
-          "blockedOwner": "台電＋我方",
-          "blockedImpact": "先核對這 3 人的資格與核准，並提送出勤配置計畫與人員登錄表；其餘 4 職的派駐時點待台電通知",
-          "dueDate": "2026-10-16",
-          "daysLeft": -3,
-          "overdue": true,
-          "overdueDays": 3
-        }
-      ],
-      "overdueItems": [
-        {
-          "task": "龍顯聖亭線監造派駐啟動",
-          "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "法忠",
-          "manager": "法忠",
-          "major": true,
-          "fine": "5,000/人日",
-          "basis": "工作說明書7.3.2.1／7.3.15",
-          "status": "公文已到；10/16 進駐，逐人核准名單待核對",
-          "heading": "三、簽約初期（決標日觸發）",
-          "fineParsed": {
-            "amount": 5000,
-            "unit": "人日",
-            "kind": "amount",
-            "label": "5,000/人日"
-          },
-          "trigger": "other",
-          "triggerLabel": "其他／未分類",
-          "state": "inprogress",
-          "stateLabel": "進行中",
-          "blocked": true,
-          "blockedReason": "正式公文已到（115/10/12 北區字第1158124715號）：115/10/16 起派駐監造主管1、協辦監造工程師1、文書管理人員1；逐人核准名單待核對",
-          "blockedOwner": "台電＋我方",
-          "blockedImpact": "先核對這 3 人的資格與核准，並提送出勤配置計畫與人員登錄表；其餘 4 職的派駐時點待台電通知",
-          "dueDate": "2026-10-16",
-          "daysLeft": -3,
-          "overdue": true,
-          "overdueDays": 3
-        }
-      ],
-      "activeItems": [
-        {
-          "task": "龍顯聖亭線監造派駐啟動",
-          "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "法忠",
-          "manager": "法忠",
-          "major": true,
-          "fine": "5,000/人日",
-          "basis": "工作說明書7.3.2.1／7.3.15",
-          "status": "公文已到；10/16 進駐，逐人核准名單待核對",
-          "heading": "三、簽約初期（決標日觸發）",
-          "fineParsed": {
-            "amount": 5000,
-            "unit": "人日",
-            "kind": "amount",
-            "label": "5,000/人日"
-          },
-          "trigger": "other",
-          "triggerLabel": "其他／未分類",
-          "state": "inprogress",
-          "stateLabel": "進行中",
-          "blocked": true,
-          "blockedReason": "正式公文已到（115/10/12 北區字第1158124715號）：115/10/16 起派駐監造主管1、協辦監造工程師1、文書管理人員1；逐人核准名單待核對",
-          "blockedOwner": "台電＋我方",
-          "blockedImpact": "先核對這 3 人的資格與核准，並提送出勤配置計畫與人員登錄表；其餘 4 職的派駐時點待台電通知",
-          "dueDate": "2026-10-16",
-          "daysLeft": -3,
-          "overdue": true,
-          "overdueDays": 3
-        }
-      ],
+      "blockedItems": [],
+      "overdueItems": [],
+      "activeItems": [],
       "pendingItems": [
         {
           "heading": "六、分案施工階段待觸發事項",

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-19 19:13:12 +0800",
+  "generatedAt": "2026-10-19 19:16:56 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -160,35 +160,26 @@
       "name": "台電4合1",
       "auditDate": "2026-10-19",
       "version": "V3",
-      "modifiedAt": "2026-10-19 19:13:05",
+      "modifiedAt": "2026-10-19 19:16:50",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 1
       },
-      "itemCount": 2,
+      "itemCount": 1,
       "topUrgent": {
-        "task": "龍顯聖亭線監造派駐啟動",
-        "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
-        "diff": -3,
-        "diffLabel": "逾期3天",
-        "statusLight": "🔴",
-        "owner": "**法忠**",
-        "manager": "**法忠**"
+        "task": "廣豐D/S監造派駐啟動",
+        "dueLabel": "115/11/01（起始會議確認）",
+        "diff": 13,
+        "diffLabel": "D-13 追蹤",
+        "statusLight": "🟢",
+        "owner": "**巧晴姐**",
+        "manager": "孝智哥 <@911417165373136897>"
       },
       "items": [
-        {
-          "task": "龍顯聖亭線監造派駐啟動",
-          "dueLabel": "115/10/16（台電 115/10/12 北區字第1158124715號函：監造主管1、協辦監造工程師1、文書管理人員1）",
-          "diff": -3,
-          "diffLabel": "逾期3天",
-          "statusLight": "🔴",
-          "owner": "**法忠**",
-          "manager": "**法忠**"
-        },
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/11/01（起始會議確認）",
@@ -199,7 +190,7 @@
           "manager": "孝智哥 <@911417165373136897>"
         }
       ],
-      "sourceSha256": "83dcc8566f4163d2c48f78bfe45b6342caf1981a33ee3936b1b9623a83508116"
+      "sourceSha256": "080dc42a482749cb70b1018cfc315b0725b818ce0e398a8ecabfefeaf1968c81"
     },
     {
       "key": "agri_bridge",
