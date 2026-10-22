@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-22 16:05:34 +0800",
+  "generatedAt": "2026-10-22 17:12:45 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "080dc42a482749cb70b1018cfc315b0725b818ce0e398a8ecabfefeaf1968c81",
-  "sourceModifiedAt": "2026-10-19 19:16:50 +0800",
+  "sourceSha256": "c0cf84b838f21c2818c2cdbfc535761b04285b4251bedb6e96856f7c3ec8c1a3",
+  "sourceModifiedAt": "2026-10-22 17:12:45 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-10-22",
-    "modifiedAt": "2026-10-19 19:16:50",
+    "modifiedAt": "2026-10-22 17:12:45",
     "riskCounts": {
       "red": 0,
       "orange": 0,
@@ -5421,8 +5421,8 @@
         },
         {
           "role": "協辦監造工程員",
-          "person": "高鴻瑜",
-          "approval": "待核對"
+          "person": "待應徵",
+          "approval": "—"
         },
         {
           "role": "職安人員",
