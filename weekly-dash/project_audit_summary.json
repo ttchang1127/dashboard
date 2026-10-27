@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27 08:30:07 +0800",
+  "generatedAt": "2026-10-27 14:54:16 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -205,36 +205,18 @@
       "name": "台電69kV",
       "auditDate": "2026-10-27",
       "version": "V1",
-      "modifiedAt": "2026-10-19 20:27:30",
+      "modifiedAt": "2026-10-27 14:54:10",
       "mode": "active",
       "note": "第一期已通知開工，依提醒清單實際日期啟動 D-45 列管",
       "riskCounts": {
-        "red": 1,
+        "red": 0,
         "orange": 0,
         "yellow": 0,
         "green": 0
       },
-      "itemCount": 1,
-      "topUrgent": {
-        "task": "提送修正後服務實施計畫書、簽證執行計畫書及設計品質計畫書",
-        "dueLabel": "115/10/27",
-        "diff": 0,
-        "diffLabel": "D-0 逾期",
-        "statusLight": "🔴",
-        "owner": "**智淵哥**",
-        "manager": "**柏勛哥**"
-      },
-      "items": [
-        {
-          "task": "提送修正後服務實施計畫書、簽證執行計畫書及設計品質計畫書",
-          "dueLabel": "115/10/27",
-          "diff": 0,
-          "diffLabel": "D-0 逾期",
-          "statusLight": "🔴",
-          "owner": "**智淵哥**",
-          "manager": "**柏勛哥**"
-        }
-      ]
+      "itemCount": 0,
+      "topUrgent": null,
+      "items": []
     },
     {
       "key": "taipower_4in1",
