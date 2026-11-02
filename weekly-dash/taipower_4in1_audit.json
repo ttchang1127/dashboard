@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-10-30 13:30:08 +0800",
+  "generatedAt": "2026-11-02 08:30:08 +0800",
   "source": "台電4合1提醒清單_V3.md",
   "sourceSha256": "c0cf84b838f21c2818c2cdbfc535761b04285b4251bedb6e96856f7c3ec8c1a3",
   "sourceModifiedAt": "2026-10-22 17:12:45 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
-    "auditDate": "2026-10-30",
+    "auditDate": "2026-11-02",
     "modifiedAt": "2026-10-22 17:12:45",
     "riskCounts": {
-      "red": 0,
+      "red": 1,
       "orange": 0,
-      "yellow": 1,
+      "yellow": 0,
       "green": 0
     }
   },
@@ -19,12 +19,12 @@
     "active": 1,
     "pending": 112,
     "major": 36,
-    "red": 0,
+    "red": 1,
     "orange": 0,
-    "yellow": 1,
+    "yellow": 0,
     "green": 0,
     "blocked": 4,
-    "overdue": 0
+    "overdue": 1
   },
   "stateCounts": {
     "approved": 2,
@@ -47,7 +47,7 @@
       "pending": 6,
       "major": 3,
       "blocked": 0,
-      "overdue": 0,
+      "overdue": 1,
       "staffing": {
         "total": 8,
         "approved": 0,
@@ -59,7 +59,7 @@
         "task": "廣豐D/S監造派駐啟動",
         "dueLabel": "115/11/01（起始會議確認）",
         "dueDate": "2026-11-01",
-        "daysLeft": 2
+        "daysLeft": -1
       },
       "rank": 1
     },
@@ -319,7 +319,36 @@
       "blockedImpact": "未取得證據前不得標示合規完成"
     }
   ],
-  "overdueItems": [],
+  "overdueItems": [
+    {
+      "task": "廣豐D/S監造派駐啟動",
+      "dueLabel": "115/11/01（起始會議確認）",
+      "diff": -1,
+      "diffLabel": "逾期1天",
+      "statusLight": "🔴",
+      "owner": "巧晴姐",
+      "manager": "孝智哥 <@911417165373136897>",
+      "major": true,
+      "fine": "5,000/人日",
+      "basis": "工作說明書7.3.2.3／7.3.15",
+      "status": "待辦",
+      "heading": "三、簽約初期（決標日觸發）",
+      "fineParsed": {
+        "amount": 5000,
+        "unit": "人日",
+        "kind": "amount",
+        "label": "5,000/人日"
+      },
+      "trigger": "other",
+      "triggerLabel": "其他／未分類",
+      "state": "inprogress",
+      "stateLabel": "進行中",
+      "dueDate": "2026-11-01",
+      "daysLeft": -1,
+      "overdue": true,
+      "overdueDays": 1
+    }
+  ],
   "trackedItems": [
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -342,7 +371,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-12",
-      "daysLeft": -79
+      "daysLeft": -82
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -365,7 +394,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -70
+      "daysLeft": -73
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -388,7 +417,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -70
+      "daysLeft": -73
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -411,7 +440,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -70
+      "daysLeft": -73
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -434,7 +463,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -70
+      "daysLeft": -73
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -457,7 +486,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-14",
-      "daysLeft": -77
+      "daysLeft": -80
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -480,7 +509,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-17",
-      "daysLeft": -74
+      "daysLeft": -77
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -507,7 +536,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；台電已函知 115/10/16 起派駐 3 人（北區字第1158124715號），核定文號待核對",
       "dueDate": "2026-08-27",
-      "daysLeft": -64
+      "daysLeft": -67
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -534,7 +563,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -64
+      "daysLeft": -67
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -561,7 +590,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；台電已函知 115/10/16 起派駐 3 人（北區字第1158124715號），核定文號待核對",
       "dueDate": "2026-08-27",
-      "daysLeft": -64
+      "daysLeft": -67
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -588,7 +617,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -64
+      "daysLeft": -67
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -615,7 +644,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響11/01派駐安排",
       "dueDate": "2026-08-27",
-      "daysLeft": -64
+      "daysLeft": -67
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -638,7 +667,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-08-27",
-      "daysLeft": -64
+      "daysLeft": -67
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -661,7 +690,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-09-06",
-      "daysLeft": -54
+      "daysLeft": -57
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -684,7 +713,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-10-16",
-      "daysLeft": -14
+      "daysLeft": -17
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -707,7 +736,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-10-05",
-      "daysLeft": -25
+      "daysLeft": -28
     }
   ],
   "sections": [
@@ -5450,10 +5479,10 @@
         "pending": 6,
         "major": 3,
         "blocked": 0,
-        "overdue": 0,
-        "red": 0,
+        "overdue": 1,
+        "red": 1,
         "orange": 0,
-        "yellow": 1,
+        "yellow": 0,
         "green": 0
       },
       "stateCounts": {
@@ -5631,14 +5660,13 @@
         }
       ],
       "blockedItems": [],
-      "overdueItems": [],
-      "activeItems": [
+      "overdueItems": [
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/11/01（起始會議確認）",
-          "diff": 2,
-          "diffLabel": "D-2 提醒",
-          "statusLight": "🟡",
+          "diff": -1,
+          "diffLabel": "逾期1天",
+          "statusLight": "🔴",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
           "major": true,
@@ -5657,7 +5685,39 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-11-01",
-          "daysLeft": 2
+          "daysLeft": -1,
+          "overdue": true,
+          "overdueDays": 1
+        }
+      ],
+      "activeItems": [
+        {
+          "task": "廣豐D/S監造派駐啟動",
+          "dueLabel": "115/11/01（起始會議確認）",
+          "diff": -1,
+          "diffLabel": "逾期1天",
+          "statusLight": "🔴",
+          "owner": "巧晴姐",
+          "manager": "孝智哥 <@911417165373136897>",
+          "major": true,
+          "fine": "5,000/人日",
+          "basis": "工作說明書7.3.2.3／7.3.15",
+          "status": "待辦",
+          "heading": "三、簽約初期（決標日觸發）",
+          "fineParsed": {
+            "amount": 5000,
+            "unit": "人日",
+            "kind": "amount",
+            "label": "5,000/人日"
+          },
+          "trigger": "other",
+          "triggerLabel": "其他／未分類",
+          "state": "inprogress",
+          "stateLabel": "進行中",
+          "dueDate": "2026-11-01",
+          "daysLeft": -1,
+          "overdue": true,
+          "overdueDays": 1
         }
       ],
       "pendingItems": [
