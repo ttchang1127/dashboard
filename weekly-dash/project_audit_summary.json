@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03 19:49:42 +0800",
+  "generatedAt": "2026-11-03 21:09:27 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -133,44 +133,26 @@
       "name": "航空城",
       "auditDate": "2026-11-03",
       "version": "V5",
-      "modifiedAt": "2026-11-03 19:49:00",
+      "modifiedAt": "2026-11-03 21:09:02",
       "mode": "active",
       "note": null,
       "riskCounts": {
-        "red": 2,
+        "red": 0,
         "orange": 0,
         "yellow": 1,
         "green": 3
       },
-      "itemCount": 6,
+      "itemCount": 4,
       "topUrgent": {
-        "task": "115年10月設計階段月報彙整日",
-        "dueLabel": "115/11/02",
-        "diff": -1,
-        "diffLabel": "逾期1天",
-        "statusLight": "🔴",
-        "owner": "子銘哥 <@1488800412734849115>",
-        "manager": null
+        "task": "115年10月整體工作月報 提送截止",
+        "dueLabel": "115/11/05",
+        "diff": 2,
+        "diffLabel": "D-2 提醒",
+        "statusLight": "🟡",
+        "owner": "**珮婷**",
+        "manager": "囿任哥 <@1516964897404092430>"
       },
       "items": [
-        {
-          "task": "115年10月設計階段月報彙整日",
-          "dueLabel": "115/11/02",
-          "diff": -1,
-          "diffLabel": "逾期1天",
-          "statusLight": "🔴",
-          "owner": "子銘哥 <@1488800412734849115>",
-          "manager": null
-        },
-        {
-          "task": "監造階段進駐工務所",
-          "dueLabel": "115/11/02",
-          "diff": -1,
-          "diffLabel": "逾期1天",
-          "statusLight": "🔴",
-          "owner": "待指派",
-          "manager": null
-        },
         {
           "task": "115年10月整體工作月報 提送截止",
           "dueLabel": "115/11/05",
