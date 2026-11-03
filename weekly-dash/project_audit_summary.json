@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03 18:53:13 +0800",
+  "generatedAt": "2026-11-03 18:56:57 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -133,7 +133,7 @@
       "name": "航空城",
       "auditDate": "2026-11-03",
       "version": "V5",
-      "modifiedAt": "2026-10-11 20:08:06",
+      "modifiedAt": "2026-11-03 18:55:54",
       "mode": "active",
       "note": null,
       "riskCounts": {
