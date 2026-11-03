@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03 08:30:21 +0800",
+  "generatedAt": "2026-11-03 17:56:23 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -260,125 +260,26 @@
       "name": "農業局橋檢案",
       "auditDate": "2026-11-03",
       "version": "V1",
-      "modifiedAt": "2026-10-07 09:13:54",
+      "modifiedAt": "2026-11-03 16:31:40",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
-        "orange": 11,
+        "orange": 0,
         "yellow": 1,
         "green": 1
       },
-      "itemCount": 13,
+      "itemCount": 2,
       "topUrgent": {
-        "task": "GPR／水下基礎／LiDAR 幾何／AIM",
-        "dueLabel": "115/11/04（配合期中報告前完成）",
-        "diff": 1,
-        "diffLabel": "D-1 緊急",
-        "statusLight": "🟠",
-        "owner": "待指派",
-        "manager": null
+        "task": "115年10月工作月報 提送截止",
+        "dueLabel": "115/11/05",
+        "diff": 2,
+        "diffLabel": "D-2 提醒",
+        "statusLight": "🟡",
+        "owner": "**英麗**",
+        "manager": "囿任哥 <@1516964897404092430>"
       },
       "items": [
-        {
-          "task": "GPR／水下基礎／LiDAR 幾何／AIM",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "剛性吊桿索力微振量測",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "吊桿系統檢測",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "基礎調查與數值模型",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "塗膜厚度/幾何/水下基礎/GPR",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "期中報告（10 份）",
-          "dueLabel": "115/11/04（115/08/06 第二期開工起 90 日內；建議 115/11/03 前完成送件）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "混凝土劣化目視與材料檢測",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "第二期期中報告 提送截止",
-          "dueLabel": "115/11/04",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "結構初步分析與 TBID 評定",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "鋼拱肋/箱梁/橋面/支承/橋墩",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
-        {
-          "task": "鋼拱肋/繫梁鏽蝕與關鍵銲道",
-          "dueLabel": "115/11/04（配合期中報告前完成）",
-          "diff": 1,
-          "diffLabel": "D-1 緊急",
-          "statusLight": "🟠",
-          "owner": "待指派",
-          "manager": null
-        },
         {
           "task": "115年10月工作月報 提送截止",
           "dueLabel": "115/11/05",
