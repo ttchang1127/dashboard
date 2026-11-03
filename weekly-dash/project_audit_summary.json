@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03 17:56:23 +0800",
+  "generatedAt": "2026-11-03 18:53:13 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -260,7 +260,7 @@
       "name": "農業局橋檢案",
       "auditDate": "2026-11-03",
       "version": "V1",
-      "modifiedAt": "2026-11-03 16:31:40",
+      "modifiedAt": "2026-11-03 18:51:27",
       "mode": "active",
       "note": null,
       "riskCounts": {
@@ -271,7 +271,7 @@
       },
       "itemCount": 2,
       "topUrgent": {
-        "task": "115年10月工作月報 提送截止",
+        "task": "115年10月工作月報 提送截止（預計 115/11/04 提送）",
         "dueLabel": "115/11/05",
         "diff": 2,
         "diffLabel": "D-2 提醒",
@@ -281,7 +281,7 @@
       },
       "items": [
         {
-          "task": "115年10月工作月報 提送截止",
+          "task": "115年10月工作月報 提送截止（預計 115/11/04 提送）",
           "dueLabel": "115/11/05",
           "diff": 2,
           "diffLabel": "D-2 提醒",
@@ -305,7 +305,7 @@
       "name": "大園區竹圍市地重劃案",
       "auditDate": "2026-11-03",
       "version": "V1",
-      "modifiedAt": "2026-10-27 16:25:18",
+      "modifiedAt": "2026-11-03 18:52:45",
       "mode": "active",
       "note": null,
       "riskCounts": {
