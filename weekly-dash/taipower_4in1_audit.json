@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-03 21:09:27 +0800",
+  "generatedAt": "2026-11-04 08:44:21 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "c0cf84b838f21c2818c2cdbfc535761b04285b4251bedb6e96856f7c3ec8c1a3",
-  "sourceModifiedAt": "2026-10-22 17:12:45 +0800",
+  "sourceSha256": "6882d2a6cb33aae33f7ef4ee314ebaad6045c16d0db5f28929961cdee445d6a7",
+  "sourceModifiedAt": "2026-11-04 08:44:21 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
-    "auditDate": "2026-11-03",
-    "modifiedAt": "2026-10-22 17:12:45",
+    "auditDate": "2026-11-04",
+    "modifiedAt": "2026-11-04 08:44:21",
     "riskCounts": {
       "red": 1,
       "orange": 0,
@@ -42,7 +42,7 @@
     {
       "key": "guangfeng",
       "title": "廣豐D/S案",
-      "subtitle": "廣豐D/S新建工程（土建統包）",
+      "subtitle": "廣豐D/S新建工程（土建統包）｜預計115/12/15開工（暫定）",
       "status": "recruiting",
       "pending": 6,
       "major": 3,
@@ -51,15 +51,15 @@
       "staffing": {
         "total": 8,
         "approved": 0,
-        "approvalPending": 8,
+        "approvalPending": 6,
         "provisional": 0,
-        "arrivalToVerify": 3
+        "arrivalToVerify": 1
       },
       "nextDue": {
         "task": "廣豐D/S監造派駐啟動",
         "dueLabel": "115/11/01（起始會議確認）",
         "dueDate": "2026-11-01",
-        "daysLeft": -2
+        "daysLeft": -3
       },
       "rank": 1
     },
@@ -323,8 +323,8 @@
     {
       "task": "廣豐D/S監造派駐啟動",
       "dueLabel": "115/11/01（起始會議確認）",
-      "diff": -2,
-      "diffLabel": "逾期2天",
+      "diff": -3,
+      "diffLabel": "逾期3天",
       "statusLight": "🔴",
       "owner": "巧晴姐",
       "manager": "孝智哥 <@911417165373136897>",
@@ -344,9 +344,9 @@
       "state": "inprogress",
       "stateLabel": "進行中",
       "dueDate": "2026-11-01",
-      "daysLeft": -2,
+      "daysLeft": -3,
       "overdue": true,
-      "overdueDays": 2
+      "overdueDays": 3
     }
   ],
   "trackedItems": [
@@ -371,7 +371,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-12",
-      "daysLeft": -83
+      "daysLeft": -84
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -394,7 +394,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -74
+      "daysLeft": -75
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -417,7 +417,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -74
+      "daysLeft": -75
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -440,7 +440,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -74
+      "daysLeft": -75
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -463,7 +463,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -74
+      "daysLeft": -75
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -486,7 +486,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-14",
-      "daysLeft": -81
+      "daysLeft": -82
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -509,7 +509,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-17",
-      "daysLeft": -78
+      "daysLeft": -79
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -536,7 +536,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；台電已函知 115/10/16 起派駐 3 人（北區字第1158124715號），核定文號待核對",
       "dueDate": "2026-08-27",
-      "daysLeft": -68
+      "daysLeft": -69
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -563,7 +563,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -68
+      "daysLeft": -69
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -590,7 +590,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；台電已函知 115/10/16 起派駐 3 人（北區字第1158124715號），核定文號待核對",
       "dueDate": "2026-08-27",
-      "daysLeft": -68
+      "daysLeft": -69
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -617,7 +617,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -68
+      "daysLeft": -69
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -644,7 +644,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響11/01派駐安排",
       "dueDate": "2026-08-27",
-      "daysLeft": -68
+      "daysLeft": -69
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -667,7 +667,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-08-27",
-      "daysLeft": -68
+      "daysLeft": -69
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -690,7 +690,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-09-06",
-      "daysLeft": -58
+      "daysLeft": -59
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -713,7 +713,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-10-16",
-      "daysLeft": -18
+      "daysLeft": -19
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -736,7 +736,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-10-05",
-      "daysLeft": -29
+      "daysLeft": -30
     }
   ],
   "sections": [
@@ -5421,7 +5421,7 @@
       "title": "廣豐D/S案",
       "subtitle": "廣豐D/S新建工程（土建統包）",
       "status": "recruiting",
-      "note": "",
+      "note": "預計開工日：115/12/15（暫定，以台電書面通知為準）。",
       "staffing": [
         {
           "role": "管理人員",
@@ -5430,12 +5430,12 @@
         },
         {
           "role": "監造主任",
-          "person": "鄭光宏（預計11/02報到）",
+          "person": "林耀堂",
           "approval": "待核對"
         },
         {
-          "role": "建築主辦監造工程師",
-          "person": "林耀堂（預計10月底報到）",
+          "role": "主辦建築監造工程師",
+          "person": "李哲維",
           "approval": "待核對"
         },
         {
@@ -5445,8 +5445,8 @@
         },
         {
           "role": "協辦建築監造工程師",
-          "person": "李哲維",
-          "approval": "待核對"
+          "person": "待應徵",
+          "approval": "—"
         },
         {
           "role": "協辦監造工程員",
@@ -5664,8 +5664,8 @@
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/11/01（起始會議確認）",
-          "diff": -2,
-          "diffLabel": "逾期2天",
+          "diff": -3,
+          "diffLabel": "逾期3天",
           "statusLight": "🔴",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -5685,17 +5685,17 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-11-01",
-          "daysLeft": -2,
+          "daysLeft": -3,
           "overdue": true,
-          "overdueDays": 2
+          "overdueDays": 3
         }
       ],
       "activeItems": [
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/11/01（起始會議確認）",
-          "diff": -2,
-          "diffLabel": "逾期2天",
+          "diff": -3,
+          "diffLabel": "逾期3天",
           "statusLight": "🔴",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -5715,9 +5715,9 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-11-01",
-          "daysLeft": -2,
+          "daysLeft": -3,
           "overdue": true,
-          "overdueDays": 2
+          "overdueDays": 3
         }
       ],
       "pendingItems": [
