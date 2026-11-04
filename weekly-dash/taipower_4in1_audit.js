@@ -956,11 +956,48 @@ function render() {
     renderCaseOverview();  // 同理：卡片要標示目前選中的案
 }
 
+// Keep the confirmed Guangfeng staffing visible if another report refresh publishes an
+// older copy of the audit JSON. Remove this guard after every writer reads the
+// corrected reminder list rather than a stale local snapshot.
+function correctStaleGuangfengStaffing(payload) {
+    const section = payload.sections?.find(item => item.key === "guangfeng");
+    const director = section?.staffing?.find(item => item.role === "監造主任");
+    if (!director || !director.person.includes("鄭光宏")) return;
+
+    section.staffing = section.staffing.map(item => {
+        if (item.role === "監造主任") return { ...item, person: "林耀堂" };
+        if (item.role === "建築主辦監造工程師") {
+            return { ...item, role: "主辦建築監造工程師", person: "李哲維" };
+        }
+        if (item.role === "協辦建築監造工程師") {
+            return { ...item, person: "待應徵", approval: "—" };
+        }
+        return item;
+    });
+    section.note = "預計開工日：115/12/15（暫定，以台電書面通知為準）。";
+    const card = payload.caseOverview?.find(item => item.key === "guangfeng");
+    if (card) {
+        card.subtitle = "廣豐D/S新建工程（土建統包）｜預計115/12/15開工（暫定）";
+        card.staffing.approvalPending = section.staffing.filter(item => item.approval === "待核對").length;
+        card.staffing.arrivalToVerify = section.staffing.filter(item => item.person.includes("預計")).length;
+    }
+    const fixOwner = item => {
+        if (!item || typeof item !== "object") return;
+        if (item.task?.startsWith("廣豐") && item.owner?.includes("廣豐主任")) {
+            item.owner = "林耀堂";
+            item.manager = "視該員副理";
+        }
+        Object.values(item).forEach(fixOwner);
+    };
+    fixOwner(payload);
+}
+
 async function init() {
     try {
         const response = await fetch("./taipower_4in1_audit.json?v=" + Date.now(), { cache: "no-store" });
         if (!response.ok) throw new Error(`無法讀取資料檔：${response.status}`);
         state.payload = await response.json();
+        correctStaleGuangfengStaffing(state.payload);
         render();
     } catch (error) {
         summaryGrid.innerHTML = "";
