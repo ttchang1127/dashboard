@@ -41,7 +41,7 @@ function riskToneClass(diff) {
 function statusLabel(status) {
     const labels = {
         active: "列管中",
-        recruiting: "主任招募中",
+        recruiting: "人員招募中",
         paused: "暫不啟動稽核"
     };
     return labels[status] || "列管中";
@@ -958,7 +958,7 @@ function render() {
 
 async function init() {
     try {
-        const response = await fetch("./taipower_4in1_audit.json", { cache: "no-store" });
+        const response = await fetch("./taipower_4in1_audit.json?v=" + Date.now(), { cache: "no-store" });
         if (!response.ok) throw new Error(`無法讀取資料檔：${response.status}`);
         state.payload = await response.json();
         render();
