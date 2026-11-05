@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-04 08:56:05 +0800",
+  "generatedAt": "2026-11-05 08:30:23 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "026507aeb34aee10dd9442e1d245c79637adf8b3a8467f1ad8c647dabc4671b5",
-  "sourceModifiedAt": "2026-11-04 08:56:05 +0800",
+  "sourceSha256": "815cddd96eb1d62b46556ca68a9158248d03422525dd3aa497ef3f38efbdacaf",
+  "sourceModifiedAt": "2026-11-04 08:53:53 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
-    "auditDate": "2026-11-04",
-    "modifiedAt": "2026-11-04 08:56:05",
+    "auditDate": "2026-11-05",
+    "modifiedAt": "2026-11-04 08:53:53",
     "riskCounts": {
       "red": 0,
       "orange": 0,
@@ -42,7 +42,7 @@
     {
       "key": "guangfeng",
       "title": "廣豐D/S案",
-      "subtitle": "廣豐D/S新建工程（土建統包）｜預計115/12/15開工（暫定）",
+      "subtitle": "廣豐D/S新建工程（土建統包）",
       "status": "recruiting",
       "pending": 6,
       "major": 3,
@@ -51,15 +51,15 @@
       "staffing": {
         "total": 8,
         "approved": 0,
-        "approvalPending": 6,
+        "approvalPending": 8,
         "provisional": 0,
-        "arrivalToVerify": 1
+        "arrivalToVerify": 3
       },
       "nextDue": {
         "task": "廣豐D/S監造派駐啟動",
         "dueLabel": "115/12/15（暫定派駐日；待正式確認）",
         "dueDate": "2026-12-15",
-        "daysLeft": 41
+        "daysLeft": 40
       },
       "rank": 1
     },
@@ -342,7 +342,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-12",
-      "daysLeft": -84
+      "daysLeft": -85
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -365,7 +365,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -75
+      "daysLeft": -76
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -388,7 +388,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -75
+      "daysLeft": -76
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -411,7 +411,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -75
+      "daysLeft": -76
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -434,7 +434,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-21",
-      "daysLeft": -75
+      "daysLeft": -76
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -457,7 +457,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-14",
-      "daysLeft": -82
+      "daysLeft": -83
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -480,7 +480,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-08-17",
-      "daysLeft": -79
+      "daysLeft": -80
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -507,7 +507,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；台電已函知 115/10/16 起派駐 3 人（北區字第1158124715號），核定文號待核對",
       "dueDate": "2026-08-27",
-      "daysLeft": -69
+      "daysLeft": -70
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -534,7 +534,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -69
+      "daysLeft": -70
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -561,7 +561,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；台電已函知 115/10/16 起派駐 3 人（北區字第1158124715號），核定文號待核對",
       "dueDate": "2026-08-27",
-      "daysLeft": -69
+      "daysLeft": -70
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -588,7 +588,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "7.1正式派駐第一道門檻；11.5.2第1次估驗前提",
       "dueDate": "2026-08-27",
-      "daysLeft": -69
+      "daysLeft": -70
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -615,7 +615,7 @@
       "blockedOwner": "台電",
       "blockedImpact": "同上；影響派駐日暫定115/12/15（待正式確認）",
       "dueDate": "2026-08-27",
-      "daysLeft": -69
+      "daysLeft": -70
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -638,7 +638,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-08-27",
-      "daysLeft": -69
+      "daysLeft": -70
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -661,7 +661,7 @@
       "state": "approved",
       "stateLabel": "已核定",
       "dueDate": "2026-09-06",
-      "daysLeft": -59
+      "daysLeft": -60
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -684,7 +684,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-10-16",
-      "daysLeft": -19
+      "daysLeft": -20
     },
     {
       "heading": "三、簽約初期（決標日觸發）",
@@ -707,7 +707,7 @@
       "state": "submitted",
       "stateLabel": "已送出",
       "dueDate": "2026-10-05",
-      "daysLeft": -30
+      "daysLeft": -31
     }
   ],
   "sections": [
@@ -5392,7 +5392,7 @@
       "title": "廣豐D/S案",
       "subtitle": "廣豐D/S新建工程（土建統包）",
       "status": "recruiting",
-      "note": "預計開工日：115/12/15（暫定，以台電書面通知為準）。",
+      "note": "",
       "staffing": [
         {
           "role": "管理人員",
@@ -5401,12 +5401,12 @@
         },
         {
           "role": "監造主任",
-          "person": "林耀堂",
+          "person": "鄭光宏（預計11/02報到）",
           "approval": "待核對"
         },
         {
-          "role": "主辦建築監造工程師",
-          "person": "李哲維",
+          "role": "建築主辦監造工程師",
+          "person": "林耀堂（預計10月底報到）",
           "approval": "待核對"
         },
         {
@@ -5416,8 +5416,8 @@
         },
         {
           "role": "協辦建築監造工程師",
-          "person": "待應徵",
-          "approval": "—"
+          "person": "李哲維",
+          "approval": "待核對"
         },
         {
           "role": "協辦監造工程員",
@@ -5473,8 +5473,8 @@
               "heading": "六、分案施工階段待觸發事項",
               "task": "廣豐機電/消防設備廠驗及功能測試",
               "dueLabel": "依廠驗項目",
-              "owner": "林耀堂",
-              "manager": "視該員副理",
+              "owner": "廣豐主任（派駐日暫定115",
+              "manager": "12/15；待正式確認）/視該員副理",
               "major": false,
               "fine": "2,000/次",
               "basis": "罰則13.13",
@@ -5494,8 +5494,8 @@
               "heading": "六、分案施工階段待觸發事項",
               "task": "廣豐竣工報告單/竣工圖說/工程結算審查",
               "dueLabel": "竣工日+3日或提送次日+7日",
-              "owner": "林耀堂",
-              "manager": "視該員副理",
+              "owner": "廣豐主任（派駐日暫定115",
+              "manager": "12/15；待正式確認）/視該員副理",
               "major": false,
               "fine": "3,000/日；5,000/次",
               "basis": "罰則13.1/13.3",
@@ -5523,8 +5523,8 @@
               "heading": "六、分案施工階段待觸發事項",
               "task": "廣豐分項初驗/複驗到場",
               "dueLabel": "依機關通知",
-              "owner": "林耀堂",
-              "manager": "視該員副理",
+              "owner": "廣豐主任（派駐日暫定115",
+              "manager": "12/15；待正式確認）/視該員副理",
               "major": true,
               "fine": "建築師/技師未到場5,000/人次",
               "basis": "契約7.3.11",
@@ -5552,8 +5552,8 @@
               "heading": "六、分案施工階段待觸發事項",
               "task": "廣豐大樓結構體/RC澆置檢驗停留點",
               "dueLabel": "隱蔽部分澆置前",
-              "owner": "林耀堂",
-              "manager": "視該員副理",
+              "owner": "廣豐主任（派駐日暫定115",
+              "manager": "12/15；待正式確認）/視該員副理",
               "major": false,
               "fine": "2,000/次",
               "basis": "罰則13.13",
@@ -5581,8 +5581,8 @@
               "heading": "六、分案施工階段待觸發事項",
               "task": "廣豐各期工期起訖管控",
               "dueLabel": "自開工日起算",
-              "owner": "林耀堂",
-              "manager": "視該員副理",
+              "owner": "廣豐主任（派駐日暫定115",
+              "manager": "12/15；待正式確認）/視該員副理",
               "major": false,
               "fine": "展延10,000/日",
               "basis": "工作說明書5.2.2／罰則13.17",
@@ -5610,8 +5610,8 @@
               "heading": "六、分案施工階段待觸發事項",
               "task": "廣豐使用執照/綠建築標章及機電消防竣工簽證",
               "dueLabel": "第4期期程內",
-              "owner": "林耀堂",
-              "manager": "視該員副理",
+              "owner": "廣豐主任（派駐日暫定115",
+              "manager": "12/15；待正式確認）/視該員副理",
               "major": true,
               "fine": "5,000/次",
               "basis": "罰則13.3",
@@ -5636,8 +5636,8 @@
         {
           "task": "廣豐D/S監造派駐啟動",
           "dueLabel": "115/12/15（暫定派駐日；待正式確認）",
-          "diff": 41,
-          "diffLabel": "D-41 追蹤",
+          "diff": 40,
+          "diffLabel": "D-40 追蹤",
           "statusLight": "🟢",
           "owner": "巧晴姐",
           "manager": "孝智哥 <@911417165373136897>",
@@ -5657,7 +5657,7 @@
           "state": "inprogress",
           "stateLabel": "進行中",
           "dueDate": "2026-12-15",
-          "daysLeft": 41
+          "daysLeft": 40
         }
       ],
       "pendingItems": [
@@ -5665,8 +5665,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐各期工期起訖管控",
           "dueLabel": "自開工日起算",
-          "owner": "林耀堂",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（派駐日暫定115",
+          "manager": "12/15；待正式確認）/視該員副理",
           "major": false,
           "fine": "展延10,000/日",
           "basis": "工作說明書5.2.2／罰則13.17",
@@ -5686,8 +5686,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐大樓結構體/RC澆置檢驗停留點",
           "dueLabel": "隱蔽部分澆置前",
-          "owner": "林耀堂",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（派駐日暫定115",
+          "manager": "12/15；待正式確認）/視該員副理",
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
@@ -5707,8 +5707,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐機電/消防設備廠驗及功能測試",
           "dueLabel": "依廠驗項目",
-          "owner": "林耀堂",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（派駐日暫定115",
+          "manager": "12/15；待正式確認）/視該員副理",
           "major": false,
           "fine": "2,000/次",
           "basis": "罰則13.13",
@@ -5728,8 +5728,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐使用執照/綠建築標章及機電消防竣工簽證",
           "dueLabel": "第4期期程內",
-          "owner": "林耀堂",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（派駐日暫定115",
+          "manager": "12/15；待正式確認）/視該員副理",
           "major": true,
           "fine": "5,000/次",
           "basis": "罰則13.3",
@@ -5749,8 +5749,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐竣工報告單/竣工圖說/工程結算審查",
           "dueLabel": "竣工日+3日或提送次日+7日",
-          "owner": "林耀堂",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（派駐日暫定115",
+          "manager": "12/15；待正式確認）/視該員副理",
           "major": false,
           "fine": "3,000/日；5,000/次",
           "basis": "罰則13.1/13.3",
@@ -5770,8 +5770,8 @@
           "heading": "六、分案施工階段待觸發事項",
           "task": "廣豐分項初驗/複驗到場",
           "dueLabel": "依機關通知",
-          "owner": "林耀堂",
-          "manager": "視該員副理",
+          "owner": "廣豐主任（派駐日暫定115",
+          "manager": "12/15；待正式確認）/視該員副理",
           "major": true,
           "fine": "建築師/技師未到場5,000/人次",
           "basis": "契約7.3.11",
