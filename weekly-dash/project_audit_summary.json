@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10 08:34:11 +0800",
+  "generatedAt": "2026-11-10 08:52:13 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -115,36 +115,18 @@
       "name": "水井丁區",
       "auditDate": "2026-11-10",
       "version": "V4",
-      "modifiedAt": "2026-11-10 08:33:28",
+      "modifiedAt": "2026-11-10 08:51:14",
       "mode": "active",
       "note": null,
       "riskCounts": {
         "red": 0,
         "orange": 0,
         "yellow": 0,
-        "green": 1
+        "green": 0
       },
-      "itemCount": 1,
-      "topUrgent": {
-        "task": "115年11月監造月報",
-        "dueLabel": "115/12/10",
-        "diff": 30,
-        "diffLabel": "D-30 追蹤",
-        "statusLight": "🟢",
-        "owner": "**林全華**",
-        "manager": "孝智哥 <@911417165373136897>"
-      },
-      "items": [
-        {
-          "task": "115年11月監造月報",
-          "dueLabel": "115/12/10",
-          "diff": 30,
-          "diffLabel": "D-30 追蹤",
-          "statusLight": "🟢",
-          "owner": "**林全華**",
-          "manager": "孝智哥 <@911417165373136897>"
-        }
-      ]
+      "itemCount": 0,
+      "topUrgent": null,
+      "items": []
     },
     {
       "key": "aviation_city",
