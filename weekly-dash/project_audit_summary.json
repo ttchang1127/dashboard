@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12 08:30:30 +0800",
+  "generatedAt": "2026-11-12 11:25:57 +0800",
   "source": "project_reminder_audit.py",
   "projects": [
     {
@@ -205,7 +205,7 @@
       "name": "台電4合1",
       "auditDate": "2026-11-12",
       "version": "V3",
-      "modifiedAt": "2026-11-04 08:53:53",
+      "modifiedAt": "2026-11-12 08:42:08",
       "mode": "active",
       "note": null,
       "riskCounts": {
@@ -235,7 +235,7 @@
           "manager": "孝智哥 <@911417165373136897>"
         }
       ],
-      "sourceSha256": "815cddd96eb1d62b46556ca68a9158248d03422525dd3aa497ef3f38efbdacaf"
+      "sourceSha256": "f45dffe7262fc6c0b5a57dd89305385d60fe53e2bb53fa63cfab3c8ef8b69f23"
     },
     {
       "key": "agri_bridge",

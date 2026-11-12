@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-12 08:30:30 +0800",
+  "generatedAt": "2026-11-12 11:25:57 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "815cddd96eb1d62b46556ca68a9158248d03422525dd3aa497ef3f38efbdacaf",
-  "sourceModifiedAt": "2026-11-04 08:53:53 +0800",
+  "sourceSha256": "f45dffe7262fc6c0b5a57dd89305385d60fe53e2bb53fa63cfab3c8ef8b69f23",
+  "sourceModifiedAt": "2026-11-12 08:42:08 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-11-12",
-    "modifiedAt": "2026-11-04 08:53:53",
+    "modifiedAt": "2026-11-12 08:42:08",
     "riskCounts": {
       "red": 0,
       "orange": 0,
@@ -4687,37 +4687,37 @@
         {
           "role": "管理人員",
           "person": "張增糴",
-          "approval": "待核對"
+          "approval": "已核准（大哥115/11/12確認台電已核准；核准日期／文號未提供）"
         },
         {
           "role": "監造主任",
           "person": "邱法忠",
-          "approval": "待核對"
+          "approval": "已核准（大哥115/11/12確認台電已核准；核准日期／文號未提供）"
         },
         {
           "role": "主辦監造工程師",
           "person": "吳尚東",
-          "approval": "待核對"
+          "approval": "已核准（大哥115/11/12確認台電已核准；核准日期／文號未提供）"
         },
         {
           "role": "協辦監造工程師",
           "person": "陳宇智",
-          "approval": "待核對"
+          "approval": "已核准（大哥115/11/12確認台電已核准；核准日期／文號未提供）"
         },
         {
           "role": "協辦監造工程員",
           "person": "陳宗霆",
-          "approval": "待核對"
+          "approval": "已核准（大哥115/11/12確認台電已核准；核准日期／文號未提供）"
         },
         {
           "role": "職安人員",
           "person": "黃阡維",
-          "approval": "待核對"
+          "approval": "已核准（大哥115/11/12確認台電已核准；核准日期／文號未提供）"
         },
         {
           "role": "文書人員／工務助理",
           "person": "黃雲潔",
-          "approval": "待核對"
+          "approval": "已核准（大哥115/11/12確認台電已核准；核准日期／文號未提供）"
         }
       ],
       "staffingPlan": [
