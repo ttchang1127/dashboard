@@ -697,7 +697,12 @@ function reloadIfTaiwanDateChanged(){
     return result;
   }, {});
   const currentTaiwanDate = `${parts.year}-${parts.month}-${parts.day}`;
-  if(currentTaiwanDate !== PAGE_TAIWAN_DATE) window.location.reload();
+  if(currentTaiwanDate !== PAGE_TAIWAN_DATE){
+    // Add the new Taiwan date to the URL so a stale cached document cannot keep showing yesterday's date.
+    const refreshUrl = new URL(window.location.href);
+    refreshUrl.searchParams.set('_twdate', currentTaiwanDate);
+    window.location.replace(refreshUrl.toString());
+  }
 }
 window.setInterval(reloadIfTaiwanDateChanged, 60 * 1000);
 window.addEventListener('focus', reloadIfTaiwanDateChanged);
