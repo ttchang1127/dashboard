@@ -284,16 +284,35 @@
 <div id="tt"></div>
 
 <script>
-/* ---------------- data ---------------- */
-// Resolve "today" from Taiwan's calendar date, regardless of the viewer's device timezone.
-const taiwanTodayParts = new Intl.DateTimeFormat('en-US', {
-  timeZone: 'Asia/Taipei', year: 'numeric', month: 'numeric', day: 'numeric'
-}).formatToParts(new Date()).reduce((parts, part) => {
-  if (part.type !== 'literal') parts[part.type] = Number(part.value);
-  return parts;
-}, {});
+(async function(){
+// Prefer the page server's HTTP Date header so the displayed Taiwan date does
+// not depend on a viewer device whose calendar clock may be stale or wrong.
+async function getReferenceNow(){
+  try{
+    const clockUrl = new URL(window.location.href);
+    clockUrl.searchParams.set('_clock', String(Date.now()));
+    const response = await fetch(clockUrl.toString(), {method:'HEAD', cache:'no-store'});
+    const serverDate = response.headers.get('Date');
+    if(serverDate){
+      const parsed = new Date(serverDate);
+      if(Number.isFinite(parsed.getTime())) return parsed;
+    }
+  }catch(_error){}
+  return new Date();
+}
+function taiwanDateParts(date){
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone:'Asia/Taipei', year:'numeric', month:'numeric', day:'numeric'
+  }).formatToParts(date).reduce((parts, part)=>{
+    if(part.type !== 'literal') parts[part.type] = Number(part.value);
+    return parts;
+  }, {});
+}
+const taiwanTodayParts = taiwanDateParts(await getReferenceNow());
 const TODAY = new Date(Date.UTC(taiwanTodayParts.year, taiwanTodayParts.month - 1, taiwanTodayParts.day));
-const PAGE_TAIWAN_DATE = `${taiwanTodayParts.year}-${String(taiwanTodayParts.month).padStart(2,'0')}-${String(taiwanTodayParts.day).padStart(2,'0')}`;
+let PAGE_TAIWAN_DATE = `${taiwanTodayParts.year}-${String(taiwanTodayParts.month).padStart(2,'0')}-${String(taiwanTodayParts.day).padStart(2,'0')}`;
+
+/* ---------------- data ---------------- */
 const RANGE_START = new Date(Date.UTC(2026, 8, 1));
 const RANGE_END   = new Date(Date.UTC(2030, 0, 1)); // exclusive
 
@@ -689,24 +708,25 @@ document.addEventListener('mouseleave', ()=>tt.classList.remove('show'));
 
 // Keep a long-open tab aligned with Taiwan's calendar. Recheck on focus/visibility
 // as well as periodically, and reload only when the Taiwan date has changed.
-function reloadIfTaiwanDateChanged(){
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone:'Asia/Taipei', year:'numeric', month:'2-digit', day:'2-digit'
-  }).formatToParts(new Date()).reduce((result, part)=>{
-    if(part.type!=='literal') result[part.type]=part.value;
-    return result;
-  }, {});
-  const currentTaiwanDate = `${parts.year}-${parts.month}-${parts.day}`;
+let checkingTaiwanDate = false;
+async function reloadIfTaiwanDateChanged(){
+  if(checkingTaiwanDate) return;
+  checkingTaiwanDate = true;
+  const parts = taiwanDateParts(await getReferenceNow());
+  const currentTaiwanDate = `${parts.year}-${String(parts.month).padStart(2,'0')}-${String(parts.day).padStart(2,'0')}`;
   if(currentTaiwanDate !== PAGE_TAIWAN_DATE){
     // Add the new Taiwan date to the URL so a stale cached document cannot keep showing yesterday's date.
     const refreshUrl = new URL(window.location.href);
     refreshUrl.searchParams.set('_twdate', currentTaiwanDate);
     window.location.replace(refreshUrl.toString());
+    return;
   }
+  checkingTaiwanDate = false;
 }
-window.setInterval(reloadIfTaiwanDateChanged, 60 * 1000);
+window.setInterval(reloadIfTaiwanDateChanged, 5 * 60 * 1000);
 window.addEventListener('focus', reloadIfTaiwanDateChanged);
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState==='visible') reloadIfTaiwanDateChanged();
 });
+})();
 </script>
