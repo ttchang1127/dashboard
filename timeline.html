@@ -263,7 +263,7 @@
 <div class="top">
   <div>
     <h1>專案人力時間軸</h1>
-    <div class="sub">台灣日期 <b id="todayLabel"></b> ・ 依現有工作至預計/監造截止日期繪製</div>
+    <div class="sub">今天（台灣時間） <b id="todayLabel"></b> ・ 依現有工作至預計/監造截止日期繪製</div>
   </div>
   <div class="kpis" id="kpis"></div>
 </div>
@@ -592,13 +592,13 @@ function personHTML(person){
 
 function sectionHTML(title, desc, people){
   let body = monthHeaderHTML();
-  body += '<div class="body-rows">' + gridlinesHTML() + '<div class="todayline" style="left:'+ (210 + chartW*pct(TODAY)/100) +'px"><span class="lbl">今天 '+rocFmt(TODAY)+'</span></div>';
+  body += '<div class="body-rows">' + gridlinesHTML() + '<div class="todayline" style="left:'+ (210 + chartW*pct(TODAY)/100) +'px"><span class="lbl">今天（台灣） '+rocFmt(TODAY)+'</span></div>';
   people.forEach(p=> body += personHTML(p));
   body += '</div>';
   const miniToday = '<div class="mini-today" title="今天 '+fmt(TODAY)+' 在整體時程中的位置">'
-    + '<span class="mini-edge">'+rocShort(RANGE_START)+'</span>'
+    + '<span class="mini-edge">起點 '+rocShort(RANGE_START)+'</span>'
     + '<div class="mini-track"><div class="mini-dot" style="left:'+pct(TODAY)+'%"></div></div>'
-    + '<span class="mini-edge">'+rocShort(RANGE_END)+'</span>'
+    + '<span class="mini-edge">終點 '+rocShort(RANGE_END)+'</span>'
     + '</div>';
   return '<section class="section expanded">'
     + '<div class="section-head"><h2>'+title+'</h2><span class="cnt">'+people.length+' 人</span><span class="chev">▾</span><p>'+desc+'</p>'+miniToday+'</div>'
