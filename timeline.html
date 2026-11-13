@@ -263,7 +263,7 @@
 <div class="top">
   <div>
     <h1>專案人力時間軸</h1>
-    <div class="sub">資料基準日 <b id="todayLabel"></b> ・ 依現有工作至預計/監造截止日期繪製</div>
+    <div class="sub">台灣日期 <b id="todayLabel"></b> ・ 依現有工作至預計/監造截止日期繪製</div>
   </div>
   <div class="kpis" id="kpis"></div>
 </div>
@@ -292,10 +292,10 @@ const taiwanTodayParts = new Intl.DateTimeFormat('en-US', {
   if (part.type !== 'literal') parts[part.type] = Number(part.value);
   return parts;
 }, {});
-const TODAY = new Date(taiwanTodayParts.year, taiwanTodayParts.month - 1, taiwanTodayParts.day);
+const TODAY = new Date(Date.UTC(taiwanTodayParts.year, taiwanTodayParts.month - 1, taiwanTodayParts.day));
 const PAGE_TAIWAN_DATE = `${taiwanTodayParts.year}-${String(taiwanTodayParts.month).padStart(2,'0')}-${String(taiwanTodayParts.day).padStart(2,'0')}`;
-const RANGE_START = new Date('2026-09-01');
-const RANGE_END   = new Date('2030-01-01'); // exclusive
+const RANGE_START = new Date(Date.UTC(2026, 8, 1));
+const RANGE_END   = new Date(Date.UTC(2030, 0, 1)); // exclusive
 
 const COMPANY_COLOR = { '世合':'--shihe', '九鼎':'--jiuding', '兆豐':'--zhaofeng' };
 const UNSPEC_COLOR = '--muted';
@@ -481,13 +481,13 @@ const groups = [
 ];
 
 /* ---------------- helpers ---------------- */
-function d(s){ return new Date(s+'T00:00:00'); }
+function d(s){ return new Date(s+'T00:00:00Z'); }
 const totalMs = RANGE_END - RANGE_START;
 function pct(dt){ return Math.max(0, Math.min(100, (dt - RANGE_START)/totalMs*100)); }
 function daysUntil(endStr){ return Math.round((d(endStr) - TODAY)/86400000); }
-function fmt(dt){ return dt.getFullYear()+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+String(dt.getDate()).padStart(2,'0'); }
-function rocFmt(dt){ return (dt.getFullYear()-1911)+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+String(dt.getDate()).padStart(2,'0'); }
-function rocShort(dt){ return (dt.getFullYear()-1911)+'/'+String(dt.getMonth()+1).padStart(2,'0'); }
+function fmt(dt){ return dt.getUTCFullYear()+'/'+String(dt.getUTCMonth()+1).padStart(2,'0')+'/'+String(dt.getUTCDate()).padStart(2,'0'); }
+function rocFmt(dt){ return (dt.getUTCFullYear()-1911)+'/'+String(dt.getUTCMonth()+1).padStart(2,'0')+'/'+String(dt.getUTCDate()).padStart(2,'0'); }
+function rocShort(dt){ return (dt.getUTCFullYear()-1911)+'/'+String(dt.getUTCMonth()+1).padStart(2,'0'); }
 
 document.getElementById('todayLabel').textContent = rocFmt(TODAY)+'（西元 '+fmt(TODAY)+'）';
 
@@ -496,8 +496,8 @@ const months = [];
 {
   let cur = new Date(RANGE_START);
   while(cur < RANGE_END){
-    const next = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
-    months.push({start:new Date(cur), end:next, label:(cur.getMonth()+1)+'月', isYearStart:cur.getMonth()===0, year:cur.getFullYear()});
+    const next = new Date(Date.UTC(cur.getUTCFullYear(), cur.getUTCMonth()+1, 1));
+    months.push({start:new Date(cur), end:next, label:(cur.getUTCMonth()+1)+'月', isYearStart:cur.getUTCMonth()===0, year:cur.getUTCFullYear()});
     cur = next;
   }
 }
@@ -592,7 +592,7 @@ function personHTML(person){
 
 function sectionHTML(title, desc, people){
   let body = monthHeaderHTML();
-  body += '<div class="body-rows">' + gridlinesHTML() + '<div class="todayline" style="left:'+ (210 + chartW*pct(TODAY)/100) +'px"><span class="lbl">今天</span></div>';
+  body += '<div class="body-rows">' + gridlinesHTML() + '<div class="todayline" style="left:'+ (210 + chartW*pct(TODAY)/100) +'px"><span class="lbl">今天 '+rocFmt(TODAY)+'</span></div>';
   people.forEach(p=> body += personHTML(p));
   body += '</div>';
   const miniToday = '<div class="mini-today" title="今天 '+fmt(TODAY)+' 在整體時程中的位置">'
