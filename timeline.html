@@ -293,6 +293,7 @@ const taiwanTodayParts = new Intl.DateTimeFormat('en-US', {
   return parts;
 }, {});
 const TODAY = new Date(taiwanTodayParts.year, taiwanTodayParts.month - 1, taiwanTodayParts.day);
+const PAGE_TAIWAN_DATE = `${taiwanTodayParts.year}-${String(taiwanTodayParts.month).padStart(2,'0')}-${String(taiwanTodayParts.day).padStart(2,'0')}`;
 const RANGE_START = new Date('2026-09-01');
 const RANGE_END   = new Date('2030-01-01'); // exclusive
 
@@ -685,4 +686,22 @@ document.addEventListener('mousemove', e=>{
   tt.style.left = x+'px'; tt.style.top = y+'px';
 });
 document.addEventListener('mouseleave', ()=>tt.classList.remove('show'));
+
+// Keep a long-open tab aligned with Taiwan's calendar. Recheck on focus/visibility
+// as well as periodically, and reload only when the Taiwan date has changed.
+function reloadIfTaiwanDateChanged(){
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone:'Asia/Taipei', year:'numeric', month:'2-digit', day:'2-digit'
+  }).formatToParts(new Date()).reduce((result, part)=>{
+    if(part.type!=='literal') result[part.type]=part.value;
+    return result;
+  }, {});
+  const currentTaiwanDate = `${parts.year}-${parts.month}-${parts.day}`;
+  if(currentTaiwanDate !== PAGE_TAIWAN_DATE) window.location.reload();
+}
+window.setInterval(reloadIfTaiwanDateChanged, 60 * 1000);
+window.addEventListener('focus', reloadIfTaiwanDateChanged);
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible') reloadIfTaiwanDateChanged();
+});
 </script>
