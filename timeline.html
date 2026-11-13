@@ -285,7 +285,14 @@
 
 <script>
 /* ---------------- data ---------------- */
-const TODAY = new Date('2026-09-22');
+// Resolve "today" from Taiwan's calendar date, regardless of the viewer's device timezone.
+const taiwanTodayParts = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'Asia/Taipei', year: 'numeric', month: 'numeric', day: 'numeric'
+}).formatToParts(new Date()).reduce((parts, part) => {
+  if (part.type !== 'literal') parts[part.type] = Number(part.value);
+  return parts;
+}, {});
+const TODAY = new Date(taiwanTodayParts.year, taiwanTodayParts.month - 1, taiwanTodayParts.day);
 const RANGE_START = new Date('2026-09-01');
 const RANGE_END   = new Date('2030-01-01'); // exclusive
 
