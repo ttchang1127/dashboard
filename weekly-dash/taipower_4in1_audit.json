@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-23 08:30:35 +0800",
+  "generatedAt": "2026-11-23 11:21:19 +0800",
   "source": "台電4合1提醒清單_V3.md",
-  "sourceSha256": "f45dffe7262fc6c0b5a57dd89305385d60fe53e2bb53fa63cfab3c8ef8b69f23",
-  "sourceModifiedAt": "2026-11-12 08:42:08 +0800",
+  "sourceSha256": "2967860a2f7c23e19972e8d1d4c527265bbd58a4f29dcace224c9575aee6f6a4",
+  "sourceModifiedAt": "2026-11-23 11:21:19 +0800",
   "project": {
     "name": "台電4合1",
     "version": "V3",
     "auditDate": "2026-11-23",
-    "modifiedAt": "2026-11-12 08:42:08",
+    "modifiedAt": "2026-11-23 11:18:34",
     "riskCounts": {
       "red": 0,
       "orange": 0,
@@ -53,7 +53,7 @@
         "approved": 0,
         "approvalPending": 8,
         "provisional": 0,
-        "arrivalToVerify": 3
+        "arrivalToVerify": 2
       },
       "nextDue": {
         "task": "廣豐D/S監造派駐啟動",
@@ -5411,7 +5411,7 @@
         },
         {
           "role": "機電主辦監造工程師",
-          "person": "管傳鈴（預計10/27報到）",
+          "person": "管傳鈴",
           "approval": "待核對"
         },
         {
